@@ -1,0 +1,177 @@
+/* ═══════════════════════════════════════════════════════════════════
+   IMMERSIVE AI EXECUTION SYSTEM — Activity Bar Styles
+   ═══════════════════════════════════════════════════════════════════ */
+
+  #nxActivityBar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    height: 34px;
+    padding: 0 12px;
+    background: linear-gradient(90deg, rgba(139, 92, 246, .07) 0%, var(--surface) 60%);
+    border-bottom: 1px solid rgba(139, 92, 246, .25);
+    position: relative;
+    z-index: 5;
+  }
+
+  .nx-ab-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #8b5cf6;
+    flex-shrink: 0;
+    animation: nx-ab-pulse 1.4s ease-in-out infinite;
+  }
+
+  .nx-ab-dot.nx-ab-coding {
+    background: #3b82f6;
+  }
+
+  .nx-ab-dot.nx-ab-planning {
+    background: #f59e0b;
+  }
+
+  .nx-ab-dot.nx-ab-debug {
+    background: #ef4444;
+  }
+
+  .nx-ab-dot.nx-ab-paused {
+    background: #64748b;
+    animation: none;
+  }
+
+  .nx-ab-dot.nx-ab-done {
+    background: #10b981;
+    animation: none;
+  }
+
+  @keyframes nx-ab-pulse {
+
+    0%,
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    50% {
+      opacity: .35;
+      transform: scale(.65);
+    }
+  }
+
+  .nx-ab-file {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 10px;
+    color: #bc8cff;
+    font-weight: 600;
+    background: rgba(139, 92, 246, .12);
+    border: 1px solid rgba(139, 92, 246, .28);
+    border-radius: 4px;
+    padding: 2px 8px;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: default;
+  }
+
+  .nx-ab-link {
+    font-size: 10px;
+    color: #8b5cf6;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 1px 5px;
+    border-radius: 3px;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .nx-ab-link:hover {
+    color: #bc8cff;
+  }
+
+  .nx-ab-steps-badge {
+    font-size: 10px;
+    color: var(--text-dim);
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 9px;
+    padding: 1px 8px;
+  }
+
+  .nx-ab-btn {
+    font-size: 10px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    padding: 3px 10px;
+    border-radius: 5px;
+    transition: opacity .15s;
+  }
+
+  .nx-ab-btn:hover {
+    opacity: .8;
+  }
+
+  .nx-ab-pause,
+  .nx-ab-resume {
+    background: rgba(139, 92, 246, .15);
+    color: #bc8cff;
+    border: 1px solid rgba(139, 92, 246, .3);
+  }
+
+  .nx-ab-stop {
+    background: rgba(239, 68, 68, .12);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, .28);
+  }
+
+  /* "AI editing" banner inside code/editor area */
+  #nxAiEditingBanner {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 14px;
+    background: linear-gradient(90deg, rgba(139, 92, 246, .13) 0%, transparent 100%);
+    border-bottom: 1px solid rgba(139, 92, 246, .22);
+    font-size: 11px;
+    color: #bc8cff;
+    flex-shrink: 0;
+    animation: nx-ab-slide-in .2s ease;
+  }
+
+  @keyframes nx-ab-slide-in {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .nx-aeb-pulse {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #8b5cf6;
+    animation: nx-ab-pulse 1s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+
+  /* Flash animation for Code tab button when AI writes */
+  @keyframes nx-tab-file-flash {
+    0% {
+      background: rgba(139, 92, 246, .25);
+      color: #bc8cff;
+    }
+
+    100% {
+      background: transparent;
+      color: inherit;
+    }
+  }

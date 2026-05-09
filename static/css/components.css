@@ -1,0 +1,587 @@
+/* Phase 32 — Skeleton loaders */
+    @keyframes skelPulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.4;
+      }
+    }
+
+    .skel {
+      background: #1a2030;
+      border-radius: 4px;
+      animation: skelPulse 1.6s ease-in-out infinite;
+    }
+
+    /* Phase 32 — xterm container */
+    #xtermContainer .xterm {
+      height: 100%;
+    }
+
+    #xtermContainer .xterm-viewport {
+      border-radius: 0;
+    }
+
+    #xtermMount {
+      height: 100%;
+    }
+
+    /* Phase 32 — Agent Step Timeline */
+    .step-timeline {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .step-item {
+      display: flex;
+      gap: 12px;
+      position: relative;
+      animation: fadeInUp 0.3s ease both;
+    }
+
+    .step-item:not(:last-child)::before {
+      content: '';
+      position: absolute;
+      left: 15px;
+      top: 32px;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--step-color, #30363d), transparent);
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .step-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--step-color, #21262d);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+      margin-top: 4px;
+      box-shadow: 0 0 0 3px #0d1117, 0 0 0 4px var(--step-color, #30363d);
+      transition: box-shadow 0.2s;
+    }
+
+    .step-body {
+      flex: 1;
+      padding: 8px 12px 18px;
+    }
+
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .step-phase {
+      font-weight: 700;
+      font-size: 0.8rem;
+      color: var(--step-color, var(--text));
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .step-status {
+      font-size: 0.68rem;
+      padding: 2px 7px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.07);
+      color: var(--muted);
+    }
+
+    .step-status.running {
+      background: #1f3f6c;
+      color: #79c0ff;
+    }
+
+    .step-status.done {
+      background: #1a3a1a;
+      color: var(--green);
+    }
+
+    .step-status.error {
+      background: #3a1a1a;
+      color: var(--red);
+    }
+
+    .step-meta {
+      display: flex;
+      gap: 10px;
+      margin-top: 4px;
+      flex-wrap: wrap;
+    }
+
+    .step-meta-item {
+      font-size: 0.68rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .step-expand {
+      font-size: 0.75rem;
+      padding: 6px 10px 0 0;
+      color: var(--muted);
+      cursor: pointer;
+      transition: color 0.15s;
+    }
+
+    .step-expand:hover {
+      color: var(--accent);
+    }
+
+    .step-detail {
+      display: none;
+      margin-top: 8px;
+      background: #0a0f17;
+      border: 1px solid #2a3140;
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-family: ui-monospace, monospace;
+      font-size: 0.77rem;
+      color: #c9d1d9;
+      white-space: pre-wrap;
+      line-height: 1.5;
+      max-height: 200px;
+      overflow: auto;
+    }
+
+    .step-detail.open {
+      display: block;
+      animation: fadeInUp 0.2s ease;
+    }
+
+    .step-conf-bar {
+      height: 3px;
+      border-radius: 2px;
+      margin-top: 6px;
+      background: linear-gradient(90deg, var(--green), var(--accent));
+      transition: width 0.4s ease;
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       PHASE 33 — Real-Time AI Execution Visualization
+       ═══════════════════════════════════════════════════════ */
+
+    /* Pipeline bar (inline in Logs tab + full version in Live tab) */
+    .nx-exec-pipeline {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      padding: 8px 14px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    .nx-exec-stage {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 0.74rem;
+      font-weight: 500;
+      color: var(--muted);
+      transition: all 0.3s ease;
+      position: relative;
+      flex-shrink: 0;
+      background: transparent;
+    }
+
+    .nx-exec-stage::after {
+      content: '→';
+      margin-left: 6px;
+      color: var(--border);
+      font-size: 0.7rem;
+    }
+
+    .nx-exec-stage:last-child::after {
+      content: '';
+      margin-left: 0;
+    }
+
+    .nx-exec-stage .nx-stage-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--border);
+      transition: all 0.3s ease;
+      flex-shrink: 0;
+    }
+
+    .nx-exec-stage.active {
+      color: var(--accent);
+      background: rgba(56, 139, 253, 0.1);
+    }
+
+    .nx-exec-stage.active .nx-stage-dot {
+      background: var(--accent);
+      box-shadow: 0 0 0 3px rgba(56, 139, 253, 0.25);
+      animation: nxDotPulse 1.4s ease-in-out infinite;
+    }
+
+    .nx-exec-stage.done {
+      color: #4ade80;
+    }
+
+    .nx-exec-stage.done .nx-stage-dot {
+      background: #4ade80;
+    }
+
+    .nx-exec-stage.error {
+      color: #f87171;
+    }
+
+    .nx-exec-stage.error .nx-stage-dot {
+      background: #f87171;
+    }
+
+    @keyframes nxDotPulse {
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 3px rgba(56, 139, 253, 0.25);
+      }
+
+      50% {
+        box-shadow: 0 0 0 6px rgba(56, 139, 253, 0.08);
+      }
+    }
+
+    /* Live tab layout — display controlled by .nx-tab-content / .nx-tab-content.active */
+    #nxTab-live {
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .nx-live-split {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+      gap: 1px;
+      background: var(--border);
+    }
+
+    .nx-live-pane {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      overflow: hidden;
+      background: var(--bg);
+      min-width: 0;
+    }
+
+    .nx-live-pane-hdr {
+      padding: 6px 12px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .nx-live-pane-hdr .nx-live-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--border);
+      flex-shrink: 0;
+    }
+
+    .nx-live-pane-hdr .nx-live-dot.active {
+      background: #4ade80;
+      animation: nxDotPulse 1.4s ease-in-out infinite;
+    }
+
+    .nx-live-code-area {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      font-family: ui-monospace, 'Cascadia Code', 'Fira Code', monospace;
+      font-size: 0.76rem;
+      line-height: 1.55;
+      padding: 10px 14px;
+      color: #c9d1d9;
+      white-space: pre-wrap;
+      word-break: break-all;
+      background: #0d1117;
+    }
+
+    .nx-live-code-area .nx-code-file {
+      display: block;
+      color: #79c0ff;
+      font-weight: 600;
+      margin: 8px 0 4px;
+      font-size: 0.7rem;
+      opacity: 0.8;
+    }
+
+    .nx-live-code-area .nx-code-chunk {
+      display: block;
+      animation: nxFadeSlide 0.12s ease;
+    }
+
+    .nx-live-term-area {
+      flex: 1;
+      overflow-y: auto;
+      font-family: ui-monospace, 'Cascadia Code', 'Fira Code', monospace;
+      font-size: 0.76rem;
+      line-height: 1.5;
+      padding: 10px 14px;
+      background: #0a0f1a;
+      color: #c9d1d9;
+    }
+
+    .nx-term-line {
+      display: block;
+      padding: 1px 0;
+      animation: nxFadeSlide 0.1s ease;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .nx-term-line.nx-term-cmd {
+      color: #79c0ff;
+      font-weight: 600;
+    }
+
+    .nx-term-line.nx-term-ok {
+      color: #4ade80;
+    }
+
+    .nx-term-line.nx-term-err {
+      color: #f87171;
+    }
+
+    .nx-term-line.nx-term-warn {
+      color: #fbbf24;
+    }
+
+    .nx-term-line.nx-term-info {
+      color: #a5b4fc;
+    }
+
+    .nx-term-line.nx-term-system {
+      color: #8b949e;
+    }
+
+    @keyframes nxFadeSlide {
+      from {
+        opacity: 0;
+        transform: translateY(3px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Live status bar */
+    .nx-live-statusbar {
+      padding: 4px 14px;
+      font-size: 0.7rem;
+      color: var(--muted);
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .nx-live-statusbar .nx-lsb-item {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .nx-live-statusbar .nx-lsb-val {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    /* Compact pipeline bar inside Logs tab */
+    #nxLogsPipeline {
+      display: none;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      flex-shrink: 0;
+    }
+
+    /* Fix: when nxInit() moves tabLogs into nxTab-logs, ensure it fills remaining flex space
+       despite nxInit setting height:100% (which overflows in a flex-column container) */
+    #nxTab-logs #tabLogs {
+      flex: 1 !important;
+      height: auto !important;
+      min-height: 0 !important;
+      overflow: auto;
+    }
+
+    /* Live tab actions bar */
+    #nxTabActions-live {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    /* Phase 32 — Analysis panel (code/image results) */
+    .analysis-panel {
+      background: #0d1117;
+      border: 1px solid #2a3140;
+      border-radius: 10px;
+      padding: 14px;
+      margin: 14px;
+      animation: fadeInUp 0.3s ease;
+    }
+
+    .analysis-panel h4 {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 10px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .analysis-badge {
+      font-size: 0.65rem;
+      padding: 2px 7px;
+      border-radius: 10px;
+      background: #1f3f6c;
+      color: #79c0ff;
+    }
+
+    .analysis-issue {
+      display: flex;
+      gap: 8px;
+      padding: 6px 0;
+      border-bottom: 1px solid #1c2230;
+      font-size: 0.78rem;
+    }
+
+    .analysis-issue:last-child {
+      border-bottom: none;
+    }
+
+    .issue-sev {
+      font-size: 0.65rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 600;
+      flex-shrink: 0;
+      align-self: flex-start;
+      margin-top: 1px;
+    }
+
+    .issue-sev.error {
+      background: #3a1a1a;
+      color: #f85149;
+    }
+
+    .issue-sev.warning {
+      background: #3a2a00;
+      color: #d29922;
+    }
+
+    .issue-sev.info {
+      background: #1a2a3a;
+      color: #58a6ff;
+    }
+
+    .issue-line {
+      color: var(--muted);
+      font-size: 0.68rem;
+      margin-top: 2px;
+    }
+
+    .issue-fix {
+      color: var(--green);
+      font-size: 0.72rem;
+      margin-top: 2px;
+    }
+
+    .quality-score {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      background: linear-gradient(135deg, #58a6ff, #3fb950);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Phase 32 — Typing effect for agent text output */
+    .typing-cursor::after {
+      content: '█';
+      animation: blink 1s infinite;
+      color: var(--accent);
+    }
+
+    @keyframes blink {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0;
+      }
+    }
+
+    /* Phase 32 — Agent command badge in logs */
+    .agent-cmd-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: #0e1e0e;
+      border: 1px solid #2a4a2a;
+      border-radius: 5px;
+      padding: 3px 8px;
+      font-family: ui-monospace, monospace;
+      font-size: 0.78rem;
+      color: #56d364;
+      margin: 2px 0;
+    }
+
+    .agent-cmd-source {
+      font-size: 0.64rem;
+      padding: 1px 5px;
+      border-radius: 3px;
+      background: #1a3a1a;
+      color: #3fb950;
+      font-weight: 600;
+    }

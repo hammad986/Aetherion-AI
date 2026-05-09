@@ -1,0 +1,324 @@
+/* ── Global Loading Bar ───────────────────────────────────────────────── */
+  #nx-loading-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    z-index: 999999;
+    pointer-events: none;
+    background: linear-gradient(90deg, #58a6ff, #bc8cff, #3fb950);
+    background-size: 200% 100%;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.25s ease, opacity 0.4s;
+    opacity: 0;
+  }
+
+  #nx-loading-bar.active {
+    opacity: 1;
+    transform: scaleX(0.7);
+    animation: nx-bar-shimmer 1.2s linear infinite;
+  }
+
+  #nx-loading-bar.done {
+    opacity: 0;
+    transform: scaleX(1);
+  }
+
+  @keyframes nx-bar-shimmer {
+    0% {
+      background-position: 200% 0;
+    }
+
+    100% {
+      background-position: -200% 0;
+    }
+  }
+
+  /* ── Toast Container ──────────────────────────────────────────────────── */
+  #nx-toasts {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 999998;
+    pointer-events: none;
+    max-width: 340px;
+  }
+
+  .nx-toast {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 9px;
+    font-size: 0.79rem;
+    color: #e6edf3;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+    pointer-events: auto;
+    cursor: pointer;
+    animation: nx-toast-in 0.22s ease;
+    border: 1px solid transparent;
+    max-width: 340px;
+  }
+
+  @keyframes nx-toast-in {
+    from {
+      opacity: 0;
+      transform: translateX(16px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes nx-toast-out {
+    from {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    to {
+      opacity: 0;
+      transform: translateX(16px);
+    }
+  }
+
+  .nx-toast.success {
+    background: #0d2117;
+    border-color: #2ea04326;
+  }
+
+  .nx-toast.error {
+    background: #1e0b0b;
+    border-color: #f8514940;
+  }
+
+  .nx-toast.warning {
+    background: #1a1300;
+    border-color: #d2992240;
+  }
+
+  .nx-toast.info {
+    background: #0d1926;
+    border-color: #58a6ff30;
+  }
+
+  .nx-toast-icon {
+    font-size: 1rem;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .nx-toast-body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .nx-toast-title {
+    font-weight: 600;
+    font-size: 0.8rem;
+    margin-bottom: 2px;
+  }
+
+  .nx-toast.success .nx-toast-title {
+    color: #3fb950;
+  }
+
+  .nx-toast.error .nx-toast-title {
+    color: #f85149;
+  }
+
+  .nx-toast.warning .nx-toast-title {
+    color: #d29922;
+  }
+
+  .nx-toast.info .nx-toast-title {
+    color: #58a6ff;
+  }
+
+  .nx-toast-msg {
+    color: #8b949e;
+    font-size: 0.74rem;
+    line-height: 1.4;
+    word-break: break-word;
+  }
+
+  .nx-toast-close {
+    color: #8b949e;
+    font-size: 0.7rem;
+    flex-shrink: 0;
+    cursor: pointer;
+    padding: 0 2px;
+    margin-top: 1px;
+  }
+
+  .nx-toast-close:hover {
+    color: #e6edf3;
+  }
+
+  /* ── Onboarding Panel ─────────────────────────────────────────────────── */
+  #nx-onboard-panel {
+    display: none;
+    background: linear-gradient(135deg, rgba(88, 166, 255, 0.07), rgba(188, 140, 255, 0.07));
+    border: 1px solid rgba(188, 140, 255, 0.2);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin: 12px 0;
+  }
+
+  .nx-onboard-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #e6edf3;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .nx-onboard-sub {
+    font-size: 0.76rem;
+    color: #8b949e;
+    margin-bottom: 14px;
+    line-height: 1.5;
+  }
+
+  .nx-onboard-prompts {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .nx-onboard-prompt {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border, #30363d);
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 0.77rem;
+    color: #c9d1d9;
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .nx-onboard-prompt:hover {
+    border-color: #58a6ff55;
+    background: rgba(88, 166, 255, 0.06);
+    color: #e6edf3;
+  }
+
+  .nx-onboard-prompt .nx-op-icon {
+    font-size: 0.85rem;
+    flex-shrink: 0;
+  }
+
+  .nx-onboard-dismiss {
+    margin-top: 12px;
+    font-size: 0.7rem;
+    color: #8b949e;
+    cursor: pointer;
+    text-align: right;
+  }
+
+  .nx-onboard-dismiss:hover {
+    color: #58a6ff;
+  }
+
+  /* ── Error Overlay (Failsafe) ─────────────────────────────────────────── */
+  #nx-failsafe-banner {
+    display: none;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    background: rgba(248, 81, 73, 0.1);
+    border-bottom: 1px solid rgba(248, 81, 73, 0.3);
+    padding: 8px 16px;
+    font-size: 0.78rem;
+    color: #f85149;
+    display: none;
+    align-items: center;
+    gap: 10px;
+  }
+
+  #nx-failsafe-banner.show {
+    display: flex;
+  }
+
+  .nx-failsafe-msg {
+    flex: 1;
+  }
+
+  .nx-failsafe-retry {
+    padding: 4px 10px;
+    border-radius: 5px;
+    background: rgba(248, 81, 73, 0.15);
+    color: #f85149;
+    border: 1px solid rgba(248, 81, 73, 0.3);
+    cursor: pointer;
+    font-size: 0.72rem;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  .nx-failsafe-retry:hover {
+    background: rgba(248, 81, 73, 0.25);
+  }
+
+  /* ── Log line error highlight ──────────────────────────────────────────── */
+  .log-line.error,
+  .log-line.err {
+    color: #f85149 !important;
+  }
+
+  .log-line.success,
+  .log-line.done {
+    color: #3fb950 !important;
+  }
+
+  .log-line.warning,
+  .log-line.warn {
+    color: #d29922 !important;
+  }
+
+  .log-line.system {
+    color: #bc8cff !important;
+  }
+
+  /* ── SSE reconnect badge ───────────────────────────────────────────────── */
+  #nx-sse-status {
+    position: fixed;
+    bottom: 54px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1c2230;
+    border: 1px solid #30363d;
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 0.71rem;
+    color: #8b949e;
+    display: none;
+    align-items: center;
+    gap: 6px;
+    z-index: 9997;
+    pointer-events: none;
+  }
+
+  #nx-sse-status.show {
+    display: flex;
+  }
+
+  #nx-sse-status .nx-sse-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #d29922;
+    animation: uxit-pulse 1s infinite;
+  }

@@ -1,0 +1,4056 @@
+/* ── NX UI — Advanced AI Platform Interface ──────────────────────────────── */
+    :root {
+      --bg: #09090f;
+      --surface: #0d0d14;
+      --panel: #111118;
+      --panel2: #161620;
+      --panel-border: #1e1e2e;
+      --panel-border-hover: #2e2e45;
+      --accent: #6366f1;
+      --accent-hover: #818cf8;
+      --accent-dim: rgba(99, 102, 241, 0.12);
+      --accent-glow: rgba(99, 102, 241, 0.25);
+      --green: #22c55e;
+      --green-dim: rgba(34, 197, 94, 0.12);
+      --red: #ef4444;
+      --red-dim: rgba(239, 68, 68, 0.12);
+      --yellow: #f59e0b;
+      --yellow-dim: rgba(245, 158, 11, 0.12);
+      --blue: #3b82f6;
+      --blue-dim: rgba(59, 130, 246, 0.12);
+      --purple: #a855f7;
+      --purple-dim: rgba(168, 85, 247, 0.12);
+      --text: #e8e8f0;
+      --text-muted: #7878a0;
+      --text-dim: #454560;
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --type-xs: 11px;
+      --type-sm: 12px;
+      --type-md: 13px;
+      --type-lg: 16px;
+      --shadow-1: 0 6px 18px rgba(0, 0, 0, 0.18);
+      --shadow-2: 0 18px 40px rgba(0, 0, 0, 0.28);
+      --hdr: 52px;
+      --leftW: 0px;
+      --rightW: 290px;
+      --bottomH: 0px;
+      --ease: cubic-bezier(0.4, 0, 0.2, 1);
+      --dur: 220ms;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    body {
+      font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--panel-border-hover);
+      border-radius: 3px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--text-dim);
+    }
+
+    /* ── Header ── */
+    .nx-header {
+      height: var(--hdr);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 12px;
+      background: var(--panel);
+      border-bottom: 1px solid var(--panel-border);
+      z-index: 200;
+      flex-shrink: 0;
+    }
+
+    .nx-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 52px;
+      flex-shrink: 0;
+    }
+
+    .nx-logo-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--accent), #a855f7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 14px;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .nx-logo-brand {
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    .nx-logo-badge {
+      font-size: 10px;
+      background: var(--accent-dim);
+      color: var(--accent);
+      padding: 1px 6px;
+      border-radius: 8px;
+      border: 1px solid var(--accent-glow);
+      font-weight: 600;
+    }
+
+    .nx-cmd-wrap {
+      flex: 1;
+      max-width: 680px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--surface);
+      border: 1px solid var(--panel-border);
+      border-radius: 10px;
+      padding: 4px 8px 4px 12px;
+      transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+    }
+
+    .nx-cmd-wrap:focus-within {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-dim);
+    }
+
+    .nx-cmd-wrap textarea {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      resize: none;
+      height: 34px;
+      line-height: 1.6;
+      padding: 4px 0;
+    }
+
+    .nx-cmd-wrap textarea::placeholder {
+      color: var(--text-dim);
+    }
+
+    .nx-cmd-attach {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px 6px;
+      border-radius: 6px;
+      font-size: 15px;
+      transition: color var(--dur), background var(--dur);
+    }
+
+    .nx-cmd-attach:hover {
+      color: var(--text);
+      background: var(--panel-border);
+    }
+
+    .nx-run-btn {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 6px 16px;
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      white-space: nowrap;
+      transition: background var(--dur), transform 0.1s, box-shadow var(--dur);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .nx-run-btn:hover {
+      background: var(--accent-hover);
+      box-shadow: 0 0 12px var(--accent-glow);
+    }
+
+    .nx-run-btn:active {
+      transform: scale(0.97);
+    }
+
+    .nx-run-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .nx-run-btn.running {
+      background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+      animation: nx-pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes nx-pulse {
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4)
+      }
+
+      50% {
+        box-shadow: 0 0 0 6px rgba(59, 130, 246, 0)
+      }
+    }
+
+    .nx-live-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+      animation: nx-blink 1.2s ease-in-out infinite;
+    }
+
+    @keyframes nx-blink {
+
+      0%,
+      100% {
+        opacity: 1
+      }
+
+      50% {
+        opacity: 0.3
+      }
+    }
+
+    .nx-header-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+
+    .nx-model-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--surface);
+      border: 1px solid var(--panel-border);
+      color: var(--text-muted);
+      padding: 5px 10px;
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 11px;
+      font-family: 'Inter', sans-serif;
+      transition: border-color var(--dur), color var(--dur);
+      white-space: nowrap;
+    }
+
+    .nx-model-btn:hover {
+      border-color: var(--panel-border-hover);
+      color: var(--text);
+    }
+
+    .nx-model-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      flex-shrink: 0;
+    }
+
+    .nx-icon-btn {
+      background: none;
+      border: 1px solid var(--panel-border);
+      color: var(--text-muted);
+      padding: 5px 8px;
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all var(--dur);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .nx-icon-btn:hover {
+      border-color: var(--panel-border-hover);
+      color: var(--text);
+      background: var(--panel2);
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible,
+    select:focus-visible,
+    .nx-more-item:focus-visible,
+    .tab-btn:focus-visible,
+    .nx-tab:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.22);
+      border-color: var(--accent);
+    }
+
+    /* ── Notification Bell ── */
+    .nx-bell-wrap {
+      position: relative;
+    }
+
+    .nx-bell-btn {
+      background: none;
+      border: 1px solid var(--panel-border);
+      color: var(--text-muted);
+      width: 34px;
+      height: 30px;
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all var(--dur);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .nx-bell-btn:hover {
+      border-color: var(--accent, #58a6ff);
+      color: var(--accent, #58a6ff);
+      background: var(--panel2);
+    }
+
+    .nx-bell-btn.has-unread {
+      border-color: rgba(88, 166, 255, 0.4);
+    }
+
+    .nx-bell-badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      min-width: 16px;
+      height: 16px;
+      background: #f85149;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      border-radius: 8px;
+      line-height: 16px;
+      text-align: center;
+      padding: 0 3px;
+      border: 1.5px solid var(--bg, #0d1117);
+      pointer-events: none;
+    }
+
+    .nx-notif-panel {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      width: 340px;
+      background: var(--panel, #161b22);
+      border: 1px solid var(--panel-border, #30363d);
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, .5);
+      z-index: 9999;
+      overflow: hidden;
+    }
+
+    .nx-notif-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--panel-border, #30363d);
+    }
+
+    .nx-notif-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text, #e6edf3);
+    }
+
+    .nx-notif-readall {
+      background: none;
+      border: none;
+      font-size: 11px;
+      color: var(--accent, #58a6ff);
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .nx-notif-readall:hover {
+      text-decoration: underline;
+    }
+
+    .nx-notif-list {
+      max-height: 360px;
+      overflow-y: auto;
+    }
+
+    .nx-notif-empty {
+      padding: 24px;
+      text-align: center;
+      color: var(--text-dim, #8b949e);
+      font-size: 12px;
+    }
+
+    .nx-notif-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--panel-border, #30363d);
+      cursor: pointer;
+      transition: background var(--dur, .15s);
+      position: relative;
+    }
+
+    .nx-notif-item:last-child {
+      border-bottom: none;
+    }
+
+    .nx-notif-item:hover {
+      background: var(--panel2, #1c2128);
+    }
+
+    .nx-notif-item.unread {
+      background: rgba(88, 166, 255, 0.04);
+    }
+
+    .nx-notif-item.unread::before {
+      content: '';
+      position: absolute;
+      left: 6px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--accent, #58a6ff);
+    }
+
+    .nx-notif-icon {
+      font-size: 18px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .nx-notif-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .nx-notif-item-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text, #e6edf3);
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .nx-notif-item-msg {
+      font-size: 11px;
+      color: var(--text-dim, #8b949e);
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .nx-notif-item-time {
+      font-size: 10px;
+      color: var(--text-dim, #8b949e);
+      margin-top: 4px;
+    }
+
+    .nx-notif-item.priority-warning .nx-notif-icon {
+      filter: drop-shadow(0 0 3px #d29922);
+    }
+
+    .nx-notif-item.priority-critical .nx-notif-icon {
+      filter: drop-shadow(0 0 3px #f85149);
+    }
+
+    .nx-status-badge {
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 8px;
+      font-weight: 600;
+      background: var(--green-dim);
+      color: var(--green);
+      border: 1px solid rgba(34, 197, 94, 0.2);
+      transition: all var(--dur);
+    }
+
+    .nx-status-badge.running {
+      background: var(--blue-dim);
+      color: var(--blue);
+      border-color: rgba(59, 130, 246, 0.2);
+    }
+
+    .nx-status-badge.error {
+      background: var(--red-dim);
+      color: var(--red);
+      border-color: rgba(239, 68, 68, 0.2);
+    }
+
+    /* ── Phase 3: Logo animation ── */
+    .nx-logo-icon {
+      animation: nxLogoSpin 8s linear infinite;
+      background: linear-gradient(135deg, var(--accent), #a855f7, var(--accent));
+      background-size: 200% 200%;
+      animation: nxLogoGrad 4s ease infinite;
+    }
+
+    @keyframes nxLogoGrad {
+      0% {
+        background-position: 0% 50%
+      }
+
+      50% {
+        background-position: 100% 50%
+      }
+
+      100% {
+        background-position: 0% 50%
+      }
+    }
+
+    .nx-logo:hover .nx-logo-icon {
+      transform: scale(1.1) rotate(8deg);
+      transition: transform 0.3s;
+    }
+
+    /* ── Phase 3: Plan selector ── */
+    .nx-plan-selector {
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .nx-plan-badge {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      border: 1px solid transparent;
+      transition: all var(--dur);
+      white-space: nowrap;
+      user-select: none;
+    }
+
+    .nx-plan-badge.lite {
+      background: rgba(63, 185, 80, 0.12);
+      color: #3fb950;
+      border-color: rgba(63, 185, 80, 0.3);
+    }
+
+    .nx-plan-badge.pro {
+      background: rgba(56, 139, 253, 0.12);
+      color: #388bfd;
+      border-color: rgba(56, 139, 253, 0.3);
+    }
+
+    .nx-plan-badge.elite {
+      background: rgba(188, 140, 255, 0.12);
+      color: #bc8cff;
+      border-color: rgba(188, 140, 255, 0.3);
+    }
+
+    .nx-plan-badge:hover {
+      filter: brightness(1.2);
+    }
+
+    .nx-plan-badge .nx-plan-caret {
+      opacity: 0.7;
+      font-size: 9px;
+    }
+
+    .nx-plan-dropdown {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      z-index: 400;
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 10px;
+      padding: 6px;
+      min-width: 210px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      display: none;
+    }
+
+    .nx-plan-dropdown.open {
+      display: block;
+      animation: nxFadeIn 0.12s ease;
+    }
+
+    .nx-plan-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: background var(--dur);
+    }
+
+    .nx-plan-option:hover {
+      background: var(--surface);
+    }
+
+    .nx-plan-option.active {
+      background: var(--surface);
+    }
+
+    .nx-plan-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 3px;
+    }
+
+    .nx-plan-name {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .nx-plan-desc {
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: 2px;
+      line-height: 1.4;
+    }
+
+    .nx-plan-check {
+      margin-left: auto;
+      color: var(--accent);
+      font-size: 12px;
+    }
+
+    /* ── Phase 3: Plus/Attach menu ── */
+    .nx-plus-btn {
+      background: none;
+      border: 1px dashed var(--panel-border);
+      color: var(--text-muted);
+      cursor: pointer;
+      width: 26px;
+      height: 26px;
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      line-height: 1;
+      transition: all var(--dur);
+      flex-shrink: 0;
+    }
+
+    .nx-plus-btn:hover {
+      color: var(--accent);
+      border-color: var(--accent);
+      background: var(--accent-dim);
+    }
+
+    .nx-plus-menu {
+      position: absolute;
+      bottom: calc(100% + 8px);
+      left: 0;
+      z-index: 400;
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 10px;
+      padding: 6px;
+      min-width: 180px;
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
+      display: none;
+    }
+
+    .nx-plus-menu.open {
+      display: block;
+      animation: nxFadeIn 0.12s ease;
+    }
+
+    .nx-plus-opt {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      color: var(--text-muted);
+      transition: all var(--dur);
+    }
+
+    .nx-plus-opt:hover {
+      background: var(--surface);
+      color: var(--text);
+    }
+
+    .nx-plus-opt-icon {
+      font-size: 15px;
+      width: 20px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    /* ── Phase 3: GitHub import modal ── */
+    .nx-gh-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 500;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nx-gh-overlay.open {
+      display: flex;
+      animation: nxFadeIn 0.15s ease;
+    }
+
+    .nx-gh-modal {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 14px;
+      padding: 24px;
+      width: 440px;
+      max-width: 96vw;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    .nx-gh-modal h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      margin: 0 0 6px;
+    }
+
+    .nx-gh-modal p {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin: 0 0 16px;
+    }
+
+    .nx-gh-input {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      padding: 9px 12px;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      outline: none;
+      box-sizing: border-box;
+      transition: border-color var(--dur);
+    }
+
+    .nx-gh-input:focus {
+      border-color: var(--accent);
+    }
+
+    .nx-gh-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+      justify-content: flex-end;
+    }
+
+    .nx-gh-btn {
+      padding: 7px 16px;
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      border: none;
+      transition: all var(--dur);
+    }
+
+    .nx-gh-btn.primary {
+      background: var(--accent);
+      color: white;
+    }
+
+    .nx-gh-btn.primary:hover {
+      background: var(--accent-hover);
+    }
+
+    .nx-gh-btn.secondary {
+      background: var(--surface);
+      color: var(--text-muted);
+      border: 1px solid var(--panel-border);
+    }
+
+    .nx-gh-btn.secondary:hover {
+      color: var(--text);
+    }
+
+    .nx-gh-progress {
+      display: none;
+      margin-top: 12px;
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    .nx-gh-progress.visible {
+      display: block;
+    }
+
+    /* ── Phase 3: Context badge (files/repo active) ── */
+    .nx-context-bar {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      padding: 4px 12px;
+      background: rgba(56, 139, 253, 0.06);
+      border-bottom: 1px solid rgba(56, 139, 253, 0.15);
+      flex-shrink: 0;
+      min-height: 28px;
+    }
+
+    .nx-context-bar.visible {
+      display: flex;
+    }
+
+    .nx-ctx-badge {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--surface);
+      border: 1px solid var(--panel-border);
+      border-radius: 20px;
+      padding: 2px 8px 2px 6px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .nx-ctx-badge-icon {
+      font-size: 12px;
+    }
+
+    .nx-ctx-badge-remove {
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      cursor: pointer;
+      padding: 0 0 0 4px;
+      font-size: 13px;
+      line-height: 1;
+    }
+
+    .nx-ctx-badge-remove:hover {
+      color: var(--red);
+    }
+
+    .nx-ctx-label {
+      font-size: 10px;
+      color: var(--text-dim);
+      margin-right: 2px;
+    }
+
+    /* ── Phase 3: Drop zone highlight ── */
+    .nx-cmd-wrap.drag-over {
+      border-color: var(--accent) !important;
+      box-shadow: 0 0 0 3px var(--accent-dim) !important;
+      background: rgba(56, 139, 253, 0.05);
+    }
+
+    .nx-cmd-wrap.drag-over::after {
+      content: 'Drop to attach';
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      color: var(--accent);
+      font-weight: 600;
+      pointer-events: none;
+      background: rgba(13, 17, 23, 0.8);
+      border-radius: 10px;
+    }
+
+    .nx-cmd-wrap {
+      position: relative;
+    }
+
+    /* ── Phase 3: Plan mode indicator on session card ── */
+    .nx-plan-indicator {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    @keyframes nxFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-4px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ── Main Layout ── */
+    .nx-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .nx-main {
+      flex: 1;
+      display: grid;
+      overflow: hidden;
+      grid-template-columns: var(--leftW) 4px 1fr 4px var(--rightW);
+      transition: grid-template-columns var(--dur) var(--ease);
+    }
+
+    .nx-bottom-wrap {
+      height: var(--bottomH);
+      overflow: hidden;
+      border-top: 1px solid var(--panel-border);
+      transition: height var(--dur) var(--ease);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nx-bottom-wrap.open {
+      height: 220px;
+    }
+
+    /* ── Drag Handles ── */
+    .nx-divider {
+      width: 4px;
+      height: 100%;
+      cursor: col-resize;
+      z-index: 10;
+      background: transparent;
+      transition: background var(--dur);
+      position: relative;
+    }
+
+    .nx-divider:hover,
+    .nx-divider.dragging {
+      background: var(--accent);
+    }
+
+    .nx-divider::after {
+      content: '';
+      position: absolute;
+      inset: 0 -4px;
+    }
+
+    /* ── Panel base ── */
+    .nx-panel {
+      height: 100%;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      background: var(--panel);
+    }
+
+    .nx-panel-hdr {
+      height: 38px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10px;
+      border-bottom: 1px solid var(--panel-border);
+      background: var(--panel);
+    }
+
+    .nx-panel-title {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .nx-panel-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .nx-tiny-btn {
+      background: none;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      padding: 2px 6px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 11px;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.15s;
+    }
+
+    .nx-tiny-btn:hover {
+      background: var(--panel-border);
+      color: var(--text);
+      border-color: var(--panel-border-hover);
+    }
+
+    .nx-panel-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+    }
+
+    /* ── Left Panel — AI Thinking ── */
+    .nx-left {
+      border-right: 1px solid var(--panel-border);
+    }
+
+    .nx-think-section {
+      margin-bottom: 12px;
+    }
+
+    .nx-think-label {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--text-dim);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .nx-think-label::before {
+      content: '';
+      width: 3px;
+      height: 12px;
+      border-radius: 2px;
+    }
+
+    .nx-think-label.thoughts::before {
+      background: var(--blue);
+    }
+
+    .nx-think-label.decisions::before {
+      background: var(--purple);
+    }
+
+    .nx-think-label.recall::before {
+      background: var(--yellow);
+    }
+
+    .nx-session-card {
+      background: var(--surface);
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+
+    .nx-session-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nx-session-label {
+      font-size: 10px;
+      color: var(--text-dim);
+      font-weight: 500;
+    }
+
+    .nx-session-val {
+      font-size: 11px;
+      color: var(--text);
+      font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .nx-hitl-strip {
+      background: var(--surface);
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      padding: 8px;
+      margin-bottom: 10px;
+    }
+
+    .nx-hitl-row {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 6px;
+    }
+
+    .nx-hitl-inject {
+      display: flex;
+      gap: 4px;
+      margin-top: 4px;
+    }
+
+    .nx-hitl-input {
+      flex: 1;
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      color: var(--text);
+      padding: 4px 8px;
+      border-radius: 5px;
+      font-size: 11px;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+    }
+
+    .nx-hitl-input:focus {
+      border-color: var(--accent);
+    }
+
+    .nx-hitl-status {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .nx-quick-examples {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-top: 4px;
+    }
+
+    .nx-example-chip {
+      background: var(--surface);
+      border: 1px solid var(--panel-border);
+      border-radius: 6px;
+      padding: 5px 8px;
+      font-size: 11px;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s;
+      text-align: left;
+    }
+
+    .nx-example-chip:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-dim);
+    }
+
+    /* ── Center Panel — Tabbed Workspace ── */
+    .nx-center {
+      background: var(--surface);
+      border-right: 1px solid var(--panel-border);
+    }
+
+    .nx-tab-bar {
+      display: flex;
+      align-items: center;
+      height: 38px;
+      flex-shrink: 0;
+      border-bottom: 1px solid var(--panel-border);
+      background: var(--panel);
+      overflow-x: auto;
+      padding: 0 4px;
+      gap: 1px;
+    }
+
+    .nx-tab-bar::-webkit-scrollbar {
+      height: 0;
+    }
+
+    .nx-tab {
+      height: 38px;
+      padding: 0 12px;
+      border: none;
+      background: transparent;
+      color: var(--text-dim);
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      white-space: nowrap;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: color var(--dur), border-color var(--dur), background var(--dur);
+    }
+
+    .nx-tab:hover {
+      color: var(--text-muted);
+      background: var(--panel2);
+    }
+
+    .nx-tab.active {
+      color: var(--text);
+      border-bottom-color: var(--accent);
+      background: var(--panel2);
+    }
+
+    .nx-tab-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--accent);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .nx-tab.has-update .nx-tab-dot {
+      opacity: 1;
+    }
+
+    .nx-tab-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-left: auto;
+      padding: 0 6px;
+      flex-shrink: 0;
+    }
+
+    .nx-tab-content {
+      display: none;
+      flex: 1;
+      overflow: hidden;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .nx-tab-content.active {
+      display: flex;
+    }
+
+    /* ── Secondary tabs — hidden behind More ── */
+    .nx-tab.secondary {
+      display: none;
+    }
+
+    .nx-tab.secondary.visible {
+      display: flex;
+    }
+
+    .nx-more-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .nx-more-btn {
+      height: 38px;
+      padding: 0 10px;
+      border: none;
+      background: transparent;
+      color: var(--text-dim);
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: color var(--dur), background var(--dur);
+    }
+
+    .nx-more-btn:hover {
+      color: var(--text-muted);
+      background: var(--panel2);
+    }
+
+    .nx-more-btn.open {
+      color: var(--accent);
+    }
+
+    .nx-more-dropdown {
+      position: absolute;
+      top: calc(100% + 2px);
+      left: 0;
+      z-index: 200;
+      background: var(--panel2);
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      padding: 4px;
+      min-width: 140px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      display: none;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    .nx-more-dropdown.open {
+      display: flex;
+    }
+
+    .nx-more-item {
+      padding: 7px 10px;
+      border-radius: 5px;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background var(--dur), color var(--dur);
+    }
+
+    .nx-more-item:hover {
+      background: var(--accent-dim);
+      color: var(--text);
+    }
+
+    .nx-more-item.active {
+      color: var(--accent);
+    }
+
+    /* ── Idle hero — shown when no session active ── */
+    .nx-idle-hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      padding: 40px 24px;
+      gap: 20px;
+      background: var(--surface);
+      animation: nxFadeIn 0.35s var(--ease);
+      overflow: auto;
+    }
+
+    .nx-idle-hero.hidden {
+      display: none;
+    }
+
+    @keyframes nxFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Hero logo: breathe when idle */
+    .nx-hero-logo {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--purple) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 0 0 0 var(--accent-glow);
+      animation: nxHeroBreathe 3s ease-in-out infinite;
+    }
+
+    @keyframes nxHeroBreathe {
+
+      0%,
+      100% {
+        box-shadow: 0 0 18px var(--accent-glow);
+        transform: scale(1);
+      }
+
+      50% {
+        box-shadow: 0 0 32px rgba(99, 102, 241, 0.4);
+        transform: scale(1.04);
+      }
+    }
+
+    .nx-hero-text {
+      text-align: center;
+    }
+
+    .nx-hero-heading {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+      text-align: center;
+      line-height: 1.2;
+    }
+
+    .nx-hero-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+      text-align: center;
+      max-width: 380px;
+      line-height: 1.6;
+      margin-top: 6px;
+    }
+
+    .nx-hero-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      max-width: 500px;
+    }
+
+    .nx-hero-chip {
+      padding: 7px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+      background: var(--panel2);
+      border: 1px solid var(--panel-border);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 180ms var(--ease);
+      font-family: 'Inter', sans-serif;
+    }
+
+    .nx-hero-chip:hover {
+      background: var(--accent-dim);
+      border-color: var(--accent);
+      color: var(--text);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px var(--accent-glow);
+    }
+
+    .nx-hero-hint {
+      font-size: 11px;
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .nx-hero-hint kbd {
+      background: var(--panel2);
+      border: 1px solid var(--panel-border);
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-size: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-muted);
+    }
+
+    /* ── Success flash banner (shown in logs area on task complete) ── */
+    .nx-success-flash {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(90deg, rgba(34, 197, 94, 0.12) 0%, rgba(34, 197, 94, 0.04) 100%);
+      border-bottom: 1px solid rgba(34, 197, 94, 0.25);
+      padding: 9px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--green);
+      animation: nxSlideDown 0.25s var(--ease);
+      z-index: 10;
+    }
+
+    @keyframes nxSlideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .nx-success-flash .nx-sf-icon {
+      font-size: 15px;
+    }
+
+    .nx-success-flash .nx-sf-close {
+      margin-left: auto;
+      background: none;
+      border: none;
+      color: var(--green);
+      cursor: pointer;
+      font-size: 13px;
+      opacity: 0.6;
+      padding: 0 2px;
+    }
+
+    .nx-success-flash .nx-sf-close:hover {
+      opacity: 1;
+    }
+
+    /* ── Error highlight in logs ── */
+    .nx-error-highlight-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(90deg, rgba(239, 68, 68, 0.12) 0%, rgba(239, 68, 68, 0.04) 100%);
+      border-bottom: 1px solid rgba(239, 68, 68, 0.25);
+      padding: 9px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--red);
+      animation: nxSlideDown 0.25s var(--ease);
+      z-index: 10;
+    }
+
+    .nx-error-highlight-bar .nx-fix-cta {
+      margin-left: auto;
+      background: var(--red);
+      color: white;
+      border: none;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: background 0.15s;
+    }
+
+    .nx-error-highlight-bar .nx-fix-cta:hover {
+      background: #dc2626;
+    }
+
+    /* ── Command bar focus glow ── */
+    .nx-cmd-wrap:focus-within {
+      border-color: var(--accent) !important;
+      box-shadow: 0 0 0 3px var(--accent-dim), 0 0 20px var(--accent-glow) !important;
+    }
+
+    /* ── Error state: inspector pulse ── */
+    .nx-right.error-pulse {
+      animation: nxErrorPulse 0.5s ease 2;
+    }
+
+    @keyframes nxErrorPulse {
+
+      0%,
+      100% {
+        box-shadow: none;
+      }
+
+      50% {
+        box-shadow: inset 0 0 0 1px rgba(239, 68, 68, 0.5);
+      }
+    }
+
+    /* ── Running: left panel auto-open transition ── */
+    #nxLeft {
+      transition: width var(--dur) var(--ease);
+    }
+
+    #nxDivLeft {
+      transition: opacity var(--dur) var(--ease);
+    }
+
+    /* ── Status bar running animation ── */
+    @keyframes nxRunDot {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.3;
+      }
+    }
+
+    #nxRunDot {
+      animation: nxRunDot 1.2s ease infinite;
+    }
+
+    /* ── Collapsible inspector section ── */
+    .nx-insp-section-collapsible {
+      overflow: hidden;
+      transition: max-height 250ms var(--ease), opacity 200ms;
+    }
+
+    .nx-insp-section-collapsible.collapsed {
+      max-height: 0;
+      opacity: 0;
+    }
+
+    .nx-insp-section-collapsible.expanded {
+      max-height: 400px;
+      opacity: 1;
+    }
+
+    /* ── Right Panel — Inspector ── */
+    .nx-right {}
+
+    .nx-inspector-section {
+      margin-bottom: 10px;
+    }
+
+    /* ── Phase 7: Agent System Panel ── */
+    #p7AgentsSection {}
+
+    .p7-master-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .p7-system-label {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .p7-toggle-switch {
+      position: relative;
+      width: 32px;
+      height: 17px;
+      display: inline-block;
+    }
+
+    .p7-toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .p7-toggle-track {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background: var(--panel-border);
+      border-radius: 17px;
+      transition: background 200ms;
+    }
+
+    .p7-toggle-track::before {
+      content: "";
+      position: absolute;
+      width: 13px;
+      height: 13px;
+      left: 2px;
+      top: 2px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 200ms;
+    }
+
+    .p7-toggle-switch input:checked+.p7-toggle-track {
+      background: var(--green, #4caf50);
+    }
+
+    .p7-toggle-switch input:checked+.p7-toggle-track::before {
+      transform: translateX(15px);
+    }
+
+    .p7-agent-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--surface);
+      border: 1px solid var(--panel-border);
+      border-radius: 6px;
+      padding: 6px 8px;
+      margin-bottom: 5px;
+      transition: border-color 200ms, opacity 200ms;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .p7-agent-row.p7-running {
+      border-color: var(--accent);
+    }
+
+    .p7-agent-row.p7-done {
+      border-color: var(--green, #4caf50);
+    }
+
+    .p7-agent-row.p7-error {
+      border-color: #bf4c4c;
+    }
+
+    .p7-agent-row.p7-skipped {
+      opacity: 0.5;
+    }
+
+    .p7-agent-progress {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: var(--accent);
+      border-radius: 6px 0 0 6px;
+      transition: background 300ms;
+    }
+
+    .p7-running .p7-agent-progress {
+      background: var(--accent);
+      animation: p7Pulse 1s ease-in-out infinite;
+    }
+
+    .p7-done .p7-agent-progress {
+      background: var(--green, #4caf50);
+    }
+
+    .p7-error .p7-agent-progress {
+      background: #bf4c4c;
+    }
+
+    @keyframes p7Pulse {
+
+      0%,
+      100% {
+        opacity: 1
+      }
+
+      50% {
+        opacity: 0.4
+      }
+    }
+
+    .p7-agent-icon {
+      font-size: 14px;
+      min-width: 18px;
+      text-align: center;
+    }
+
+    .p7-agent-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .p7-agent-name {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.2;
+    }
+
+    .p7-agent-status {
+      font-size: 10px;
+      color: var(--text-dim);
+      margin-top: 1px;
+    }
+
+    .p7-agent-toggle {
+      flex-shrink: 0;
+    }
+
+    .p7-result-card {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 5px;
+      padding: 7px 8px;
+      margin-top: 4px;
+      font-size: 10px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      display: none;
+    }
+
+    .p7-result-card.visible {
+      display: block;
+    }
+
+    .p7-result-summary {
+      color: var(--text);
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .p7-result-item {
+      display: flex;
+      gap: 5px;
+      align-items: flex-start;
+      padding: 2px 0;
+      border-bottom: 1px solid var(--panel-border);
+    }
+
+    .p7-result-item:last-child {
+      border-bottom: none;
+    }
+
+    .p7-sev-high {
+      color: #bf4c4c;
+      font-weight: 700;
+      font-size: 9px;
+      min-width: 36px;
+    }
+
+    .p7-sev-medium {
+      color: #d6a94a;
+      font-weight: 700;
+      font-size: 9px;
+      min-width: 36px;
+    }
+
+    .p7-sev-low {
+      color: #6c8ebf;
+      font-weight: 700;
+      font-size: 9px;
+      min-width: 36px;
+    }
+
+    .p7-sev-ok {
+      color: var(--green, #4caf50);
+      font-weight: 700;
+      font-size: 9px;
+      min-width: 36px;
+    }
+
+    .p7-run-btn {
+      width: 100%;
+      margin-top: 6px;
+      padding: 6px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 150ms;
+    }
+
+    .p7-run-btn:hover {
+      opacity: 0.85;
+    }
+
+    .p7-run-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .p7-pipeline-stage {
+      font-size: 10px;
+      color: var(--text-dim);
+      text-align: center;
+      margin-bottom: 6px;
+      height: 14px;
+    }
+
+    .p7-plan-badge {
+      font-size: 9px;
+      background: var(--panel-border);
+      color: var(--text-dim);
+      padding: 1px 5px;
+      border-radius: 4px;
+      margin-left: auto;
+    }
+
+    .nx-insp-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--text-dim);
+      margin-bottom: 6px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid var(--panel-border);
+    }
+
+    .nx-insp-card {
+      background: var(--surface);
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 8px;
+    }
+
+    .nx-stat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+
+    .nx-stat {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 6px;
+      padding: 8px;
+    }
+
+    .nx-stat-label {
+      font-size: 10px;
+      color: var(--text-dim);
+      margin-bottom: 2px;
+    }
+
+    .nx-stat-val {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .nx-error-card {
+      background: var(--red-dim);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 8px;
+      display: none;
+    }
+
+    .nx-error-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--red);
+      margin-bottom: 4px;
+    }
+
+    .nx-error-msg {
+      font-size: 11px;
+      color: #fca5a5;
+      font-family: 'JetBrains Mono', monospace;
+      word-break: break-all;
+    }
+
+    .nx-fix-btn {
+      margin-top: 6px;
+      background: var(--red);
+      color: white;
+      border: none;
+      padding: 4px 10px;
+      border-radius: 5px;
+      font-size: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .nx-fix-btn:hover {
+      filter: brightness(1.1);
+    }
+
+    .nx-metrics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .nx-metric {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 6px;
+      padding: 8px 10px;
+    }
+
+    .nx-metric-label {
+      font-size: 10px;
+      color: var(--text-dim);
+    }
+
+    .nx-metric-val {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      margin-top: 2px;
+    }
+
+    .nx-metric-bar {
+      height: 3px;
+      border-radius: 2px;
+      background: var(--panel-border);
+      margin-top: 4px;
+    }
+
+    .nx-metric-fill {
+      height: 100%;
+      border-radius: 2px;
+      background: var(--accent);
+      transition: width 0.5s;
+    }
+
+    .nx-model-info {
+      background: var(--surface);
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 8px;
+      font-size: 11px;
+    }
+
+    .nx-model-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+
+    .nx-model-name {
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .nx-model-tag {
+      font-size: 10px;
+      background: var(--accent-dim);
+      color: var(--accent);
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+
+    /* ── Bottom Terminal Strip ── */
+    .nx-bottom-hdr {
+      height: 36px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 10px;
+      border-bottom: 1px solid var(--panel-border);
+      background: var(--panel);
+      cursor: pointer;
+    }
+
+    .nx-bottom-title {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--text-dim);
+    }
+
+    .nx-bottom-body {
+      flex: 1;
+      overflow: hidden;
+      display: flex;
+    }
+
+    .nx-bottom-body>* {
+      flex: 1;
+    }
+
+    /* ── Status Bar ── */
+    .nx-statusbar {
+      height: 24px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      gap: 12px;
+      background: var(--panel);
+      border-top: 1px solid var(--panel-border);
+      font-size: 10px;
+      color: var(--text-dim);
+    }
+
+    .nx-statusbar-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .nx-statusbar-sep {
+      width: 1px;
+      height: 12px;
+      background: var(--panel-border);
+    }
+
+    .nx-statusbar-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* ── Command Palette ── */
+    .nx-palette-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 9000;
+      display: none;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 80px;
+      backdrop-filter: blur(4px);
+    }
+
+    .nx-palette-backdrop.open {
+      display: flex;
+      animation: nx-fade-in 0.15s ease;
+    }
+
+    @keyframes nx-fade-in {
+      from {
+        opacity: 0;
+        transform: scale(0.97)
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1)
+      }
+    }
+
+    .nx-palette {
+      width: 560px;
+      background: var(--panel);
+      border: 1px solid var(--panel-border-hover);
+      border-radius: 12px;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+    }
+
+    .nx-palette-input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid var(--panel-border);
+      color: var(--text);
+      padding: 14px 16px;
+      font-size: 14px;
+      outline: none;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .nx-palette-input::placeholder {
+      color: var(--text-dim);
+    }
+
+    .nx-palette-list {
+      max-height: 320px;
+      overflow-y: auto;
+      padding: 6px;
+    }
+
+    .nx-palette-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+
+    .nx-palette-item:hover,
+    .nx-palette-item.selected {
+      background: var(--accent-dim);
+    }
+
+    .nx-palette-item-icon {
+      font-size: 14px;
+      width: 20px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .nx-palette-item-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .nx-palette-item-hint {
+      margin-left: auto;
+      font-size: 10px;
+      color: var(--text-dim);
+    }
+
+    .nx-palette-group {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      padding: 8px 10px 4px;
+    }
+
+    .nx-palette-empty {
+      padding: 20px;
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 12px;
+    }
+
+    .nx-kbd {
+      background: var(--panel2);
+      border: 1px solid var(--panel-border-hover);
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-muted);
+    }
+
+    /* ── Notification toast ── */
+    .nx-toast {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--panel);
+      border: 1px solid var(--panel-border-hover);
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 12px;
+      color: var(--text);
+      z-index: 9999;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      animation: nx-slide-up 0.2s ease;
+      pointer-events: none;
+    }
+
+    @keyframes nx-slide-up {
+      from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(8px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0)
+      }
+    }
+
+    /* ── Override legacy elements that are moved into new slots ── */
+    #legacy-shell {
+      display: none !important;
+    }
+
+    .nx-slot-wrap {
+      height: 100%;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nx-slot-wrap>* {
+      height: 100% !important;
+      overflow: auto !important;
+    }
+
+    /* Make moved legacy content fill their slots */
+    #tabLogs,
+    #tabPreview,
+    #tabFiles,
+    #tabTerminal,
+    #tabObservability,
+    #tabReasoning,
+    #tabAgents,
+    #tabTimeline,
+    #tabSteps,
+    #tabAnalysis,
+    #tabIntelligence,
+    #tabEnterprise {
+      display: flex !important;
+      flex-direction: column;
+      height: 100% !important;
+      overflow: hidden !important;
+    }
+
+    #tabPreview .preview-frame {
+      width: 100% !important;
+      height: 100% !important;
+      flex: 1;
+    }
+
+    .preview-shell {
+      position: relative;
+      display: flex;
+      flex: 1;
+      min-height: 0;
+      background: linear-gradient(180deg, rgba(17, 17, 24, 0.96), rgba(10, 10, 16, 0.96));
+    }
+
+    .preview-state {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-6);
+      background: rgba(9, 9, 15, 0.52);
+      backdrop-filter: blur(6px);
+      z-index: 2;
+      transition: opacity var(--dur) var(--ease), visibility var(--dur) var(--ease);
+    }
+
+    .preview-state.is-hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .preview-state-card {
+      width: min(420px, 100%);
+      padding: var(--space-5);
+      border-radius: 16px;
+      border: 1px solid rgba(99, 102, 241, 0.18);
+      background: rgba(17, 17, 24, 0.94);
+      box-shadow: var(--shadow-2);
+      text-align: center;
+    }
+
+    .preview-state-title {
+      font-size: var(--type-lg);
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .preview-state-copy {
+      margin-top: var(--space-2);
+      font-size: var(--type-md);
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .preview-state-actions {
+      display: flex;
+      justify-content: center;
+      gap: var(--space-2);
+      margin-top: var(--space-4);
+      flex-wrap: wrap;
+    }
+
+    #tabFiles .files-pane {
+      flex: 1 !important;
+      overflow: hidden !important;
+    }
+
+    /* Inspector: fix moved element styles */
+    .right-pane {
+      height: auto !important;
+      overflow: visible !important;
+    }
+
+    .pane-header {
+      display: none !important;
+    }
+
+    /* NX Live dot in tab bar */
+    .nx-pulse {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      display: inline-block;
+      animation: nx-blink 1.2s ease-in-out infinite;
+    }
+
+    /* Voice transcript preview */
+    .voice-transcript-preview {
+      font-size: 11px;
+      color: var(--text-muted);
+      padding: 4px 0;
+      min-height: 0;
+    }
+
+    /* Error banner override */
+    #p57-error-banner {
+      position: fixed;
+      top: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--red-dim);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      padding: 10px 18px;
+      border-radius: 10px;
+      z-index: 5000;
+      display: none;
+      align-items: center;
+      gap: 10px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 8px 24px rgba(239, 68, 68, 0.2);
+    }
+
+    /* Plan box tweak */
+    #planUserBox.plan-user {
+      display: block !important;
+    }
+
+    /* Uploaded chips */
+    #uploadChips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 4px;
+    }
+
+    /* Mode toggle in settings drawer */
+    .nx-mode-toggle {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 8px;
+    }
+
+    .nx-mode-opt {
+      flex: 1;
+      padding: 7px;
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 11px;
+      text-align: center;
+      border: 1px solid var(--panel-border);
+      color: var(--text-muted);
+      transition: all var(--dur);
+    }
+
+    .nx-mode-opt.active {
+      border-color: var(--accent);
+      background: var(--accent-dim);
+      color: var(--accent);
+    }
+
+    /* Resizing cursor lock */
+    body.nx-resizing {
+      cursor: col-resize !important;
+      user-select: none;
+    }
+
+    /* Smooth transitions for panels */
+    .nx-panel {
+      transition: none;
+    }
+
+    /* ═══════════════════════════════════════════════════════
+   PHASE 8 — MONETIZATION UI STYLES
+   ═══════════════════════════════════════════════════════ */
+
+    /* Subscription badge in header */
+    .p8-sub-badge {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 9px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid;
+      transition: filter 150ms, transform 100ms;
+      white-space: nowrap;
+      user-select: none;
+    }
+
+    .p8-sub-badge:hover {
+      filter: brightness(1.15);
+      transform: scale(1.02);
+    }
+
+    .p8-sub-badge.p8-free {
+      background: rgba(76, 175, 80, .12);
+      color: #4caf50;
+      border-color: rgba(76, 175, 80, .3);
+    }
+
+    .p8-sub-badge.p8-pro {
+      background: rgba(56, 139, 253, .12);
+      color: #388bfd;
+      border-color: rgba(56, 139, 253, .3);
+    }
+
+    .p8-sub-badge.p8-elite {
+      background: rgba(188, 140, 255, .12);
+      color: #bc8cff;
+      border-color: rgba(188, 140, 255, .3);
+    }
+
+    /* Upgrade modal */
+    .p8-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .65);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+      display: none;
+    }
+
+    .p8-modal-backdrop.open {
+      display: flex;
+    }
+
+    .p8-modal {
+      background: var(--bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 16px;
+      padding: 28px 28px 24px;
+      width: min(780px, 94vw);
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, .4);
+    }
+
+    .p8-modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .p8-modal-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .p8-modal-sub {
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-bottom: 20px;
+    }
+
+    .p8-close-btn {
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      cursor: pointer;
+      font-size: 18px;
+      padding: 2px 6px;
+      border-radius: 5px;
+    }
+
+    .p8-close-btn:hover {
+      background: var(--surface);
+    }
+
+    .p8-plans-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 600px) {
+      .p8-plans-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .p8-plan-card {
+      background: var(--surface);
+      border: 1.5px solid var(--panel-border);
+      border-radius: 12px;
+      padding: 18px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 200ms, transform 150ms;
+    }
+
+    .p8-plan-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .p8-plan-card.p8-active {
+      border-width: 2px;
+    }
+
+    .p8-plan-card.p8-active::before {
+      content: "✓ Current Plan";
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: var(--accent);
+      color: #fff;
+      font-size: 9px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 0 12px 0 8px;
+    }
+
+    .p8-plan-icon {
+      font-size: 24px;
+      margin-bottom: 6px;
+    }
+
+    .p8-plan-name {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+
+    .p8-plan-price {
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .p8-plan-features {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 14px 0;
+    }
+
+    .p8-plan-features li {
+      font-size: 11px;
+      color: var(--text-muted);
+      padding: 3px 0;
+      display: flex;
+      gap: 6px;
+      align-items: baseline;
+    }
+
+    .p8-plan-features li::before {
+      content: "✓";
+      font-weight: 700;
+    }
+
+    .p8-plan-btn {
+      width: 100%;
+      padding: 9px;
+      border: 1.5px solid;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 150ms;
+      background: transparent;
+      font-family: inherit;
+    }
+
+    .p8-plan-btn:hover {
+      opacity: .85;
+    }
+
+    .p8-plan-btn.p8-current {
+      opacity: .5;
+      cursor: default;
+    }
+
+    /* Usage indicators in Inspector */
+    .p8-usage-bar-wrap {
+      background: var(--panel-border);
+      border-radius: 4px;
+      height: 4px;
+      margin-top: 3px;
+      overflow: hidden;
+    }
+
+    .p8-usage-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 400ms;
+    }
+
+    .p8-usage-ok {
+      background: #4caf50;
+    }
+
+    .p8-usage-warn {
+      background: #d6a94a;
+    }
+
+    .p8-usage-full {
+      background: #bf4c4c;
+    }
+
+    /* Coupon section */
+    .p8-coupon-wrap {
+      display: flex;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .p8-coupon-input {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--panel-border);
+      border-radius: 7px;
+      padding: 8px 10px;
+      color: var(--text);
+      font-size: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      outline: none;
+      transition: border-color 150ms;
+    }
+
+    .p8-coupon-input:focus {
+      border-color: var(--accent);
+    }
+
+    .p8-coupon-btn {
+      padding: 8px 14px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 150ms;
+    }
+
+    .p8-coupon-btn:hover {
+      opacity: .85;
+    }
+
+    .p8-coupon-msg {
+      font-size: 11px;
+      margin-top: 5px;
+      min-height: 16px;
+    }
+
+    .p8-coupon-ok {
+      color: #4caf50;
+    }
+
+    .p8-coupon-err {
+      color: #bf4c4c;
+    }
+
+    /* Phase 36 — Billing cycle toggle */
+    .p36-cycle-toggle {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+
+    .p36-cycle-btn {
+      flex: 1;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid var(--panel-border);
+      background: var(--surface);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all .15s;
+      text-align: center;
+    }
+
+    .p36-cycle-btn.active {
+      background: rgba(188, 140, 255, .15);
+      color: #bc8cff;
+      border-color: rgba(188, 140, 255, .4);
+    }
+
+    .p36-cycle-save {
+      font-size: 10px;
+      color: #3fb950;
+      font-weight: 700;
+      margin-left: 4px;
+    }
+
+    /* Phase 36 — Invoice list */
+    .p36-inv-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--panel-border);
+      font-size: 12px;
+    }
+
+    .p36-inv-row:last-child {
+      border-bottom: none;
+    }
+
+    .p36-inv-plan {
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .p36-inv-date {
+      color: var(--text-muted);
+      font-size: 11px;
+    }
+
+    .p36-inv-dl {
+      background: rgba(188, 140, 255, .1);
+      color: #bc8cff;
+      border: 1px solid rgba(188, 140, 255, .3);
+      border-radius: 5px;
+      padding: 3px 9px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .p36-inv-dl:hover {
+      background: rgba(188, 140, 255, .2);
+    }
+
+    /* Phase 36 — Pay button */
+    .p36-pay-btn {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      transition: opacity .15s;
+    }
+
+    .p36-pay-btn:hover {
+      opacity: .85;
+    }
+
+    .p36-pay-btn:disabled {
+      opacity: .5;
+      cursor: default;
+    }
+
+    /* Phase 36 — Subscription status chip */
+    .p36-sub-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 10px;
+      font-weight: 700;
+      border-radius: 12px;
+      padding: 2px 8px;
+    }
+
+    .p36-sub-chip.active {
+      background: rgba(63, 185, 80, .12);
+      color: #3fb950;
+      border: 1px solid rgba(63, 185, 80, .3);
+    }
+
+    .p36-sub-chip.expired {
+      background: rgba(248, 81, 73, .12);
+      color: #f85149;
+      border: 1px solid rgba(248, 81, 73, .3);
+    }
+
+    .p36-sub-chip.free {
+      background: rgba(139, 148, 158, .12);
+      color: #8b949e;
+      border: 1px solid rgba(139, 148, 158, .3);
+    }
+
+    /* Usage section in Plan settings tab */
+    .p8-usage-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .p8-usage-label {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .p8-usage-val {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    /* Inspector usage mini-block */
+    .p8-insp-usage {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid var(--panel-border);
+    }
+
+    /* ── Phase 10 — Memory & Intelligence ───────────────────────────── */
+    .p10-mem-section {
+      margin-top: 8px;
+      padding: 10px 12px;
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+    }
+
+    .p10-mem-title {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 7px;
+    }
+
+    .p10-score-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+
+    .p10-score-label {
+      font-size: 10px;
+      color: var(--text-dim);
+    }
+
+    .p10-score-val {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .p10-grade-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 800;
+      width: 22px;
+      height: 22px;
+      line-height: 22px;
+      text-align: center;
+      border-radius: 5px;
+      background: var(--bg);
+      border: 1px solid var(--panel-border);
+    }
+
+    .p10-mem-item {
+      font-size: 10px;
+      padding: 3px 6px;
+      background: var(--bg);
+      border-radius: 4px;
+      margin-bottom: 3px;
+      border-left: 2px solid transparent;
+      line-height: 1.4;
+    }
+
+    .p10-mem-item.fail {
+      border-left-color: #f87171;
+    }
+
+    .p10-mem-item.success {
+      border-left-color: #4caf50;
+    }
+
+    .p10-mem-item.insight {
+      border-left-color: #bc8cff;
+    }
+
+    /* ── Phase 11 — AI Team Panel ────────────────────────────────────── */
+    .p11-team-tab {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .p11-team-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--panel-border);
+      flex-shrink: 0;
+    }
+
+    .p11-team-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .p11-status-badge {
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      background: var(--panel);
+      color: var(--text-dim);
+      border: 1px solid var(--panel-border);
+    }
+
+    .p11-status-badge.running {
+      background: #4caf5022;
+      color: #4caf50;
+      border-color: #4caf5044;
+    }
+
+    .p11-status-badge.paused {
+      background: #f59e0b22;
+      color: #f59e0b;
+      border-color: #f59e0b44;
+    }
+
+    .p11-status-badge.done {
+      background: #388bfd22;
+      color: #388bfd;
+      border-color: #388bfd44;
+    }
+
+    .p11-status-badge.failed {
+      background: #f8717122;
+      color: #f87171;
+      border-color: #f8717144;
+    }
+
+    .p11-team-controls {
+      display: flex;
+      gap: 6px;
+      margin-left: auto;
+    }
+
+    .p11-ctrl-btn {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 6px;
+      color: var(--text);
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .15s;
+    }
+
+    .p11-ctrl-btn:hover {
+      background: var(--hover);
+    }
+
+    .p11-ctrl-btn.primary {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .p11-ctrl-btn.primary:hover {
+      filter: brightness(1.1);
+    }
+
+    .p11-task-input-wrap {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--panel-border);
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .p11-task-input {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 6px;
+      color: var(--text);
+      padding: 6px 10px;
+      font-size: 12px;
+      font-family: inherit;
+      outline: none;
+    }
+
+    .p11-task-input:focus {
+      border-color: var(--accent);
+    }
+
+    .p11-agents-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      padding: 10px 14px;
+      flex-shrink: 0;
+    }
+
+    .p11-agent-card {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      padding: 10px;
+      transition: border-color .2s;
+    }
+
+    .p11-agent-card.running {
+      border-color: #4caf50;
+      box-shadow: 0 0 0 1px #4caf5033;
+    }
+
+    .p11-agent-card.done {
+      border-color: #388bfd;
+    }
+
+    .p11-agent-card.failed {
+      border-color: #f87171;
+    }
+
+    .p11-agent-icon {
+      font-size: 18px;
+      margin-bottom: 4px;
+    }
+
+    .p11-agent-name {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .p11-agent-status {
+      font-size: 9px;
+      margin-top: 2px;
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: .05em;
+    }
+
+    .p11-agent-status.idle {
+      color: var(--text-dim);
+    }
+
+    .p11-agent-status.running {
+      color: #4caf50;
+    }
+
+    .p11-agent-status.done {
+      color: #388bfd;
+    }
+
+    .p11-agent-status.failed {
+      color: #f87171;
+    }
+
+    .p11-agent-task {
+      font-size: 9.5px;
+      color: var(--muted);
+      margin-top: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .p11-log-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 6px 14px 10px;
+      font-size: 10.5px;
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    }
+
+    .p11-log-entry {
+      display: flex;
+      gap: 8px;
+      padding: 2px 0;
+      border-bottom: 1px solid var(--panel-border)11;
+      line-height: 1.5;
+    }
+
+    .p11-log-ts {
+      color: var(--muted);
+      min-width: 44px;
+      font-size: 9.5px;
+    }
+
+    .p11-log-agent {
+      font-weight: 700;
+      min-width: 64px;
+      font-size: 9.5px;
+    }
+
+    .p11-log-msg {
+      color: var(--text-dim);
+    }
+
+    .p11-log-agent.manager {
+      color: #bc8cff;
+    }
+
+    .p11-log-agent.research {
+      color: #388bfd;
+    }
+
+    .p11-log-agent.coding {
+      color: #4caf50;
+    }
+
+    .p11-log-agent.debug {
+      color: #f59e0b;
+    }
+
+    /* ── Phase 9 — Active Routing Panel ─────────────────────────────── */
+    .p9-routing-section {
+      margin-top: 8px;
+      padding: 10px 12px;
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+    }
+
+    .p9-routing-title {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .p9-routing-title .p9-status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #4caf50;
+      flex-shrink: 0;
+    }
+
+    .p9-role-row {
+      display: grid;
+      grid-template-columns: 56px 1fr auto;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 0;
+      font-size: 10.5px;
+      border-radius: 4px;
+      transition: background .15s;
+    }
+
+    .p9-role-row:hover {
+      background: var(--hover);
+    }
+
+    .p9-role-label {
+      color: var(--text-dim);
+      font-size: 9.5px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    .p9-model-tag {
+      background: var(--bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-size: 10px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 140px;
+    }
+
+    .p9-provider-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-left: auto;
+    }
+
+    .p9-fallback-badge {
+      font-size: 9px;
+      background: #f59e0b22;
+      color: #f59e0b;
+      border: 1px solid #f59e0b44;
+      border-radius: 3px;
+      padding: 1px 4px;
+      margin-left: 2px;
+    }
+
+    .p9-fallback-log-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 9.5px;
+      padding: 2px 0;
+      border-bottom: 1px solid var(--panel-border);
+      color: var(--text-dim);
+    }
+
+    .p9-fallback-log-row:last-child {
+      border-bottom: none;
+    }
+
+    .p9-fallback-ts {
+      color: var(--muted);
+      font-size: 9px;
+      min-width: 44px;
+    }
+
+    .p9-ctx-bar-wrap {
+      height: 2px;
+      background: var(--panel-border);
+      border-radius: 2px;
+      margin-top: 5px;
+      overflow: hidden;
+    }
+
+    .p9-ctx-bar-fill {
+      height: 100%;
+      border-radius: 2px;
+      background: var(--accent);
+      transition: width .4s ease;
+    }
+
+    /* ── Phase 12: Chat UI ────────────────────────────────────────────────────── */
+    .p12-chat-wrap {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .p12-chat-msgs {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .p12-chat-msgs::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .p12-chat-msgs::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 4px;
+    }
+
+    .p12-msg {
+      display: flex;
+      flex-direction: column;
+      max-width: 88%;
+    }
+
+    .p12-msg.user {
+      align-self: flex-end;
+      align-items: flex-end;
+    }
+
+    .p12-msg.assistant {
+      align-self: flex-start;
+      align-items: flex-start;
+    }
+
+    .p12-msg-bubble {
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 0.84rem;
+      line-height: 1.55;
+      word-break: break-word;
+      white-space: pre-wrap;
+    }
+
+    .p12-msg.user .p12-msg-bubble {
+      background: var(--accent);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+
+    .p12-msg.assistant .p12-msg-bubble {
+      background: var(--panel2);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-bottom-left-radius: 4px;
+    }
+
+    .p12-msg-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 3px;
+      font-size: 0.68rem;
+      color: var(--muted);
+    }
+
+    .p12-msg-edit-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 0.7rem;
+      padding: 1px 5px;
+      border-radius: 4px;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+
+    .p12-msg:hover .p12-msg-edit-btn {
+      opacity: 1;
+    }
+
+    .p12-msg-edit-btn:hover {
+      background: var(--border);
+      color: var(--text);
+    }
+
+    .p12-status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .p12-status-dot.success {
+      background: var(--green);
+    }
+
+    .p12-status-dot.failed {
+      background: var(--red);
+    }
+
+    .p12-status-dot.stopped {
+      background: var(--yellow);
+    }
+
+    .p12-status-dot.running {
+      background: var(--accent);
+      animation: p12pulse 1s ease infinite;
+    }
+
+    @keyframes p12pulse {
+
+      0%,
+      100% {
+        opacity: 1
+      }
+
+      50% {
+        opacity: 0.4
+      }
+    }
+
+    .p12-chat-footer {
+      border-top: 1px solid var(--border);
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .p12-continue-btn {
+      flex: 1;
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      padding: 7px 12px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .p12-continue-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .p12-clear-btn {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--muted);
+      padding: 7px 10px;
+      font-size: 0.75rem;
+      cursor: pointer;
+    }
+
+    .p12-clear-btn:hover {
+      border-color: var(--red);
+      color: var(--red);
+    }
+
+    .p12-empty {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      gap: 8px;
+      font-size: 0.82rem;
+    }
+
+    .p12-empty-icon {
+      font-size: 2rem;
+      opacity: 0.4;
+    }
+
+    .p12-edit-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9000;
+    }
+
+    .p12-edit-modal {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      width: 520px;
+      max-width: 92vw;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .p12-edit-modal h4 {
+      margin: 0;
+      font-size: 0.9rem;
+      color: var(--text);
+    }
+
+    .p12-edit-modal textarea {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      padding: 10px;
+      font-size: 0.84rem;
+      resize: vertical;
+      min-height: 90px;
+      font-family: inherit;
+      line-height: 1.5;
+    }
+
+    .p12-edit-modal textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .p12-edit-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .p12-edit-actions button {
+      padding: 7px 16px;
+      border-radius: 7px;
+      font-size: 0.82rem;
+      cursor: pointer;
+      border: none;
+    }
+
+    .p12-edit-cancel {
+      background: var(--panel2);
+      color: var(--muted);
+    }
+
+    .p12-edit-submit {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    /* ── Enterprise Auth Gate ─────────────────────────────────────────────────── */
+    #nx-auth-gate {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      background: rgba(13, 17, 23, 0.97);
+      backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Inter', sans-serif;
+    }
+
+    #nx-auth-gate.nx-auth-hidden {
+      display: none !important;
+    }
+
+    .nx-auth-card {
+      background: var(--panel, #161b22);
+      border: 1px solid var(--border, #30363d);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 420px;
+      padding: 36px 36px 28px;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
+      animation: nx-auth-slide-in 0.3s ease;
+    }
+
+    @keyframes nx-auth-slide-in {
+      from {
+        opacity: 0;
+        transform: translateY(16px) scale(0.98);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .nx-auth-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 24px;
+      justify-content: center;
+    }
+
+    .nx-auth-logo-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 9px;
+      background: #0d1117;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nx-auth-logo-text {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--text, #e6edf3);
+      letter-spacing: -0.5px;
+    }
+
+    .nx-auth-logo-text span {
+      color: var(--purple, #bc8cff);
+    }
+
+    .nx-auth-headline {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--text, #e6edf3);
+      text-align: center;
+      margin-bottom: 4px;
+    }
+
+    .nx-auth-sub {
+      font-size: 0.82rem;
+      color: var(--muted, #8b949e);
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .nx-auth-tabs {
+      display: flex;
+      gap: 0;
+      background: var(--panel2, #1c2230);
+      border-radius: 8px;
+      padding: 3px;
+      margin-bottom: 22px;
+    }
+
+    .nx-auth-tab {
+      flex: 1;
+      text-align: center;
+      padding: 7px 0;
+      border-radius: 6px;
+      font-size: 0.83rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--muted, #8b949e);
+      transition: all 0.15s;
+      border: none;
+      background: none;
+    }
+
+    .nx-auth-tab.active {
+      background: var(--accent, #58a6ff);
+      color: #fff;
+    }
+
+    .nx-auth-field {
+      margin-bottom: 14px;
+    }
+
+    .nx-auth-field label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--muted, #8b949e);
+      margin-bottom: 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .nx-auth-field input {
+      width: 100%;
+      box-sizing: border-box;
+      background: var(--panel2, #1c2230);
+      border: 1px solid var(--border, #30363d);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 0.9rem;
+      color: var(--text, #e6edf3);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .nx-auth-field input:focus {
+      border-color: var(--accent, #58a6ff);
+    }
+
+    .nx-auth-field input.error {
+      border-color: var(--red, #f85149);
+    }
+
+    .nx-auth-btn-primary {
+      width: 100%;
+      padding: 11px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      background: var(--purple, #bc8cff);
+      color: #fff;
+      font-size: 0.9rem;
+      font-weight: 700;
+      margin-top: 4px;
+      margin-bottom: 10px;
+      /* FIX: was 0 — clears space below button so Forgot Password link never overlaps */
+      display: block;
+      /* ensure full block stacking */
+      transition: opacity 0.15s;
+    }
+
+    .nx-auth-btn-primary:hover {
+      opacity: 0.88;
+    }
+
+    .nx-auth-btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .nx-auth-divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 18px 0;
+      color: var(--muted, #8b949e);
+      font-size: 0.78rem;
+    }
+
+    .nx-auth-divider::before,
+    .nx-auth-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border, #30363d);
+    }
+
+    .nx-auth-oauth {
+      display: flex;
+      gap: 10px;
+    }
+
+    .nx-auth-oauth-btn {
+      flex: 1;
+      padding: 10px 8px;
+      border-radius: 8px;
+      border: 1px solid var(--border, #30363d);
+      background: var(--panel2, #1c2230);
+      color: var(--text, #e6edf3);
+      font-size: 0.83rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      transition: border-color 0.15s, background 0.15s;
+      text-decoration: none;
+    }
+
+    .nx-auth-oauth-btn:hover {
+      border-color: var(--accent, #58a6ff);
+      background: var(--panel, #161b22);
+    }
+
+    .nx-auth-err {
+      background: rgba(248, 81, 73, 0.12);
+      border: 1px solid rgba(248, 81, 73, 0.3);
+      border-radius: 7px;
+      padding: 9px 12px;
+      font-size: 0.82rem;
+      color: var(--red, #f85149);
+      margin-bottom: 14px;
+      display: none;
+    }
+
+    .nx-auth-err.show {
+      display: block;
+    }
+
+    /* Account Recovery UI */
+    .nx-auth-forgot-link {
+      display: block;
+      /* block so it renders on its own line below the button */
+      text-align: right;
+      font-size: 0.75rem;
+      color: var(--accent, #58a6ff);
+      cursor: pointer;
+      margin-top: 2px;
+      /* FIX v3: button now carries margin-bottom:10px — link only needs 2px gap */
+      margin-bottom: 6px;
+      padding: 4px 0;
+      /* extra tap target area */
+      background: none;
+      border: none;
+      font-family: inherit;
+      text-decoration: none;
+      position: relative;
+      /* ensure stacking context is not overridden */
+      z-index: 1;
+      overflow: visible;
+      /* prevent any accidental clipping */
+    }
+
+    .nx-auth-forgot-link:hover {
+      text-decoration: underline;
+      color: var(--purple, #bc8cff);
+    }
+
+    .nx-auth-back-link {
+      display: block;
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--muted, #8b949e);
+      cursor: pointer;
+      margin-top: 12px;
+      background: none;
+      border: none;
+      font-family: inherit;
+    }
+
+    .nx-auth-back-link:hover {
+      color: var(--accent, #58a6ff);
+    }
+
+    .nx-auth-ok {
+      display: none;
+      background: rgba(63, 185, 80, 0.12);
+      border: 1px solid rgba(63, 185, 80, 0.3);
+      color: #3fb950;
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 0.82rem;
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+
+    .nx-auth-ok.show {
+      display: block;
+    }
+
+    /* Email verification banner */
+    #nx-verify-banner {
+      display: none;
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #161b22;
+      border: 1px solid #d29922;
+      border-radius: 10px;
+      padding: 12px 18px;
+      z-index: 99990;
+      font-size: 0.82rem;
+      color: #e6edf3;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      max-width: 480px;
+      width: calc(100% - 32px);
+      display: none;
+      align-items: center;
+      gap: 12px;
+    }
+
+    #nx-verify-banner.show {
+      display: flex;
+    }
+
+    #nx-verify-banner .nx-verify-msg {
+      flex: 1;
+      line-height: 1.4;
+    }
+
+    #nx-verify-banner .nx-verify-send {
+      background: #d29922;
+      color: #0d1117;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      font-family: inherit;
+    }
+
+    #nx-verify-banner .nx-verify-send:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    #nx-verify-banner .nx-verify-close {
+      background: none;
+      border: none;
+      color: #8b949e;
+      cursor: pointer;
+      font-size: 16px;
+      padding: 0 2px;
+      line-height: 1;
+    }
+
+    .nx-footer {
+      margin-top: 18px;
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--muted, #8b949e);
+    }
+
+    .nx-auth-footer a {
+      color: var(--accent, #58a6ff);
+      text-decoration: none;
+    }
+
+    .nx-auth-user-badge {
+      position: fixed;
+      top: 8px;
+      right: 56px;
+      z-index: 9999;
+      background: var(--panel, #161b22);
+      border: 1px solid var(--border, #30363d);
+      border-radius: 20px;
+      padding: 4px 12px 4px 8px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      cursor: pointer;
+      font-size: 0.78rem;
+      color: var(--muted, #8b949e);
+      transition: border-color 0.15s;
+    }
+
+    .nx-auth-user-badge:hover {
+      border-color: var(--accent, #58a6ff);
+    }
+
+    .nx-auth-user-badge .nx-auth-avatar {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--purple, #bc8cff);
+      color: #fff;
+      font-size: 0.65rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Sessions panel */
+    .nx-sessions-panel {
+      background: var(--panel2, #1c2230);
+      border-radius: 10px;
+      padding: 14px;
+      margin-top: 12px;
+      max-height: 240px;
+      overflow-y: auto;
+    }
+
+    .nx-session-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border, #30363d);
+      gap: 8px;
+    }
+
+    .nx-session-row:last-child {
+      border-bottom: none;
+    }
+
+    .nx-session-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .nx-session-device {
+      font-size: 0.78rem;
+      color: var(--text, #e6edf3);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .nx-session-meta {
+      font-size: 0.7rem;
+      color: var(--muted, #8b949e);
+      margin-top: 2px;
+    }
+
+    .nx-session-revoke {
+      background: var(--red, #f85149);
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 3px 8px;
+      font-size: 0.72rem;
+      cursor: pointer;
+      white-space: nowrap;
+    }

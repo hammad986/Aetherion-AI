@@ -1,0 +1,3409 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexora — AI Development Platform</title>
+  <meta name="description"
+    content="Nexora AI Platform — Autonomous multi-agent AI that plans, codes, debugs and ships your software.">
+  <meta name="application-name" content="Nexora">
+  <meta property="og:title" content="Nexora — AI Development Platform">
+  <meta property="og:description"
+    content="Autonomous multi-agent AI that plans, codes, debugs and ships your software.">
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230d1117'/%3E%3Cpolygon points='16,3 20.5,11.5 30,13 23,20 24.7,29.5 16,25 7.3,29.5 9,20 2,13 11.5,11.5' fill='%23bc8cff' stroke='%236b3fa0' stroke-width='0.5'/%3E%3C/svg%3E">
+  <link rel="shortcut icon"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230d1117'/%3E%3Cpolygon points='16,3 20.5,11.5 30,13 23,20 24.7,29.5 16,25 7.3,29.5 9,20 2,13 11.5,11.5' fill='%23bc8cff' stroke='%236b3fa0' stroke-width='0.5'/%3E%3C/svg%3E">
+  <!-- Phase 35 — Centralized Modular Boot System -->
+  <script src="/static/js/boot.js"></script>
+  <script src="https://checkout.razorpay.com/v1/checkout.js" async></script>
+  <link rel="stylesheet" href="/static/css/base.css">
+
+  <!-- Phase 20.6 — Monaco editor loading is now deferred/lazy to improve startup time. -->
+  <!-- Phase 32 — xterm.js real PTY terminal -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.8.0/lib/xterm-addon-fit.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/xterm-addon-web-links@0.9.0/lib/xterm-addon-web-links.min.js" defer></script>
+
+  <link rel="stylesheet" href="/static/css/components.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/layout.css">
+  <link rel="stylesheet" href="/static/css/forms.css">
+  <link rel="stylesheet" href="/static/css/graphs.css">
+  <link rel="stylesheet" href="/static/css/support.css">
+  <link rel="stylesheet" href="/static/css/stability.css">
+</head>
+
+<body>
+
+  <!-- ── Enterprise Auth Gate ─────────────────────────────────────────────── -->
+  <div id="nx-auth-gate" class="nx-auth-hidden">
+    <div class="nx-auth-card">
+      <div class="nx-auth-logo">
+        <div class="nx-auth-logo-icon">
+          <svg width="22" height="22" viewBox="0 0 32 32" fill="none">
+            <polygon points="16,3 20.5,11.5 30,13 23,20 24.7,29.5 16,25 7.3,29.5 9,20 2,13 11.5,11.5" fill="#bc8cff"
+              stroke="#6b3fa0" stroke-width="0.5" />
+          </svg>
+        </div>
+        <div class="nx-auth-logo-text">Nexora <span>AI</span></div>
+      </div>
+
+      <div id="nx-auth-err" class="nx-auth-err"></div>
+
+      <!-- Tabs -->
+      <div class="nx-auth-tabs">
+        <button class="nx-auth-tab active" id="nx-tab-login" onclick="nxAuthTab('login')">Sign In</button>
+        <button class="nx-auth-tab" id="nx-tab-signup" onclick="nxAuthTab('signup')">Create Account</button>
+      </div>
+
+      <!-- Login form -->
+      <div id="nx-form-login">
+        <div class="nx-auth-field">
+          <label>Email or Username</label>
+          <input type="text" id="nx-login-id" placeholder="you@example.com" autocomplete="username">
+        </div>
+        <div class="nx-auth-field">
+          <label>Password</label>
+          <input type="password" id="nx-login-pw" placeholder="••••••••" autocomplete="current-password"
+            onkeydown="if(event.key==='Enter') nxDoLogin()">
+        </div>
+        <button class="nx-auth-btn-primary" id="nx-btn-login" onclick="nxDoLogin()">Sign In</button>
+        <button class="nx-auth-forgot-link" onclick="nxShowForgotPw()">Forgot Password?</button>
+      </div>
+
+      <!-- Forgot Password form -->
+      <div id="nx-form-forgot" style="display:none">
+        <div id="nx-auth-ok" class="nx-auth-ok"></div>
+        <div class="nx-auth-field">
+          <label>Email Address</label>
+          <input type="email" id="nx-forgot-email" placeholder="you@example.com" autocomplete="email"
+            onkeydown="if(event.key==='Enter') nxDoForgotPw()">
+        </div>
+        <button class="nx-auth-btn-primary" id="nx-btn-forgot" onclick="nxDoForgotPw()">Send Reset Link</button>
+        <button class="nx-auth-back-link" onclick="nxShowForgotPw(false)">← Back to Sign In</button>
+      </div>
+
+      <!-- Signup form -->
+      <div id="nx-form-signup" style="display:none">
+        <div class="nx-auth-field">
+          <label>Full Name</label>
+          <input type="text" id="nx-signup-name" placeholder="Your Name" autocomplete="name">
+        </div>
+        <div class="nx-auth-field">
+          <label>Email</label>
+          <input type="email" id="nx-signup-email" placeholder="you@example.com" autocomplete="email">
+        </div>
+        <div class="nx-auth-field">
+          <label>Password <span style="color:var(--muted);font-weight:400;">(min 8 chars)</span></label>
+          <input type="password" id="nx-signup-pw" placeholder="••••••••" autocomplete="new-password"
+            onkeydown="if(event.key==='Enter') nxDoSignup()">
+        </div>
+        <label
+          style="display:flex;align-items:flex-start;gap:8px;margin-top:10px;cursor:pointer;font-size:0.8rem;color:var(--muted,#8b949e)">
+          <input type="checkbox" id="nx-signup-agree" style="margin-top:2px;accent-color:var(--purple,#bc8cff)">
+          <span>I agree to the <a href="/terms-of-service" target="_blank" style="color:var(--accent,#58a6ff)">Terms of
+              Service</a> and <a href="/privacy-policy" target="_blank" style="color:var(--accent,#58a6ff)">Privacy
+              Policy</a></span>
+        </label>
+        <button class="nx-auth-btn-primary" id="nx-btn-signup" onclick="nxDoSignup()" style="margin-top:10px">Create
+          Account</button>
+      </div>
+
+      <!-- OAuth -->
+      <div class="nx-auth-divider">or continue with</div>
+      <div class="nx-auth-oauth">
+        <a href="/api/auth/google" class="nx-auth-oauth-btn" id="nx-btn-google">
+          <svg width="16" height="16" viewBox="0 0 24 24">
+            <path fill="#4285F4"
+              d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+            <path fill="#34A853"
+              d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+            <path fill="#FBBC05"
+              d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" />
+            <path fill="#EA4335"
+              d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+          </svg>
+          Google
+        </a>
+        <a href="/api/auth/github" class="nx-auth-oauth-btn" id="nx-btn-github">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+          </svg>
+          GitHub
+        </a>
+      </div>
+
+      <div class="nx-auth-footer">
+        By signing in you agree to our
+        <a href="/terms-of-service" target="_blank">Terms of Service</a> &amp;
+        <a href="/privacy-policy" target="_blank">Privacy Policy</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Cookie Notice Banner ── -->
+  <div id="nx-cookie-banner"
+    style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:99999;background:#161b22;border-top:1px solid #30363d;padding:14px 20px;align-items:center;gap:16px;flex-wrap:wrap">
+    <span style="font-size:0.82rem;color:#8b949e;flex:1;min-width:200px">
+      🍪 We use essential cookies to keep you signed in and to secure your session. By continuing to use Nexora AI, you
+      accept our
+      <a href="/privacy-policy" target="_blank" style="color:#bc8cff">Privacy Policy</a>.
+    </span>
+    <div style="display:flex;gap:8px;flex-shrink:0">
+      <button onclick="nxAcceptCookies()"
+        style="background:#bc8cff;color:#0d1117;border:none;border-radius:6px;padding:7px 18px;font-size:0.82rem;font-weight:700;cursor:pointer;font-family:inherit">Accept</button>
+      <button onclick="document.getElementById('nx-cookie-banner').style.display='none'"
+        style="background:transparent;color:#8b949e;border:1px solid #30363d;border-radius:6px;padding:7px 12px;font-size:0.82rem;cursor:pointer;font-family:inherit">Dismiss</button>
+    </div>
+  </div>
+
+  <!-- ── Site Footer ── -->
+  <div id="nx-site-footer"
+    style="display:none;text-align:center;padding:16px 20px;border-top:1px solid #21262d;background:#0d1117;font-size:0.75rem;color:#8b949e">
+    <span>© 2026 Nexora AI</span>
+    <span style="margin:0 8px">·</span>
+    <a href="/privacy-policy" target="_blank" style="color:#8b949e;text-decoration:none"
+      onmouseover="this.style.color='#bc8cff'" onmouseout="this.style.color='#8b949e'">Privacy Policy</a>
+    <span style="margin:0 8px">·</span>
+    <a href="/terms-of-service" target="_blank" style="color:#8b949e;text-decoration:none"
+      onmouseover="this.style.color='#bc8cff'" onmouseout="this.style.color='#8b949e'">Terms of Service</a>
+    <span style="margin:0 8px">·</span>
+    <a href="/refund-policy" target="_blank" style="color:#8b949e;text-decoration:none"
+      onmouseover="this.style.color='#bc8cff'" onmouseout="this.style.color='#8b949e'">Refund Policy</a>
+    <span style="margin:0 8px">·</span>
+    <a href="mailto:support@nexora.ai" style="color:#8b949e;text-decoration:none"
+      onmouseover="this.style.color='#bc8cff'" onmouseout="this.style.color='#8b949e'">support@nexora.ai</a>
+  </div>
+
+  <!-- ── Email Verification Banner ── -->
+  <div id="nx-verify-banner">
+    <div class="nx-verify-msg">
+      <strong style="color:#d29922">⚠ Verify your email</strong><br>
+      <span id="nx-verify-banner-msg" style="color:#8b949e;font-size:0.78rem">Verify your email address to secure your
+        account.</span>
+    </div>
+    <button class="nx-verify-send" id="nx-verify-send-btn" onclick="nxSendVerificationEmail()">Send Link</button>
+    <button class="nx-verify-close"
+      onclick="document.getElementById('nx-verify-banner').classList.remove('show')">✕</button>
+  </div>
+
+  <!-- ── Error Banner ── -->
+  <div id="p57-error-banner">
+    <span style="color:#fca5a5; font-weight:600; font-size:12px;">⚠ Error</span>
+    <span id="p57-error-msg"
+      style="font-size:11px; color:#fca5a5; max-width:400px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"></span>
+    <button onclick="p57FixError()"
+      style="background:var(--red);color:white;border:none;padding:4px 10px;border-radius:5px;cursor:pointer;font-size:11px;font-weight:600;font-family:'Inter',sans-serif;">Fix
+      with AI</button>
+    <button onclick="document.getElementById('p57-error-banner').style.display='none'"
+      style="background:none;border:none;color:#fca5a5;cursor:pointer;font-size:14px;padding:0 2px;">✕</button>
+  </div>
+
+  <!-- ── Command Palette ── -->
+  <div class="nx-palette-backdrop" id="nxPalette" onclick="nxClosePalette(event)">
+    <div class="nx-palette">
+      <input class="nx-palette-input" id="nxPaletteInput" placeholder="Search commands, tabs, sessions..."
+        autocomplete="off">
+      <div class="nx-palette-list" id="nxPaletteList"></div>
+    </div>
+  </div>
+
+  <!-- ── Header ── -->
+  <header class="nx-header">
+    <!-- Logo -->
+    <div class="nx-logo" title="Nexora AI Platform">
+      <div class="nx-logo-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
+            fill="white" stroke="rgba(255,255,255,0.3)" stroke-width="0.5" />
+        </svg>
+      </div>
+      <div>
+        <div class="nx-logo-brand">Nexora</div>
+      </div>
+      <span class="nx-logo-badge">AI</span>
+    </div>
+
+    <!-- Plan mode selector -->
+    <div class="nx-plan-selector" id="nxPlanSelector">
+      <div class="nx-plan-badge elite" id="nxPlanBadge" onclick="nxTogglePlanDropdown()" title="Execution plan mode">
+        <span id="nxPlanLabel">⚡ Elite</span>
+        <span class="nx-plan-caret">▾</span>
+      </div>
+      <div class="nx-plan-dropdown" id="nxPlanDropdown">
+        <div class="nx-plan-option" onclick="nxSetPlan('lite')">
+          <div class="nx-plan-dot" style="background:#3fb950"></div>
+          <div>
+            <div class="nx-plan-name">Lite</div>
+            <div class="nx-plan-desc">Fast responses, no planning</div>
+          </div>
+          <span class="nx-plan-check" id="nxPlanCheck-lite" style="display:none">✓</span>
+        </div>
+        <div class="nx-plan-option" onclick="nxSetPlan('pro')">
+          <div class="nx-plan-dot" style="background:#388bfd"></div>
+          <div>
+            <div class="nx-plan-name">Pro</div>
+            <div class="nx-plan-desc">Reasoning + multi-step planning</div>
+          </div>
+          <span class="nx-plan-check" id="nxPlanCheck-pro" style="display:none">✓</span>
+        </div>
+        <div class="nx-plan-option active" onclick="nxSetPlan('elite')">
+          <div class="nx-plan-dot" style="background:#bc8cff"></div>
+          <div>
+            <div class="nx-plan-name">Elite</div>
+            <div class="nx-plan-desc">Full autonomy · debug · self-correct</div>
+          </div>
+          <span class="nx-plan-check" id="nxPlanCheck-elite">✓</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Command bar -->
+    <div class="nx-cmd-wrap" id="nxCmdWrap">
+      <!-- Plus/attach menu -->
+      <div style="position:relative">
+        <button class="nx-plus-btn" id="nxPlusBtn" onclick="nxTogglePlusMenu()"
+          title="Attach file, image, or import repo">+</button>
+        <div class="nx-plus-menu" id="nxPlusMenu">
+          <div class="nx-plus-opt" onclick="nxPlusMenu_file()">
+            <span class="nx-plus-opt-icon">📄</span> Upload File
+          </div>
+          <div class="nx-plus-opt" onclick="nxPlusMenu_image()">
+            <span class="nx-plus-opt-icon">🖼️</span> Upload Image
+          </div>
+          <div class="nx-plus-opt" onclick="nxPlusMenu_folder()">
+            <span class="nx-plus-opt-icon">📁</span> Upload Folder
+          </div>
+          <div class="nx-plus-opt" onclick="nxOpenGithubModal()">
+            <span class="nx-plus-opt-icon">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+                <path
+                  d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
+              </svg>
+            </span> Import from GitHub
+          </div>
+        </div>
+      </div>
+      <!-- Hidden file inputs -->
+      <input type="file" id="nxFileInput" style="display:none"
+        accept=".py,.js,.ts,.html,.css,.txt,.md,.json,.yaml,.yml,.csv,.sh,.sql,.xml,.toml,.ini,.cfg"
+        onchange="handleFileUpload(this)">
+      <input type="file" id="nxImageInput" style="display:none" accept=".png,.jpg,.jpeg,.gif,.webp,.svg"
+        onchange="handleFileUpload(this)">
+      <input type="file" id="nxFolderInput" style="display:none" webkitdirectory multiple
+        onchange="nxHandleFolderUpload(this)">
+      <div class="p4-suggest-wrap" style="flex:1;position:relative;display:flex;flex-direction:column">
+        <textarea id="taskInput" placeholder="Describe what you want to build… (Ctrl+Enter to run)" autocomplete="off"
+          spellcheck="false" oninput="p4OnTaskInput(this.value);p6OnTaskType(this.value)"
+          onfocus="p4OnTaskInput(this.value)" onblur="setTimeout(()=>p4CloseSuggest(),200)"></textarea>
+        <div class="p4-suggest-box" id="p4SuggestBox"></div>
+      </div>
+      <button class="nx-cmd-attach" title="Voice input" id="nxVoiceBtn" onclick="toggleVoice()">🎤</button>
+      <button class="nx-run-btn" id="runBtn" onclick="nxRunOrStop()">
+        <span class="nx-live-dot" id="nxRunDot" style="display:none"></span>
+        <span id="runBtnLabel">▶ Run</span>
+      </button>
+    </div>
+
+    <div class="nx-header-right">
+      <div class="nx-model-btn" id="nxModelBtn" onclick="nxOpenPanel('settings')" title="Model & API config">
+        <span class="nx-model-dot" id="nxModelDot"></span>
+        <span id="nxModelName">Loading…</span>
+        <span style="color:var(--text-dim)">▾</span>
+      </div>
+      <span class="nx-status-badge" id="nxGlobalStatus">Idle</span>
+      <!-- Phase 5: Active provider badge + selector -->
+      <div class="p5-provider-badge" id="p5ProvBadge" onclick="p5ToggleProvMenu(event)"
+        title="Active AI provider — click to switch">
+        <span class="p5-dot" id="p5ProvDot" style="background:#3fb950"></span>
+        <span class="p5-name" id="p5ProvName">AUTO</span>
+        <span class="p5-arrow">▾</span>
+        <div class="p5-prov-menu" id="p5ProvMenu">
+          <div class="p5-prov-menu-head">🤖 Select AI Provider</div>
+          <div id="p5ProvMenuList"></div>
+        </div>
+      </div>
+      <!-- Phase 4: Live token + cost tracker -->
+      <div class="p4-token-pill" id="p4TokenPill" title="Tokens used · Estimated cost (session total)"
+        style="display:none">
+        <span>🔢</span>
+        <span class="p4-tk" id="p4TkCount">0</span>tok
+        <span style="color:#30363d">·</span>
+        <span class="p4-cost">$<span id="p4CostVal">0.0000</span></span>
+      </div>
+      <!-- Phase 4: Theme toggle -->
+      <button class="p4-theme-btn" id="p4ThemeBtn" onclick="p4ToggleTheme()" title="Toggle light/dark theme">🌙</button>
+      <button class="nx-icon-btn" title="Sessions (S)" onclick="nxOpenPanel('sessions')">📁 <span id="nxSessCount"
+          style="font-size:11px;color:var(--text-muted)">0</span></button>
+      <button class="nx-icon-btn" title="Command palette (Ctrl+K)" onclick="nxOpenPalette()">⌘K</button>
+      <!-- Phase 8: Subscription badge + upgrade button -->
+      <div class="p8-sub-badge p8-free" id="p8SubBadge" onclick="p8OpenUpgradeModal()"
+        title="Your subscription plan — click to upgrade">
+        <span id="p8SubIcon">🆓</span>
+        <span id="p8SubName">Free</span>
+        <span id="p8SubExpiry" style="font-size:9px;opacity:.7;display:none"></span>
+      </div>
+      <!-- Notification Bell -->
+      <div class="nx-bell-wrap" id="nxBellWrap">
+        <button class="nx-bell-btn" id="nxBellBtn" onclick="nxBellToggle(event)" title="Notifications"
+          aria-label="Notifications">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+          </svg>
+          <span class="nx-bell-badge" id="nxBellBadge" style="display:none">0</span>
+        </button>
+        <!-- Dropdown panel -->
+        <div class="nx-notif-panel" id="nxNotifPanel" style="display:none">
+          <div class="nx-notif-header">
+            <span class="nx-notif-title">Notifications</span>
+            <button class="nx-notif-readall" id="nxNotifReadAll" onclick="nxNotifMarkAllRead()">Mark all read</button>
+          </div>
+          <div class="nx-notif-list" id="nxNotifList">
+            <div class="nx-notif-empty" id="nxNotifEmpty">No notifications yet</div>
+          </div>
+        </div>
+      </div>
+      <button class="nx-icon-btn" title="Settings" onclick="openSettings()">⚙</button>
+      <button class="nx-icon-btn" title="Sign Out" onclick="nxLogout()" style="margin-left:4px;color:var(--red,#f85149)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+          <polyline points="16 17 21 12 16 7" />
+          <line x1="21" y1="12" x2="9" y2="12" />
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Phase 6: Inline task recommendation bar -->
+  <div class="p6-inline-rec" id="p6InlineRec">
+    <span>🧠</span>
+    <span id="p6IrText">Best for this task:</span>
+    <b id="p6IrProv" style="color:#79c0ff"></b>
+    <span id="p6IrReason" style="color:#8b949e;font-size:0.7rem"></span>
+    <span class="p6-ir-use" onclick="p6ApplyRecommendation()">Use ↗</span>
+  </div>
+
+  <!-- Phase 5: Failover status bar (shows when provider switches) -->
+  <div class="p5-failover-bar" id="p5FailoverBar">
+    <span>⚡ Failover:</span>
+    <span class="p5-fb-from" id="p5FbFrom">—</span>
+    <span>→</span>
+    <span class="p5-fb-to" id="p5FbTo">—</span>
+    <span id="p5FbReason" style="color:#8b949e"></span>
+    <button onclick="document.getElementById('p5FailoverBar').classList.remove('visible')"
+      style="margin-left:auto;background:none;border:none;color:#8b949e;cursor:pointer;font-size:12px">✕</button>
+  </div>
+
+  <!-- Phase 3: Context bar (shows active attachments/repo) -->
+  <div class="nx-context-bar" id="nxContextBar">
+    <span class="nx-ctx-label">Context:</span>
+    <div id="nxCtxBadges" style="display:flex;gap:5px;flex-wrap:wrap;align-items:center"></div>
+  </div>
+
+  <!-- Phase 3: GitHub import modal -->
+  <div class="nx-gh-overlay" id="nxGhOverlay" onclick="nxCloseGithubModal(event)">
+    <div class="nx-gh-modal">
+      <h3>🔗 Import from GitHub</h3>
+      <p>Paste a public repo URL to clone and load its structure into your workspace.</p>
+      <input type="text" class="nx-gh-input" id="nxGhUrl" placeholder="https://github.com/user/repo" />
+      <div class="nx-gh-progress" id="nxGhProgress">Cloning repository…</div>
+      <div class="nx-gh-actions">
+        <button class="nx-gh-btn secondary" onclick="nxCloseGithubModal()">Cancel</button>
+        <button class="nx-gh-btn primary" onclick="nxImportGithub()">Import Repo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Phase 8: Upgrade / Plan modal -->
+  <div class="p8-modal-backdrop" id="p8UpgradeModal" onclick="p8CloseUpgradeModal(event)">
+    <div class="p8-modal" onclick="event.stopPropagation()">
+      <div class="p8-modal-head">
+        <div class="p8-modal-title">🚀 Choose Your Plan</div>
+        <button class="p8-close-btn" onclick="p8CloseUpgradeModal()">×</button>
+      </div>
+      <div class="p8-modal-sub" id="p8ModalSub">Unlock the full power of Nexora AI Platform</div>
+
+      <!-- Phase 36: Billing cycle toggle -->
+      <div class="p36-cycle-toggle" id="p36CycleToggle">
+        <button class="p36-cycle-btn active" id="p36CycleMonthly" onclick="p36SetCycle('monthly')">
+          Monthly
+        </button>
+        <button class="p36-cycle-btn" id="p36CycleYearly" onclick="p36SetCycle('yearly')">
+          Yearly <span class="p36-cycle-save">Save 17%</span>
+        </button>
+      </div>
+
+      <!-- Plan cards -->
+      <div class="p8-plans-grid" id="p8PlansGrid">
+        <!-- Rendered by JS -->
+      </div>
+
+      <!-- Phase 36: Subscription status -->
+      <div id="p36SubStatus"
+        style="display:none;margin-top:12px;padding:10px 14px;background:var(--surface);border-radius:8px;border:1px solid var(--panel-border)">
+        <div
+          style="font-size:11px;font-weight:700;color:var(--text-dim);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em">
+          Active Subscription</div>
+        <div id="p36SubStatusContent"></div>
+      </div>
+
+      <!-- Phase 36: Payment status message -->
+      <div id="p36PayMsg"
+        style="display:none;margin-top:10px;padding:10px 14px;border-radius:8px;font-size:13px;font-weight:600;text-align:center">
+      </div>
+
+      <!-- Coupon section -->
+      <div style="border-top:1px solid var(--panel-border);padding-top:16px;margin-top:14px">
+        <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:6px">🎟 Have a Coupon?</div>
+        <div class="p8-coupon-wrap">
+          <input class="p8-coupon-input" id="p8CouponInput" placeholder="ENTER CODE"
+            onkeydown="if(event.key==='Enter') p8ApplyCoupon()" autocomplete="off">
+          <button class="p8-coupon-btn" onclick="p8ApplyCoupon()">Apply</button>
+        </div>
+        <div class="p8-coupon-msg" id="p8CouponMsg"></div>
+      </div>
+
+      <!-- Usage summary -->
+      <div
+        style="margin-top:14px;padding:12px;background:var(--surface);border-radius:8px;border:1px solid var(--panel-border)">
+        <div
+          style="font-size:11px;font-weight:700;color:var(--text-dim);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">
+          Current Usage</div>
+        <div id="p8ModalUsage">Loading…</div>
+      </div>
+
+      <!-- Phase 36: Invoice history -->
+      <div
+        style="margin-top:14px;padding:12px;background:var(--surface);border-radius:8px;border:1px solid var(--panel-border)">
+        <div
+          style="font-size:11px;font-weight:700;color:var(--text-dim);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">
+          📄 Invoice History</div>
+        <div id="p36InvoiceList"><span style="font-size:12px;color:var(--text-muted)">No invoices yet.</span></div>
+      </div>
+
+      <!-- Phase 36: Billing Setup Guide -->
+      <div id="p36SetupGuide"
+        style="margin-top:14px;padding:14px;background:rgba(188,140,255,.06);border-radius:8px;border:1px solid rgba(188,140,255,.2)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div style="font-size:11px;font-weight:700;color:#bc8cff;text-transform:uppercase;letter-spacing:.05em">⚙
+            Billing Setup Guide</div>
+          <div id="p36WebhookStatus" style="font-size:10px;padding:2px 8px;border-radius:10px;font-weight:700">Checking…
+          </div>
+        </div>
+        <div style="font-size:11px;color:var(--text-muted);line-height:1.7">
+          <div style="margin-bottom:6px"><strong style="color:var(--text)">Step 1 — Add Razorpay Keys</strong></div>
+          <div style="margin-bottom:10px">In Replit Secrets, add: <code
+              style="background:var(--surface);padding:1px 5px;border-radius:3px;font-size:10px">RAZORPAY_KEY_ID</code>
+            and <code
+              style="background:var(--surface);padding:1px 5px;border-radius:3px;font-size:10px">RAZORPAY_KEY_SECRET</code>
+          </div>
+          <div style="margin-bottom:6px"><strong style="color:var(--text)">Step 2 — Configure Webhook</strong></div>
+          <div style="margin-bottom:6px">In Razorpay Dashboard → Settings → Webhooks, add this URL:</div>
+          <div id="p36WebhookUrl"
+            style="background:var(--surface);padding:7px 10px;border-radius:5px;font-family:monospace;font-size:11px;color:#bc8cff;word-break:break-all;margin-bottom:8px;border:1px solid var(--panel-border)">
+            Loading…</div>
+          <div style="margin-bottom:6px">Select events: <code
+              style="background:var(--surface);padding:1px 5px;border-radius:3px;font-size:10px">payment.captured</code>
+            and <code
+              style="background:var(--surface);padding:1px 5px;border-radius:3px;font-size:10px">payment.failed</code>
+          </div>
+          <div style="margin-bottom:6px"><strong style="color:var(--text)">Step 3 — Test (Optional)</strong></div>
+          <div>Add <code
+              style="background:var(--surface);padding:1px 5px;border-radius:3px;font-size:10px">EMAIL_API_KEY</code>
+            (Resend) to enable invoice emails.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Body ── -->
+  <div class="nx-body">
+    <div class="nx-main" id="nxMain">
+
+      <!-- ── LEFT: AI Thinking & Controls ── -->
+      <div class="nx-panel nx-left" id="nxLeft">
+        <div class="nx-panel-hdr">
+          <span class="nx-panel-title">
+            <span class="nx-pulse" id="nxThinkPulse" style="display:none"></span>
+            AI Thinking
+          </span>
+          <div class="nx-panel-actions">
+            <button class="nx-tiny-btn" onclick="nxToggleLeft()" title="Collapse">◂</button>
+          </div>
+        </div>
+        <div class="nx-panel-body" id="nxLeftBody">
+
+          <!-- Session card -->
+          <div class="nx-session-card" id="nxSessionCard">
+            <div class="nx-session-row">
+              <span class="nx-session-label">Session</span>
+              <span class="nx-session-val" id="nxCurSid">—</span>
+            </div>
+            <div class="nx-session-row" style="margin-top:4px">
+              <span class="nx-session-label">Project</span>
+              <span class="nx-session-val" id="nxCurProject"
+                style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</span>
+            </div>
+            <div class="nx-session-row" style="margin-top:4px">
+              <span class="nx-session-label">Status</span>
+              <span class="nx-session-val" id="nxCurStatus">Idle</span>
+            </div>
+            <div class="nx-session-row" style="margin-top:4px">
+              <span class="nx-session-label">Plan</span>
+              <span class="nx-session-val" id="nxActivePlanMode" style="color:#bc8cff;font-weight:600">⚡ Elite</span>
+            </div>
+          </div>
+
+          <!-- HITL controls (shown when running) -->
+          <div class="nx-hitl-strip" id="nxHitlStrip" style="display:none">
+            <div
+              style="font-size:10px;font-weight:600;color:var(--text-muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.07em">
+              Agent Control</div>
+            <div class="nx-hitl-row">
+              <button class="nx-tiny-btn" id="hitlPauseBtn" onclick="hitlPause()" style="flex:1">⏸ Pause</button>
+              <button class="nx-tiny-btn" id="hitlResumeBtn" onclick="hitlResume()" style="flex:1;display:none">▶
+                Resume</button>
+              <button class="nx-tiny-btn" onclick="hitlRetry()" style="flex:1">↻ Retry</button>
+            </div>
+            <div class="nx-hitl-inject">
+              <input class="nx-hitl-input" id="nxHitlInput" placeholder="Inject instruction..."
+                onkeydown="if(event.key==='Enter'){const v=this.value; const el=document.getElementById('hitlInjectInput'); if(el){el.value=v;} hitlInject();}">
+              <button class="nx-tiny-btn"
+                onclick="const v=document.getElementById('nxHitlInput').value; const el=document.getElementById('hitlInjectInput'); if(el)el.value=v; hitlInject();">Send</button>
+            </div>
+            <div class="nx-hitl-status">
+              <span class="hitl-dot" id="hitlDot"></span>
+              <span id="hitlStatusText" style="font-size:10px;color:var(--text-muted)">Idle</span>
+            </div>
+          </div>
+
+          <!-- Upload chips -->
+          <div id="uploadChips"></div>
+          <div class="voice-transcript-preview" id="voiceTranscriptPreview"></div>
+
+          <!-- Thinking stream (from legacy) -->
+          <div class="nx-think-section" id="nxThoughtSlot">
+            <div class="nx-think-label thoughts">Thoughts</div>
+          </div>
+          <div class="nx-think-section" id="nxDecisionSlot">
+            <div class="nx-think-label decisions">Decisions</div>
+          </div>
+          <div class="nx-think-section" id="nxRecallSlot">
+            <div class="nx-think-label recall">Recall</div>
+          </div>
+
+          <!-- Phase 4: Session History -->
+          <div class="p4-sess-section" id="p4SessSection">
+            <div class="p4-sess-title">
+              Recent Sessions
+              <span onclick="p4RefreshSessionHistory()" title="Refresh">↻</span>
+            </div>
+            <div class="p4-sess-list" id="p4SessList">
+              <div class="p4-sess-empty">No sessions yet</div>
+            </div>
+          </div>
+
+          <!-- Phase 4: Prompt Templates -->
+          <div style="margin-top:10px">
+            <div class="nx-think-label" style="margin-bottom:6px">Prompt Templates</div>
+            <div class="p4-tpl-cats" id="p4TplCats">
+              <button class="p4-tpl-cat active" onclick="p4SetTplCat('build',this)">Build</button>
+              <button class="p4-tpl-cat" onclick="p4SetTplCat('fix',this)">Fix</button>
+              <button class="p4-tpl-cat" onclick="p4SetTplCat('api',this)">API</button>
+              <button class="p4-tpl-cat" onclick="p4SetTplCat('test',this)">Test</button>
+              <button class="p4-tpl-cat" onclick="p4SetTplCat('saved',this)">⭐ Saved</button>
+            </div>
+            <div class="p4-tpl-chips" id="p4TplChips"></div>
+            <!-- Custom template save -->
+            <div class="p4-custom-row">
+              <input class="p4-custom-input" id="p4CustomTplInput" placeholder="Type task then ★ to save…"
+                onkeydown="if(event.key==='Enter'){nxSetTask(this.value);this.value='';}">
+              <button class="nx-example-chip" onclick="p4SaveCustomTemplate()" title="Save as template">★</button>
+            </div>
+            <div class="p4-custom-saved" id="p4CustomSaved"></div>
+          </div>
+
+          <!-- Phase 4: AI suggestions (idle prompts) -->
+          <div id="p4IdleSuggest" style="margin-top:10px;display:none">
+            <div class="nx-think-label" style="margin-bottom:5px">💡 Try This</div>
+            <div class="p4-tpl-chips" id="p4IdleChips"></div>
+          </div>
+
+        </div>
+      </div><!-- /nx-left -->
+
+      <div class="nx-divider" id="nxDivLeft"></div>
+
+      <!-- ── CENTER: Tabbed Workspace ── -->
+      <div class="nx-panel nx-center" id="nxCenter">
+        <div class="nx-tab-bar" id="nxTabBar">
+          <!-- Primary tabs: always visible -->
+          <button class="nx-tab active" data-nxtab="logs" onclick="nxSetTab('logs')">
+            <span class="nx-pulse" id="nxLogPulse" style="display:none"></span>
+            Logs
+            <span class="nx-tab-dot"></span>
+          </button>
+          <button class="nx-tab" data-nxtab="preview" onclick="nxSetTab('preview')">
+            Preview
+            <span class="nx-tab-dot"></span>
+          </button>
+          <button class="nx-tab" data-nxtab="code" onclick="nxSetTab('code')">
+            Code
+            <span class="nx-tab-dot"></span>
+          </button>
+          <button class="nx-tab" data-nxtab="chat" onclick="nxSetTab('chat');p12LoadChat(currentSession)">
+            💬 Chat
+            <span class="nx-tab-dot" id="p12ChatDot"></span>
+          </button>
+          <button class="nx-tab" data-nxtab="live" onclick="nxSetTab('live')" id="nxLiveTabBtn"
+            title="Real-time execution view">
+            ⚡ Live
+            <span class="nx-tab-dot" id="nxLiveDot" style="display:none"></span>
+          </button>
+
+          <!-- More ▾ dropdown for secondary tabs -->
+          <div class="nx-more-wrap">
+            <button class="nx-more-btn" id="nxMoreBtn" onclick="nxToggleMore(event)">More ▾</button>
+            <div class="nx-more-dropdown" id="nxMoreDropdown">
+              <div class="nx-more-item" data-nxtab="terminal" onclick="nxSetTab('terminal');nxCloseMore()">💻 Terminal
+              </div>
+              <div class="nx-more-item" data-nxtab="metrics" onclick="nxSetTab('metrics');nxCloseMore()">📊 Metrics
+              </div>
+              <div class="nx-more-item" data-nxtab="agents" onclick="nxSetTab('agents');nxCloseMore()">🤖 Agents</div>
+              <div class="nx-more-item" data-nxtab="timeline" onclick="nxSetTab('timeline');nxCloseMore()">📅 Timeline
+              </div>
+              <div class="nx-more-item" data-nxtab="steps" onclick="nxSetTab('steps');nxCloseMore()">🧐 Steps</div>
+              <div style="border-top:1px solid var(--panel-border);margin:3px 0"></div>
+              <div class="nx-more-item" data-nxtab="learning"
+                onclick="nxSetTab('learning');p15LoadDashboard();nxCloseMore()">📊 Learning</div>
+              <div class="nx-more-item" data-nxtab="goals" onclick="nxSetTab('goals');p16InitGoals();nxCloseMore()">🎯
+                Goal Mode</div>
+              <div class="nx-more-item" data-nxtab="graph" onclick="nxSetTab('graph');p17InitGraph();nxCloseMore()">🧩
+                Execution Graph</div>
+              <div class="nx-more-item" data-nxtab="scheduler"
+                onclick="nxSetTab('scheduler');p18InitScheduler();nxCloseMore()">⏱ Scheduler</div>
+            </div>
+          </div>
+
+          <!-- Hidden tab targets still needed for content -->
+          <button class="nx-tab secondary" data-nxtab="terminal" onclick="nxSetTab('terminal')">Terminal<span
+              class="nx-tab-dot"></span></button>
+          <button class="nx-tab secondary" data-nxtab="metrics" onclick="nxSetTab('metrics')">Metrics<span
+              class="nx-tab-dot"></span></button>
+          <button class="nx-tab secondary" data-nxtab="agents" onclick="nxSetTab('agents')">Agents<span
+              class="nx-tab-dot"></span></button>
+          <button class="nx-tab secondary" data-nxtab="timeline" onclick="nxSetTab('timeline')">Timeline<span
+              class="nx-tab-dot"></span></button>
+          <button class="nx-tab secondary" data-nxtab="steps" onclick="nxSetTab('steps')">Steps<span
+              class="nx-tab-dot"></span></button>
+          <button class="nx-tab secondary" data-nxtab="learning" onclick="nxSetTab('learning');p15LoadDashboard()">📊
+            Learning<span class="nx-tab-dot"></span></button>
+          <button class="nx-tab secondary" data-nxtab="goals" onclick="nxSetTab('goals');p16InitGoals()">🎯 Goals<span
+              class="nx-tab-dot"></span></button>
+          <button class="nx-tab secondary" data-nxtab="graph" onclick="nxSetTab('graph');p17InitGraph()">🧩 Graph<span
+              class="nx-tab-dot"></span></button>
+          <button class="nx-tab secondary" data-nxtab="scheduler" onclick="nxSetTab('scheduler');p18InitScheduler()">⏱
+            Scheduler<span class="nx-tab-dot"></span></button>
+
+          <!-- Tab-specific action bar -->
+          <div class="nx-tab-actions" id="nxTabActions"></div>
+        </div>
+
+        <!-- IMMERSIVE EXECUTION SYSTEM — AI Activity Bar -->
+        <div id="nxActivityBar" style="display:none">
+          <span class="nx-ab-dot" id="nxAbDot"></span>
+          <span id="nxAbText" style="color:var(--text-muted);font-size:11px">AI is working...</span>
+          <span id="nxAbFile" class="nx-ab-file" style="display:none"></span>
+          <button id="nxAbFileOpen" class="nx-ab-link" style="display:none" onclick="nxAbOpenFile()"
+            title="Open this file in editor">Open ↗</button>
+          <div style="flex:1"></div>
+          <span id="nxAbStepsBadge" class="nx-ab-steps-badge" style="display:none">
+            <span id="nxAbSteps">0</span> writes
+          </span>
+          <button id="nxAbPauseBtn" class="nx-ab-btn nx-ab-pause" onclick="hitlPause()" style="display:none">⏸
+            Pause</button>
+          <button id="nxAbResumeBtn" class="nx-ab-btn nx-ab-resume" onclick="hitlResume()" style="display:none">▶
+            Resume</button>
+          <button id="nxAbStopBtn" class="nx-ab-btn nx-ab-stop" onclick="stopSession()" style="display:none">■
+            Stop</button>
+        </div>
+
+        <!-- Idle hero — shown when no task is running -->
+        <div class="nx-idle-hero" id="nxIdleHero">
+          <div class="nx-hero-logo">A</div>
+          <div class="nx-hero-text">
+            <div class="nx-hero-heading">What do you want to build?</div>
+            <div class="nx-hero-sub">Describe a task and the AI agent will plan, code, and run it — step by step.</div>
+          </div>
+          <div class="nx-hero-chips">
+            <button class="nx-hero-chip" onclick="nxSetTask('Build a Flask REST API with CRUD endpoints')">Flask REST
+              API</button>
+            <button class="nx-hero-chip" onclick="nxSetTask('Create a login system with SQLite auth')">Login
+              System</button>
+            <button class="nx-hero-chip"
+              onclick="nxSetTask('Build a real-time dashboard with charts')">Dashboard</button>
+            <button class="nx-hero-chip" onclick="nxSetTask('Write unit tests for this project')">Generate
+              Tests</button>
+            <button class="nx-hero-chip" onclick="nxSetTask('Optimize and refactor all Python files')">Refactor
+              Code</button>
+            <button class="nx-hero-chip" onclick="nxSetTask('Add a REST API endpoint for file uploads')">File Upload
+              API</button>
+          </div>
+          <div class="nx-hero-hint">
+            Press <kbd>Ctrl+Enter</kbd> to run &nbsp;·&nbsp; <kbd>Ctrl+K</kbd> for commands
+          </div>
+        </div>
+
+        <!-- Logs tab (position:relative for overlay banners) -->
+        <div class="nx-tab-content" id="nxTab-logs"
+          style="position:relative;display:flex;flex-direction:column;overflow:hidden">
+          <!-- Phase 33 compact pipeline bar (shown during execution) -->
+          <div class="nx-exec-pipeline" id="nxLogsPipeline" style="display:none">
+            <div class="nx-exec-stage" id="nlp-planning"><span class="nx-stage-dot"></span>Planning</div>
+            <div class="nx-exec-stage" id="nlp-coding"><span class="nx-stage-dot"></span>Coding</div>
+            <div class="nx-exec-stage" id="nlp-debugging"><span class="nx-stage-dot"></span>Debugging</div>
+            <div class="nx-exec-stage" id="nlp-done"><span class="nx-stage-dot"></span>Done</div>
+            <div style="flex:1"></div>
+            <button class="btn tiny" onclick="nxSetTab('live')" style="font-size:0.68rem;padding:2px 8px">⚡ Full
+              View</button>
+          </div>
+          <div id="nxLogsBanner" style="display:none"></div>
+        </div>
+        <!-- Preview tab -->
+        <div class="nx-tab-content" id="nxTab-preview"></div>
+        <!-- Code/Files tab -->
+        <div class="nx-tab-content" id="nxTab-code"></div>
+        <!-- Terminal tab -->
+        <div class="nx-tab-content" id="nxTab-terminal"></div>
+        <!-- Metrics tab -->
+        <div class="nx-tab-content" id="nxTab-metrics"></div>
+        <!-- Agents tab -->
+        <div class="nx-tab-content" id="nxTab-agents"></div>
+        <!-- Timeline tab -->
+        <div class="nx-tab-content" id="nxTab-timeline"></div>
+        <!-- Steps tab -->
+        <div class="nx-tab-content" id="nxTab-steps"></div>
+
+        <!-- Phase 33 — Live Execution Visualization tab -->
+        <div class="nx-tab-content" id="nxTab-live" style="flex-direction:column;overflow:hidden">
+
+          <!-- Full pipeline bar -->
+          <div class="nx-exec-pipeline" id="nxLivePipeline">
+            <div class="nx-exec-stage" data-stage="planning" id="nls-planning">
+              <span class="nx-stage-dot"></span>Planning
+            </div>
+            <div class="nx-exec-stage" data-stage="coding" id="nls-coding">
+              <span class="nx-stage-dot"></span>Coding
+            </div>
+            <div class="nx-exec-stage" data-stage="debugging" id="nls-debugging">
+              <span class="nx-stage-dot"></span>Debugging
+            </div>
+            <div class="nx-exec-stage" data-stage="done" id="nls-done">
+              <span class="nx-stage-dot"></span>Done
+            </div>
+            <div style="flex:1"></div>
+            <button class="btn tiny" onclick="NxExecVis.clearLive()" title="Clear live panels"
+              style="font-size:0.68rem;padding:2px 8px">Clear</button>
+            <button class="btn tiny" onclick="nxSetTab('logs')" style="font-size:0.68rem;padding:2px 8px">←
+              Logs</button>
+          </div>
+
+          <!-- Split view: code stream | terminal stream -->
+          <div class="nx-live-split">
+
+            <!-- Left pane: live code stream -->
+            <div class="nx-live-pane">
+              <div class="nx-live-pane-hdr">
+                <span class="nx-live-dot" id="nxCodeStreamDot"></span>
+                Live Code Stream
+                <span id="nxCodeFileLabel"
+                  style="color:var(--accent);font-size:0.68rem;font-weight:500;margin-left:4px"></span>
+                <div style="flex:1"></div>
+                <label
+                  style="display:flex;align-items:center;gap:4px;font-size:0.68rem;font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted);cursor:pointer">
+                  <input type="checkbox" id="nxCodeAutoScroll" checked style="margin:0"> auto-scroll
+                </label>
+              </div>
+              <div id="nxLiveCodeArea" class="nx-live-code-area" style="flex:1">
+                <span style="color:var(--muted);font-size:0.75rem">Waiting for code to stream…</span>
+              </div>
+            </div>
+
+            <!-- Right pane: live terminal output -->
+            <div class="nx-live-pane" style="max-width:50%">
+              <div class="nx-live-pane-hdr">
+                <span class="nx-live-dot" id="nxTermStreamDot"></span>
+                Live Terminal
+                <div style="flex:1"></div>
+                <label
+                  style="display:flex;align-items:center;gap:4px;font-size:0.68rem;font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted);cursor:pointer">
+                  <input type="checkbox" id="nxTermAutoScroll" checked style="margin:0"> auto-scroll
+                </label>
+              </div>
+              <div id="nxLiveTermArea" class="nx-live-term-area" style="flex:1">
+                <span class="nx-term-line nx-term-system">Waiting for terminal output…</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Status bar -->
+          <div class="nx-live-statusbar">
+            <div class="nx-lsb-item">Stage: <span class="nx-lsb-val" id="nxLiveStageVal">—</span></div>
+            <div class="nx-lsb-item">Lines: <span class="nx-lsb-val" id="nxLiveLineCount">0</span></div>
+            <div class="nx-lsb-item">Code chunks: <span class="nx-lsb-val" id="nxLiveCodeCount">0</span></div>
+            <div class="nx-lsb-item">Commands: <span class="nx-lsb-val" id="nxLiveCmdCount">0</span></div>
+            <div style="flex:1"></div>
+            <span id="nxLiveConnStatus" style="font-size:0.68rem;color:var(--muted)">Not connected</span>
+          </div>
+        </div>
+
+        <!-- Phase 15: Learning Dashboard tab -->
+        <div class="nx-tab-content" id="nxTab-learning" style="overflow-y:auto;padding:0">
+          <div
+            style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;background:var(--surface);position:sticky;top:0;z-index:5;">
+            <span style="font-size:1.1rem">📊</span>
+            <strong
+              style="font-size:0.9rem;background:linear-gradient(135deg,#a78bfa,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Phase
+              15 — AI Learning Dashboard</strong>
+            <div style="flex:1"></div>
+            <button class="btn tiny" onclick="p15LoadDashboard()" id="p15RefreshBtn">⟳ Refresh</button>
+            <a href="/api/learning/export" class="btn tiny" style="text-decoration:none" download>⬇ Export</a>
+          </div>
+          <div style="padding:14px" id="p15DashGrid">
+
+            <!-- Summary metrics row -->
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px"
+              id="p15MetricsRow">
+              <div class="card" style="text-align:center">
+                <div style="font-size:1.6rem;font-weight:700;color:#4ade80" id="p15SuccessRate">—</div>
+                <div style="font-size:10px;color:var(--muted);margin-top:2px">Success Rate</div>
+              </div>
+              <div class="card" style="text-align:center">
+                <div style="font-size:1.6rem;font-weight:700;color:#fbbf24" id="p15RetryRate">—</div>
+                <div style="font-size:10px;color:var(--muted);margin-top:2px">Retry Rate</div>
+              </div>
+              <div class="card" style="text-align:center">
+                <div style="font-size:1.6rem;font-weight:700;color:#60a5fa" id="p15AvgLatency">—</div>
+                <div style="font-size:10px;color:var(--muted);margin-top:2px">Avg Latency</div>
+              </div>
+              <div class="card" style="text-align:center">
+                <div style="font-size:1.6rem;font-weight:700;color:#a78bfa" id="p15TotalTasks">—</div>
+                <div style="font-size:10px;color:var(--muted);margin-top:2px">Total Tasks</div>
+              </div>
+            </div>
+
+            <!-- Success trend sparkline -->
+            <div class="card" style="margin-bottom:12px">
+              <div class="card-header">📈 Task Success Trend (last 30)</div>
+              <div id="p15Sparkline" style="display:flex;align-items:flex-end;gap:2px;height:48px;padding:6px 0">
+                <div style="color:var(--muted);font-size:11px;line-height:48px">No data yet</div>
+              </div>
+            </div>
+
+            <!-- Strategy performance -->
+            <div class="card" style="margin-bottom:12px">
+              <div class="card-header">🏆 Strategy Performance</div>
+              <div id="p15Strategies" style="padding:6px 0">
+                <div style="color:var(--muted);font-size:11px">Loading…</div>
+              </div>
+            </div>
+
+            <!-- Failure analysis -->
+            <div class="card" style="margin-bottom:12px">
+              <div class="card-header">⚠️ Failure Analysis</div>
+              <div id="p15Failures" style="padding:6px 0">
+                <div style="color:var(--muted);font-size:11px">Loading…</div>
+              </div>
+            </div>
+
+            <!-- Learning timeline -->
+            <div class="card" style="margin-bottom:12px">
+              <div class="card-header">🕐 Learning Timeline</div>
+              <div id="p15Timeline" style="max-height:300px;overflow-y:auto;padding:6px 0">
+                <div style="color:var(--muted);font-size:11px">Loading…</div>
+              </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="card">
+              <div class="card-header">⚙️ Learning Controls</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px 0">
+                <button class="btn" onclick="p14ToggleInsights();openSettings('intelligence')" style="font-size:11px">🧠
+                  Intelligence Settings</button>
+                <button class="btn" style="font-size:11px;color:#f87171" onclick="p14ResetLearning()">🗑 Reset All
+                  Memory</button>
+                <a href="/api/learning/export" class="btn" style="font-size:11px;text-align:center;text-decoration:none"
+                  download>⬇ Export JSON</a>
+                <button class="btn" onclick="p15LoadDashboard()" style="font-size:11px">⟳ Refresh Now</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Phase 16: Goal Mode tab -->
+        <div class="nx-tab-content" id="nxTab-goals" style="overflow-y:auto;padding:0">
+          <div
+            style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;background:var(--surface);position:sticky;top:0;z-index:5;">
+            <span style="font-size:1.1rem">🎯</span>
+            <strong
+              style="font-size:0.9rem;background:linear-gradient(135deg,#f59e0b,#ef4444);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Phase
+              16 — Autonomous Goal Mode</strong>
+            <div style="flex:1"></div>
+            <span id="p16StatusBadge"
+              style="font-size:10px;padding:2px 8px;border-radius:10px;background:var(--surface);border:1px solid var(--border);color:var(--muted)">Idle</span>
+          </div>
+          <div style="padding:14px">
+
+            <!-- Goal input -->
+            <div class="card" style="margin-bottom:12px">
+              <div class="card-header">Enter a High-Level Goal</div>
+              <div style="padding:8px 0">
+                <div style="font-size:11px;color:var(--muted);margin-bottom:6px">
+                  Describe what you want to build or accomplish. The AI will break it into tasks and execute them
+                  step-by-step.
+                </div>
+                <textarea id="p16GoalInput"
+                  placeholder="e.g. Build a full REST API with authentication, database, and documentation"
+                  style="width:100%;min-height:80px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:8px;color:var(--text);font-size:12px;resize:vertical;font-family:inherit;box-sizing:border-box"></textarea>
+                <div style="display:flex;gap:8px;margin-top:8px">
+                  <select id="p16GoalPriority"
+                    style="background:var(--surface);border:1px solid var(--border);border-radius:5px;padding:4px 8px;color:var(--text);font-size:11px">
+                    <option value="5">⚡ Normal Priority</option>
+                    <option value="8" selected>🧠 High Priority</option>
+                    <option value="10">🚀 Critical</option>
+                  </select>
+                  <button class="btn primary" onclick="p16SubmitGoal()" id="p16SubmitBtn" style="flex:1">
+                    🎯 Decompose &amp; Execute
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Task breakdown preview -->
+            <div class="card" id="p16BreakdownCard" style="display:none;margin-bottom:12px">
+              <div class="card-header" style="display:flex;align-items:center;gap:8px">
+                🗂 Task Breakdown
+                <span id="p16TaskCount"
+                  style="background:var(--accent)22;color:var(--accent);border-radius:10px;padding:1px 7px;font-size:10px"></span>
+                <div style="flex:1"></div>
+                <button class="btn tiny" onclick="p16RunNext()" id="p16RunNextBtn">▶ Run Next Task</button>
+                <button class="btn tiny" style="color:#f87171" onclick="p16CancelGoal()">✕ Cancel</button>
+              </div>
+              <div id="p16GoalLabel" style="font-size:11px;color:var(--muted);padding:6px 0 4px;font-style:italic">
+              </div>
+              <div id="p16TaskList" style="max-height:400px;overflow-y:auto"></div>
+            </div>
+
+            <!-- Progress tracking -->
+            <div class="card" id="p16ProgressCard" style="display:none;margin-bottom:12px">
+              <div class="card-header">📈 Execution Progress</div>
+              <div style="padding:8px 0">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+                  <div
+                    style="flex:1;height:10px;background:var(--surface);border-radius:5px;border:1px solid var(--border);overflow:hidden">
+                    <div id="p16ProgressBar"
+                      style="height:100%;width:0%;background:linear-gradient(90deg,#4ade80,#60a5fa);border-radius:5px;transition:width .5s ease">
+                    </div>
+                  </div>
+                  <span id="p16ProgressPct"
+                    style="font-size:12px;font-weight:600;color:var(--accent);min-width:36px">0%</span>
+                </div>
+                <div style="display:flex;gap:12px;font-size:11px">
+                  <span style="color:#4ade80">✅ Done: <b id="p16DoneCount">0</b></span>
+                  <span style="color:#fbbf24">⏳ Pending: <b id="p16PendingCount">0</b></span>
+                  <span style="color:#f87171">❌ Failed: <b id="p16FailedCount">0</b></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Active chains list -->
+            <div class="card">
+              <div class="card-header" style="display:flex;align-items:center;gap:8px">
+                📋 Active Goal Chains
+                <button class="btn tiny" style="margin-left:auto" onclick="p16LoadChains()">⟳</button>
+              </div>
+              <div id="p16ChainList" style="max-height:250px;overflow-y:auto;padding:6px 0">
+                <div style="color:var(--muted);font-size:11px">No active goal chains yet.</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Execution Graph tab -->
+        <div class="nx-tab-content" id="nxTab-graph"
+          style="display:flex;flex-direction:column;overflow:hidden;padding:0;height:100%">
+          <!-- Header bar -->
+          <div
+            style="padding:10px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;background:var(--surface);flex-shrink:0;z-index:5">
+            <span style="font-size:1.05rem">🧩</span>
+            <strong
+              style="font-size:0.85rem;background:linear-gradient(135deg,#818cf8,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent">
+              Execution Graph</strong>
+            <div style="flex:1"></div>
+            <select id="p17ChainSelect"
+              style="background:var(--surface);border:1px solid var(--border);border-radius:5px;padding:3px 8px;color:var(--text);font-size:11px;max-width:220px">
+              <option value="">— Select a goal chain —</option>
+            </select>
+            <button class="btn tiny" onclick="p17RefreshGraph()" id="p17RefreshBtn" title="Refresh graph">⟳</button>
+            <button class="btn tiny" onclick="p17FitGraph()" title="Fit to screen">⊡</button>
+            <span id="p17StatusBadge"
+              style="font-size:10px;padding:2px 8px;border-radius:10px;background:var(--surface);border:1px solid var(--border);color:var(--muted)">No
+              chain</span>
+          </div>
+
+          <!-- Legend -->
+          <div id="p17Legend"
+            style="display:flex;gap:14px;padding:6px 16px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;font-size:10px;align-items:center">
+            <span style="color:var(--muted)">Node status:</span>
+            <span><span
+                style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#6b7280;margin-right:4px;vertical-align:middle"></span>Pending</span>
+            <span><span
+                style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#3b82f6;margin-right:4px;vertical-align:middle"></span>Running</span>
+            <span><span
+                style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#22c55e;margin-right:4px;vertical-align:middle"></span>Completed</span>
+            <span><span
+                style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#ef4444;margin-right:4px;vertical-align:middle"></span>Failed</span>
+            <span><span
+                style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#f97316;margin-right:4px;vertical-align:middle"></span>Bottleneck</span>
+            <span><span
+                style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#a855f7;margin-right:4px;vertical-align:middle"></span>Skipped</span>
+            <div style="flex:1"></div>
+            <span style="color:var(--muted)" id="p17NodeCount"></span>
+          </div>
+
+          <!-- Main graph area + detail panel -->
+          <div style="display:flex;flex:1;overflow:hidden;min-height:0">
+            <!-- Canvas -->
+            <div style="flex:1;position:relative;overflow:hidden" id="p17CanvasWrap">
+              <canvas id="p17Canvas" style="display:block;cursor:grab;width:100%;height:100%"></canvas>
+              <!-- Tooltip -->
+              <div id="p17Tooltip"
+                style="position:absolute;display:none;background:#1e293b;border:1px solid #334155;border-radius:6px;padding:8px 10px;font-size:11px;pointer-events:none;max-width:280px;z-index:20;box-shadow:0 4px 12px rgba(0,0,0,.4)">
+              </div>
+              <!-- Empty state -->
+              <div id="p17Empty"
+                style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--muted);font-size:13px;gap:10px">
+                <span style="font-size:2.5rem">🧩</span>
+                <div>Select a goal chain above to visualize its execution graph</div>
+                <button class="btn tiny" onclick="p17LoadChainOptions()">Load chains</button>
+              </div>
+            </div>
+
+            <!-- Detail panel -->
+            <div id="p17Detail"
+              style="width:0;overflow:hidden;transition:width 0.2s ease;background:var(--surface);border-left:1px solid var(--border);flex-shrink:0;display:flex;flex-direction:column">
+              <div
+                style="padding:10px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px;flex-shrink:0">
+                <strong style="font-size:11px;flex:1" id="p17DetailTitle">Node Detail</strong>
+                <button style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:14px;padding:0"
+                  onclick="p17CloseDetail()">✕</button>
+              </div>
+              <div style="flex:1;overflow-y:auto;padding:10px 12px" id="p17DetailBody"></div>
+              <div
+                style="padding:10px 12px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:6px;flex-shrink:0"
+                id="p17DetailActions"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 18: Scheduler tab -->
+        <div class="nx-tab-content" id="nxTab-scheduler" style="overflow-y:auto;padding:0">
+
+          <!-- Header -->
+          <div
+            style="padding:10px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;background:var(--surface);position:sticky;top:0;z-index:5">
+            <span style="font-size:1.05rem">⏱</span>
+            <strong
+              style="font-size:0.85rem;background:linear-gradient(135deg,#fb923c,#f43f5e);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Phase
+              18 — Background Task Scheduler</strong>
+            <div style="flex:1"></div>
+            <span id="p18EngineBadge"
+              style="font-size:10px;padding:2px 8px;border-radius:10px;background:var(--surface);border:1px solid var(--border);color:#4ade80">●
+              Active</span>
+            <button class="btn tiny" onclick="p18LoadAll()">⟳ Refresh</button>
+            <button class="btn primary" onclick="p18ShowCreateForm()" style="font-size:11px">+ New Task</button>
+          </div>
+
+          <div style="padding:14px">
+
+            <!-- Status bar -->
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px" id="p18StatsRow">
+              <div class="card" style="text-align:center">
+                <div style="font-size:1.4rem;font-weight:700;color:#fb923c" id="p18StatTotal">—</div>
+                <div style="font-size:9px;color:var(--muted);margin-top:2px">Total Tasks</div>
+              </div>
+              <div class="card" style="text-align:center">
+                <div style="font-size:1.4rem;font-weight:700;color:#4ade80" id="p18StatEnabled">—</div>
+                <div style="font-size:9px;color:var(--muted);margin-top:2px">Enabled</div>
+              </div>
+              <div class="card" style="text-align:center">
+                <div style="font-size:1.4rem;font-weight:700;color:#3b82f6" id="p18StatRunning">—</div>
+                <div style="font-size:9px;color:var(--muted);margin-top:2px">Running Now</div>
+              </div>
+              <div class="card" style="text-align:center">
+                <div style="font-size:10px;font-weight:600;color:#a78bfa" id="p18StatNext"
+                  style="word-break:break-word">—</div>
+                <div style="font-size:9px;color:var(--muted);margin-top:2px">Next Run</div>
+              </div>
+            </div>
+
+            <!-- Create task form (hidden by default) -->
+            <div class="card" id="p18CreateCard" style="display:none;margin-bottom:14px;border:1px solid #fb923c44">
+              <div class="card-header" style="display:flex;align-items:center;gap:8px">
+                <span>➕ Create Scheduled Task</span>
+                <button
+                  style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:13px;margin-left:auto"
+                  onclick="p18HideCreateForm()">✕</button>
+              </div>
+              <div style="padding:10px 0;display:grid;gap:10px">
+
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                  <div>
+                    <label style="font-size:10px;color:var(--muted);display:block;margin-bottom:3px">Task Name</label>
+                    <input id="p18FName" type="text" placeholder="e.g. Daily health check"
+                      style="width:100%;background:var(--surface);border:1px solid var(--border);border-radius:5px;padding:6px 8px;color:var(--text);font-size:11px;box-sizing:border-box">
+                  </div>
+                  <div>
+                    <label style="font-size:10px;color:var(--muted);display:block;margin-bottom:3px">Task Type</label>
+                    <select id="p18FType"
+                      style="width:100%;background:var(--surface);border:1px solid var(--border);border-radius:5px;padding:6px 8px;color:var(--text);font-size:11px">
+                      <option value="prompt">🤖 Prompt (agent task)</option>
+                      <option value="goal">🎯 Goal (decompose + run)</option>
+                      <option value="analysis">🔍 Analysis</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label style="font-size:10px;color:var(--muted);display:block;margin-bottom:3px">Prompt / Goal</label>
+                  <textarea id="p18FPrompt" rows="3" placeholder="Describe what the AI should do when this task runs…"
+                    style="width:100%;background:var(--surface);border:1px solid var(--border);border-radius:5px;padding:6px 8px;color:var(--text);font-size:11px;resize:vertical;font-family:inherit;box-sizing:border-box"></textarea>
+                </div>
+
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                  <div>
+                    <label style="font-size:10px;color:var(--muted);display:block;margin-bottom:3px">Schedule
+                      Type</label>
+                    <select id="p18FSched" onchange="p18UpdateScheduleHint()"
+                      style="width:100%;background:var(--surface);border:1px solid var(--border);border-radius:5px;padding:6px 8px;color:var(--text);font-size:11px">
+                      <option value="once">🔂 Once</option>
+                      <option value="interval">🔁 Interval (repeat every N minutes)</option>
+                      <option value="daily">📅 Daily (at specific time)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label style="font-size:10px;color:var(--muted);display:block;margin-bottom:3px"
+                      id="p18FValLabel">Run at (ISO datetime or blank for now)</label>
+                    <input id="p18FVal" type="text" placeholder="e.g. 2025-01-15T09:00 or blank"
+                      style="width:100%;background:var(--surface);border:1px solid var(--border);border-radius:5px;padding:6px 8px;color:var(--text);font-size:11px;box-sizing:border-box">
+                  </div>
+                </div>
+
+                <div id="p18FHint"
+                  style="font-size:10px;color:#fb923c;padding:4px 6px;background:#fb923c11;border-radius:4px">
+                  One-time task — runs once at the specified time (or immediately if blank).
+                </div>
+
+                <div style="display:flex;gap:8px;justify-content:flex-end">
+                  <button class="btn" style="font-size:11px" onclick="p18HideCreateForm()">Cancel</button>
+                  <button class="btn primary" style="font-size:11px" onclick="p18CreateTask()" id="p18CreateBtn">✓
+                    Create Task</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Task list -->
+            <div class="card" style="margin-bottom:14px">
+              <div class="card-header" style="display:flex;align-items:center;gap:8px">
+                📋 Scheduled Tasks
+                <span id="p18TaskCountBadge"
+                  style="background:var(--accent)22;color:var(--accent);border-radius:10px;padding:1px 7px;font-size:10px">0</span>
+              </div>
+              <div id="p18TaskList" style="padding:4px 0">
+                <div style="color:var(--muted);font-size:11px;padding:12px 0;text-align:center">No scheduled tasks yet.
+                  Click <b>+ New Task</b> to create one.</div>
+              </div>
+            </div>
+
+            <!-- Run history -->
+            <div class="card">
+              <div class="card-header" style="display:flex;align-items:center;gap:8px">
+                📜 Recent Run History
+                <button class="btn tiny" style="margin-left:auto" onclick="p18LoadHistory()">⟳</button>
+              </div>
+              <div id="p18HistoryList" style="max-height:280px;overflow-y:auto;padding:4px 0">
+                <div style="color:var(--muted);font-size:11px;padding:8px 0">Loading…</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Phase 12: Chat tab -->
+        <div class="nx-tab-content" id="nxTab-chat">
+          <div class="p12-chat-wrap">
+            <div class="p12-chat-msgs" id="p12ChatMsgs">
+              <div class="p12-empty" id="p12ChatEmpty">
+                <div class="p12-empty-icon">💬</div>
+                <div>No conversation yet.</div>
+                <div style="font-size:0.75rem;color:var(--muted);margin-top:4px">Run a task to start the conversation.
+                </div>
+              </div>
+            </div>
+            <div class="p12-chat-footer" id="p12ChatFooter" style="display:none">
+              <!-- Phase 13: Context compression status bar -->
+              <div id="p13ContextBar"
+                style="display:none;padding:3px 8px 0;font-size:10px;color:var(--text-dim);display:flex;align-items:center;gap:6px">
+                <span id="p13Badge"
+                  style="display:none;background:#7c3aed22;color:#a78bfa;border:1px solid #7c3aed44;border-radius:10px;padding:1px 7px;font-size:9px;font-weight:600">⚡
+                  Context optimized</span>
+                <span id="p13SummaryToggle" style="cursor:pointer;text-decoration:underline;opacity:.6"
+                  onclick="p13ToggleSummary()">View summary</span>
+                <div id="p13SummaryBox"
+                  style="display:none;background:var(--surface);border:1px solid var(--panel-border);border-radius:6px;padding:6px 8px;font-size:10px;color:var(--text-dim);margin-top:4px;line-height:1.4;white-space:pre-wrap;max-height:80px;overflow-y:auto">
+                </div>
+              </div>
+              <button class="p12-continue-btn" id="p12ContinueBtn" onclick="p12Continue()">
+                <span>↩</span> Continue / modify this session…
+              </button>
+              <button class="p12-clear-btn" onclick="p12ClearChat()" title="Clear conversation history">🗑</button>
+            </div>
+          </div>
+        </div>
+      </div><!-- /nx-center -->
+
+      <div class="nx-divider" id="nxDivRight"></div>
+
+      <!-- ── RIGHT: Inspector ── -->
+      <div class="nx-panel nx-right" id="nxRight">
+        <div class="nx-panel-hdr">
+          <span class="nx-panel-title">Inspector</span>
+          <div class="nx-panel-actions">
+            <span class="nx-status-badge" id="stStatus" style="font-size:10px">Idle</span>
+            <button class="nx-tiny-btn" onclick="nxToggleRight()">▸</button>
+          </div>
+        </div>
+        <div class="nx-panel-body" id="nxRightBody">
+
+          <!-- Status Stats -->
+          <div class="nx-inspector-section">
+            <div class="nx-insp-label">Status</div>
+            <div class="nx-stat-grid">
+              <div class="nx-stat">
+                <div class="nx-stat-label">Elapsed</div>
+                <div class="nx-stat-val" id="stElapsed">—</div>
+              </div>
+              <div class="nx-stat">
+                <div class="nx-stat-label">Steps</div>
+                <div class="nx-stat-val" id="nxStepCount">0</div>
+              </div>
+              <div class="nx-stat">
+                <div class="nx-stat-label">Tokens</div>
+                <div class="nx-stat-val" id="nxTokenCount">—</div>
+              </div>
+              <div class="nx-stat">
+                <div class="nx-stat-label">Queue</div>
+                <div class="nx-stat-val" id="nxQueueCount">0</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Model Info -->
+          <div class="nx-inspector-section">
+            <div class="nx-insp-label">Model</div>
+            <div class="nx-model-info">
+              <div class="nx-model-row">
+                <span class="nx-model-name" id="nxInspModel">—</span>
+                <span class="nx-model-tag" id="nxInspProvider">—</span>
+              </div>
+              <div style="font-size:10px;color:var(--text-dim);margin-top:2px" id="nxInspMode">Managed mode</div>
+            </div>
+            <!-- Phase 5: Routing info -->
+            <div class="p5-route-info" id="p5RouteInfo" style="display:none">
+              <div>Route: <span class="p5-ri-prov" id="p5RiProv">—</span></div>
+              <div class="p5-ri-chain" id="p5RiChain"></div>
+            </div>
+            <!-- Phase 8: Usage mini-block -->
+            <div class="p8-insp-usage" id="p8InspUsage" style="display:none">
+              <div id="p8InspUsageContent"></div>
+            </div>
+
+            <!-- Phase 36: Billing Status in Inspector -->
+            <div id="p36InspBilling"
+              style="display:none;margin-top:8px;padding:8px;background:var(--surface);border-radius:6px;border:1px solid var(--panel-border)">
+              <div
+                style="font-size:9px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px">
+                💳 Billing</div>
+              <div id="p36InspBillingContent" style="font-size:10px;color:var(--text-muted)">—</div>
+            </div>
+
+            <!-- Phase 10: Memory Context + Intelligence Score -->
+            <div class="p10-mem-section" id="p10MemSection">
+              <div class="p10-mem-title">🧠 Intelligence Score</div>
+              <div class="p10-score-row">
+                <span class="p10-score-label">Grade</span>
+                <span class="p10-grade-badge" id="p10Grade">—</span>
+              </div>
+              <div class="p10-score-row">
+                <span class="p10-score-label">Success rate</span>
+                <span class="p10-score-val" id="p10SuccessRate">—</span>
+              </div>
+              <div class="p10-score-row">
+                <span class="p10-score-label">Total calls</span>
+                <span class="p10-score-val" id="p10Calls">0</span>
+              </div>
+              <div style="margin-top:8px">
+                <div class="p10-mem-title" style="margin-bottom:5px">📋 Session Memory</div>
+                <div id="p10MemItems">
+                  <div style="font-size:10px;color:var(--muted)">No tasks recorded yet.</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Phase 9: Active Model Routing -->
+            <div class="p9-routing-section" id="p9RoutingSection">
+              <div class="p9-routing-title">
+                <span class="p9-status-dot" id="p9StatusDot"></span>
+                Active Routing
+                <span id="p9PlanModeTag"
+                  style="margin-left:auto;font-size:9px;font-weight:400;text-transform:none;opacity:.7"></span>
+              </div>
+              <div id="p9RouteRows">
+                <div class="p9-role-row">
+                  <span class="p9-role-label">Plan</span>
+                  <span class="p9-model-tag" style="color:#888">Loading…</span>
+                </div>
+              </div>
+              <div class="p9-ctx-bar-wrap" id="p9CtxBarWrap" style="display:none">
+                <div class="p9-ctx-bar-fill" id="p9CtxBarFill" style="width:0%"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Phase 7: Agent System -->
+          <div class="nx-inspector-section" id="p7AgentsSection">
+            <div class="nx-insp-label"
+              style="cursor:pointer;display:flex;align-items:center;justify-content:space-between"
+              onclick="p7ToggleBody()">
+              <span>Agents</span>
+              <span id="p7CollapseIcon" style="font-size:9px;color:var(--text-dim)">▴</span>
+            </div>
+            <div id="p7Body">
+              <!-- Master toggle + plan badge -->
+              <div class="p7-master-toggle">
+                <span class="p7-system-label" id="p7PlanLabel">Elite Pipeline</span>
+                <label class="p7-toggle-switch" title="Enable/disable agent system">
+                  <input type="checkbox" id="p7MasterToggle" checked onchange="p7SaveMasterToggle(this.checked)">
+                  <span class="p7-toggle-track"></span>
+                </label>
+              </div>
+              <!-- Pipeline stage indicator -->
+              <div class="p7-pipeline-stage" id="p7StageLabel">Waiting for task…</div>
+              <!-- Agent rows (rendered by JS) -->
+              <div id="p7AgentList"></div>
+              <!-- Run button -->
+              <button class="p7-run-btn" id="p7RunBtn" onclick="p7ManualRun()" disabled>
+                ▶ Run Agent Pipeline
+              </button>
+            </div>
+          </div>
+
+          <!-- Live Metrics (collapsed when idle, expanded when running) -->
+          <div class="nx-inspector-section" id="nxMetricsSection">
+            <div class="nx-insp-label"
+              style="cursor:pointer;display:flex;align-items:center;justify-content:space-between"
+              onclick="nxToggleMetrics()">
+              <span>System</span>
+              <span id="nxMetricsToggleIcon" style="font-size:9px;color:var(--text-dim)">▴</span>
+            </div>
+            <div id="nxMetricsBody" class="nx-insp-section-collapsible expanded">
+              <div class="nx-metrics-grid">
+                <div class="nx-metric">
+                  <div class="nx-metric-label">CPU</div>
+                  <div class="nx-metric-val" id="nxMetCpu">—</div>
+                  <div class="nx-metric-bar">
+                    <div class="nx-metric-fill" id="nxMetCpuBar" style="width:0%"></div>
+                  </div>
+                </div>
+                <div class="nx-metric">
+                  <div class="nx-metric-label">Memory</div>
+                  <div class="nx-metric-val" id="nxMetMem">—</div>
+                  <div class="nx-metric-bar">
+                    <div class="nx-metric-fill" id="nxMetMemBar" style="width:0%;background:var(--purple)"></div>
+                  </div>
+                </div>
+                <div class="nx-metric">
+                  <div class="nx-metric-label">Mem Used</div>
+                  <div class="nx-metric-val" id="nxMetUptime">—</div>
+                </div>
+                <div class="nx-metric">
+                  <div class="nx-metric-label">Sessions</div>
+                  <div class="nx-metric-val" id="nxMetSess">—</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Error Card (hidden when no error) -->
+          <div class="nx-error-card" id="nxErrorCard" style="display:none">
+            <div class="nx-error-title">⚠ Last Error</div>
+            <div class="nx-error-msg" id="nxErrorMsg"></div>
+            <button class="nx-fix-btn" onclick="p57FixError()">Fix with AI</button>
+          </div>
+
+          <!-- Phase 14: Learning Insights -->
+          <div class="nx-inspector-section" id="p14LearningSection">
+            <div class="nx-insp-label"
+              style="cursor:pointer;display:flex;align-items:center;justify-content:space-between"
+              onclick="p14ToggleInsights()">
+              <span>🧠 Learning Insights</span>
+              <span id="p14InsightsToggleIcon" style="font-size:9px;opacity:.5">▸</span>
+            </div>
+            <div id="p14InsightsBody" style="display:none;margin-top:6px">
+              <div id="p14InsightsContent" style="font-size:10px;color:var(--text-dim)">
+                <div style="opacity:.5">Loading insights…</div>
+              </div>
+              <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
+                <button class="nx-tiny-btn" onclick="p14LoadInsights()" style="flex:1">↺ Refresh</button>
+                <button class="nx-tiny-btn" onclick="p14ResetLearning()" style="flex:1;color:#f87171"
+                  title="Clear all learning memory">🗑 Reset</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Decisions (from legacy, hidden when empty) -->
+          <div class="nx-inspector-section" id="nxDecisionsSection" style="display:none">
+            <div class="nx-insp-label">Decisions</div>
+            <div id="nxDecisionSlot2" style="font-size:11px;color:var(--text-muted);min-height:24px"></div>
+          </div>
+
+          <!-- Output (hidden when nothing yet) -->
+          <div class="nx-inspector-section" id="nxOutputSection" style="display:none">
+            <div class="nx-insp-label">Output</div>
+            <div id="nxOutputSlot"
+              style="font-size:11px;color:var(--text-muted);background:var(--surface);border:1px solid var(--panel-border);border-radius:6px;padding:8px;min-height:40px;word-break:break-all;font-family:'JetBrains Mono',monospace;">
+            </div>
+          </div>
+
+          <!-- Download -->
+          <div class="nx-inspector-section" id="nxDownloadSection" style="display:none">
+            <button class="nx-tiny-btn" style="width:100%;justify-content:center;padding:7px" id="nxDownloadBtn">⬇
+              Download .zip</button>
+          </div>
+
+        </div>
+      </div><!-- /nx-right -->
+
+    </div><!-- /nx-main -->
+
+    <!-- ── Bottom Terminal Panel ── -->
+    <div class="nx-bottom-wrap" id="nxBottom">
+      <div class="nx-bottom-hdr" onclick="nxToggleBottom()">
+        <span class="nx-bottom-title">Terminal</span>
+        <span style="font-size:10px;color:var(--text-dim)" id="nxBottomHint">Click to expand</span>
+        <button class="nx-tiny-btn" style="margin-left:auto" onclick="nxSetTab('terminal');event.stopPropagation()">Open
+          in Center ↗</button>
+      </div>
+      <div class="nx-bottom-body" id="nxBottomBody"></div>
+    </div>
+
+  </div><!-- /nx-body -->
+
+  <!-- ── Status Bar ── -->
+  <div class="nx-statusbar">
+    <span class="nx-statusbar-item">
+      <span class="nx-model-dot" id="nxSbDot"></span>
+      <span id="nxSbModel">—</span>
+    </span>
+    <span class="nx-statusbar-sep"></span>
+    <span class="nx-statusbar-item" id="nxSbMode">Managed</span>
+    <span class="nx-statusbar-sep"></span>
+    <span class="nx-statusbar-item" id="nxSbStatus">Idle</span>
+    <div class="nx-statusbar-right">
+      <span class="nx-statusbar-item" id="nxSbSess">No session</span>
+      <span class="nx-statusbar-sep"></span>
+      <span class="nx-statusbar-item">
+        <kbd class="nx-kbd">Ctrl+Enter</kbd> Run &nbsp;
+        <kbd class="nx-kbd">Ctrl+K</kbd> Commands
+      </span>
+    </div>
+  </div>
+
+  <!-- ── Settings/Sessions Drawer ── -->
+  <div class="p57-overlay" id="p57-overlay" onclick="p55ClosePanel()"></div>
+  <div class="p57-drawer" id="p57Drawer"
+    style="top:0;right:-420px;width:400px;height:100vh;background:var(--panel);border-left:1px solid var(--panel-border);z-index:1000;transition:right 240ms cubic-bezier(0.4,0,0.2,1);display:flex;flex-direction:column;position:fixed;">
+    <div class="nx-panel-hdr" style="flex-shrink:0">
+      <span class="nx-panel-title" id="nxDrawerTitle">Settings</span>
+      <button class="nx-tiny-btn" onclick="p55ClosePanel()">✕</button>
+    </div>
+    <div style="flex:1;overflow-y:auto;padding:12px" id="p57-drawer-slot"></div>
+  </div>
+
+  <!-- ── Detail Modal ── -->
+  <div id="p57-detail-modal"
+    style="position:fixed;inset:40px;background:var(--panel);z-index:5000;border-radius:12px;display:none;flex-direction:column;border:1px solid var(--panel-border-hover);box-shadow:0 24px 64px rgba(0,0,0,0.5)">
+    <div class="nx-panel-hdr">
+      <span id="p57-detail-title" class="nx-panel-title">Detail</span>
+      <button class="nx-tiny-btn" onclick="p57CloseDetail()">✕</button>
+    </div>
+    <div id="p57-detail-body" style="flex:1;overflow:hidden;"></div>
+  </div>
+
+  <!-- ── NX Runtime Bridge ── -->
+  <script src="/static/js/ui.js" defer></script>
+  <div id="legacy-shell" style="display:none !important;">
+
+    <header>
+      <span style="font-size:1.3rem">🤖</span>
+      <h1>AI Agent Control Platform</h1>
+      <span class="badge">v3.2</span>
+      <span class="mode-pill" id="headerMode">Managed</span>
+      <span class="project-pill" id="projectPill" style="display:none">
+        <span class="project-pill-label">Project</span>
+        <span class="project-pill-name" id="projectName">—</span>
+      </span>
+      <div class="header-actions">
+        <button class="btn" onclick="openSettings()" title="Open settings">⚙ Settings</button>
+        <button class="btn warn" onclick="clearAgentMemory()">Clear Memory</button>
+      </div>
+    </header>
+
+    <div class="main">
+
+      <!-- LEFT — controls only -->
+      <div class="left" id="leftCol">
+        <div class="section">
+          <h3>What should the agent do?</h3>
+          <!-- Multimodal input: text + voice + upload -->
+          <div class="task-input-row">
+            <textarea id="taskInput" class="task-input"
+              placeholder="e.g. Build a Flask login system&#10;&#10;Press Ctrl+Enter to run."
+              style="min-height:90px"></textarea>
+            <div class="input-side">
+              <!-- Voice button -->
+              <button class="voice-btn" id="voiceBtn" title="Voice input (click to start/stop recording)"
+                onclick="toggleVoice()">
+                🎤
+              </button>
+              <!-- Upload button -->
+              <button class="upload-btn" title="Attach file or image" onclick="$('fileUploadInput').click()">
+                📎
+              </button>
+              <input type="file" id="fileUploadInput" style="display:none"
+                accept=".png,.jpg,.jpeg,.gif,.webp,.py,.js,.ts,.html,.css,.txt,.md,.json,.yaml,.yml,.csv,.sh"
+                onchange="handleFileUpload(this)">
+            </div>
+          </div>
+          <!-- Voice transcript preview -->
+          <div class="voice-transcript-preview" id="voiceTranscriptPreview"></div>
+          <!-- Upload chips -->
+          <div id="uploadChips"></div>
+        </div>
+
+        <div class="section">
+          <button class="btn primary large run-glow" id="runBtn" style="width:100%" onclick="queueTask()">
+            <span class="live-dot"></span>
+            <span id="runBtnLabel">▶ Run Task</span>
+          </button>
+          <div id="queueList" style="font-size:0.76rem; color:var(--muted); margin-top:8px; text-align:center">
+            Idle
+          </div>
+        </div>
+
+        <!-- Phase 31 — HITL Control Panel -->
+        <div class="hitl-panel" id="hitlPanel" style="display:none">
+          <h4>⚙ Agent Control</h4>
+          <div class="hitl-controls">
+            <button class="btn tiny hitl-pause" id="hitlPauseBtn" onclick="hitlPause()">&#9646;&#9646; Pause</button>
+            <button class="btn tiny hitl-resume" id="hitlResumeBtn" onclick="hitlResume()" style="display:none">▶
+              Resume</button>
+            <button class="btn tiny" onclick="hitlRetry()">↻ Retry</button>
+          </div>
+          <div class="hitl-inject-row">
+            <input class="hitl-inject-input" id="hitlInjectInput" placeholder="Inject instruction mid-run..."
+              onkeydown="if(event.key==='Enter'){hitlInject();}">
+            <button class="btn tiny" onclick="hitlInject()">Inject</button>
+          </div>
+          <div class="hitl-status">
+            <span class="hitl-dot" id="hitlDot"></span>
+            <span id="hitlStatusText">Agent running</span>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>API Mode</h3>
+          <div class="mode-toggle">
+            <div class="mode-opt active" id="modeManaged" onclick="setMode('managed')">
+              Managed
+              <small>No setup</small>
+            </div>
+            <div class="mode-opt" id="modeByok" onclick="setMode('byok')">
+              BYOK
+              <small>Your keys</small>
+            </div>
+          </div>
+          <div id="modeSummary" class="info-box" style="margin-top:8px">Loading…</div>
+        </div>
+
+        <div class="section">
+          <h3>Examples</h3>
+          <div class="examples">
+            <span class="tag" onclick="setTask('Build a Flask hello world app')">Hello world</span>
+            <span class="tag" onclick="setTask('Create a Flask login system with SQLite')">Login</span>
+            <span class="tag" onclick="setTask('Build a REST API for tasks (CRUD) with Flask')">REST API</span>
+            <span class="tag" onclick="setTask('Create a Python calculator script')">Calculator</span>
+            <span class="tag" onclick="setTask('Build an HTML landing page for a coffee shop')">Landing page</span>
+          </div>
+        </div>
+
+        <div class="left-foot">
+          <button class="btn" style="width:100%" onclick="openSettings('sessions')">
+            📁 Sessions <span id="sessCount" style="color:var(--muted); margin-left:4px">0</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Phase 6.9 — drag handle: LEFT ↔ CENTER -->
+      <div class="col-resize" id="splitLC" title="Drag to resize"></div>
+
+      <!-- CENTER — logs (top) + preview (bottom) -->
+      <!-- Phase 7.2 — tabbed dev environment in the center column -->
+      <div class="center" id="centerCol">
+        <div class="tab-bar" id="tabBar">
+          <button class="tab-btn active" data-tab="logs" onclick="setActiveTab('logs')">
+            <div class="pulse" id="pulse"></div> Logs
+            <span class="tab-dot"></span>
+          </button>
+          <button class="tab-btn" data-tab="preview" onclick="setActiveTab('preview')">
+            Preview <span class="tab-dot"></span>
+          </button>
+          <button class="tab-btn" data-tab="files" onclick="setActiveTab('files')">
+            Files <span class="tab-dot"></span>
+          </button>
+          <button class="tab-btn" data-tab="reasoning" onclick="setActiveTab('reasoning')">
+            Reasoning <span class="tab-badge" id="reasoningBadge"></span>
+          </button>
+          <!-- Phase 22 — three new tabs -->
+          <button class="tab-btn" data-tab="terminal" onclick="setActiveTab('terminal')">
+            Terminal <span class="tab-dot"></span>
+          </button>
+          <button class="tab-btn" data-tab="agents" onclick="setActiveTab('agents')">
+            Agents <span class="tab-dot"></span>
+          </button>
+          <button class="tab-btn" data-tab="timeline" onclick="setActiveTab('timeline')">
+            Timeline <span class="tab-dot"></span>
+          </button>
+          <!-- Phase 31 — Observability tab -->
+          <button class="tab-btn" data-tab="observability" onclick="setActiveTab('observability')">
+            📊 Metrics
+          </button>
+          <!-- Phase 32 — Step Trace + Analysis tabs -->
+          <button class="tab-btn" data-tab="steps" onclick="setActiveTab('steps')">
+            🧐 Steps <span class="tab-badge" id="stepsBadge"></span>
+          </button>
+          <button class="tab-btn" data-tab="analysis" onclick="setActiveTab('analysis')">
+            🔬 Analysis
+          </button>
+          <!-- Phase 34 — Intelligence Dashboard tab -->
+          <button class="tab-btn" data-tab="intelligence" onclick="setActiveTab('intelligence')"
+            id="intelligenceTabBtn">
+            🧠 Intelligence <span class="tab-badge" id="intBadge" style="background:#bc8cff22;color:#bc8cff"></span>
+          </button>
+          <!-- Phase 35 — Enterprise Dashboard tab -->
+          <button class="tab-btn" data-tab="enterprise" onclick="setActiveTab('enterprise')" id="enterpriseTabBtn">
+            🏢 Enterprise <span class="tab-badge" id="entBadge" style="background:#f0883e22;color:#f0883e">P35</span>
+          </button>
+          <!-- Phase 11 — AI Team tab -->
+          <button class="tab-btn" data-tab="aiteam" onclick="setActiveTab('aiteam')" id="p11TeamTabBtn">
+            🤖 AI Team <span class="tab-badge" id="p11TeamBadge" style="background:#4caf5022;color:#4caf50">P11</span>
+          </button>
+          <!-- Support tab -->
+          <button class="tab-btn" data-tab="support" onclick="setActiveTab('support')" id="supportTabBtn">
+            🎫 Support <span class="tab-badge" id="supportBadge"
+              style="background:#bc8cff22;color:#bc8cff;display:none">0</span>
+          </button>
+
+          <!-- per-tab action strips -->
+          <span class="tab-actions" id="tabActLogs">
+            <label title="Hide noisy lines, keep only key markers and errors">
+              <input type="checkbox" id="quietMode" checked> Quiet
+            </label>
+            <label><input type="checkbox" id="autoScroll" checked> Auto-scroll</label>
+            <button class="btn tiny" onclick="clearLogView()">Clear</button>
+          </span>
+          <span class="tab-actions" id="tabActPreview" style="display:none">
+            <span id="previewHint" class="small">Live preview</span>
+            <button class="btn tiny" onclick="reloadPreview()">Reload</button>
+            <button class="btn tiny" onclick="openPreviewWindow()">Open ↗</button>
+          </span>
+          <span class="tab-actions" id="tabActFiles" style="display:none">
+            <span id="filesCount" class="small">0 files</span>
+            <button class="btn tiny" id="fsBtnNewFile" onclick="fsCreateFile()"
+              title="Create new file in selected folder (or root)" disabled>➕ File</button>
+            <button class="btn tiny" id="fsBtnNewFolder" onclick="fsCreateFolder()"
+              title="Create new folder in selected folder (or root)" disabled>📁 Folder</button>
+            <button class="btn tiny" id="fsBtnRename" onclick="fsRename()" title="Rename selected file or folder"
+              disabled>✏️ Rename</button>
+            <button class="btn tiny" id="fsBtnDelete" onclick="fsDelete()" title="Delete selected file or folder"
+              disabled>🗑️ Delete</button>
+            <button class="btn tiny" onclick="loadFilesTree()">Refresh</button>
+            <button class="btn tiny" onclick="downloadProject()">Download .zip</button>
+          </span>
+          <span class="tab-actions" id="tabActReasoning" style="display:none">
+            <span class="small muted">Live thoughts, decisions, reflections from the agent</span>
+            <button class="btn tiny" onclick="clearReasoning()">Clear</button>
+          </span>
+          <!-- Phase 22 — terminal/agents/timeline action strips -->
+
+          <span class="tab-actions" id="tabActTerminal" style="display:none">
+            <span class="small muted" id="terminalCwd">cwd: workspace</span>
+            <span id="terminalModeBadge" title="Click Settings to switch terminal mode" style="font-size:0.74rem;padding:2px 8px;border-radius:10px;
+                             background:#1f6feb22;color:#79c0ff;border:1px solid #1f6feb55;
+                             font-family:ui-monospace,monospace">mode: sandbox</span>
+            <button class="btn tiny" onclick="terminalToggleSettings()">Settings</button>
+            <button class="btn tiny" onclick="terminalClear()">Clear</button>
+            <button class="btn tiny" onclick="terminalLoadHistory()">History</button>
+          </span>
+          <span class="tab-actions" id="tabActAgents" style="display:none">
+            <span class="small muted">Live multi-agent status</span>
+            <button class="btn tiny" onclick="loadAgentsState()">Refresh</button>
+          </span>
+          <span class="tab-actions" id="tabActTimeline" style="display:none">
+            <span class="small muted">All past tasks</span>
+            <button class="btn tiny" onclick="loadTimeline()">Refresh</button>
+          </span>
+          <!-- Phase 32 — Steps + Analysis action strips -->
+          <span class="tab-actions" id="tabActSteps" style="display:none">
+            <span class="small muted">Live agent step trace with confidence + tokens</span>
+            <button class="btn tiny" onclick="loadStepTrace()">Refresh</button>
+          </span>
+          <span class="tab-actions" id="tabActAnalysis" style="display:none">
+            <span class="small muted">AI analysis results from uploaded files</span>
+            <button class="btn tiny" onclick="clearAnalysisResults()">Clear</button>
+          </span>
+        </div>
+
+        <!-- LOGS tab -->
+        <div class="tab-content" id="tabLogs">
+          <div class="log-pane">
+            <div id="planUserBox" class="plan-user hidden">
+              <div class="plan-user-label">What I'm doing</div>
+              <ol class="plan-user-list" id="planUserList"></ol>
+            </div>
+            <div class="log-area" id="logArea">
+              <div class="empty" id="logsEmpty">Enter a task and click Run to start 🚀</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PREVIEW tab -->
+        <div class="tab-content hidden" id="tabPreview">
+          <div class="preview-shell" id="previewShell">
+            <div class="preview-state" id="previewState" data-state="empty">
+              <div class="preview-state-card">
+                <div class="preview-state-title" id="previewStateTitle">No preview yet</div>
+                <div class="preview-state-copy" id="previewStateCopy">Run a task or open a session with previewable files.</div>
+                <div class="preview-state-actions">
+                  <button class="btn tiny" type="button" onclick="reloadPreview()">Reload</button>
+                  <button class="btn tiny" type="button" onclick="setTask('Build a simple landing page with HTML and CSS')">Starter</button>
+                </div>
+              </div>
+            </div>
+            <!-- Sandbox intentionally omits allow-same-origin so an
+                   agent-generated page can't read the parent (this app's)
+                   DOM or localStorage. Scripts/forms/popups still work. -->
+            <iframe id="previewIframe" class="preview-frame" src="about:blank"
+              sandbox="allow-scripts allow-forms allow-popups"></iframe>
+          </div>
+        </div>
+
+        <!-- FILES tab — Phase 20.6 integrated editor -->
+        <div class="tab-content hidden" id="tabFiles">
+          <div class="files-pane">
+            <div class="file-tree" id="fileTree">
+              <div class="ft-empty">No files yet.<br>Run a task to generate code.</div>
+            </div>
+            <div class="file-viewer">
+              <div class="file-viewer-header">
+                <span class="file-viewer-path" id="fileViewerPath">Pick a file from the tree</span>
+                <span style="margin-left:auto"></span>
+                <span class="small muted" id="fileViewerMeta"></span>
+              </div>
+
+              <!-- Phase 20.6 — Editor toolbar (above editor) -->
+              <div class="editor-toolbar" id="editorToolbar" style="display:none">
+                <span class="group">
+                  <button class="btn tiny" onclick="saveCurrentFile()" title="Save (Ctrl/Cmd+S)">💾 Save</button>
+                  <button class="btn tiny" onclick="toggleEditorFullscreen()" id="btnFullscreen"
+                    title="Toggle fullscreen">⛶ Fullscreen</button>
+                  <button class="btn tiny" onclick="toggleSessionPanel()" id="btnHidePanel"
+                    title="Hide right session panel">↔ Panel</button>
+                </span>
+                <span class="group">
+                  <button class="btn tiny" onclick="runAIAction('fix')" title="Ask AI to fix bugs">🛠 Fix</button>
+                  <button class="btn tiny" onclick="runAIAction('optimize')" title="Ask AI to optimize">⚡
+                    Optimize</button>
+                  <button class="btn tiny" onclick="runAIAction('explain')" title="Ask AI to explain">📖
+                    Explain</button>
+                  <button class="btn tiny" onclick="runAIAction('refactor')" title="Ask AI to refactor">♻
+                    Refactor</button>
+                  <button class="btn tiny hidden" id="pendingSuggBtn" onclick="acceptAllPending()"
+                    title="Apply all queued AI suggestions in order">
+                    ✓ Accept all <span id="pendingSuggCount">0</span>
+                  </button>
+                  <!-- Phase 22 — predictive suggestion chip -->
+                  <span class="btn tiny hidden" id="predictiveChip"
+                    style="background:#1f6feb33;border:1px solid #1f6feb;cursor:pointer" onclick="acceptPrediction()"
+                    title="Suggested next action">
+                  </span>
+                </span>
+                <span class="group">
+                  <button class="btn tiny" onclick="runCurrentFile()" title="Run in sandbox">▶ Run</button>
+                  <button class="btn tiny" onclick="testCurrentFile()" title="Generate + run tests">🧪 Tests</button>
+                </span>
+                <span class="save-status" id="saveStatus"></span>
+              </div>
+
+              <!-- Editor mount: Monaco for text, falls back to legacy
+                         pre/img viewer for binary content. -->
+              <div class="file-viewer-body" id="fileViewerBody">
+                <div class="empty">Select a file on the left to view its contents.</div>
+              </div>
+
+              <!-- Output panel below editor — collapsed by default -->
+              <div class="editor-output collapsed" id="editorOutput">
+                <div class="editor-output-header">
+                  <span class="title" id="editorOutputTitle">Output</span>
+                  <span id="editorOutputMeta"></span>
+                  <span style="margin-left:auto"></span>
+                  <button class="btn tiny" onclick="clearEditorOutput()">Clear</button>
+                  <button class="btn tiny" onclick="hideEditorOutput()">Hide</button>
+                </div>
+                <div class="editor-output-body" id="editorOutputBody"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI diff modal (#7 — safe apply) -->
+        <div class="diff-modal-backdrop" id="diffModal">
+          <div class="diff-modal">
+            <div class="diff-modal-header">
+              <h3 id="diffModalTitle">AI suggestion</h3>
+              <span class="small" id="diffModalSubtitle"></span>
+            </div>
+            <div class="diff-modal-body">
+              <div class="diff-mount" id="diffMount"></div>
+              <div class="diff-explain hidden" id="diffExplain"></div>
+            </div>
+            <div class="diff-modal-footer">
+              <button class="btn tiny" onclick="rejectDiff()">Reject</button>
+              <button class="btn tiny" onclick="saveDiffForLater()"
+                title="Queue this suggestion — apply later via the toolbar">
+                Save for later
+              </button>
+              <button class="btn tiny" onclick="acceptDiff()" id="diffAcceptBtn">Accept</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- REASONING tab — Phase 13 (A): live thoughts / decisions / reflections -->
+        <div class="tab-content hidden" id="tabReasoning">
+          <div class="reasoning-pane">
+            <section class="reasoning-section" data-kind="thoughts">
+              <header>
+                <span class="rs-dot" style="background:#79c0ff"></span>
+                <h3>Thoughts</h3>
+                <span class="rs-count" id="rsCountThoughts">0</span>
+                <span class="rs-help">Why the agent is choosing this approach</span>
+              </header>
+              <div class="rs-list" id="rsListThoughts">
+                <div class="rs-empty">No thoughts yet — start a task to see the agent's reasoning.</div>
+              </div>
+            </section>
+            <section class="reasoning-section" data-kind="decisions">
+              <header>
+                <span class="rs-dot" style="background:#d2a8ff"></span>
+                <h3>Decisions</h3>
+                <span class="rs-count" id="rsCountDecisions">0</span>
+                <span class="rs-help">Strategy picks, replans, adapt steps</span>
+              </header>
+              <div class="rs-list" id="rsListDecisions">
+                <div class="rs-empty">No decisions yet.</div>
+              </div>
+            </section>
+            <section class="reasoning-section" data-kind="reflections">
+              <header>
+                <span class="rs-dot" style="background:#3fb950"></span>
+                <h3>Reflections</h3>
+                <span class="rs-count" id="rsCountReflections">0</span>
+                <span class="rs-help">Post-step evaluation and what changes next</span>
+              </header>
+              <div class="rs-list" id="rsListReflections">
+                <div class="rs-empty">No reflections yet.</div>
+              </div>
+            </section>
+
+            <!-- Phase 13C — Prior Experience (semantic memory recall) -->
+            <section class="reasoning-section" data-kind="recall">
+              <header>
+                <span class="rs-dot" style="background:#a371f7"></span>
+                <h3>Prior Experience</h3>
+                <span class="rs-count" id="rsCountRecall">0</span>
+                <span class="rs-help">What memory recalled before planning</span>
+              </header>
+              <div class="rs-list" id="rsListRecall">
+                <div class="rs-empty">No recalls yet — memory pulls related past tasks at the start of each run.</div>
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <!-- Phase 22 — TERMINAL tab -->
+        <div class="tab-content hidden" id="tabTerminal">
+          <div class="terminal-pane"
+            style="display:flex;flex-direction:column;height:100%;font-family:ui-monospace,'SF Mono',Menlo,monospace">
+            <!-- Phase 24 — collapsible mode + bridge settings panel -->
+            <div id="terminalSettings"
+              style="display:none;padding:10px 12px;border-bottom:1px solid var(--border);background:var(--card);font-family:system-ui,sans-serif">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+                <strong style="font-size:0.85rem">Terminal mode</strong>
+                <label style="display:flex;align-items:center;gap:4px;font-size:0.82rem">
+                  <input type="radio" name="terminalMode" value="sandbox" checked
+                    onchange="terminalOnModeChange(this.value)"> Sandbox
+                  <span class="muted" style="font-size:0.72rem">(safe, in-app)</span>
+                </label>
+                <label style="display:flex;align-items:center;gap:4px;font-size:0.82rem">
+                  <input type="radio" name="terminalMode" value="local" onchange="terminalOnModeChange(this.value)">
+                  Local Bridge
+                  <span class="muted" style="font-size:0.72rem">(your machine)</span>
+                </label>
+              </div>
+              <div id="terminalLocalWarning"
+                style="display:none;background:#5a1d1d33;border:1px solid #f8514955;color:#ffa198;padding:8px 10px;border-radius:6px;font-size:0.78rem;line-height:1.45;margin-bottom:8px">
+                <strong>Warning — Local Bridge runs commands on YOUR computer</strong> with full
+                permissions of the user who started the bridge script. There is NO sandbox or
+                blocklist. Anything an agent (or you) types here can install packages, modify
+                files, exfiltrate data, or run arbitrary code. Only enable this if you trust
+                every agent and tab connected to this app, run the bridge bound to
+                <code>127.0.0.1</code>, and set a strong token.
+              </div>
+              <div id="terminalBridgeFields" style="display:none">
+                <div
+                  style="display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center;margin-bottom:8px">
+                  <label style="font-size:0.78rem" for="terminalBridgeUrl">Bridge URL</label>
+                  <input id="terminalBridgeUrl" type="text" placeholder="http://127.0.0.1:5002"
+                    style="background:#0d1117;border:1px solid var(--border);color:#c9d1d9;padding:4px 8px;border-radius:4px;font-family:ui-monospace,monospace;font-size:0.8rem">
+                  <label style="font-size:0.78rem" for="terminalBridgeToken">Token</label>
+                  <input id="terminalBridgeToken" type="password" placeholder="(optional, recommended)"
+                    autocomplete="off"
+                    style="background:#0d1117;border:1px solid var(--border);color:#c9d1d9;padding:4px 8px;border-radius:4px;font-family:ui-monospace,monospace;font-size:0.8rem">
+                </div>
+                <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+                  <button class="btn tiny" onclick="terminalCheckBridge()">Test connection</button>
+                  <button class="btn tiny" onclick="terminalSaveMode()">Save</button>
+                  <button class="btn tiny" onclick="terminalToggleSettings()">Close</button>
+                  <span id="terminalBridgeStatus" class="muted" style="font-size:0.74rem;margin-left:6px"></span>
+                </div>
+                <div class="muted" style="font-size:0.72rem;margin-top:6px">
+                  Run <code>python tools/local_terminal_bridge.py</code> on your machine.
+                  Set <code>LOCAL_BRIDGE_TOKEN</code> in that shell first if you want token auth.
+                </div>
+              </div>
+              <div id="terminalSandboxNote" class="muted" style="font-size:0.74rem">
+                Sandbox mode runs commands inside this app's workspace with a strict blocklist
+                (rm, sudo, curl, wget, kill, …), 10s timeout, 256KB output cap.
+              </div>
+              <!-- Phase 25 — AI automation toggle + setup buttons -->
+              <div id="aiAutomationSection" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+                  <strong style="font-size:0.85rem">AI automation</strong>
+                  <span class="muted" style="font-size:0.72rem">(let agents run terminal commands through a strict
+                    whitelist)</span>
+                </div>
+                <label style="display:flex;align-items:center;gap:6px;font-size:0.8rem;margin-bottom:4px">
+                  <input id="aiTerminalEnabled" type="checkbox" onchange="aiSaveSettings()">
+                  Allow AI to run terminal commands
+                </label>
+                <label style="display:flex;align-items:center;gap:6px;font-size:0.8rem;margin-bottom:4px">
+                  <input id="aiAllowInstall" type="checkbox" onchange="aiSaveSettings()">
+                  Auto-approve <code>pip install</code> / <code>npm install</code>
+                </label>
+                <label style="display:flex;align-items:center;gap:6px;font-size:0.8rem;margin-bottom:8px">
+                  <input id="aiAllowRun" type="checkbox" checked onchange="aiSaveSettings()">
+                  Auto-approve <code>python script.py</code> / <code>npm run</code>
+                </label>
+                <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+                  <button class="btn tiny" onclick="aiRunSetup()">Run Setup</button>
+                  <button class="btn tiny" onclick="aiAutoFixEnv()">Auto Fix Environment</button>
+                  <span id="aiAutomationStatus" class="muted" style="font-size:0.74rem;margin-left:4px"></span>
+                </div>
+                <div class="muted" style="font-size:0.72rem;margin-top:6px">
+                  Whitelist: <code>pip install</code>, <code>npm install/run/test</code>,
+                  <code>python &lt;file&gt;</code>, <code>node &lt;file&gt;</code>, plus read-only
+                  basics (ls, cat, grep, find, …). Hard-blocked: <code>rm</code>,
+                  <code>sudo</code>, <code>curl</code>, <code>wget</code>, shell metacharacters,
+                  <code>python -c</code>.
+                </div>
+              </div>
+            </div>
+            <div id="terminalOutput" style="display:none"></div>
+
+            <!-- Phase 32 — xterm.js REAL interactive terminal -->
+            <div id="xtermContainer" style="flex:1;min-height:0;background:#0c0c0c;position:relative">
+              <div id="xtermMount" style="width:100%;height:100%"></div>
+              <!-- Skeleton loader shown while PTY is initializing -->
+              <div id="xtermSkeleton" style="
+                        position:absolute;inset:0;background:#0c0c0c;
+                        padding:14px;display:flex;flex-direction:column;gap:6px;
+                        animation:skelPulse 1.6s ease-in-out infinite;
+                    ">
+                <div style="height:12px;width:60%;background:#1a2030;border-radius:4px"></div>
+                <div style="height:12px;width:40%;background:#1a2030;border-radius:4px"></div>
+                <div style="height:12px;width:75%;background:#1a2030;border-radius:4px"></div>
+                <div style="height:12px;width:30%;background:#1a2030;border-radius:4px"></div>
+                <div style="height:12px;width:55%;background:#1a2030;border-radius:4px"></div>
+              </div>
+            </div>
+
+            <!-- Toolbar below xterm -->
+            <div id="xtermToolbar" style="
+                    display:flex;gap:6px;padding:6px 10px;
+                    border-top:1px solid var(--border);
+                    background:var(--panel2);align-items:center;
+                ">
+              <span style="font-family:ui-monospace,monospace;color:var(--accent);font-size:0.82rem;opacity:0.7">
+                PTY
+              </span>
+              <span id="xtermStatus" style="font-size:0.72rem;color:var(--muted)">Initializing…</span>
+              <div style="flex:1"></div>
+              <button class="btn tiny" onclick="xtermRunQuick()" id="xtermRunBtn" title="Run command in terminal">▶
+                Run</button>
+              <input id="xtermQuickInput" type="text" placeholder="Quick command…" style="background:#0d1117;border:1px solid var(--border);color:var(--text);
+                                  padding:3px 8px;border-radius:5px;font-family:ui-monospace,monospace;
+                                  font-size:0.8rem;width:200px;outline:none;"
+                onkeydown="if(event.key==='Enter'){xtermRunQuick();}">
+              <button class="btn tiny" onclick="xtermClear()" title="Clear terminal">⎚ Clear</button>
+              <button class="btn tiny" onclick="xtermRestart()" title="Restart shell">↻ Restart</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 22 — AGENTS tab -->
+        <div class="tab-content hidden" id="tabAgents">
+          <div id="agentsPanel"
+            style="padding:14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px">
+            <div class="empty">Loading agent state…</div>
+          </div>
+        </div>
+
+        <!-- Phase 22 — TIMELINE tab -->
+        <div class="tab-content hidden" id="tabTimeline">
+          <div id="timelinePanel" style="padding:14px;overflow:auto;height:100%">
+            <div class="empty">Loading timeline…</div>
+          </div>
+        </div>
+
+        <!-- Phase 31 — OBSERVABILITY DASHBOARD tab -->
+        <div class="tab-content hidden" id="tabObservability">
+          <div class="obs-pane">
+            <!-- KPI Cards Row -->
+            <div class="obs-grid" id="obsGrid">
+              <div class="obs-card blue">
+                <div class="obs-label">Total Sessions</div>
+                <div class="obs-value" id="obsTotal">—</div>
+                <div class="obs-sub">all time</div>
+              </div>
+              <div class="obs-card green">
+                <div class="obs-label">Success Rate</div>
+                <div class="obs-value" id="obsSuccessRate">—</div>
+                <div class="obs-sub">% of completed</div>
+              </div>
+              <div class="obs-card yellow">
+                <div class="obs-label">Currently Running</div>
+                <div class="obs-value" id="obsRunning">—</div>
+                <div class="obs-sub">active sessions</div>
+              </div>
+              <div class="obs-card purple">
+                <div class="obs-label">CPU Usage</div>
+                <div class="obs-value" id="obsCpu">—</div>
+                <div class="obs-sub">current %</div>
+              </div>
+              <div class="obs-card">
+                <div class="obs-label">Memory Used</div>
+                <div class="obs-value" id="obsMem">—</div>
+                <div class="obs-sub">GB in use</div>
+              </div>
+              <div class="obs-card blue">
+                <div class="obs-label">Python Version</div>
+                <div class="obs-value" id="obsPython" style="font-size:1rem">—</div>
+                <div class="obs-sub">runtime</div>
+              </div>
+            </div>
+
+            <!-- Success Rate Progress Bar -->
+            <div class="obs-section-title">Task Success Rate</div>
+            <div class="obs-bar-wrap">
+              <div class="obs-bar-label">
+                <span>0%</span>
+                <span id="obsSuccessRateBar">0%</span>
+                <span>100%</span>
+              </div>
+              <div class="obs-bar-track">
+                <div class="obs-bar-fill" id="obsBarFill" style="width:0%"></div>
+              </div>
+            </div>
+
+            <!-- Safety Limits -->
+            <div class="obs-section-title">Phase 30 Safety Limits</div>
+            <div class="obs-safety-grid">
+              <div class="obs-safety-item">
+                <div class="sv" id="obsSafetyIter">—</div>
+                <div class="sk">Max Iterations</div>
+              </div>
+              <div class="obs-safety-item">
+                <div class="sv" id="obsSafetyCmd">—</div>
+                <div class="sk">Max Commands</div>
+              </div>
+              <div class="obs-safety-item">
+                <div class="sv" id="obsSafetyRuntime">—</div>
+                <div class="sk">Max Runtime (s)</div>
+              </div>
+            </div>
+
+            <!-- Refresh row -->
+            <div class="obs-refresh-row">
+              <span class="obs-last-updated" id="obsLastUpdated">Not loaded yet</span>
+              <button class="btn tiny" onclick="loadObservability()">&#8635; Refresh</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 32 — STEP TIMELINE tab -->
+        <div class="tab-content hidden" id="tabSteps">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px 0;flex-shrink:0">
+            <span
+              style="font-size:0.68rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);font-weight:600">Agent
+              Step Trace</span>
+            <div style="display:flex;gap:6px">
+              <button class="btn tiny" onclick="loadStepTrace()">&#8635; Refresh</button>
+              <button class="btn tiny" onclick="clearSteps()">Clear</button>
+            </div>
+          </div>
+          <div id="stepTimeline" class="step-timeline" style="flex:1;overflow-y:auto">
+            <div style="padding:30px;text-align:center;color:var(--muted);font-size:0.82rem">
+              Run a task to see the step-by-step agent trace here.
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 32 — ANALYSIS RESULTS tab -->
+        <div class="tab-content hidden" id="tabAnalysis">
+          <div style="overflow-y:auto;height:100%" id="analysisResultsPane">
+            <div style="padding:30px;text-align:center;color:var(--muted);font-size:0.82rem">
+              Upload an image or code file to see AI analysis here.
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 34 — Intelligence Dashboard panel -->
+        <div class="tab-content hidden" id="tabIntelligence" style="overflow-y:auto;padding:0">
+          <!-- Header bar -->
+          <div style="padding:12px 16px;border-bottom:1px solid var(--border);
+                        display:flex;align-items:center;gap:10px;background:var(--surface);
+                        position:sticky;top:0;z-index:5;">
+            <span style="font-size:1.1rem">🧠</span>
+            <strong style="font-size:0.9rem;background:linear-gradient(135deg,#bc8cff,#388bfd);
+                    -webkit-background-clip:text;-webkit-text-fill-color:transparent">
+              Phase 34 — Semi-AGI Intelligence
+            </strong>
+            <div style="flex:1"></div>
+            <button class="btn tiny" onclick="loadIntelligenceDashboard()" id="intRefreshBtn">⟳ Refresh</button>
+          </div>
+
+          <div style="padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:12px" id="intGrid">
+            <!-- Agent Squad -->
+            <div class="card" style="grid-column:1/-1">
+              <div class="card-header">🤖 Agent Squad (5 Specialized Agents)</div>
+              <div id="intAgents" style="display:flex;gap:8px;flex-wrap:wrap;padding:10px 0">
+                <div class="skel" style="height:60px;flex:1;border-radius:8px"></div>
+              </div>
+            </div>
+
+            <!-- LTM Stats -->
+            <div class="card">
+              <div class="card-header">📚 Long-Term Memory</div>
+              <div id="intLtmStats" style="padding:8px 0">
+                <div class="skel" style="height:80px;border-radius:6px"></div>
+              </div>
+            </div>
+
+            <!-- Tool Library -->
+            <div class="card">
+              <div class="card-header">🔧 Learned Tool Library</div>
+              <div id="intTools" style="font-size:0.78rem;max-height:180px;overflow-y:auto">
+                <div class="skel" style="height:80px;border-radius:6px"></div>
+              </div>
+            </div>
+
+            <!-- Task Patterns -->
+            <div class="card" style="grid-column:1/-1">
+              <div class="card-header">🗺️ Task Generalization Patterns</div>
+              <div id="intPatterns" style="font-size:0.78rem;max-height:160px;overflow-y:auto">
+                <div class="skel" style="height:60px;border-radius:6px"></div>
+              </div>
+            </div>
+
+            <!-- Message Bus feed -->
+            <div class="card" style="grid-column:1/-1">
+              <div class="card-header">📡 Agent Message Bus
+                <span class="badge" id="intMsgCount" style="background:#388bfd22;color:#388bfd;font-size:0.65rem">0
+                  msgs</span>
+              </div>
+              <div id="intMsgFeed" style="font-family:ui-monospace,monospace;font-size:0.72rem;
+                         max-height:200px;overflow-y:auto;padding:6px;
+                         background:#0d1117;border-radius:6px;border:1px solid var(--border)">
+                <span style="color:var(--muted)">Waiting for agent activity…</span>
+              </div>
+            </div>
+
+            <!-- Capabilities -->
+            <div class="card" style="grid-column:1/-1">
+              <div class="card-header">✅ System Capabilities</div>
+              <div id="intCaps" style="display:flex;flex-wrap:wrap;gap:6px;padding:6px 0">
+                <div class="skel" style="height:24px;width:200px;border-radius:12px"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase 35 — Enterprise Dashboard panel -->
+      <div class="tab-content hidden" id="tabEnterprise" style="overflow-y:auto;padding:0">
+        <!-- Header -->
+        <div style="padding:12px 16px;border-bottom:1px solid var(--border);
+                        display:flex;align-items:center;gap:10px;background:var(--surface);
+                        position:sticky;top:0;z-index:5;">
+          <span style="font-size:1.1rem">🏢</span>
+          <strong style="font-size:0.9rem;background:linear-gradient(135deg,#f0883e,#d29922);
+                    -webkit-background-clip:text;-webkit-text-fill-color:transparent">
+            Phase 35 — Enterprise Autonomous System
+          </strong>
+          <div style="flex:1"></div>
+          <button class="btn tiny" onclick="loadEnterpriseDashboard()" id="entRefreshBtn">⟳ Refresh</button>
+        </div>
+
+        <div style="padding:14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px" id="entGrid">
+
+          <!-- System Health row -->
+          <div class="card" style="grid-column:1/-1">
+            <div class="card-header">⚡ System Health</div>
+            <div id="entHealth" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:8px 0">
+              <div class="skel" style="height:64px;border-radius:8px"></div>
+              <div class="skel" style="height:64px;border-radius:8px"></div>
+              <div class="skel" style="height:64px;border-radius:8px"></div>
+              <div class="skel" style="height:64px;border-radius:8px"></div>
+            </div>
+          </div>
+
+          <!-- Worker Queue -->
+          <div class="card">
+            <div class="card-header">⚙️ Worker Queue
+              <span id="entQueueBadge" class="badge" style="background:#388bfd22;color:#388bfd"></span>
+            </div>
+            <div id="entQueue" style="font-size:0.78rem;max-height:160px;overflow-y:auto">
+              <div class="skel" style="height:80px;border-radius:6px"></div>
+            </div>
+            <div style="margin-top:8px" id="entWorkers"></div>
+          </div>
+
+          <!-- Cost Tracker -->
+          <div class="card">
+            <div class="card-header">💰 Cost Tracker (24h)</div>
+            <div id="entCosts" style="font-size:0.78rem">
+              <div class="skel" style="height:80px;border-radius:6px"></div>
+            </div>
+          </div>
+
+          <!-- Sandbox -->
+          <div class="card">
+            <div class="card-header">🔒 Sandbox
+              <span id="entSandboxBadge" class="badge" style="background:#3fb95022;color:#3fb950"></span>
+            </div>
+            <div id="entSandbox" style="font-size:0.78rem">
+              <div class="skel" style="height:80px;border-radius:6px"></div>
+            </div>
+          </div>
+
+          <!-- Model Router -->
+          <div class="card" style="grid-column:1/-1">
+            <div class="card-header">🔀 Model Router — Provider Status</div>
+            <div id="entModels" style="display:flex;flex-wrap:wrap;gap:8px;padding:6px 0">
+              <div class="skel" style="height:48px;flex:1;border-radius:8px"></div>
+            </div>
+          </div>
+
+          <!-- Workflow Launcher -->
+          <div class="card" style="grid-column:1/-1">
+            <div class="card-header">🚀 Autonomous Workflow Launcher</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;padding:8px 0">
+              <select id="entWorkflowSel" style="flex:0 0 180px;padding:6px 8px;
+                            background:var(--surface2);border:1px solid var(--border);
+                            border-radius:6px;color:var(--text);font-size:0.8rem">
+                <option value="generate_and_test">generate_and_test</option>
+                <option value="build_and_deploy">build_and_deploy</option>
+                <option value="generate_only">generate_only</option>
+                <option value="debug_existing">debug_existing</option>
+              </select>
+              <input id="entWorkflowTask" type="text" placeholder="Describe the task..." style="flex:1;padding:6px 10px;background:var(--surface2);
+                            border:1px solid var(--border);border-radius:6px;
+                            color:var(--text);font-size:0.8rem" />
+              <select id="entLangSel" style="flex:0 0 100px;padding:6px 8px;
+                            background:var(--surface2);border:1px solid var(--border);
+                            border-radius:6px;color:var(--text);font-size:0.8rem">
+                <option>python</option>
+                <option>javascript</option>
+                <option>bash</option>
+              </select>
+              <button class="btn primary" onclick="runEntWorkflow()" id="entRunBtn">▶ Run</button>
+            </div>
+            <div id="entWorkflowResult" style="font-size:0.78rem;margin-top:8px;
+                         background:#0d1117;border-radius:6px;border:1px solid var(--border);
+                         padding:8px;max-height:220px;overflow-y:auto;display:none">
+            </div>
+          </div>
+
+          <!-- Capabilities -->
+          <div class="card" style="grid-column:1/-1">
+            <div class="card-header">✅ Phase 35 Capabilities</div>
+            <div id="entCaps" style="display:flex;flex-wrap:wrap;gap:6px;padding:6px 0"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Support Tab Panel -->
+      <div class="tab-content hidden" id="tabSupport" style="padding:0;overflow:hidden;height:100%">
+        <div style="display:flex;height:100%;overflow:hidden">
+          <!-- Left: Ticket list -->
+          <div
+            style="width:300px;min-width:220px;border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden">
+            <div
+              style="padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px">
+              <span style="font-size:12px;font-weight:700;color:var(--text);flex:1">Support Tickets</span>
+              <button class="btn tiny" onclick="nxSupportNewTicket()"
+                style="background:#bc8cff;color:#0d1117;font-weight:700;border:none">+ New</button>
+            </div>
+            <!-- Filters -->
+            <div style="padding:8px 10px;border-bottom:1px solid var(--border);display:flex;gap:6px;flex-wrap:wrap">
+              <select id="nxSupportStatusFilter" onchange="nxSupportLoadTickets()"
+                style="flex:1;font-size:11px;background:var(--bg2);border:1px solid var(--border);color:var(--text);border-radius:4px;padding:3px 6px">
+                <option value="">All Status</option>
+                <option value="open">Open</option>
+                <option value="in_progress">In Progress</option>
+                <option value="resolved">Resolved</option>
+                <option value="closed">Closed</option>
+              </select>
+              <select id="nxSupportPriorityFilter" onchange="nxSupportLoadTickets()"
+                style="flex:1;font-size:11px;background:var(--bg2);border:1px solid var(--border);color:var(--text);border-radius:4px;padding:3px 6px">
+                <option value="">All Priority</option>
+                <option value="high">High</option>
+                <option value="medium">Medium</option>
+                <option value="low">Low</option>
+              </select>
+            </div>
+            <!-- Ticket list -->
+            <div id="nxSupportTicketList" style="flex:1;overflow-y:auto;padding:6px">
+              <div style="color:var(--muted);font-size:11px;text-align:center;padding:20px">Loading tickets…</div>
+            </div>
+          </div>
+          <!-- Right: Ticket detail / New ticket form -->
+          <div style="flex:1;display:flex;flex-direction:column;overflow:hidden">
+            <!-- New Ticket Form -->
+            <div id="nxSupportNewForm"
+              style="display:none;flex-direction:column;height:100%;padding:16px;gap:12px;overflow-y:auto">
+              <div style="font-size:14px;font-weight:700;color:var(--text)">🎫 Create Support Ticket</div>
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <label style="font-size:11px;color:var(--muted)">Subject</label>
+                <input id="nxTicketSubject" type="text" placeholder="Describe your issue briefly" maxlength="200"
+                  style="background:var(--bg2);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:8px 10px;font-size:13px;outline:none">
+              </div>
+              <div style="display:flex;gap:10px">
+                <div style="flex:1;display:flex;flex-direction:column;gap:6px">
+                  <label style="font-size:11px;color:var(--muted)">Priority</label>
+                  <select id="nxTicketPriority"
+                    style="background:var(--bg2);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:8px;font-size:13px">
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                    <option value="low">Low</option>
+                  </select>
+                </div>
+                <div style="flex:1;display:flex;flex-direction:column;gap:6px">
+                  <label style="font-size:11px;color:var(--muted)">Your Email (for updates)</label>
+                  <input id="nxTicketEmail" type="email" placeholder="you@example.com"
+                    style="background:var(--bg2);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:8px 10px;font-size:13px;outline:none">
+                </div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:6px;flex:1">
+                <label style="font-size:11px;color:var(--muted)">Message</label>
+                <textarea id="nxTicketMessage" rows="8" placeholder="Describe your issue in detail…"
+                  style="background:var(--bg2);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:8px 10px;font-size:13px;resize:vertical;outline:none;flex:1"></textarea>
+              </div>
+              <div style="display:flex;gap:8px">
+                <button class="btn" onclick="nxSupportCancelNew()"
+                  style="flex:1;background:var(--bg2);color:var(--text);border:1px solid var(--border)">Cancel</button>
+                <button class="btn" onclick="nxSupportSubmitTicket()"
+                  style="flex:2;background:#bc8cff;color:#0d1117;font-weight:700;border:none">Submit Ticket</button>
+              </div>
+              <div id="nxTicketFormMsg" style="font-size:12px;color:#3fb950;text-align:center;display:none"></div>
+            </div>
+            <!-- Ticket Detail View -->
+            <div id="nxSupportDetail" style="flex:1;display:flex;flex-direction:column;overflow:hidden">
+              <div id="nxSupportPlaceholder"
+                style="flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;color:var(--muted)">
+                <div style="font-size:32px">🎫</div>
+                <div style="font-size:13px">Select a ticket or create a new one</div>
+                <button class="btn" onclick="nxSupportNewTicket()"
+                  style="background:#bc8cff;color:#0d1117;font-weight:700;border:none;margin-top:8px">+ New
+                  Ticket</button>
+              </div>
+              <!-- Ticket header (hidden until ticket selected) -->
+              <div id="nxTicketHeader" style="display:none;padding:14px 16px;border-bottom:1px solid var(--border)">
+                <div style="display:flex;align-items:flex-start;gap:10px">
+                  <div style="flex:1">
+                    <div style="font-size:14px;font-weight:700;color:var(--text)" id="nxTicketTitle"></div>
+                    <div style="font-size:11px;color:var(--muted);margin-top:4px" id="nxTicketMeta"></div>
+                  </div>
+                  <div style="display:flex;gap:6px;align-items:center">
+                    <span id="nxTicketStatusBadge"
+                      style="font-size:10px;padding:3px 8px;border-radius:10px;font-weight:700"></span>
+                    <span id="nxTicketPriorityBadge"
+                      style="font-size:10px;padding:3px 8px;border-radius:10px;font-weight:700"></span>
+                  </div>
+                </div>
+                <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">
+                  <span style="font-size:10px;color:var(--muted)">Change status:</span>
+                  <button class="btn tiny" onclick="nxTicketSetStatus('in_progress')" style="font-size:10px">In
+                    Progress</button>
+                  <button class="btn tiny" onclick="nxTicketSetStatus('resolved')"
+                    style="font-size:10px;background:#3fb95022;color:#3fb950">Resolved</button>
+                  <button class="btn tiny" onclick="nxTicketSetStatus('closed')"
+                    style="font-size:10px;background:#f8514922;color:#f85149">Close</button>
+                </div>
+              </div>
+              <!-- Chat-style message thread -->
+              <div id="nxTicketMessages"
+                style="flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:10px"></div>
+              <!-- Reply area -->
+              <div id="nxTicketReplyArea" style="display:none;padding:12px 16px;border-top:1px solid var(--border)">
+                <div style="display:flex;gap:8px;align-items:flex-end">
+                  <textarea id="nxTicketReplyInput" rows="2" placeholder="Type your reply…"
+                    style="flex:1;background:var(--bg2);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:8px 10px;font-size:13px;resize:none;outline:none"
+                    onkeydown="if(event.ctrlKey&&event.key==='Enter')nxSupportSendReply()"></textarea>
+                  <button class="btn" onclick="nxSupportSendReply()"
+                    style="background:#bc8cff;color:#0d1117;font-weight:700;border:none;padding:8px 14px">Send</button>
+                </div>
+                <div style="font-size:10px;color:var(--muted);margin-top:4px">Ctrl+Enter to send</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase 11 — AI Team Tab -->
+      <div class="tab-content hidden" id="tabAiteam" style="padding:0;overflow:hidden">
+        <div class="p11-team-tab">
+          <div class="p11-team-header">
+            <span class="p11-team-title">🤖 AI Team</span>
+            <span class="p11-status-badge" id="p11TeamStatus">Idle</span>
+            <div class="p11-team-controls">
+              <button class="p11-ctrl-btn" onclick="p11CancelTeam()" id="p11CancelBtn" disabled>Cancel</button>
+              <button class="p11-ctrl-btn primary" onclick="p11RunTeam()" id="p11RunBtn">▶ Run Team</button>
+            </div>
+          </div>
+          <div class="p11-task-input-wrap">
+            <textarea class="p11-task-input" id="p11TaskInput" rows="2"
+              placeholder="Describe a task for the AI team to solve together…"></textarea>
+          </div>
+          <div class="p11-agents-grid" id="p11AgentsGrid">
+            <div class="p11-agent-card" id="p11CardManager">
+              <div class="p11-agent-icon">🧠</div>
+              <div class="p11-agent-name">Manager</div>
+              <div class="p11-agent-status idle" id="p11StatusManager">idle</div>
+              <div class="p11-agent-task" id="p11TaskManager">—</div>
+            </div>
+            <div class="p11-agent-card" id="p11CardResearch">
+              <div class="p11-agent-icon">🔍</div>
+              <div class="p11-agent-name">Research</div>
+              <div class="p11-agent-status idle" id="p11StatusResearch">idle</div>
+              <div class="p11-agent-task" id="p11TaskResearch">—</div>
+            </div>
+            <div class="p11-agent-card" id="p11CardCoding">
+              <div class="p11-agent-icon">💻</div>
+              <div class="p11-agent-name">Coding</div>
+              <div class="p11-agent-status idle" id="p11StatusCoding">idle</div>
+              <div class="p11-agent-task" id="p11TaskCoding">—</div>
+            </div>
+            <div class="p11-agent-card" id="p11CardDebug">
+              <div class="p11-agent-icon">🐛</div>
+              <div class="p11-agent-name">Debug</div>
+              <div class="p11-agent-status idle" id="p11StatusDebug">idle</div>
+              <div class="p11-agent-task" id="p11TaskDebug">—</div>
+            </div>
+          </div>
+          <div class="p11-log-area" id="p11LogArea">
+            <div style="color:var(--muted);font-size:10px;padding:6px 0">Team log will appear here once a run starts…
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-resize" id="splitCR" title="Drag to resize"></div>
+
+      <!-- RIGHT — status / decisions / output (resizable, Phase 6.7) -->
+      <div class="right" id="rightCol">
+        <div class="right-pane" id="rp-status" style="height:300px">
+          <div class="pane-header">
+            <h2>Status</h2>
+            <span id="stStepBadge" class="step-badge" style="display:none"></span>
+            <span id="stModelBadge" class="model-badge" style="margin-left:auto;display:none"></span>
+          </div>
+          <div class="pane-body">
+            <div class="status-grid">
+              <div class="label">Status</div>
+              <div class="value"><span class="pill idle" id="stStatus">No session</span></div>
+              <div class="label">Mode</div>
+              <div class="value muted" id="stMode">—</div>
+              <div class="label">Stage</div>
+              <div class="value muted" id="stStage">—</div>
+              <div class="label">Step</div>
+              <div class="value muted" id="stStep">—</div>
+              <div class="label">Model</div>
+              <div class="value muted" id="stModel">—</div>
+              <div class="label">Retries</div>
+              <div class="value" id="stRetry">0</div>
+              <div class="label">Elapsed</div>
+              <div class="value" id="stElapsed">—</div>
+              <div class="label">Session</div>
+              <div class="value muted" id="stSession">—</div>
+              <!-- Phase 30 Observability Metrics -->
+              <div class="label">Iterations</div>
+              <div class="value" id="stIterations">—</div>
+              <div class="label">Commands</div>
+              <div class="value" id="stCommands">—</div>
+              <div class="label">Term Reason</div>
+              <div class="value muted" id="stTermReason">—</div>
+            </div>
+            <div class="session-actions">
+              <button class="btn danger tiny" id="actStop" onclick="stopSession()" disabled>Stop</button>
+              <button class="btn tiny" id="actRestart" onclick="restartSession()" disabled>Restart</button>
+              <button class="btn tiny" id="actDelete" onclick="deleteSession()" disabled>Delete</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="resize-handle" data-target="rp-status" title="Drag to resize"></div>
+
+        <div class="right-pane" id="rp-decisions" style="height:240px">
+          <div class="pane-header">
+            <h2>Decision Trace</h2>
+          </div>
+          <div class="pane-body" id="decisionList">
+            <div class="empty" style="padding:16px 0">No decisions yet.</div>
+          </div>
+        </div>
+
+        <div class="resize-handle" data-target="rp-decisions" title="Drag to resize"></div>
+
+        <div class="right-pane flex" id="rp-output">
+          <div class="pane-header">
+            <h2>Output</h2>
+          </div>
+          <div class="pane-body">
+            <div class="result-block">
+              <div class="sub">Validation</div>
+              <div class="result-box muted" id="outValidation">Nothing yet.</div>
+            </div>
+            <div class="result-block">
+              <div class="sub">Final Result</div>
+              <div class="result-box muted" id="outResult">Nothing yet.</div>
+            </div>
+            <div class="result-block">
+              <div class="sub">Usage (estimated)</div>
+              <div class="result-box muted" id="outUsage">No calls yet.</div>
+            </div>
+          </div>
+        </div>
+        <!-- Hidden status field kept for compatibility -->
+        <span id="stError" style="display:none"></span>
+      </div>
+    </div>
+
+    <!-- ─── Settings modal ───────────────────────────────────────────── -->
+    <div class="modal-backdrop" id="settingsBackdrop" onclick="onBackdropClick(event)">
+      <div class="modal" id="settingsModal" onclick="event.stopPropagation()">
+        <div class="modal-head">
+          <h2>⚙ Settings</h2>
+          <button class="close-btn" onclick="closeSettings()" title="Close">×</button>
+        </div>
+        <div class="modal-body">
+          <div class="settings-tabs">
+            <button class="settings-tab active" data-stab="api" onclick="switchSettingsTab('api')">Providers &amp;
+              API</button>
+            <button class="settings-tab" data-stab="intelligence" onclick="switchSettingsTab('intelligence')">🧠
+              Intelligence</button>
+            <button class="settings-tab" data-stab="plan" onclick="switchSettingsTab('plan')">💳 Plan</button>
+            <button class="settings-tab" data-stab="sessions" onclick="switchSettingsTab('sessions')">Sessions</button>
+            <button class="settings-tab" data-stab="security" onclick="switchSettingsTab('security')">🔐
+              Security</button>
+            <button class="settings-tab" data-stab="memory" onclick="switchSettingsTab('memory')">Memory</button>
+            <button class="settings-tab" data-stab="advanced" onclick="switchSettingsTab('advanced')">Advanced</button>
+            <button class="settings-tab" data-stab="billing-setup" onclick="switchSettingsTab('billing-setup')">💳
+              Billing Setup</button>
+            <button class="settings-tab" data-stab="account" onclick="switchSettingsTab('account')">Account</button>
+          </div>
+
+          <!-- API tab -->
+          <div class="settings-pane active" id="spane-api">
+            <div class="section">
+              <h3>API Mode</h3>
+              <div class="mode-toggle">
+                <div class="mode-opt active" id="settingsModeManaged" onclick="setMode('managed')">
+                  Use Platform AI <small>Recommended — no setup</small>
+                </div>
+                <div class="mode-opt" id="settingsModeByok" onclick="setMode('byok')">
+                  Use My Own APIs <small>Advanced — BYOK</small>
+                </div>
+              </div>
+            </div>
+
+            <div id="managedPanel">
+              <div class="section">
+                <h3>Platform Providers</h3>
+                <div class="api-list" id="apiList">
+                  <div class="api-row">
+                    <div class="dot off"></div>Loading…
+                  </div>
+                </div>
+                <div id="warnBox" style="margin-top:8px;display:none">
+                  <div class="info-box warn">
+                    No platform API keys configured. Add one via Secrets
+                    (e.g. <code>GROQ_API_KEY</code>, <code>GEMINI_API_KEY</code>)
+                    or switch to BYOK above.<br>
+                    Free Groq key at <a href="https://console.groq.com" target="_blank">console.groq.com</a>
+                  </div>
+                </div>
+              </div>
+              <div class="section">
+                <h3>Managed Limits</h3>
+                <div id="limitsBox" class="info-box">Loading…</div>
+              </div>
+            </div>
+
+            <div id="byokPanel" style="display:none">
+              <!-- Phase 5: Routing recommendation -->
+              <div class="section" id="p5RoutingRec" style="display:none">
+                <h3>Intelligent Routing</h3>
+                <div class="p5-route-info" style="display:block">
+                  <div>For current plan: <span class="p5-ri-prov" id="p5RecProv">—</span></div>
+                  <div class="p5-ri-chain" id="p5RecChain" style="margin-top:3px"></div>
+                </div>
+              </div>
+              <div class="section">
+                <h3>Your API Keys
+                  <span style="font-size:0.72rem;font-weight:400;color:var(--muted);margin-left:8px">order = fallback
+                    priority</span>
+                </h3>
+                <!-- Phase 5: Category-grouped provider list -->
+                <div id="providerList">
+                  <div class="p5-byok-cat-header">
+                    <span>🔵</span> Core Providers
+                  </div>
+                  <div id="p5ByokCore"></div>
+                  <div class="p5-byok-cat-header" style="margin-top:8px">
+                    <span>⚡</span> High Value
+                  </div>
+                  <div id="p5ByokHighValue"></div>
+                  <div class="p5-byok-cat-header" style="margin-top:8px">
+                    <span>🌐</span> Open / Fallback
+                  </div>
+                  <div id="p5ByokOpen"></div>
+                  <div class="p5-byok-cat-header" style="margin-top:8px">
+                    <span>🎨</span> Multimodal
+                  </div>
+                  <div id="p5ByokMultimodal"></div>
+                </div>
+              </div>
+              <div class="section">
+                <button class="btn primary" style="width:100%" onclick="saveConfig(false, true)">Save BYOK
+                  Configuration</button>
+                <button class="btn" style="width:100%;margin-top:6px" onclick="p5TestAllKeys()">🔍 Test All
+                  Keys</button>
+              </div>
+              <div class="section">
+                <div class="info-box">
+                  Keys stay in memory and are injected into the agent subprocess only.
+                  They are <b>never</b> echoed back to the browser in plaintext or written to logs.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Intelligence tab (Phase 6) -->
+          <div class="settings-pane" id="spane-intelligence">
+
+            <!-- Priority Selector -->
+            <div class="section">
+              <h3>Routing Priority
+                <span style="font-size:0.72rem;font-weight:400;color:var(--muted);margin-left:8px">Affects all AUTO
+                  routing decisions</span>
+              </h3>
+              <div class="p6-priority-row" id="p6PriorityRow">
+                <button class="p6-prio-btn cheap" onclick="p6SetPriority('cheap',this)">💰 Cheapest<br><small>Minimize
+                    cost</small></button>
+                <button class="p6-prio-btn fast" onclick="p6SetPriority('fast',this)">⚡ Fastest<br><small>Min
+                    latency</small></button>
+                <button class="p6-prio-btn smart" onclick="p6SetPriority('smart',this)">🧠 Smartest<br><small>Best
+                    quality</small></button>
+              </div>
+              <div class="info-box" id="p6PrioDesc" style="font-size:0.76rem;margin-top:6px">
+                Currently using <b id="p6PrioLabel">fast</b> routing — optimizes for response speed.
+              </div>
+            </div>
+
+            <!-- Provider Lock -->
+            <div class="section">
+              <h3>Provider Lock <span style="font-size:0.72rem;font-weight:400;color:var(--muted);margin-left:8px">Pin a
+                  specific provider</span></h3>
+              <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap" id="p6LockRow">
+                <button class="p6-lock-btn" onclick="p6LockProvider('auto')" id="p6Lock_auto">🔓 Auto
+                  (unlocked)</button>
+              </div>
+              <div class="info-box" style="font-size:0.76rem;margin-top:6px" id="p6LockDesc">
+                No lock — the router chooses the best provider automatically.
+              </div>
+            </div>
+
+            <!-- Model Intelligence Table -->
+            <div class="section">
+              <h3>Model Intelligence
+                <button class="btn tiny" style="float:right" onclick="p6LoadIntelPanel()">Refresh</button>
+              </h3>
+              <div class="info-box" style="font-size:0.76rem;margin-bottom:10px">
+                Compare all providers side-by-side. Latency bars show estimated response time (shorter = faster). Bold
+                rows have runtime measurements.
+              </div>
+              <div id="p6IntelTable">
+                <div class="empty" style="padding:14px 0">Loading…</div>
+              </div>
+            </div>
+
+            <!-- Real-time Performance Tracking -->
+            <div class="section">
+              <h3>Live Performance <button class="btn tiny" style="float:right"
+                  onclick="p6LoadPerfBadges()">Refresh</button></h3>
+              <div id="p6PerfBadges">
+                <div class="empty" style="padding:8px 0">No runtime data yet — data is collected as you use the system.
+                </div>
+              </div>
+            </div>
+
+            <!-- Phase 14: Self-Improvement Controls -->
+            <div class="section" id="p14SettingsSection">
+              <h3>🧠 Self-Improving AI <span
+                  style="font-size:0.72rem;font-weight:400;color:var(--muted);margin-left:8px">Phase 14</span></h3>
+              <div class="info-box" style="font-size:0.76rem;margin-bottom:10px">
+                The system learns from every task — improving prompts, recognizing failure patterns, and reusing
+                successful strategies.
+              </div>
+              <label style="display:flex;align-items:center;gap:10px;cursor:pointer;margin-bottom:10px">
+                <input type="checkbox" id="p14LearningToggle" checked onchange="p14SaveSettings()">
+                <span><b>Enable Learning</b>
+                  <small style="display:block;color:var(--muted)">Analyze completed tasks and store meta-learnings
+                    (async, non-blocking)</small>
+                </span>
+              </label>
+              <label style="display:flex;align-items:center;gap:10px;cursor:pointer;margin-bottom:10px">
+                <input type="checkbox" id="p14AutoOptToggle" checked onchange="p14SaveSettings()">
+                <span><b>Auto Prompt Optimization</b>
+                  <small style="display:block;color:var(--muted)">Inject proven strategies from past successful tasks
+                    into new prompts</small>
+                </span>
+              </label>
+              <!-- Phase 13: Context Compression toggle -->
+              <div style="border-top:1px solid var(--panel-border);margin:8px 0 10px"></div>
+              <h3 style="margin-bottom:8px">⚡ Context Compression <span
+                  style="font-size:0.72rem;font-weight:400;color:var(--muted);margin-left:8px">Phase 13</span></h3>
+              <div class="info-box" style="font-size:0.76rem;margin-bottom:8px">
+                Auto-summarizes long conversations to reduce token usage by 50–80% while preserving full context.
+              </div>
+              <div style="font-size:11px;color:var(--text-dim)">
+                Trigger: <b id="p13ThresholdVal">10</b> messages → automatic background compression
+              </div>
+              <div style="margin-top:10px;display:flex;gap:6px">
+                <button class="btn" style="flex:1;font-size:11px" onclick="p14LoadInsights()">↺ View Insights</button>
+                <button class="btn" style="flex:1;font-size:11px;color:#f87171" onclick="p14ResetLearning()">🗑 Reset
+                  Memory</button>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Plan tab -->
+          <div class="settings-pane" id="spane-plan">
+            <div class="section">
+              <h3>Subscription Plan</h3>
+              <div id="p8CurrentPlanBlock" style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+                <div id="p8SettingsPlanBadge" style="font-size:13px;font-weight:700;color:var(--accent)">—</div>
+                <div id="p8SettingsPlanExpiry" style="font-size:11px;color:var(--text-dim)"></div>
+              </div>
+              <button class="btn" onclick="p8OpenUpgradeModal()" style="margin-bottom:12px">
+                🚀 View / Upgrade Plans
+              </button>
+            </div>
+
+            <div class="section">
+              <h3>Usage This Period</h3>
+              <div id="p8SettingsUsage">Loading…</div>
+            </div>
+
+            <div class="section">
+              <h3>🎟 Coupon Code</h3>
+              <div class="p8-coupon-wrap">
+                <input class="p8-coupon-input" id="p8SettingsCouponInput" placeholder="ENTER CODE"
+                  onkeydown="if(event.key==='Enter') p8ApplyCouponSettings()" autocomplete="off">
+                <button class="p8-coupon-btn" onclick="p8ApplyCouponSettings()">Apply</button>
+              </div>
+              <div class="p8-coupon-msg" id="p8SettingsCouponMsg"></div>
+              <div style="font-size:10px;color:var(--text-dim);margin-top:6px">
+                Try: <code>NEXORA</code> · <code>NEXORA90</code> · <code>ELITE7</code> · <code>TRYAGENT</code>
+              </div>
+            </div>
+
+            <div class="section" id="p8ByokPrioritySection">
+              <h3>BYOK Priority Mode <span
+                  style="font-size:10px;font-weight:400;color:var(--text-dim)">(Pro/Elite)</span></h3>
+              <label style="display:flex;align-items:center;gap:10px;cursor:pointer">
+                <input type="checkbox" id="p8ByokPriorityToggle" onchange="p8ToggleByokPriority(this.checked)">
+                <span><b>Priority routing when using BYOK keys</b>
+                  <small style="display:block;color:var(--muted)">
+                    Forces fastest provider selection and skips queue limits when
+                    using your own API keys. Simulates premium routing tier.
+                  </small>
+                </span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Sessions tab -->
+          <div class="settings-pane" id="spane-sessions">
+            <div class="section">
+              <h3>All Sessions <button class="btn tiny" style="float:right" onclick="loadSessions()">Refresh</button>
+              </h3>
+              <div id="sessionsList">
+                <div class="empty" style="padding:20px 0">No sessions yet.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Security tab -->
+          <div class="settings-pane" id="spane-security">
+            <div class="section">
+              <h3>Change Password</h3>
+              <div class="info-box" style="font-size:0.82rem;margin-bottom:14px">
+                Update your password. All other active sessions will be signed out immediately.
+                <strong style="color:var(--accent)"> Your current session stays active.</strong>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <div>
+                  <label style="font-size:0.78rem;color:var(--muted);display:block;margin-bottom:4px">Current
+                    Password</label>
+                  <input type="password" id="sec-old-pw" placeholder="••••••••"
+                    style="width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:8px 10px;color:var(--text);font-size:0.87rem">
+                </div>
+                <div>
+                  <label style="font-size:0.78rem;color:var(--muted);display:block;margin-bottom:4px">New Password <span
+                      style="color:var(--muted);font-weight:400">(min 8 chars)</span></label>
+                  <input type="password" id="sec-new-pw" placeholder="••••••••"
+                    style="width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:8px 10px;color:var(--text);font-size:0.87rem">
+                </div>
+                <div>
+                  <label style="font-size:0.78rem;color:var(--muted);display:block;margin-bottom:4px">Confirm New
+                    Password</label>
+                  <input type="password" id="sec-confirm-pw" placeholder="••••••••"
+                    style="width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:8px 10px;color:var(--text);font-size:0.87rem">
+                </div>
+                <div id="sec-pw-msg" style="font-size:0.82rem;min-height:18px"></div>
+                <button onclick="nxChangePassword()" id="sec-pw-btn"
+                  style="background:var(--purple,#bc8cff);color:#0d1117;border:none;border-radius:6px;padding:9px 20px;font-size:0.87rem;font-weight:700;cursor:pointer;font-family:inherit;align-self:flex-start">
+                  Update Password
+                </button>
+              </div>
+            </div>
+
+            <div class="section">
+              <h3 style="color:var(--muted)">Active Sessions</h3>
+              <div style="font-size:0.82rem;color:var(--muted);margin-bottom:10px">
+                Changing your password signs out all other devices. Use the Sessions tab to view and revoke individual
+                sessions.
+              </div>
+              <button class="btn" onclick="switchSettingsTab('sessions')" style="font-size:0.8rem">View All Sessions
+                →</button>
+            </div>
+          </div>
+
+          <!-- Memory tab -->
+          <div class="settings-pane" id="spane-memory">
+            <div class="section">
+              <h3>Stored Learnings <button class="btn tiny" style="float:right" onclick="loadMemory()">Refresh</button>
+              </h3>
+              <div id="memLearnings">
+                <div class="empty" style="padding:14px 0">Loading…</div>
+              </div>
+            </div>
+            <div class="section">
+              <h3>Recent Tasks</h3>
+              <div id="memTasks"></div>
+            </div>
+            <div class="section">
+              <h3>Saved Snippets</h3>
+              <div id="memSnippets"></div>
+            </div>
+            <!-- Phase 22 — Code Lessons (error → fix history) -->
+            <div class="section">
+              <h3>Code Lessons (Phase 20.2)
+                <button class="btn tiny" style="float:right" onclick="loadLessons()">Refresh</button>
+              </h3>
+              <div class="info-box" style="font-size:0.78rem">
+                Searchable error → fix history captured by the dev loop.
+              </div>
+              <input type="text" id="lessonsSearch" placeholder="Search error / fix…"
+                style="width:100%;padding:6px 10px;margin-top:8px;background:#0d1117;border:1px solid var(--border);color:var(--text);border-radius:4px"
+                oninput="loadLessons()">
+              <div id="lessonsList" style="margin-top:10px">
+                <div class="empty" style="padding:14px 0">Loading…</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Advanced tab -->
+          <div class="settings-pane" id="spane-advanced">
+            <div class="section">
+              <h3>Thinking Mode</h3>
+              <label style="display:flex;align-items:center;gap:10px;cursor:pointer">
+                <input type="checkbox" id="thinkingModeToggle" onchange="toggleThinkingMode(this.checked)" checked>
+                <span><b>Dual-layer thinking</b>
+                  <small style="display:block;color:var(--muted)">
+                    THINK → PLAN → EXECUTE → VERIFY → REFLECT → ADAPT.
+                    Decomposes complex tasks and retries with different
+                    strategies. Turn off to use the raw single-shot agent.
+                  </small>
+                </span>
+              </label>
+            </div>
+            <!-- Phase 19 — Self-driven goals -->
+            <div class="section">
+              <h3>Self-driven Goals (Beta)</h3>
+              <label style="display:flex;align-items:center;gap:10px;cursor:pointer">
+                <input type="checkbox" id="autoGoalsToggle" onchange="toggleAutoGoals(this.checked)">
+                <span><b>Proactive intelligence</b>
+                  <small style="display:block;color:var(--muted)">
+                    Watches for repeated failures and quietly creates
+                    low-priority background tasks to investigate them.
+                    Capped at 3/day with a 30-minute cooldown. Off by default.
+                  </small>
+                </span>
+              </label>
+              <div id="autoGoalsStatus" class="info-box" style="margin-top:8px;font-size:0.78rem">
+                Loading status…
+              </div>
+              <div style="display:flex;gap:8px;margin-top:8px">
+                <button class="btn" onclick="runGoalsNow()">Run now</button>
+                <button class="btn" onclick="refreshGoalsPanel()">Refresh</button>
+              </div>
+              <div id="autoGoalsList" style="margin-top:10px"></div>
+            </div>
+            <div class="section">
+              <h3>Force Model (optional)</h3>
+              <select id="modelSelect" class="model-select">
+                <option value="">Auto (intelligent routing)</option>
+                <optgroup label="── Core ──">
+                  <option value="openai">OpenAI (GPT-4o)</option>
+                  <option value="gemini">Google Gemini</option>
+                  <option value="anthropic">Anthropic (Claude)</option>
+                  <option value="groq">Groq (fastest)</option>
+                  <option value="openrouter">OpenRouter</option>
+                </optgroup>
+                <optgroup label="── High Value ──">
+                  <option value="xai">xAI (Grok)</option>
+                  <option value="azure">Azure OpenAI</option>
+                  <option value="bedrock">AWS Bedrock</option>
+                  <option value="together">Together AI</option>
+                  <option value="fireworks">Fireworks AI</option>
+                  <option value="nvidia">NVIDIA NIM</option>
+                </optgroup>
+                <optgroup label="── Open / Fallback ──">
+                  <option value="deepseek">DeepSeek</option>
+                  <option value="mistral">Mistral</option>
+                  <option value="cohere">Cohere</option>
+                  <option value="huggingface">HuggingFace</option>
+                </optgroup>
+                <optgroup label="── Multimodal ──">
+                  <option value="replicate">Replicate</option>
+                  <option value="elevenlabs">ElevenLabs (TTS)</option>
+                  <option value="deepgram">Deepgram (ASR)</option>
+                </optgroup>
+                <optgroup label="── Local ──">
+                  <option value="local">Ollama (local)</option>
+                </optgroup>
+              </select>
+              <div class="info-box" style="margin-top:8px">
+                Overrides routing for the next run. Leave on Auto for normal multi-model use.
+              </div>
+            </div>
+            <!-- Phase 22 / 23 — Unified Model Routing (per-role) -->
+            <div class="section">
+              <h3>Model Routing (Phase 23 — unified)
+                <button class="btn tiny" style="float:right" onclick="loadModelRouting()">Refresh</button>
+              </h3>
+              <div class="info-box" style="font-size:0.78rem">
+                Pick which model handles each role. <b>Planner</b> for
+                decomposition, <b>Coding</b> for Fix/Optimize/Refactor
+                and the dev-loop iterations, <b>Reasoning</b> for the
+                editor's Explain action. Leave a model field empty to
+                use the provider's default. Routing applies to every
+                provider — Gemini, Groq, OpenRouter, Together, NVIDIA,
+                Ollama. Pick <b>auto</b> to let the router rank
+                providers by health/cost (in that mode the per-role
+                model strings are ignored). When a specific provider
+                is pinned but down, the router falls back to the next
+                healthy one. The <b>reasoning</b> role automatically
+                falls back to the <b>coding</b> model when left blank.
+              </div>
+              <div id="modelRoutingBox" style="margin-top:8px">
+                <div class="empty" style="padding:8px 0">Loading…</div>
+              </div>
+            </div>
+            <!-- Phase 21.2 — Editor review policy -->
+            <div class="section">
+              <h3>AI Suggestion Review Policy</h3>
+              <div class="info-box" style="font-size:0.78rem">
+                Controls what happens after the editor's
+                Fix / Optimize / Explain / Refactor buttons return
+                a suggestion. <b>Request review</b> always shows
+                the diff modal. <b>Always proceed</b> auto-applies
+                every suggestion (use with care). <b>Agent decides</b>
+                auto-applies only small, safe changes that match
+                the thresholds below; everything else still goes
+                through the modal.
+              </div>
+              <div id="reviewPolicyBox" style="margin-top:8px">
+                <div class="empty" style="padding:8px 0">Loading…</div>
+              </div>
+            </div>
+            <div class="section">
+              <h3>Browser Host Allowlist</h3>
+              <div class="info-box" style="font-size:0.78rem">
+                Hosts the platform is allowed to reach when browsing or
+                contacting local services (e.g. Ollama). Defaults cover
+                local development. Foundation for the Phase&nbsp;21.3 SSRF
+                guard on the Ollama base URL.
+              </div>
+              <div id="allowlistList" style="margin-top:8px">
+                <div class="empty" style="padding:8px 0">Loading…</div>
+              </div>
+              <div class="allowlist-add">
+                <input type="text" id="allowlistInput" placeholder="e.g. localhost or 192.168.1.10"
+                  onkeydown="if(event.key==='Enter'){event.preventDefault();addBrowserAllowlistEntry();}">
+                <button class="btn" onclick="addBrowserAllowlistEntry()">Add</button>
+                <button class="btn tiny" onclick="loadBrowserAllowlist()">Refresh</button>
+              </div>
+            </div>
+            <div class="section">
+              <h3>About</h3>
+              <div class="info-box">
+                Multi-model AI agent with adaptive routing, validation, escalation,
+                and persistent memory. The CLI core (agent/router/tools) is unchanged
+                — this is a control layer over it.
+              </div>
+            </div>
+          </div>
+
+          <!-- ══ Billing Setup Guide tab ══ -->
+          <div class="settings-pane" id="spane-billing-setup">
+            <!-- Status card -->
+            <div class="section">
+              <h3>Razorpay Connection Status</h3>
+              <div id="webhookStatusCard"
+                style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:8px;border:1px solid var(--border);background:var(--panel2);margin-bottom:4px">
+                <span id="webhookStatusDot"
+                  style="width:10px;height:10px;border-radius:50%;flex-shrink:0;background:var(--muted)"></span>
+                <span id="webhookStatusLabel" style="font-size:13px;font-weight:600;color:var(--text)">Checking…</span>
+                <button class="btn tiny" onclick="loadWebhookStatus()" style="margin-left:auto">Refresh</button>
+              </div>
+              <div id="webhookStatusDetail" style="font-size:11px;color:var(--muted);margin-top:4px"></div>
+            </div>
+
+            <!-- Webhook URL -->
+            <div class="section">
+              <h3>Webhook URL</h3>
+              <div class="info-box" style="font-size:11px;margin-bottom:8px">
+                Copy this URL and paste it into your Razorpay Dashboard → Webhooks. Razorpay will call this endpoint
+                after every payment event to keep your subscriptions in sync.
+              </div>
+              <div style="display:flex;gap:6px;align-items:center">
+                <input id="webhookUrlInput" type="text" readonly
+                  style="flex:1;font-family:monospace;font-size:11px;background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:8px 10px;color:var(--accent)"
+                  value="Loading…">
+                <button class="btn tiny" onclick="copyWebhookUrl()">Copy</button>
+              </div>
+            </div>
+
+            <!-- Step-by-step guide -->
+            <div class="section">
+              <h3>Setup Guide</h3>
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <div style="display:flex;gap:12px;align-items:flex-start">
+                  <div
+                    style="min-width:22px;height:22px;border-radius:50%;background:var(--purple);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center">
+                    1</div>
+                  <div>
+                    <div style="font-size:13px;font-weight:600;color:var(--text)">Add Razorpay API Keys</div>
+                    <div style="font-size:11px;color:var(--muted);margin-top:2px">Go to Replit Secrets and add <code
+                        style="color:var(--accent)">RAZORPAY_KEY_ID</code> and <code
+                        style="color:var(--accent)">RAZORPAY_KEY_SECRET</code> from your Razorpay Dashboard → Settings →
+                      API Keys.</div>
+                  </div>
+                </div>
+                <div style="display:flex;gap:12px;align-items:flex-start">
+                  <div
+                    style="min-width:22px;height:22px;border-radius:50%;background:var(--purple);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center">
+                    2</div>
+                  <div>
+                    <div style="font-size:13px;font-weight:600;color:var(--text)">Register the Webhook</div>
+                    <div style="font-size:11px;color:var(--muted);margin-top:2px">In Razorpay Dashboard → Settings →
+                      Webhooks → Add New Webhook. Paste the webhook URL shown above.</div>
+                  </div>
+                </div>
+                <div style="display:flex;gap:12px;align-items:flex-start">
+                  <div
+                    style="min-width:22px;height:22px;border-radius:50%;background:var(--purple);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center">
+                    3</div>
+                  <div>
+                    <div style="font-size:13px;font-weight:600;color:var(--text)">Select Events</div>
+                    <div style="font-size:11px;color:var(--muted);margin-top:2px">Enable: <code
+                        style="color:var(--accent)">payment.captured</code> and <code
+                        style="color:var(--accent)">payment.failed</code> in the webhook event checkboxes.</div>
+                  </div>
+                </div>
+                <div style="display:flex;gap:12px;align-items:flex-start">
+                  <div
+                    style="min-width:22px;height:22px;border-radius:50%;background:var(--purple);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center">
+                    4</div>
+                  <div>
+                    <div style="font-size:13px;font-weight:600;color:var(--text)">Save Webhook Secret</div>
+                    <div style="font-size:11px;color:var(--muted);margin-top:2px">Razorpay will generate a <b>Webhook
+                        Secret</b>. Copy it and add it to Replit Secrets as <code
+                        style="color:var(--accent)">RAZORPAY_WEBHOOK_SECRET</code>. Then restart the app.</div>
+                  </div>
+                </div>
+                <div style="display:flex;gap:12px;align-items:flex-start">
+                  <div
+                    style="min-width:22px;height:22px;border-radius:50%;background:var(--green);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center">
+                    ✓</div>
+                  <div>
+                    <div style="font-size:13px;font-weight:600;color:var(--green)">Done — click Refresh above</div>
+                    <div style="font-size:11px;color:var(--muted);margin-top:2px">The status should update to ✅
+                      Connected once all three secrets are present.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Email config -->
+            <div class="section">
+              <h3>Email Notifications (Optional)</h3>
+              <div class="info-box" style="font-size:11px">
+                To send payment confirmation emails, add a <a href="https://resend.com" target="_blank"
+                  style="color:var(--accent)">Resend</a> API key as <code
+                  style="color:var(--accent)">EMAIL_API_KEY</code> in Replit Secrets. Set <code
+                  style="color:var(--accent)">EMAIL_FROM</code> to your verified sender address (e.g.
+                <code>billing@yourdomain.com</code>).
+              </div>
+            </div>
+          </div>
+
+          <!-- Account tab -->
+          <div class="settings-pane" id="spane-account">
+            <!-- Legal & Policies -->
+            <div class="section">
+              <h3>Legal &amp; Policies</h3>
+              <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">
+                <a href="/terms-of-service" target="_blank"
+                  style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--panel2,#1c2230);border:1px solid var(--border,#30363d);border-radius:8px;color:var(--text,#e6edf3);text-decoration:none;font-size:0.87rem;font-weight:600"
+                  onmouseover="this.style.borderColor='var(--purple,#bc8cff)'"
+                  onmouseout="this.style.borderColor='var(--border,#30363d)'">
+                  <span>📄 Terms of Service</span><span style="color:var(--muted,#8b949e);font-size:0.75rem">→</span>
+                </a>
+                <a href="/privacy-policy" target="_blank"
+                  style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--panel2,#1c2230);border:1px solid var(--border,#30363d);border-radius:8px;color:var(--text,#e6edf3);text-decoration:none;font-size:0.87rem;font-weight:600"
+                  onmouseover="this.style.borderColor='var(--purple,#bc8cff)'"
+                  onmouseout="this.style.borderColor='var(--border,#30363d)'">
+                  <span>🔒 Privacy Policy</span><span style="color:var(--muted,#8b949e);font-size:0.75rem">→</span>
+                </a>
+                <a href="/refund-policy" target="_blank"
+                  style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--panel2,#1c2230);border:1px solid var(--border,#30363d);border-radius:8px;color:var(--text,#e6edf3);text-decoration:none;font-size:0.87rem;font-weight:600"
+                  onmouseover="this.style.borderColor='var(--purple,#bc8cff)'"
+                  onmouseout="this.style.borderColor='var(--border,#30363d)'">
+                  <span>💳 Refund Policy</span><span style="color:var(--muted,#8b949e);font-size:0.75rem">→</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- Contact -->
+            <div class="section">
+              <h3>Support &amp; Contact</h3>
+              <div class="info-box" style="font-size:0.87rem">
+                For billing, privacy, or account issues, email us at<br>
+                <a href="mailto:support@nexora.ai" style="color:var(--accent);font-weight:600">support@nexora.ai</a>
+                <span style="color:var(--muted);font-size:0.8rem;display:block;margin-top:4px">We respond within 2
+                  business days.</span>
+              </div>
+            </div>
+
+            <!-- Data & Privacy -->
+            <div class="section">
+              <h3>Data &amp; Privacy</h3>
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <div
+                  style="padding:12px 14px;background:var(--panel2,#1c2230);border:1px solid var(--border,#30363d);border-radius:8px">
+                  <div style="font-size:0.87rem;font-weight:600;color:var(--text,#e6edf3);margin-bottom:4px">Request My
+                    Data</div>
+                  <div style="font-size:0.78rem;color:var(--muted,#8b949e);margin-bottom:10px">Receive a copy of all
+                    personal data associated with your account.</div>
+                  <button class="btn" onclick="nxRequestData()" style="font-size:0.8rem;padding:6px 14px">Request Data
+                    Export</button>
+                </div>
+                <div style="padding:12px 14px;background:#1f0d0d;border:1px solid #5a1d1d;border-radius:8px">
+                  <div style="font-size:0.87rem;font-weight:600;color:#f85149;margin-bottom:4px">Delete My Account</div>
+                  <div style="font-size:0.78rem;color:var(--muted,#8b949e);margin-bottom:10px">Permanently delete your
+                    account and all associated data. This action is <strong style="color:#f85149">irreversible</strong>.
+                  </div>
+                  <button onclick="nxShowDeleteModal()"
+                    style="background:#f85149;color:#fff;border:none;border-radius:6px;padding:6px 14px;font-size:0.8rem;cursor:pointer;font-family:inherit;font-weight:600">Delete
+                    Account</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <!-- Phase 28: Human-in-the-Loop Uncertainty Resolution Modal -->
+    <div id="uncertaintyModal"
+      style="display:none; position:fixed; bottom:20px; right:20px; width:350px; background:var(--panel2); border:1px solid var(--accent); border-radius:8px; padding:16px; box-shadow:0 10px 20px rgba(0,0,0,0.5); z-index:9999;">
+      <h3 style="color:var(--accent); margin-bottom:10px; font-size:1.1rem;" id="uncertaintyQuestion">System Uncertainty
+      </h3>
+      <div id="uncertaintyOptions" style="display:flex; flex-direction:column; gap:8px; margin-bottom:12px;"></div>
+      <div style="display:flex; gap:8px;">
+        <input type="text" id="uncertaintyCustomInput" placeholder="Custom response..."
+          style="flex:1; padding:6px; background:var(--bg); color:var(--text); border:1px solid var(--border); border-radius:4px;">
+        <button onclick="submitUncertainty('custom')"
+          style="padding:6px 12px; background:var(--accent); color:#000; border:none; border-radius:4px; cursor:pointer;">Submit</button>
+      </div>
+    </div>
+    <!-- ── FEEDBACK SYSTEM ──────────────────────────────────────────────────────── -->
+
+    <button id="feedback-fab" onclick="openFeedbackModal()">
+      <span>🐛</span> Report Issue
+    </button>
+
+    <div id="feedback-overlay" onclick="closeFeedbackOnOverlay(event)">
+      <div id="feedback-modal">
+        <button class="fb-close" onclick="closeFeedbackModal()" title="Close">×</button>
+        <h3>🐛 Report an Issue</h3>
+        <p class="fb-subtitle">Help us improve — tell us what went wrong or what you'd like to see.</p>
+
+        <div id="fb-form-body">
+          <label class="fb-label">Category</label>
+          <div class="fb-cats">
+            <div class="fb-cat selected" data-cat="bug" onclick="selectFbCat(this)">🐛 Bug</div>
+            <div class="fb-cat" data-cat="suggestion" onclick="selectFbCat(this)">💡 Suggestion</div>
+            <div class="fb-cat" data-cat="confusion" onclick="selectFbCat(this)">😕 Confusion</div>
+          </div>
+
+          <label class="fb-label">Message</label>
+          <textarea id="fb-message" class="fb-textarea" placeholder="Describe the issue or idea in detail…"></textarea>
+
+          <label class="fb-label">Email (optional)</label>
+          <input id="fb-email" type="email" class="fb-email-input"
+            placeholder="you@example.com — so we can follow up" />
+
+          <div id="fb-err" class="fb-err"></div>
+          <button class="fb-submit" id="fb-submit-btn" onclick="submitFeedback()">Send Report</button>
+        </div>
+
+        <div id="fb-success-body" class="fb-success" style="display:none">
+          <div class="fb-check">✅</div>
+          <h4>Feedback received!</h4>
+          <p>Thanks for helping make Nexora better. We'll review your report shortly.</p>
+        </div>
+      </div>
+    </div>
+
+  <script src="/static/js/runtime.js" defer></script>
+  <script src="/static/js/activity.js" defer></script>
+  <script src="/static/js/feedback.js" defer></script>
+  <script src="/static/js/dashboard.js" defer></script>
+
+<!-- Phase 12: Edit Prompt Modal -->
+<div class="p12-edit-overlay" id="p12EditOverlay" style="display:none" onclick="p12CloseEditModal(event)">
+  <div class="p12-edit-modal" onclick="event.stopPropagation()">
+    <h4>✏️ Edit prompt</h4>
+    <textarea id="p12EditTextarea" rows="4" placeholder="Edit your prompt…"></textarea>
+    <div class="p12-edit-actions">
+      <button class="p12-edit-cancel" onclick="p12CloseEditModal()">Cancel</button>
+      <button class="p12-edit-submit" onclick="p12SubmitEdit()">Re-run ↩</button>
+    </div>
+  </div>
+</div>
+
+  <script src="/static/js/evolution.js" defer></script>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     Phase 13 — Intelligent Context Compression & Memory Optimization
+     Phase 14 — Self-Improving AI System (Auto Learning + Prompt Optimization)
+     ══════════════════════════════════════════════════════════════════════ -->
+  <script src="/static/js/agent_mem.js" defer></script>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     Phase 15 — AI Learning Dashboard
+     Phase 16 — Autonomous Goal-Driven AI
+     ══════════════════════════════════════════════════════════════════════ -->
+  <script src="/static/js/history.js" defer></script>
+  <script src="/static/js/execution_graph.js" defer></script>
+  <script src="/static/js/immersive.js" defer></script>
+  <script src="/static/js/session.js" defer></script>
+  <script src="/static/js/support.js" defer></script>
+  <script src="/static/js/ux_trust.js" defer></script>
+  <script src="/static/js/stability.js" defer></script>
+</body>
+</html>

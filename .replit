@@ -1,0 +1,48 @@
+modules = ["python-3.12", "web"]
+[agent]
+expertMode = true
+stack = "BEST_EFFORT_FALLBACK"
+
+[nix]
+channel = "stable-25_05"
+packages = ["cargo", "gitFull", "libiconv", "playwright-driver", "rustc"]
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Start application"
+
+[[workflows.workflow]]
+name = "Start application"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python web_app.py"
+waitForPort = 5000
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+
+[deployment]
+deploymentTarget = "autoscale"
+run = ["gunicorn", "--bind=0.0.0.0:5000", "--reuse-port", "-w", "4", "--threads", "8", "--timeout", "120", "web_app:app"]
+
+[userenv]
+
+[userenv.shared]
+SECRET_KEY = "588ea26d8ea896e8c28517dcb2bd54b1640eab3d289d5fdd4ba27a2ff6a3cca1"
+JWT_SECRET = "cb5eb37edc9edb8215f839ad2338bc7d671a4df18858f28c0e5fbb048093bc5f"
+FLASK_DEBUG = "0"
+NO_BROWSER = "1"

@@ -50,3 +50,6 @@ memory_vectors/
 workspace/
 uploads/
 scratch/
+node_modules/
+.vscode/
+.idea/

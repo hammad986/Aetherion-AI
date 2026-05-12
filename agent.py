@@ -489,18 +489,55 @@ class Agent:
                                 f"\n  ⚠️  {total_failures} cumulative failures. "
                                 f"Last: [{category.upper()}] {err[:100]}"
                             )
-                            print(
-                                "  💡  Enter a hint/correction (or press Enter to auto-continue): ",
-                                end="", flush=True,
-                            )
-                            try:
-                                hint = input().strip()
-                                if hint:
-                                    self.memory.add_message("user", f"[USER HINT]: {hint}")
-                                    observation += f"\n[USER HINT from operator]: {hint}"
-                                    logger.info(f"[Agent] User hint received: {hint[:100]}")
-                            except (EOFError, KeyboardInterrupt):
-                                pass
+                            if _os.getenv("AETHERION_REALTIME_V1", "").lower() == "true":
+                                # ── Web-safe HITL: non-blocking threading.Event wait ──────────
+                                # The daemon worker thread blocks here (NOT a gunicorn request
+                                # thread). Timeout auto-continues; rejection raises InterruptedError.
+                                try:
+                                    from execution.hitl import global_hitl_tracker
+                                    _hitl_payload = {
+                                        "prompt": "Enter a hint or correction for the agent",
+                                        "last_error": err[:200],
+                                        "error_category": category,
+                                        "total_failures": total_failures,
+                                        "step": active_step[:100],
+                                        "session_id": self._session_id,
+                                    }
+                                    self._emit_fn("hitl.required", _hitl_payload)
+                                    _hitl_timeout = int(_os.getenv("HITL_TIMEOUT_SECONDS", "60"))
+                                    _hitl_resp = global_hitl_tracker.request_approval(
+                                        execution_id=getattr(self, "_execution_id", "unknown"),
+                                        payload=_hitl_payload,
+                                        timeout_sec=_hitl_timeout,
+                                    )
+                                    hint = (_hitl_resp.get("feedback") or "").strip()
+                                    if hint:
+                                        self.memory.add_message("user", f"[USER HINT]: {hint}")
+                                        observation += f"\n[USER HINT from operator]: {hint}"
+                                        logger.info(f"[Agent] HITL hint received: {hint[:100]}")
+                                    elif _hitl_resp.get("status") == "timeout":
+                                        logger.info("[Agent] HITL timeout — auto-continuing.")
+                                    elif _hitl_resp.get("status") == "rejected":
+                                        logger.info("[Agent] HITL rejected — terminating task.")
+                                        raise InterruptedError("Task rejected by operator via HITL.")
+                                except InterruptedError:
+                                    raise   # propagate rejection cleanly
+                                except Exception as _hitl_err:
+                                    logger.warning(f"[Agent] HITL system error: {_hitl_err} — auto-continuing.")
+                            else:
+                                # ── Legacy CLI mode (original behaviour) ──────────────────────
+                                print(
+                                    "  💡  Enter a hint/correction (or press Enter to auto-continue): ",
+                                    end="", flush=True,
+                                )
+                                try:
+                                    hint = input().strip()
+                                    if hint:
+                                        self.memory.add_message("user", f"[USER HINT]: {hint}")
+                                        observation += f"\n[USER HINT from operator]: {hint}"
+                                        logger.info(f"[Agent] User hint received: {hint[:100]}")
+                                except (EOFError, KeyboardInterrupt):
+                                    pass
 
                         if error_count >= self.config.PER_STEP_RETRY and current_step > 0:
                             rollback_logs = []

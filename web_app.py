@@ -11134,9 +11134,53 @@ def api_write_doc():
     except Exception as e:
         return jsonify({"ok": False, "error": str(e)}), 500
 
-
 # ─────────────────────────────────────────────────────────────────────────────
-# ── REALTIME WIRING (Op-3): /api/stream/<session_id> SSE endpoint ─────────────
+# ── HITL APPROVAL API ────────────────────────────────────────────────────────
+# Called by the frontend HITL panel to unblock a waiting agent thread.
+# Requires AETHERION_REALTIME_V1=true (same flag as SSE streaming).
+# ─────────────────────────────────────────────────────────────────────────────
+
+@app.route("/api/hitl/approve", methods=["POST"])
+def api_hitl_approve():
+    """
+    Provide operator approval/rejection/hint to a paused agent execution.
+
+    Request body:
+        execution_id  (str)  — ID of the blocked execution task
+        status        (str)  — "approved" | "rejected"
+        feedback      (str)  — optional hint text to inject into agent memory
+    """
+    if os.getenv("AETHERION_REALTIME_V1", "").lower() != "true":
+        return jsonify({"ok": False, "error": "AETHERION_REALTIME_V1 not enabled"}), 501
+
+    data         = request.get_json(silent=True) or {}
+    execution_id = (data.get("execution_id") or "").strip()
+    status       = (data.get("status") or "").strip().lower()
+    feedback     = (data.get("feedback") or "").strip()
+
+    if not execution_id:
+        return jsonify({"ok": False, "error": "execution_id required"}), 400
+    if status not in ("approved", "rejected"):
+        return jsonify({"ok": False, "error": "status must be 'approved' or 'rejected'"}), 400
+
+    try:
+        from execution.hitl import global_hitl_tracker
+        resolved = global_hitl_tracker.provide_approval(
+            execution_id=execution_id,
+            status=status,
+            feedback=feedback,
+        )
+        if not resolved:
+            return jsonify({
+                "ok": False,
+                "error": "No paused execution found with that ID (may have timed out already)",
+            }), 404
+        return jsonify({"ok": True, "execution_id": execution_id, "status": status})
+    except Exception as e:
+        logger.exception(f"[HITL] /api/hitl/approve error: {e}")
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
 # Activated ONLY when AETHERION_REALTIME_V1=true.
 # When the flag is off the endpoint still exists but returns 501 so the existing
 # legacy /api/logs SSE endpoint continues to serve all current clients unchanged.

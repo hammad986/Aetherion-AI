@@ -3,6 +3,7 @@ import logging
 import time
 import queue
 import threading
+import uuid as _uuid
 
 logger = logging.getLogger("nexora.sse")
 
@@ -41,6 +42,7 @@ class SSEClient:
             return False
         try:
             self.queue.put(event, timeout=timeout)
+            self.last_active = time.time()   # F-2: track delivery time for reaper
             return True
         except queue.Full:
             logger.warning(f"[SSE] Queue full for client {self.client_id}. Dropping event.")
@@ -53,16 +55,50 @@ class SSEManager:
     """
     _clients = {}
     _lock = threading.Lock()
+    _MAX_CLIENTS_PER_SESSION = 5          # F-3: cap per-session connections
+    _STALE_TTL_SECONDS       = 120        # F-2: evict disconnected clients after 2 min
+    _reaper_started          = False
+
+    @classmethod
+    def _start_reaper_once(cls):
+        """Lazily start a background thread that evicts stale disconnected clients."""
+        if cls._reaper_started:
+            return
+        cls._reaper_started = True
+        def _reap():
+            while True:
+                time.sleep(60)
+                cutoff = time.time() - cls._STALE_TTL_SECONDS
+                with cls._lock:
+                    stale = [
+                        cid for cid, c in cls._clients.items()
+                        if not c.connected and c.last_active < cutoff
+                    ]
+                for cid in stale:
+                    with cls._lock:
+                        cls._clients.pop(cid, None)
+                    logger.info(f"[SSE] Reaped stale client {cid}")
+        t = threading.Thread(target=_reap, daemon=True, name="sse-reaper")
+        t.start()
 
     @classmethod
     def register_client(cls, session_id):
-        # BUGFIX: timestamp-only IDs collide under concurrent registration
-        # (two clients in same millisecond → second overwrites first in _clients).
+        cls._start_reaper_once()
+        # BUGFIX: timestamp-only IDs collide under concurrent registration.
         # uuid4 suffix guarantees uniqueness regardless of timing.
-        import uuid as _uuid
         client_id = f"sse_{int(time.time() * 1000)}_{_uuid.uuid4().hex[:8]}"
         client = SSEClient(client_id, session_id)
         with cls._lock:
+            # F-3: enforce per-session client cap — evict oldest if exceeded
+            session_clients = sorted(
+                [c for c in cls._clients.values() if c.session_id == session_id],
+                key=lambda c: c.last_active
+            )
+            while len(session_clients) >= cls._MAX_CLIENTS_PER_SESSION:
+                evict = session_clients.pop(0)
+                evict.connected = False
+                cls._clients.pop(evict.client_id, None)
+                logger.info(f"[SSE] Evicted oldest client {evict.client_id} (session cap reached)")
             cls._clients[client_id] = client
         logger.info(f"[SSE] Client registered: {client_id} for session {session_id}")
         return client

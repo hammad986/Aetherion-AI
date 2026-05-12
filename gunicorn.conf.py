@@ -13,9 +13,14 @@ bind    = f"0.0.0.0:{os.getenv('PORT', '5000')}"
 # live-log SSE, background workers). Multiple *processes* would each get their
 # own copy of that state, causing sessions queued in process A to be invisible
 # in process B. Keep workers=1 and scale via threads instead.
+#
+# worker_class="gthread": stdlib-only threaded worker; WSGI-compatible; safe
+# with Flask, SSE, threading.Event, queue.Queue, and sqlite3.  No new deps.
+# Raises SSE concurrency ceiling from 8 to 32 sessions.
+# Rollback: set worker_class="sync" and GUNICORN_THREADS=8.
 workers      = 1
-threads      = int(os.getenv("GUNICORN_THREADS", "8"))
-worker_class = "sync"
+threads      = int(os.getenv("GUNICORN_THREADS", "32"))
+worker_class = "gthread"
 timeout      = int(os.getenv("GUNICORN_TIMEOUT", "120"))
 keepalive    = 5
 

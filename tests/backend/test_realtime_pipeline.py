@@ -425,50 +425,84 @@ check("Disconnected client rejects further puts",
 # ═════════════════════════════════════════════════════════════════════════════
 section("PHASE 9 — Failure Forensics (Static Trace)")
 
-# FORENSIC 1: input() in agent loop — line 497
+# FORENSIC 1: HITL — input() now lives in the legacy flag-OFF branch.
+# The web-safe HITLEventTracker path is now used when AETHERION_REALTIME_V1=true.
 with open(os.path.join(ROOT, "agent.py"), encoding="utf-8") as f:
     agent_src = f.read()
 
-has_input_call = "hint = input().strip()" in agent_src
-check("CRITICAL: input() call found in agent.py (HITL freeze risk)",
-      has_input_call,       # True = confirmed present = it IS a risk
-      "Line ~497 — blocks gunicorn thread until stdin provides data")
+has_hitl_tracker = "global_hitl_tracker" in agent_src
+has_input_legacy = "hint = input().strip()" in agent_src
+check("HITL: HITLEventTracker.request_approval() wired in agent.py",
+      has_hitl_tracker,
+      "global_hitl_tracker not found" if not has_hitl_tracker else
+      "Wired — input() now only in legacy flag-OFF branch")
+check("HITL: legacy input() still present for CLI mode",
+      has_input_legacy,
+      "flag-OFF branch intact for backward compatibility")
 
-# Gunicorn config inspection
+# FORENSIC 2: Gunicorn worker class — now gthread (32 threads)
 gunicorn_path = os.path.join(ROOT, "gunicorn.conf.py")
 with open(gunicorn_path, encoding="utf-8", errors="replace") as f:
     gcfg = f.read()
 
-is_sync_worker = 'worker_class = "sync"' in gcfg
-threads_val    = None
+is_gthread  = 'worker_class = "gthread"' in gcfg
+threads_val = None
 for line in gcfg.splitlines():
-    if line.strip().startswith("threads"):
-        try: threads_val = int(line.split("=")[1].strip().split("#")[0].strip().strip('"'))
-        except: pass
+    stripped = line.strip()
+    if stripped.startswith("threads") and "=" in stripped and not stripped.startswith("#"):
+        rhs = stripped.split("=", 1)[1].strip().split("#")[0].strip()
+        # May be an int literal or an os.getenv(..., "32") expression
+        if rhs.isdigit():
+            threads_val = int(rhs)
+        elif 'getenv' in rhs:
+            # Extract default value from os.getenv("VAR", "32")
+            import re as _re
+            m = _re.search(r',\s*["\']([0-9]+)["\']\)', rhs)
+            if m:
+                threads_val = int(m.group(1))
 
-check("CRITICAL: Gunicorn is sync worker (limits concurrency)",
-      is_sync_worker,
-      "Concurrent SSE sessions limited by threads=8; gevent needed")
-check(f"Gunicorn threads value detected",
-      threads_val is not None,
-      f"threads={threads_val}")
+check("Gunicorn upgraded to gthread worker (SSE concurrency raised)",
+      is_gthread,
+      f"worker_class={'gthread' if is_gthread else 'sync — STILL NEEDS MIGRATION'}")
+check("Gunicorn thread ceiling",
+      threads_val is not None and threads_val >= 16,
+      f"threads={threads_val} ({'OK — raised' if threads_val and threads_val >= 16 else 'LOW — still limited'})")
 
-# workflow_engine.py presence
-we_path = os.path.join(ROOT, "workflow_engine.py")
+# FORENSIC 3: workflow_engine.py restored
+we_path   = os.path.join(ROOT, "workflow_engine.py")
 we_exists = os.path.isfile(we_path)
 check("workflow_engine.py exists on disk",
       we_exists,
-      "MISSING — /api/workflows/* routes return 503" if not we_exists else "Found")
+      "MISSING — /api/workflows/* routes return 503" if not we_exists else "Found — import errors resolved")
+if we_exists:
+    # Verify the required interface is present
+    with open(we_path, encoding="utf-8") as f:
+        we_src = f.read()
+    check("workflow_engine exports get_workflow_engine()",  "def get_workflow_engine" in we_src)
+    check("workflow_engine has list_workflows()",           "def list_workflows" in we_src)
+    check("workflow_engine has run()",                      "def run" in we_src)
+    check("workflow_engine has get_result()",               "def get_result" in we_src)
+    check("workflow_engine delegates to Agent pipeline",    "from agent import Agent" in we_src)
 
-# SSEManager in-process state (not Redis-backed)
+# FORENSIC 4: SSEManager in-process state (not Redis-backed)
 with open(os.path.join(ROOT, "streaming", "sse_manager.py"), encoding="utf-8") as f:
     sse_src = f.read()
 is_in_process = "dict" in sse_src and "redis" not in sse_src.lower()
 check("SSEManager uses in-process dict (multi-worker risk)",
       is_in_process,
-      "Multi-process deployment will lose events across workers")
+      "Multi-process deployment will lose events across workers — Redis migration in V2")
 
-# LightweightWorker memory: tasks removed from _active_tasks on completion
+# FORENSIC 5: SSEManager stale-client reaper added
+check("SSEManager has stale-client reaper",
+      "_start_reaper_once" in sse_src,
+      "Reaper evicts disconnected clients after 120s")
+
+# FORENSIC 6: SSEManager per-session client cap added
+check("SSEManager caps clients per session",
+      "_MAX_CLIENTS_PER_SESSION" in sse_src,
+      "Prevents reconnect-storm client accumulation")
+
+# FORENSIC 7: LightweightWorker memory: tasks removed on completion
 with open(os.path.join(ROOT, "execution", "worker.py"), encoding="utf-8") as f:
     worker_src = f.read()
 check("LightweightWorker cleans up _active_tasks in finally",

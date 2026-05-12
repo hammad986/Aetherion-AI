@@ -105,11 +105,21 @@ Rules:
 
 
 class Agent:
-    def __init__(self, config: Config = None, memory: Memory = None, force_model: str | None = None):
-        self.config  = config  or Config()
-        self.memory  = memory  or Memory()
-        self.router  = LLMRouter(config=self.config, force_model=force_model)
-        self.tools   = Tools(config=self.config)
+    def __init__(
+        self,
+        config: Config = None,
+        memory: Memory = None,
+        force_model: str | None = None,
+        emit_fn=None,          # ── REALTIME WIRING (Op-1): optional SSE callback
+        session_id: str = "",  # ── used to tag emitted events with session context
+    ):
+        self.config     = config  or Config()
+        self.memory     = memory  or Memory()
+        self.router     = LLMRouter(config=self.config, force_model=force_model)
+        self.tools      = Tools(config=self.config)
+        # If emit_fn is not supplied the agent behaves exactly as before (no-op).
+        self._emit_fn   = emit_fn if callable(emit_fn) else (lambda kind, payload: None)
+        self._session_id = session_id
 
     # ──────────────────────────────────────────────────────────────────────────
     # Phase 8 — structured records for the outer orchestrator
@@ -119,11 +129,20 @@ class Agent:
     # around the agent without modifying tools.py / router.py / main.py.
     # CLI users see the extra lines but they're harmless.
     def _emit_record(self, kind: str, payload: dict) -> None:
+        """Emit a structured record to stdout (CLI) AND to the realtime SSE bus."""
         try:
             line = json.dumps({"kind": kind, **payload}, default=str)
         except Exception:
             line = json.dumps({"kind": kind, "error": "unserialisable payload"})
+        # Preserve original CLI output — always printed.
         print(f"[AGENT_RECORD] {line}", flush=True)
+        # ── REALTIME WIRING (Op-1): forward to SSE bus when enabled ──────────
+        import os as _os
+        if _os.getenv("AETHERION_REALTIME_V1", "").lower() == "true":
+            try:
+                self._emit_fn(f"agent.{kind}", {**payload, "session_id": self._session_id})
+            except Exception:
+                pass  # Never let SSE errors interrupt the agent loop
 
     # ──────────────────────────────────────────────────────────────────────────
     # PUBLIC: run a task
@@ -133,6 +152,13 @@ class Agent:
         print(f"\n{'━'*55}")
         print(f"🎯 TASK: {task}")
         print(f"{'━'*55}")
+        # ── REALTIME WIRING (Op-1): emit task.start event ─────────────────────
+        import os as _os
+        if _os.getenv("AETHERION_REALTIME_V1", "").lower() == "true":
+            try:
+                self._emit_fn("agent.task_start", {"task": task[:200], "session_id": self._session_id})
+            except Exception:
+                pass
 
         # ── Recall similar tasks ─────────────────────────
         similar = self.memory.find_similar_task(task)
@@ -296,6 +322,18 @@ class Agent:
 
                 if thought:
                     print(f"\n  💭 {thought}")
+                    # ── REALTIME WIRING (Op-1): stream thought token ──────────
+                    import os as _os
+                    if _os.getenv("AETHERION_REALTIME_V1", "").lower() == "true":
+                        try:
+                            self._emit_fn("agent.think", {
+                                "thought": thought,
+                                "step_index": current_step,
+                                "step_text": active_step,
+                                "session_id": self._session_id,
+                            })
+                        except Exception:
+                            pass
 
                 if action:
                     fingerprint = self._fingerprint_action(action, args)
@@ -336,6 +374,19 @@ class Agent:
 
                     args_preview = ", ".join(f"{k}={repr(v)[:40]}" for k, v in args.items())
                     print(f"  🔧 {action}({args_preview})")
+                    # ── REALTIME WIRING (Op-1): emit agent.action event ───────
+                    import os as _os
+                    if _os.getenv("AETHERION_REALTIME_V1", "").lower() == "true":
+                        try:
+                            self._emit_fn("agent.action", {
+                                "tool": action,
+                                "args": {k: str(v)[:120] for k, v in (args or {}).items()},
+                                "step_index": current_step,
+                                "step_text": active_step,
+                                "session_id": self._session_id,
+                            })
+                        except Exception:
+                            pass
 
                     snapshot = self._snapshot_before_action(
                         action=action,
@@ -356,6 +407,24 @@ class Agent:
                         observation = f"TOOL '{action}' SUCCEEDED for step '{active_step}':\n{out}"
                         error_count = 0
                         last_output = out
+                        # ── REALTIME WIRING (Op-1): emit tool success ─────────
+                        import os as _os
+                        if _os.getenv("AETHERION_REALTIME_V1", "").lower() == "true":
+                            try:
+                                _file_mutating = action in (
+                                    "write_file", "diff_edit", "search_replace",
+                                    "delete_file", "ast_replace",
+                                )
+                                _evt = "file.modified" if _file_mutating else "agent.tool_success"
+                                self._emit_fn(_evt, {
+                                    "tool": action,
+                                    "step_index": current_step,
+                                    "output": str(out)[:300],
+                                    "path": (args or {}).get("path", ""),
+                                    "session_id": self._session_id,
+                                })
+                            except Exception:
+                                pass
                         # Record action + step as completed
                         step_completed_actions[current_step].add(fingerprint)
                         completed_steps.add(active_step)
@@ -434,9 +503,22 @@ class Agent:
                                 pass
 
                         if error_count >= self.config.PER_STEP_RETRY and current_step > 0:
+                            rollback_logs = []
+                            # Revert all actions from the current step
+                            while state_stack and state_stack[-1].get("step") == current_step:
+                                r_msg = self._rollback_from_snapshot(state_stack.pop())
+                                if r_msg: rollback_logs.append(r_msg)
+                            
                             current_step -= 1
                             error_count   = 0
-                            observation  += f"\nBacktracked to step {current_step + 1} to try a safer alternative path."
+                            
+                            # Revert all actions from the previous step we are returning to, so we can retry it freshly
+                            while state_stack and state_stack[-1].get("step") == current_step:
+                                r_msg = self._rollback_from_snapshot(state_stack.pop())
+                                if r_msg: rollback_logs.append(r_msg)
+
+                            rollback_summary = " ".join(rollback_logs)
+                            observation  += f"\nBacktracked to step {current_step + 1} to try a safer alternative path. Restored state: {rollback_summary}"
 
                         elif error_count >= self.config.PER_STEP_RETRY * 2:
                             msg = f"Too many failures ({error_count}). Last error: {err}"
@@ -563,6 +645,19 @@ class Agent:
         print(f"\n{'━'*55}")
         print(f"✅ Status: {status.upper()} | API: {self.router.last_used_api} | Loops: {loop_count}")
         print(f"{'━'*55}\n")
+        # ── REALTIME WIRING (Op-1): emit task completion event ────────────────
+        import os as _os
+        if _os.getenv("AETHERION_REALTIME_V1", "").lower() == "true":
+            try:
+                self._emit_fn("agent.task_complete", {
+                    "status": status,
+                    "loops": loop_count,
+                    "api": self.router.last_used_api or "",
+                    "output": str(last_output)[:300],
+                    "session_id": self._session_id,
+                })
+            except Exception:
+                pass
         return last_output or "Task completed."
 
     # ──────────────────────────────────────────────────────────────────────────
@@ -767,7 +862,7 @@ class Agent:
 
     def _rollback_from_snapshot(self, snapshot: dict | None) -> str:
         if not snapshot or "path" not in snapshot:
-            return "No file rollback required"
+            return ""
 
         path = snapshot["path"]
         if snapshot.get("file_existed"):
@@ -777,7 +872,7 @@ class Agent:
         res = self.tools.delete_file(path=path)
         if res["success"]:
             return f"Removed newly-created file {path}"
-        return f"No rollback delete needed for {path}"
+        return ""
 
     def _categorize_error(self, err: str) -> str:
         msg = (err or "").lower()

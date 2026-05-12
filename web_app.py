@@ -477,6 +477,24 @@ def _looks_text(path, sample_bytes=2048):
 
 app = Flask(__name__)
 
+# --- NEXORA V2 BACKEND ARCHITECTURE EXTRACTION ---
+# Phase 36: Observability, Middlewares, and Blueprints
+try:
+    from middleware.observability import setup_observability
+    from routes.health import health_bp
+    from routes.workspace import workspace_bp
+    from routes.execution import execution_bp
+    from routes.admin import admin_bp
+    setup_observability(app)
+    app.register_blueprint(health_bp)
+    app.register_blueprint(workspace_bp)
+    app.register_blueprint(execution_bp)
+    app.register_blueprint(admin_bp)
+    print("✅ Nexora V2 Backend extraction active (Observability, Health, Workspace, Execution, Admin)")
+except ImportError as e:
+    print(f"⚠️ Failed to load Nexora V2 middlewares: {e}")
+# -------------------------------------------------
+
 # ── Phase 19: Security hardening ─────────────────────────────────────────────
 from security import (
     _general_limiter, _task_limiter, _auth_limiter, _scheduler_limiter,
@@ -1938,6 +1956,21 @@ def _p19_cors(response):
     response.headers.setdefault("X-Frame-Options", "SAMEORIGIN")
     response.headers.setdefault("X-XSS-Protection", "1; mode=block")
     response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+    # Phase 3 Security Hardening — Content-Security-Policy
+    # Only apply to text/html responses (API JSON responses don't need it, and
+    # setting it on JSON can break some clients).
+    if "text/html" in response.content_type:
+        response.headers.setdefault(
+            "Content-Security-Policy",
+            "default-src 'self'; "
+            "script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; "
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+            "font-src 'self' https://fonts.gstatic.com; "
+            "img-src 'self' data: blob:; "
+            "connect-src 'self' wss: ws:; "
+            "frame-src 'self'; "
+            "object-src 'none';"
+        )
     return response
 
 
@@ -3841,6 +3874,24 @@ def api_run_code(sid):
     except Exception as e:
         return jsonify({"ok": False, "error": "runner_unavailable",
                         "detail": str(e)}), 500
+    # ── Phase 3 Security: apply ExecutionController limits before running ──────
+    try:
+        from safety_layer import ExecutionController as _EC
+        _ctrl = _EC(
+            max_iterations=1,
+            max_commands=20,
+            max_runtime=_EDITOR_RUN_TIMEOUT_SEC + 5,
+        )
+        _limit_result = _ctrl.check_limits()
+        if _limit_result and _limit_result.get("terminated"):
+            return jsonify({
+                "ok": False,
+                "error": "execution_blocked",
+                "reason": _limit_result.get("reason"),
+                "detail": _limit_result.get("detail"),
+            }), 429
+    except Exception:
+        pass  # Never block a legitimate run due to safety_layer import failure
     try:
         rr = _run_code(
             code,
@@ -11085,8 +11136,103 @@ def api_write_doc():
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# ── REALTIME WIRING (Op-3): /api/stream/<session_id> SSE endpoint ─────────────
+# Activated ONLY when AETHERION_REALTIME_V1=true.
+# When the flag is off the endpoint still exists but returns 501 so the existing
+# legacy /api/logs SSE endpoint continues to serve all current clients unchanged.
+# ─────────────────────────────────────────────────────────────────────────────
+
+@app.route("/api/stream/<sid>")
+def api_realtime_stream(sid):
+    """
+    Realtime SSE stream for a session — consumes the SSEManager subscriber queue.
+
+    Event types emitted:
+      agent.task_start    — task accepted, work beginning
+      agent.think         — LLM reasoning token (thought field)
+      agent.action        — tool call about to execute
+      agent.tool_success  — tool executed successfully
+      file.modified       — agent mutated a file (triggers Monaco sync)
+      agent.task_complete — task finished (status: done | timeout)
+      task.started        — worker thread began
+      task.completed      — worker thread finished
+      task.failed         — worker thread errored
+      hitl.required       — human approval needed (future)
+      rollback.triggered  — state rollback occurred (future)
+      heartbeat           — keep-alive ping every 15 s
+    """
+    # ── Feature-flag guard ─────────────────────────────────────────────────────
+    if os.getenv("AETHERION_REALTIME_V1", "").lower() != "true":
+        return jsonify({
+            "ok": False,
+            "error": "AETHERION_REALTIME_V1 flag is not enabled",
+            "hint": "Set AETHERION_REALTIME_V1=true in your .env to activate realtime streaming.",
+        }), 501
+
+    if not sid:
+        return jsonify({"ok": False, "error": "session_id required"}), 400
+
+    # Register this HTTP connection as an SSE subscriber for the session.
+    try:
+        from streaming.sse_manager import SSEManager
+    except ImportError:
+        return jsonify({"ok": False, "error": "SSEManager unavailable"}), 503
+
+    client = SSEManager.register_client(session_id=sid)
+
+    _SSE_HEADERS = {
+        "Content-Type":      "text/event-stream",
+        "Cache-Control":     "no-cache, no-transform",
+        "X-Accel-Buffering": "no",   # nginx: disable proxy buffering
+        "Connection":        "keep-alive",
+    }
+
+    def _generate():
+        """
+        Generator consumed by Flask's stream_with_context.
+        Blocks on client.queue with a 15-second timeout to emit heartbeats.
+        Terminates cleanly on:
+          - queue sentinel (None) — session completed or server shutdown
+          - GeneratorExit         — browser disconnected / tab closed
+        Guarantees SSEManager.remove_client() is always called for cleanup.
+        """
+        import queue as _queue
+        try:
+            while True:
+                try:
+                    event = client.queue.get(timeout=15)
+                except _queue.Empty:
+                    # No events for 15 s — emit a comment heartbeat.
+                    # SSE comments (lines starting with ":") are safe no-ops
+                    # for EventSource but prevent proxy/load-balancer timeouts.
+                    yield ": heartbeat\n\n"
+                    continue
+
+                if event is None:
+                    # Sentinel: task finished or server is shutting down.
+                    yield "event: done\ndata: {\"status\": \"session_closed\"}\n\n"
+                    return
+
+                # event is an SSEEvent — encode and stream.
+                yield event.encode()
+
+        except GeneratorExit:
+            # Browser closed the connection — clean up silently.
+            pass
+        finally:
+            # Always deregister — prevents queue memory leaks.
+            SSEManager.remove_client(client.client_id)
+
+    return Response(
+        stream_with_context(_generate()),
+        headers=_SSE_HEADERS,
+    )
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
     # Phase 19: debug mode controlled by env var — never True in production
     _debug = os.getenv("FLASK_DEBUG", "0").strip() == "1"
     _port  = int(os.getenv("PORT", "5000"))
     app.run(host="0.0.0.0", port=_port, debug=_debug, threaded=True)
+

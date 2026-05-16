@@ -1,0 +1,269 @@
+MISSION:
+AETHERION AI — PHASE Z6
+RUNTIME STABILIZATION + ACCOUNT GOVERNANCE + SECURITY FINALIZATION
+
+ARCHITECTURE STATUS:
+PERMANENTLY LOCKED.
+
+DEPLOYMENT STATUS:
+LIVE RUNTIME VALIDATION HAS NOW BEGUN.
+
+The recent Replit deployment exposed:
+
+* incomplete blueprint migrations
+* circular import fragility
+* missing API endpoints
+* CSP deployment inconsistencies
+
+This phase must now:
+STABILIZE → VALIDATE → GOVERN.
+
+NO new architecture.
+NO feature invention.
+NO AGI experimentation.
+
+====================================================
+PRIMARY OBJECTIVE
+=================
+
+Transform Aetherion AI from:
+"internally stable engineered system"
+
+into:
+"externally deployable operational platform"
+
+through:
+
+* runtime stabilization
+* route integrity verification
+* account lifecycle governance
+* security finalization
+* production validation
+
+====================================================
+MANDATORY CONSTRAINTS
+=====================
+
+STRICTLY FORBIDDEN:
+
+* orchestration redesign
+* frontend redesign
+* NxBus changes
+* SSE payload mutation
+* event schema mutation
+* agent redesign
+* runtime expansion
+* new AI systems
+
+PRESERVE:
+
+* Redis bridge
+* WAL concurrency
+* replay systems
+* diagnostics
+* mission system
+* trust systems
+* chunking/orchestration
+* Monaco/xterm integration
+
+====================================================
+PHASE 1 — FULL ROUTE INTEGRITY AUDIT
+====================================
+
+Generate:
+ROUTE_RUNTIME_VALIDATION_REPORT.md
+
+Verify EVERY:
+
+* Flask route
+* blueprint registration
+* API endpoint
+* auth endpoint
+* SSE endpoint
+* queue endpoint
+* provider endpoint
+* session endpoint
+
+Detect:
+
+* missing handlers
+* orphan frontend calls
+* duplicate routes
+* dead endpoints
+* blueprint mismatch
+* import timing issues
+
+NO assumptions.
+
+====================================================
+PHASE 2 — CIRCULAR IMPORT HARDENING
+===================================
+
+Generate:
+IMPORT_STABILITY_CERTIFICATION.md
+
+Audit:
+
+* route imports
+* deferred injections
+* globals().update patterns
+* initialization order
+* blueprint timing
+* singleton state timing
+
+Verify:
+
+* no hidden circular chains remain
+* runtime boot order deterministic
+* Gunicorn multi-worker safe
+
+====================================================
+PHASE 3 — ACCOUNT GOVERNANCE SYSTEM
+===================================
+
+Implement:
+production-grade account lifecycle governance.
+
+Features:
+
+* export account
+* request deletion
+* async deletion pipeline
+* replay purge
+* memory purge
+* session invalidation
+* Redis cleanup
+* WAL-safe deletion batches
+* forensic archival
+
+Generate:
+ACCOUNT_LIFECYCLE_AUDIT.md
+
+====================================================
+PHASE 4 — SQLITE + WAL VALIDATION
+=================================
+
+Stress validate:
+
+* concurrent writes
+* replay persistence
+* session deletion
+* memory updates
+* HITL writes
+
+Verify:
+
+* WAL checkpoints safe
+* no database lock regressions
+* rollback safety intact
+
+Generate:
+SQLITE_RUNTIME_STABILITY_REPORT.md
+
+====================================================
+PHASE 5 — REDIS + SSE VALIDATION
+================================
+
+Verify:
+
+* cross-worker broadcasts
+* reconnect replay
+* stale client cleanup
+* disconnect handling
+* orphan subscription cleanup
+
+Generate:
+REDIS_SSE_RUNTIME_CERTIFICATION.md
+
+====================================================
+PHASE 6 — FRONTEND/BACKEND CONTRACT VALIDATION
+==============================================
+
+Audit:
+ALL frontend fetch() calls.
+
+Verify:
+
+* matching backend route exists
+* payload schemas match
+* no stale endpoints remain
+* no silent 404 patterns remain
+
+Generate:
+FRONTEND_BACKEND_CONTRACT_REPORT.md
+
+====================================================
+PHASE 7 — SECURITY FINALIZATION
+===============================
+
+Audit:
+
+* JWT lifecycle
+* refresh flows
+* OAuth handling
+* CSP policies
+* replay auth
+* export auth
+* delete auth
+* CSRF exposure
+* fallback secrets
+* env loading
+
+Generate:
+SECURITY_FINALIZATION_CERTIFICATION.md
+
+====================================================
+PHASE 8 — DEPLOYMENT VALIDATION
+===============================
+
+Validate:
+
+* Replit deployment
+* Gunicorn deployment
+* VPS deployment
+* Docker deployment
+* Nginx SSE behavior
+
+Generate:
+DEPLOYMENT_COMPATIBILITY_REPORT.md
+
+====================================================
+PHASE 9 — FINAL STABILIZATION CERTIFICATION
+===========================================
+
+Generate:
+Z6_OPERATIONAL_STABILITY_CERTIFICATION.md
+
+Must include:
+
+* route integrity
+* runtime integrity
+* WAL integrity
+* Redis integrity
+* auth lifecycle validation
+* remaining technical debt
+* known deployment ceilings
+* honest production readiness score
+
+====================================================
+SUCCESS CRITERIA
+================
+
+Aetherion AI becomes:
+
+* externally deployable
+* operationally governable
+* lifecycle-safe
+* runtime-stable
+* multi-worker-safe
+* production-disciplined
+
+WITHOUT:
+
+* architectural mutation
+* orchestration redesign
+* runtime regression
+* frontend instability
+
+FINAL STATE:
+Production-grade autonomous operational platform.

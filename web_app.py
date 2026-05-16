@@ -6501,6 +6501,245 @@ def api_queue_snapshot():
     })
 
 
+@app.route("/api/queue-task", methods=["POST"])
+def api_queue_task():
+    """Queue a new task for execution. Core execution endpoint."""
+    data  = request.get_json(silent=True) or {}
+    task  = (data.get("task") or data.get("prompt") or "").strip()
+    model = data.get("model") or None
+    if not task:
+        return jsonify({"ok": False, "error": "missing_task"}), 400
+    cfg = get_setting("default_config", default_managed_config())
+    if model:
+        cfg = dict(cfg)
+        cfg["model"] = model
+    try:
+        sid = enqueue_task(task, model=model, cfg=cfg)
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+    return jsonify({"ok": True, "session_id": sid})
+
+
+# ── Session sub-routes ────────────────────────────────────────────────────────
+
+@app.route("/api/session/<sid>", methods=["GET"])
+def api_session_detail(sid):
+    """Return full session record including logs and decisions."""
+    sess = db_session(sid)
+    if not sess:
+        return jsonify({"ok": False, "error": "not_found"}), 404
+    try:
+        logs = db_logs(sid, limit=100)
+    except Exception:
+        logs = []
+    try:
+        decisions = db_decisions(sid)
+    except Exception:
+        decisions = []
+    return jsonify({"ok": True, "session": sess, "logs": logs, "decisions": decisions})
+
+
+@app.route("/api/session/<sid>/stop", methods=["POST"])
+def api_session_stop(sid):
+    """Stop a running session."""
+    sess = db_session(sid)
+    if not sess:
+        return jsonify({"ok": False, "error": "not_found"}), 404
+    ok, msg = stop_running_session(sid)
+    if not ok:
+        db_update_session(sid, status="failed")
+    return jsonify({"ok": ok, "message": msg})
+
+
+@app.route("/api/session/<sid>/restart", methods=["POST"])
+def api_session_restart(sid):
+    """Re-queue a completed/failed session with the same task."""
+    sess = db_session(sid)
+    if not sess:
+        return jsonify({"ok": False, "error": "not_found"}), 404
+    task  = sess.get("task", "")
+    if not task:
+        return jsonify({"ok": False, "error": "no_task_to_restart"}), 400
+    cfg = json.loads(sess.get("config_json") or "{}") if sess.get("config_json") else None
+    new_sid = enqueue_task(task, model=sess.get("model"), cfg=cfg)
+    return jsonify({"ok": True, "new_session_id": new_sid})
+
+
+@app.route("/api/session/<sid>/pause", methods=["POST"])
+def api_session_pause(sid):
+    """Pause a running session via HITL gate."""
+    if not db_session(sid):
+        return jsonify({"ok": False, "error": "not_found"}), 404
+    state = _hitl_get(sid)
+    with _hitl_lock:
+        state["paused"] = True
+    return jsonify({"ok": True, "paused": True})
+
+
+@app.route("/api/session/<sid>/resume", methods=["POST"])
+def api_session_resume(sid):
+    """Resume a paused session."""
+    if not db_session(sid):
+        return jsonify({"ok": False, "error": "not_found"}), 404
+    state = _hitl_get(sid)
+    with _hitl_lock:
+        state["paused"] = False
+    return jsonify({"ok": True, "paused": False})
+
+
+@app.route("/api/session/<sid>/inject", methods=["POST"])
+def api_session_inject(sid):
+    """Inject a message into a running/paused session."""
+    if not db_session(sid):
+        return jsonify({"ok": False, "error": "not_found"}), 404
+    data = request.get_json(silent=True) or {}
+    message = (data.get("message") or "").strip()
+    if not message:
+        return jsonify({"ok": False, "error": "missing_message"}), 400
+    state = _hitl_get(sid)
+    with _hitl_lock:
+        state["inject_queue"].append(message)
+        state["paused"] = False
+    return jsonify({"ok": True, "queued": message})
+
+
+@app.route("/api/session/<sid>/steps", methods=["GET"])
+def api_session_steps(sid):
+    """Return the execution steps/log for a session."""
+    if not db_session(sid):
+        return jsonify({"ok": False, "error": "not_found"}), 404
+    since = int(request.args.get("since", 0))
+    limit = min(int(request.args.get("limit", 200)), 500)
+    try:
+        logs = db_logs(sid, since=since, limit=limit)
+    except Exception:
+        logs = []
+    return jsonify({"ok": True, "steps": logs, "count": len(logs)})
+
+
+@app.route("/api/session/<sid>/save", methods=["POST"])
+def api_session_save(sid):
+    """Mark a session as saved/bookmarked."""
+    sess = db_session(sid)
+    if not sess:
+        return jsonify({"ok": False, "error": "not_found"}), 404
+    with _db_lock, _conn() as c:
+        c.execute("UPDATE sessions SET mode=COALESCE(mode,'saved') WHERE id=? AND status NOT IN ('running','queued')",
+                  (sid,))
+        c.execute("INSERT OR IGNORE INTO settings(key,value) VALUES(?,?)",
+                  (f"saved_session_{sid}", json.dumps({"sid": sid, "task": sess.get("task",""), "ts": time.time()})))
+    return jsonify({"ok": True, "saved": True, "sid": sid})
+
+
+@app.route("/api/session/<sid>/restore", methods=["GET"])
+def api_session_restore(sid):
+    """Restore a saved session's context."""
+    sess = db_session(sid)
+    if not sess:
+        return jsonify({"ok": False, "error": "not_found"}), 404
+    try:
+        chat = db_chat_get(sid, limit=50)
+    except Exception:
+        chat = []
+    try:
+        logs = db_logs(sid, limit=50)
+    except Exception:
+        logs = []
+    return jsonify({"ok": True, "session": sess, "chat": chat, "logs": logs})
+
+
+@app.route("/api/sessions/saved", methods=["GET"])
+def api_sessions_saved():
+    """Return bookmarked/saved sessions."""
+    limit = min(int(request.args.get("limit", 20)), 100)
+    saved = []
+    with _conn() as c:
+        keys = c.execute(
+            "SELECT key,value FROM settings WHERE key LIKE 'saved_session_%' LIMIT ?",
+            (limit,)
+        ).fetchall()
+        for row in keys:
+            try:
+                data = json.loads(row["value"])
+                saved.append(data)
+            except Exception:
+                pass
+    saved.sort(key=lambda x: x.get("ts", 0), reverse=True)
+    return jsonify({"ok": True, "sessions": saved})
+
+
+# ── Logs & Decisions endpoints ────────────────────────────────────────────────
+
+@app.route("/api/logs", methods=["GET"])
+def api_logs():
+    """Return execution logs for a session."""
+    sid   = request.args.get("session_id") or request.args.get("sid", "")
+    since = int(request.args.get("since", 0))
+    limit = min(int(request.args.get("limit", 200)), 500)
+    if not sid:
+        return jsonify({"ok": False, "error": "missing_session_id"}), 400
+    try:
+        logs = db_logs(sid, since=since, limit=limit)
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+    return jsonify({"ok": True, "logs": logs, "session_id": sid})
+
+
+@app.route("/api/decisions", methods=["GET"])
+def api_decisions():
+    """Return AI decision log for a session."""
+    sid = request.args.get("session_id") or request.args.get("sid", "")
+    if not sid:
+        return jsonify({"ok": False, "error": "missing_session_id"}), 400
+    try:
+        decisions = db_decisions(sid)
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+    return jsonify({"ok": True, "decisions": decisions, "session_id": sid})
+
+
+# ── Chat endpoints ─────────────────────────────────────────────────────────────
+
+@app.route("/api/chat/<sid>", methods=["GET"])
+def api_chat_get(sid):
+    """Return the conversation history for a session."""
+    if not db_session(sid):
+        return jsonify({"ok": False, "error": "not_found"}), 404
+    limit = min(int(request.args.get("limit", 50)), 200)
+    try:
+        messages = db_chat_get(sid, limit=limit)
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+    return jsonify({"ok": True, "messages": messages, "session_id": sid})
+
+
+@app.route("/api/chat/<sid>", methods=["DELETE"])
+def api_chat_clear(sid):
+    """Clear all chat messages for a session."""
+    if not db_session(sid):
+        return jsonify({"ok": False, "error": "not_found"}), 404
+    try:
+        db_chat_clear(sid)
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+    return jsonify({"ok": True, "cleared": True, "session_id": sid})
+
+
+@app.route("/api/chat/<sid>/edit/<int:msg_id>", methods=["POST"])
+def api_chat_edit(sid, msg_id):
+    """Edit/delete a chat message and all messages after it (for branching)."""
+    if not db_session(sid):
+        return jsonify({"ok": False, "error": "not_found"}), 404
+    try:
+        db_chat_delete_message(sid, msg_id)
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+    data    = request.get_json(silent=True) or {}
+    content = (data.get("content") or "").strip()
+    role    = data.get("role", "user")
+    if content:
+        db_chat_add(sid, role, content)
+    return jsonify({"ok": True, "edited": True})
 
 
 
@@ -7868,6 +8107,215 @@ def api_auth_delete_account():
 def api_auth_logout_all():
     revoke_all_sessions(g.user_id)
     return jsonify({"ok": True, "message": "All sessions revoked"})
+
+
+# ── Phase Z6: Account Governance System ──────────────────────────────────────
+# GDPR/CCPA-compliant account data export, deletion request, and deletion.
+# All routes require a valid JWT (token_required) so they operate on the
+# authenticated user only — no user_id parameter accepted in the body to
+# prevent IDOR.
+
+@app.route("/api/account/export", methods=["GET"])
+@token_required
+def api_account_export():
+    """Export all personal data for the authenticated user (GDPR Art. 20)."""
+    import sqlite3 as _sq3
+    uid = g.user_id
+
+    export = {
+        "export_generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "user": {},
+        "auth_sessions": [],
+        "agent_sessions": [],
+        "chat_messages": [],
+        "decisions": [],
+        "billing": {"invoices": [], "subscriptions": []},
+    }
+
+    # Profile
+    try:
+        c = _sq3.connect("saas_platform.db")
+        c.row_factory = _sq3.Row
+        row = c.execute(
+            "SELECT id,email,name,username,provider,created_at,total_tasks,total_tokens "
+            "FROM users WHERE id=?", (uid,)
+        ).fetchone()
+        if row:
+            export["user"] = dict(row)
+        # Active auth sessions (metadata only — no tokens)
+        for r in c.execute(
+            "SELECT id,device_info,ip_address,created_at,expires_at "
+            "FROM auth_sessions WHERE user_id=?", (uid,)
+        ):
+            export["auth_sessions"].append(dict(r))
+        c.close()
+    except Exception as e:
+        export["profile_error"] = str(e)
+
+    # Agent sessions (sessions.db keyed by user_id if column exists)
+    try:
+        sc = _sq3.connect("sessions.db")
+        sc.row_factory = _sq3.Row
+        cols = [r[1] for r in sc.execute("PRAGMA table_info(sessions)").fetchall()]
+        if "user_id" in cols:
+            for r in sc.execute(
+                "SELECT id,task,status,created_at,model FROM sessions "
+                "WHERE user_id=? ORDER BY created_at DESC LIMIT 200", (uid,)
+            ):
+                export["agent_sessions"].append(dict(r))
+        # Chat messages for those sessions
+        sess_ids = [s["id"] for s in export["agent_sessions"]]
+        for sid in sess_ids[:50]:
+            for r in sc.execute(
+                "SELECT ts,role,content FROM chat_messages "
+                "WHERE session_id=? ORDER BY ts ASC", (sid,)
+            ):
+                row_d = dict(r)
+                row_d["session_id"] = sid
+                export["chat_messages"].append(row_d)
+        sc.close()
+    except Exception as e:
+        export["sessions_error"] = str(e)
+
+    # Billing data
+    try:
+        bc = _sq3.connect("billing.db")
+        bc.row_factory = _sq3.Row
+        for tbl in ("invoices", "subscriptions"):
+            try:
+                for r in bc.execute(
+                    f"SELECT * FROM {tbl} WHERE user_id=? ORDER BY created_at DESC LIMIT 100",
+                    (uid,)
+                ):
+                    export["billing"][tbl].append(dict(r))
+            except Exception:
+                pass
+        bc.close()
+    except Exception as e:
+        export["billing_error"] = str(e)
+
+    return jsonify({"ok": True, "data": export})
+
+
+# Pending deletion requests — simple in-process store (survives until restart,
+# which is sufficient for a single-process Gunicorn worker).
+import collections as _acct_coll
+_deletion_requests: dict = {}  # uid → {"requested_at": float, "confirmed": bool}
+_deletion_lock = threading.Lock()
+
+
+@app.route("/api/account/delete-request", methods=["POST"])
+@token_required
+def api_account_delete_request():
+    """Submit a GDPR deletion request. Returns a confirmation token.
+    The actual delete must be confirmed within 24 h via POST /api/account/delete."""
+    uid = g.user_id
+    token = secrets.token_hex(32)
+    with _deletion_lock:
+        _deletion_requests[uid] = {
+            "token":        token,
+            "requested_at": time.time(),
+            "confirmed":    False,
+        }
+    return jsonify({
+        "ok":      True,
+        "message": "Deletion request received. Confirm within 24 hours.",
+        "token":   token,
+    })
+
+
+@app.route("/api/account/delete", methods=["POST"])
+@token_required
+def api_account_delete():
+    """Confirm and execute GDPR account deletion.
+
+    Body: { "token": "<from /api/account/delete-request>" }
+
+    Deletes: users row, all auth_sessions, password_resets,
+    email_verifications, agent sessions, chat messages, decisions,
+    billing records. All operations are best-effort so one table
+    failure doesn't abort the whole pipeline.
+    """
+    import sqlite3 as _sq3
+    uid  = g.user_id
+    data = request.get_json(silent=True) or {}
+    tok  = (data.get("token") or "").strip()
+
+    with _deletion_lock:
+        req = _deletion_requests.get(uid)
+
+    if not req:
+        return jsonify({"ok": False, "error": "No pending deletion request. Call /api/account/delete-request first."}), 400
+    if req.get("confirmed"):
+        return jsonify({"ok": False, "error": "Deletion already processed."}), 409
+    if req["token"] != tok:
+        return jsonify({"ok": False, "error": "Invalid confirmation token."}), 401
+    if time.time() - req["requested_at"] > 86400:
+        with _deletion_lock:
+            _deletion_requests.pop(uid, None)
+        return jsonify({"ok": False, "error": "Deletion token expired (24 h). Re-request."}), 410
+
+    errors = []
+
+    # 1. saas_platform.db — user profile + sessions
+    try:
+        c = _sq3.connect("saas_platform.db")
+        c.execute("DELETE FROM auth_sessions WHERE user_id=?", (uid,))
+        for tbl in ("password_resets", "email_verifications", "notifications"):
+            try:
+                c.execute(f"DELETE FROM {tbl} WHERE user_id=?", (uid,))
+            except _sq3.OperationalError:
+                pass
+        c.execute("DELETE FROM users WHERE id=?", (uid,))
+        c.commit()
+        c.close()
+    except Exception as e:
+        errors.append(f"saas_platform: {e}")
+
+    # 2. sessions.db — agent sessions, chat, decisions
+    try:
+        sc = _sq3.connect("sessions.db")
+        cols = [r[1] for r in sc.execute("PRAGMA table_info(sessions)").fetchall()]
+        if "user_id" in cols:
+            rows = sc.execute("SELECT id FROM sessions WHERE user_id=?", (uid,)).fetchall()
+            sids = [r[0] for r in rows]
+            for sid in sids:
+                for tbl in ("chat_messages", "decisions", "logs"):
+                    try:
+                        sc.execute(f"DELETE FROM {tbl} WHERE session_id=?", (sid,))
+                    except _sq3.OperationalError:
+                        pass
+            sc.execute("DELETE FROM sessions WHERE user_id=?", (uid,))
+        sc.commit()
+        sc.close()
+    except Exception as e:
+        errors.append(f"sessions: {e}")
+
+    # 3. billing.db — invoices, subscriptions
+    try:
+        bc = _sq3.connect("billing.db")
+        for tbl in ("invoices", "subscriptions", "payment_events"):
+            try:
+                bc.execute(f"DELETE FROM {tbl} WHERE user_id=?", (uid,))
+            except _sq3.OperationalError:
+                pass
+        bc.commit()
+        bc.close()
+    except Exception as e:
+        errors.append(f"billing: {e}")
+
+    # Mark as processed before clearing the cookie so we can't replay
+    with _deletion_lock:
+        if uid in _deletion_requests:
+            _deletion_requests[uid]["confirmed"] = True
+
+    resp = jsonify({
+        "ok":      True,
+        "deleted": uid,
+        "errors":  errors,
+        "message": "Account and all associated data have been permanently deleted.",
+    })
+    return _nx_clear_refresh_cookie(resp)
 
 
 # ─── Session management ───────────────────────────────────────────────────────
@@ -10806,6 +11254,17 @@ app.register_blueprint(session_bp)
 _mem_inject()
 _prov_inject()
 _sess_inject()
+
+# --- PHASE Z6: TELEMETRY BLUEPRINT ---
+# telemetry_routes.py has no conflicting URLs and is safe to register.
+# All routes are behind lazy imports so missing infra sub-packages never
+# crash the main process — they return {"error": "..."} 500s instead.
+try:
+    from routes.telemetry_routes import telemetry_bp
+    app.register_blueprint(telemetry_bp)
+    print("✅ telemetry_bp registered (/metrics, /api/infra/*, /api/devops/*, /api/cluster/*)")
+except Exception as _tel_err:
+    print(f"⚠️  telemetry_bp registration skipped: {_tel_err}")
 
 if __name__ == "__main__":
     # Phase 19: debug mode controlled by env var — never True in production

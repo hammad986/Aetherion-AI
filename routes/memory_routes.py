@@ -12,33 +12,8 @@ def _inject_web_app_globals():
 
 memory_bp = Blueprint('memory_routes', __name__)
 
-@memory_bp.route("/api/memory")
-def api_memory():
-    info = {"learnings": [], "tasks": [], "snippets": [], "kv": {}}
-    try:
-        c = sqlite3.connect(os.path.join(BASE_DIR, "memory.db"))
-        c.row_factory = sqlite3.Row
-        for r in c.execute("SELECT category,insight,created_at FROM learnings "
-                           "ORDER BY id DESC LIMIT 30"):
-            info["learnings"].append(dict(r))
-        for r in c.execute("SELECT task,status,api_used,created_at FROM tasks "
-                           "ORDER BY id DESC LIMIT 20"):
-            info["tasks"].append(dict(r))
-        for r in c.execute("SELECT name,lang,used_count FROM snippets "
-                           "ORDER BY used_count DESC LIMIT 20"):
-            info["snippets"].append(dict(r))
-        c.close()
-    except Exception as e:
-        info["memory_db_error"] = str(e)
-    try:
-        with open(os.path.join(BASE_DIR, "memory.json"), "r", encoding="utf-8") as f:
-            jdata = json.load(f)
-        kv = jdata.get("kv") or {}
-        info["kv"] = {k: (str(v)[:200]) for k, v in list(kv.items())[:20]}
-        info["message_count"] = len(jdata.get("messages") or [])
-    except Exception:
-        pass
-    return jsonify(info)
+# NOTE: /api/memory (base route) is intentionally defined in web_app.py at line ~3182.
+# This blueprint only provides the SUB-routes to avoid a duplicate URL conflict.
 
 @memory_bp.route("/api/memory/recent")
 def api_memory_recent():

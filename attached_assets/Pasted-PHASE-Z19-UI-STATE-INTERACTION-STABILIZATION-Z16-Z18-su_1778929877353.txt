@@ -1,0 +1,160 @@
+PHASE Z19 — UI STATE & INTERACTION STABILIZATION
+
+Z16-Z18 successfully stabilized the visual and operational shell.
+
+However:
+the frontend interaction layer still contains fragmented state management, accessibility desynchronization, inconsistent active-state behavior, and scattered inline interaction logic.
+
+This phase focuses exclusively on:
+interaction integrity
+state synchronization
+operational feedback clarity
+and deterministic UI behavior.
+
+====================================================
+PRIMARY OBJECTIVE
+=================
+
+Transform the frontend interaction layer into a:
+predictable
+synchronized
+operationally disciplined
+state-driven execution environment.
+
+====================================================
+MANDATORY FORENSIC AUDIT
+========================
+
+Before implementation:
+
+perform a deep forensic audit of:
+
+* active tab state management
+* aria-selected synchronization
+* command palette lifecycle
+* modal lifecycle
+* inspector open/close state
+* nav active state
+* execution state transitions
+* loading state transitions
+* SSE reconnect indicators
+* focus routing
+* keyboard navigation
+* hover-state consistency
+* interaction race conditions
+* stale DOM references
+* MutationObserver lifecycle
+* event listener accumulation
+* overlay cleanup
+
+Generate:
+
+docs/Z19_UI_STATE_FORENSIC_AUDIT.md
+
+====================================================
+IMPLEMENTATION TARGETS
+======================
+
+1. TAB STATE SYNCHRONIZATION
+   Ensure:
+
+* aria-selected
+* active classes
+* focus states
+* keyboard navigation
+
+always remain synchronized.
+
+====================================================
+2. COMMAND PALETTE DISCIPLINE
+
+Fix:
+
+* overlay lifecycle
+* focus trapping
+* escape handling
+* stale listeners
+* backdrop cleanup
+
+====================================================
+3. MODAL DISCIPLINE
+
+Normalize:
+
+* z-index
+* close behavior
+* body locking
+* overlay stacking
+* focus restoration
+
+====================================================
+4. EXECUTION STATE CLARITY
+
+Refine:
+
+* running
+* paused
+* reconnecting
+* failed
+* waiting HITL
+* streaming
+
+states visually and semantically.
+
+====================================================
+5. NAVIGATION STATE SYSTEM
+
+Fix:
+
+* active state consistency
+* hover conflicts
+* keyboard accessibility
+* icon state synchronization
+
+====================================================
+6. OBSERVER & EVENT HYGIENE
+
+Audit:
+
+* MutationObserver count
+* listener cleanup
+* interval cleanup
+* detached DOM references
+* stale subscriptions
+
+====================================================
+STRICT RULES
+============
+
+NO:
+
+* backend changes
+* SSE rewrites
+* architecture redesign
+* framework migration
+
+====================================================
+CERTIFICATION
+=============
+
+Generate:
+
+1. Z19_STATE_DISCIPLINE_REPORT.md
+2. Z19_RUNTIME_INTERACTION_CERTIFICATION.md
+3. Z19_ACCESSIBILITY_MATRIX.md
+
+====================================================
+SUCCESS STATE
+=============
+
+Aetherion AI should feel:
+stable
+predictable
+synchronized
+operationally trustworthy
+
+NOT:
+fragmented
+race-condition prone
+visually desynced
+prototype-like

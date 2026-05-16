@@ -1,0 +1,140 @@
+PHASE Z20 — INLINE STYLE ERADICATION & TOKENIZATION
+
+The frontend currently still contains extensive inline-style debt and hardcoded visual values scattered throughout templates/index.html.
+
+This is now the single largest frontend maintainability risk.
+
+====================================================
+PRIMARY OBJECTIVE
+=================
+
+Eliminate:
+
+* inline styles
+* hardcoded hex values
+* hardcoded spacing
+* hardcoded z-index
+* hardcoded typography
+
+and migrate them into:
+tokenized
+class-driven
+maintainable
+theme-safe
+design architecture.
+
+====================================================
+MANDATORY AUDIT
+===============
+
+Perform a complete forensic scan of:
+
+templates/index.html
+all runtime-generated HTML
+all inline style attributes
+all hardcoded colors
+all hardcoded spacing
+all inline transitions
+all inline hover handlers
+
+Generate:
+
+docs/Z20_INLINE_STYLE_AUDIT.md
+
+Include:
+
+* exact line numbers
+* duplicate values
+* tokenization opportunities
+* critical maintainability risks
+
+====================================================
+IMPLEMENTATION TARGETS
+======================
+
+1. REMOVE INLINE COLORS
+   Move:
+   backgrounds
+   borders
+   text colors
+   hover colors
+
+into tokenized CSS classes.
+
+====================================================
+2. REMOVE INLINE SPACING
+Move:
+padding
+margin
+gap
+height
+width
+
+into reusable utility classes.
+
+====================================================
+3. REMOVE INLINE TYPOGRAPHY
+Move:
+font-size
+font-weight
+line-height
+font-family
+
+into typography tokens.
+
+====================================================
+4. REMOVE INLINE Z-INDEX
+Integrate all overlay stacking into:
+the centralized z-index registry.
+
+====================================================
+5. REMOVE INLINE HOVER JS
+Replace:
+mouseover/mouseout inline logic
+
+with:
+pure CSS hover/focus-visible states.
+
+====================================================
+6. TOKENIZATION PASS
+
+Replace all:
+raw hex values
+
+with:
+var(--nds-*)
+or
+var(--nx-*)
+
+tokens.
+
+====================================================
+RULES
+=====
+
+NO:
+
+* DOM restructuring
+* backend changes
+* execution logic rewrites
+
+====================================================
+CERTIFICATION
+=============
+
+Generate:
+
+1. Z20_TOKENIZATION_CERTIFICATION.md
+2. Z20_INLINE_DEBT_REMOVAL_REPORT.md
+3. Z20_THEME_STABILITY_MATRIX.md
+
+====================================================
+SUCCESS STATE
+=============
+
+Frontend becomes:
+maintainable
+theme-safe
+scalable
+clean
+enterprise-grade.

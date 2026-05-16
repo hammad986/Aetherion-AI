@@ -1,0 +1,139 @@
+PHASE Z21 — FRONTEND RUNTIME PERFORMANCE & MEMORY DISCIPLINE
+
+The frontend visual layer is now largely stabilized.
+
+The next critical risk is:
+runtime accumulation
+memory instability
+observer leakage
+DOM growth
+and long-session degradation.
+
+====================================================
+PRIMARY OBJECTIVE
+=================
+
+Harden Aetherion AI for:
+8-12 hour operational sessions
+continuous SSE streaming
+heavy execution logs
+and multi-session workflows.
+
+====================================================
+MANDATORY FORENSIC AUDIT
+========================
+
+Perform a deep runtime forensic audit of:
+
+* MutationObserver lifecycle
+* event listener accumulation
+* detached DOM nodes
+* terminal growth
+* Monaco model accumulation
+* log growth
+* interval/timer leaks
+* animation loops
+* overlay cleanup
+* SSE stream accumulation
+* execution history growth
+* Split.js resize observers
+* memory snapshots
+* repaint hotspots
+* layout thrashing
+
+Generate:
+
+docs/Z21_RUNTIME_FORENSIC_AUDIT.md
+
+====================================================
+IMPLEMENTATION TARGETS
+======================
+
+1. OBSERVER DISCIPLINE
+   Fix:
+
+* orphan observers
+* duplicate subscriptions
+* stale references
+
+====================================================
+2. DOM GROWTH CONTROL
+Implement:
+
+* log trimming
+* node ceilings
+* cleanup strategies
+* virtualization where safe
+
+====================================================
+3. TERMINAL DISCIPLINE
+Prevent:
+
+* infinite buffer growth
+* repaint storms
+* memory spikes
+
+====================================================
+4. MONACO STABILITY
+Audit:
+
+* model disposal
+* editor lifecycle
+* detached instances
+
+====================================================
+5. SSE RUNTIME HYGIENE
+Ensure:
+
+* reconnect cleanup
+* stale stream removal
+* listener cleanup
+
+====================================================
+6. PERFORMANCE INSTRUMENTATION
+Add:
+lightweight runtime metrics
+for:
+FPS
+DOM nodes
+observer count
+memory trend
+
+WITHOUT:
+external telemetry services.
+
+====================================================
+RULES
+=====
+
+NO:
+
+* backend rewrites
+* architecture redesign
+* framework migration
+
+====================================================
+CERTIFICATION
+=============
+
+Generate:
+
+1. Z21_MEMORY_STABILITY_CERTIFICATION.md
+2. Z21_RUNTIME_PERFORMANCE_REPORT.md
+3. Z21_LONG_SESSION_VALIDATION.md
+
+====================================================
+SUCCESS STATE
+=============
+
+Aetherion AI should survive:
+long sessions
+continuous execution
+heavy logs
+multi-hour runtime
+
+without:
+memory collapse
+UI degradation
+runtime instability
+or browser exhaustion.

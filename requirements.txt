@@ -32,3 +32,15 @@ redis>=5.0.0          # Redis SSE bridge + session pub/sub
 
 # ── Vector store (optional, memory explainability) ────────────────────────────
 # chromadb>=0.4.0      # Uncomment to enable semantic memory search
+bcrypt
+docx
+Flask
+gunicorn
+psutil
+PyJWT
+python-docx
+python-dotenv
+razorpay
+redis
+requests
+tiktoken

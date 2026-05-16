@@ -27,8 +27,10 @@ from flask import Blueprint, jsonify, request, Response, stream_with_context, g
 
 # Intentional wildcard — see module docstring above
 from runtime.state import *
-import web_app
-globals().update({k: v for k, v in vars(web_app).items() if not k.startswith('__')})
+
+def _inject_web_app_globals():
+    import web_app
+    globals().update({k: v for k, v in vars(web_app).items() if not k.startswith('__')})
 
 session_bp = Blueprint('session_routes', __name__)
 

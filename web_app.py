@@ -1957,12 +1957,12 @@ def _p19_cors(response):
         response.headers.setdefault(
             "Content-Security-Policy",
             "default-src 'self'; "
-            "script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; "
-            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
-            "font-src 'self' https://fonts.gstatic.com; "
-            "img-src 'self' data: blob:; "
-            "connect-src 'self' wss: ws:; "
-            "frame-src 'self'; "
+            "script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://checkout.razorpay.com; "
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; "
+            "font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; "
+            "img-src 'self' data: blob: https:; "
+            "connect-src 'self' wss: ws: https://api.razorpay.com; "
+            "frame-src 'self' https://api.razorpay.com https://checkout.razorpay.com; "
             "object-src 'none';"
         )
     return response
@@ -6435,6 +6435,70 @@ def api_sandbox_stats():
 # ── Task queue routes ─────────────────────────────────────────────────────────
 
 
+@app.route("/api/sessions")
+def api_sessions():
+    """List all sessions for the dashboard/UI."""
+    limit = int(request.args.get("limit", 200))
+    sessions = db_sessions(limit=limit)
+    return jsonify({"ok": True, "sessions": sessions})
+
+
+@app.route("/api/providers")
+def api_providers():
+    """Return provider catalogue with availability status."""
+    stored_cfg = get_setting("default_config", default_managed_config())
+    stored_keys = stored_cfg.get("api_keys") or {}
+    providers = []
+    for name, meta in PROVIDERS.items():
+        key_env = meta.get("key_env")
+        has_env = bool(os.getenv(key_env)) if key_env else True
+        has_byok = bool(stored_keys.get(name))
+        available = has_env or has_byok
+        providers.append({
+            "id": name,
+            "label": meta.get("label", name),
+            "category": meta.get("category", ""),
+            "speed": meta.get("speed", ""),
+            "quality": meta.get("quality", ""),
+            "caps": meta.get("caps", []),
+            "models": meta.get("models", []),
+            "available": available,
+            "byok": has_byok,
+        })
+    return jsonify({"ok": True, "providers": providers})
+
+
+@app.route("/api/queue")
+def api_queue():
+    """Return current queue and running session state."""
+    with queue_lock:
+        pending = list(pending_queue)
+    run_sid = running.get("sid")
+    run_sess = db_session(run_sid) if run_sid else None
+    pending_sessions = []
+    for sid in pending:
+        s = db_session(sid)
+        if s:
+            pending_sessions.append({"id": sid, "task": s.get("task", ""), "status": "queued"})
+    return jsonify({
+        "ok": True,
+        "running": run_sess,
+        "pending": pending_sessions,
+    })
+
+
+@app.route("/api/queue/snapshot")
+def api_queue_snapshot():
+    """Alias for /api/queue used by some UI modules."""
+    with queue_lock:
+        pending = list(pending_queue)
+    run_sid = running.get("sid")
+    return jsonify({
+        "ok": True,
+        "running_sid": run_sid,
+        "pending": pending,
+        "queue_depth": len(pending),
+    })
 
 
 
@@ -10733,12 +10797,15 @@ def api_realtime_stream(sid):
 
 # ─────────────────────────────────────────────────────────────────────────────
 # --- PHASE Z3: RUNTIME ROUTE MODULARIZATION ---
-from routes.memory_routes import memory_bp
-from routes.provider_routes import provider_bp
-from routes.session_routes import session_bp
+from routes.memory_routes import memory_bp, _inject_web_app_globals as _mem_inject
+from routes.provider_routes import provider_bp, _inject_web_app_globals as _prov_inject
+from routes.session_routes import session_bp, _inject_web_app_globals as _sess_inject
 app.register_blueprint(memory_bp)
 app.register_blueprint(provider_bp)
 app.register_blueprint(session_bp)
+_mem_inject()
+_prov_inject()
+_sess_inject()
 
 if __name__ == "__main__":
     # Phase 19: debug mode controlled by env var — never True in production

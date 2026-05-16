@@ -1,0 +1,776 @@
+/**
+ * nx-z44.css — Phase Z44: Unified Cognitive Runtime + Execution Storytelling
+ * ═══════════════════════════════════════════════════════════════════════════
+ * Sub-phases:
+ *   A — Unified Runtime State System (9 states)
+ *   B — Execution Storytelling Layer
+ *   C — DAG + Timeline + Replay Fusion
+ *   D — Cognitive Inspector Evolution
+ *   E — Operator Guidance System
+ *   F — Long-Session Continuity
+ *   G — Visual Cognitive Maturity Corrections
+ *
+ * State selector: body[data-nx-state="idle|running|queued|paused|hitl|
+ *                                     recovery|stabilizing|failed|replay"]
+ * Color token:    var(--z44-state-color) — set by JS per state
+ *
+ * Animation budget: opacity + transform only. No layout shifts.
+ * ═══════════════════════════════════════════════════════════════════════
+ */
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z44 TOKENS
+   ══════════════════════════════════════════════════════════════════════ */
+:root {
+  /* Dynamic — overridden by JS per state */
+  --z44-state-color:       #3A3D48;
+
+  /* Per-state accent palette */
+  --z44-idle:              #3A3D48;
+  --z44-running:           #0079F2;
+  --z44-queued:            #525566;
+  --z44-paused:            #C28A00;
+  --z44-hitl:              #7C5DB7;
+  --z44-recovery:          #D97706;
+  --z44-stabilizing:       #16A34A;
+  --z44-failed:            #C0392B;
+  --z44-replay:            #0891B2;
+
+  /* Mission strip */
+  --z44-mission-h:         24px;
+  --z44-story-max-lines:   5;
+
+  /* Session age */
+  --z44-age-fresh:         #16A34A;
+  --z44-age-active:        #0079F2;
+  --z44-age-long:          #C28A00;
+  --z44-age-idle:          #3A3D48;
+
+  /* Advisory */
+  --z44-advisory-h:        auto;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z44A — UNIFIED RUNTIME STATE SYSTEM
+   Every surface reacts coherently to runtime state.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── Topbar bottom-border accent — state-driven ───────────────────── */
+.nx-shell-topbar::after {
+  background: var(--z44-state-color) !important;
+  opacity: 0.35;
+  transition: background 0.35s ease, opacity 0.35s ease;
+}
+
+body[data-nx-state="idle"] .nx-shell-topbar::after     { opacity: 0; }
+body[data-nx-state="running"] .nx-shell-topbar::after  { opacity: 0.4; }
+body[data-nx-state="failed"] .nx-shell-topbar::after   { opacity: 0.5; }
+body[data-nx-state="hitl"] .nx-shell-topbar::after     { opacity: 0.45; }
+
+/* ── Run dot — state-color ────────────────────────────────────────── */
+body[data-nx-state="idle"] .nx-run-dot          { background: var(--z44-idle); animation: none; }
+body[data-nx-state="running"] .nx-run-dot       { background: var(--z44-running); animation: z43-run-dot-pulse 2.4s ease infinite; }
+body[data-nx-state="queued"] .nx-run-dot        { background: var(--z44-queued); animation: z43-run-dot-pulse 3.5s ease infinite; }
+body[data-nx-state="paused"] .nx-run-dot        { background: var(--z44-paused); animation: none; }
+body[data-nx-state="hitl"] .nx-run-dot          { background: var(--z44-hitl); animation: z43-run-dot-pulse 1.8s ease infinite; }
+body[data-nx-state="recovery"] .nx-run-dot      { background: var(--z44-recovery); animation: z43-run-dot-pulse 2.0s ease infinite; }
+body[data-nx-state="stabilizing"] .nx-run-dot   { background: var(--z44-stabilizing); animation: z43-run-dot-pulse 3.0s ease infinite; }
+body[data-nx-state="failed"] .nx-run-dot        { background: var(--z44-failed); animation: none; }
+body[data-nx-state="replay"] .nx-run-dot        { background: var(--z44-replay); animation: z43-run-dot-pulse 2.0s ease infinite; }
+
+/* ── Z33 runtime pulse pill — state-driven ────────────────────────── */
+body[data-nx-state="idle"] .z33-runtime-pulse         { border-color: var(--z42-border-subtle); color: var(--nds-text-dim); background: var(--z42-workspace); }
+body[data-nx-state="running"] .z33-runtime-pulse      { border-color: rgba(0,121,242,0.30); color: #57ABFF; background: rgba(0,121,242,0.06); }
+body[data-nx-state="queued"] .z33-runtime-pulse       { border-color: rgba(82,85,102,0.40); color: #8891A4; background: rgba(82,85,102,0.06); }
+body[data-nx-state="paused"] .z33-runtime-pulse       { border-color: rgba(194,138,0,0.35); color: #D4AC45; background: rgba(194,138,0,0.07); }
+body[data-nx-state="hitl"] .z33-runtime-pulse         { border-color: rgba(124,93,183,0.40); color: #A58BD4; background: rgba(124,93,183,0.08); }
+body[data-nx-state="recovery"] .z33-runtime-pulse     { border-color: rgba(217,119,6,0.35); color: #D4A030; background: rgba(217,119,6,0.07); }
+body[data-nx-state="stabilizing"] .z33-runtime-pulse  { border-color: rgba(22,163,74,0.35); color: #4ADE80; background: rgba(22,163,74,0.07); }
+body[data-nx-state="failed"] .z33-runtime-pulse       { border-color: rgba(192,57,43,0.35); color: #E55A4E; background: rgba(192,57,43,0.07); }
+body[data-nx-state="replay"] .z33-runtime-pulse       { border-color: rgba(8,145,178,0.35); color: #22D3EE; background: rgba(8,145,178,0.07); }
+
+/* State labels in runtime pulse */
+body[data-nx-state="idle"] .z33-pulse-label            { content: 'Idle'; }
+body[data-nx-state="queued"] .z33-pulse-dot            { background: var(--z44-queued); }
+body[data-nx-state="paused"] .z33-pulse-dot            { background: var(--z44-paused); }
+body[data-nx-state="hitl"] .z33-pulse-dot              { background: var(--z44-hitl); }
+body[data-nx-state="recovery"] .z33-pulse-dot          { background: var(--z44-recovery); }
+body[data-nx-state="stabilizing"] .z33-pulse-dot       { background: var(--z44-stabilizing); }
+body[data-nx-state="failed"] .z33-pulse-dot            { background: var(--z44-failed); }
+body[data-nx-state="replay"] .z33-pulse-dot            { background: var(--z44-replay); }
+
+/* ── Center panel left border — state-driven ──────────────────────── */
+.nx-panel.nx-center {
+  border-left: 2px solid transparent !important;
+  transition: border-color 0.35s ease !important;
+}
+
+body[data-nx-state="idle"] .nx-panel.nx-center         { border-left-color: transparent !important; }
+body[data-nx-state="running"] .nx-panel.nx-center      { border-left-color: rgba(0,121,242,0.20) !important; }
+body[data-nx-state="queued"] .nx-panel.nx-center       { border-left-color: rgba(82,85,102,0.15) !important; }
+body[data-nx-state="paused"] .nx-panel.nx-center       { border-left-color: rgba(194,138,0,0.20) !important; }
+body[data-nx-state="hitl"] .nx-panel.nx-center         { border-left-color: rgba(124,93,183,0.25) !important; }
+body[data-nx-state="recovery"] .nx-panel.nx-center     { border-left-color: rgba(217,119,6,0.20) !important; }
+body[data-nx-state="stabilizing"] .nx-panel.nx-center  { border-left-color: rgba(22,163,74,0.20) !important; }
+body[data-nx-state="failed"] .nx-panel.nx-center       { border-left-color: rgba(192,57,43,0.25) !important; }
+body[data-nx-state="replay"] .nx-panel.nx-center       { border-left-color: rgba(8,145,178,0.20) !important; }
+
+/* ── Status badge — state-driven ─────────────────────────────────── */
+.nx-status-badge {
+  transition: color 0.25s, border-color 0.25s, background 0.25s !important;
+}
+
+body[data-nx-state="idle"] .nx-status-badge          { color: var(--nds-text-dim) !important; border-color: var(--z42-border-active) !important; background: var(--z42-workspace) !important; }
+body[data-nx-state="running"] .nx-status-badge       { color: #57ABFF !important; border-color: rgba(0,121,242,0.30) !important; background: rgba(0,121,242,0.06) !important; }
+body[data-nx-state="queued"] .nx-status-badge        { color: #8891A4 !important; border-color: rgba(82,85,102,0.35) !important; background: rgba(82,85,102,0.05) !important; }
+body[data-nx-state="paused"] .nx-status-badge        { color: #D4AC45 !important; border-color: rgba(194,138,0,0.30) !important; background: rgba(194,138,0,0.06) !important; }
+body[data-nx-state="hitl"] .nx-status-badge          { color: #A58BD4 !important; border-color: rgba(124,93,183,0.35) !important; background: rgba(124,93,183,0.07) !important; }
+body[data-nx-state="recovery"] .nx-status-badge      { color: #D4A030 !important; border-color: rgba(217,119,6,0.30) !important; background: rgba(217,119,6,0.06) !important; }
+body[data-nx-state="stabilizing"] .nx-status-badge   { color: #4ADE80 !important; border-color: rgba(22,163,74,0.30) !important; background: rgba(22,163,74,0.06) !important; }
+body[data-nx-state="failed"] .nx-status-badge        { color: #E55A4E !important; border-color: rgba(192,57,43,0.30) !important; background: rgba(192,57,43,0.06) !important; }
+body[data-nx-state="replay"] .nx-status-badge        { color: #22D3EE !important; border-color: rgba(8,145,178,0.30) !important; background: rgba(8,145,178,0.06) !important; }
+
+/* ── Statusbar model dot — state-driven ────────────────────────────── */
+.nx-model-dot { transition: background 0.25s !important; }
+body[data-nx-state="idle"] .nx-model-dot             { background: var(--z44-idle); animation: none; }
+body[data-nx-state="running"] .nx-model-dot          { background: var(--z44-running); animation: z43-run-dot-pulse 2.4s ease infinite; }
+body[data-nx-state="queued"] .nx-model-dot           { background: var(--z44-queued); }
+body[data-nx-state="paused"] .nx-model-dot           { background: var(--z44-paused); }
+body[data-nx-state="hitl"] .nx-model-dot             { background: var(--z44-hitl); animation: z43-run-dot-pulse 1.8s ease infinite; }
+body[data-nx-state="recovery"] .nx-model-dot         { background: var(--z44-recovery); animation: z43-run-dot-pulse 2.0s ease infinite; }
+body[data-nx-state="stabilizing"] .nx-model-dot      { background: var(--z44-stabilizing); }
+body[data-nx-state="failed"] .nx-model-dot           { background: var(--z44-failed); }
+body[data-nx-state="replay"] .nx-model-dot           { background: var(--z44-replay); }
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z44B — EXECUTION STORYTELLING LAYER
+   Mission narrative strip + runtime event feed.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── Mission strip — single-line operational narrative ────────────── */
+.nx-mission-strip {
+  height: var(--z44-mission-h);
+  min-height: var(--z44-mission-h);
+  max-height: var(--z44-mission-h);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 12px;
+  background: var(--z42-workspace);
+  border-bottom: 1px solid var(--z42-border-subtle);
+  font-size: 10px;
+  font-family: var(--nds-mono);
+  color: var(--nds-text-dim);
+  overflow: hidden;
+  flex-shrink: 0;
+  transition: border-color 0.25s, color 0.25s;
+}
+
+/* Hide when idle */
+body[data-nx-state="idle"] .nx-mission-strip {
+  opacity: 0.4;
+}
+
+body[data-nx-state="failed"] .nx-mission-strip {
+  border-bottom-color: rgba(192,57,43,0.20);
+}
+
+body[data-nx-state="hitl"] .nx-mission-strip {
+  border-bottom-color: rgba(124,93,183,0.20);
+}
+
+.nx-mission-icon {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--z44-state-color);
+  flex-shrink: 0;
+  transition: background 0.25s;
+}
+
+body[data-nx-state="running"] .nx-mission-icon,
+body[data-nx-state="hitl"] .nx-mission-icon,
+body[data-nx-state="recovery"] .nx-mission-icon {
+  animation: z43-run-dot-pulse 2.4s ease infinite;
+}
+
+.nx-mission-text {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--nds-text-lo);
+  transition: color 0.2s;
+}
+
+body[data-nx-state="failed"] .nx-mission-text { color: #E55A4E; }
+body[data-nx-state="hitl"] .nx-mission-text   { color: #A58BD4; }
+body[data-nx-state="paused"] .nx-mission-text { color: #D4AC45; }
+
+.nx-mission-state {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+  padding: 1px 5px;
+  border-radius: 2px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--z42-border-subtle);
+  color: var(--z44-state-color);
+  transition: color 0.25s, border-color 0.25s;
+}
+
+body[data-nx-state="idle"] .nx-mission-state { display: none; }
+
+/* ── Storytelling feed (in inspector) ────────────────────────────── */
+.nx-story-section {
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+.nx-story-section .nx-insp-label {
+  padding: 7px 12px 0 !important;
+  height: auto !important;
+  margin-bottom: 4px !important;
+}
+
+.nx-story-feed {
+  overflow-y: auto;
+  max-height: 140px;
+  padding: 0 8px 6px;
+}
+
+.nx-story-empty {
+  font-size: 10px;
+  color: var(--nds-text-dim);
+  font-family: var(--nds-mono);
+  padding: 8px 4px;
+  text-align: center;
+}
+
+.nx-story-line {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--z42-border-subtle);
+  min-height: 0;
+}
+
+.nx-story-line:last-child { border-bottom: none; }
+
+.nx-story-text {
+  font-size: 10px;
+  font-family: var(--nds-mono);
+  color: var(--nds-text-lo);
+  flex: 1;
+  line-height: 1.45;
+  word-break: break-word;
+}
+
+.nx-story-age {
+  font-size: 9px;
+  font-family: var(--nds-mono);
+  color: var(--nds-text-dim);
+  flex-shrink: 0;
+  white-space: nowrap;
+  margin-top: 1px;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z44C — DAG + TIMELINE + REPLAY FUSION
+   Synchronized execution surfaces.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── DAG panel — state-aware framing ────────────────────────────── */
+.z30-dag-panel {
+  border: 1px solid var(--z42-border-frame) !important;
+  border-radius: 5px !important;
+  overflow: hidden !important;
+  transition: border-color 0.3s !important;
+}
+
+body[data-nx-state="running"] .z30-dag-panel     { border-color: rgba(0,121,242,0.20) !important; }
+body[data-nx-state="failed"] .z30-dag-panel      { border-color: rgba(192,57,43,0.20) !important; }
+body[data-nx-state="hitl"] .z30-dag-panel        { border-color: rgba(124,93,183,0.20) !important; }
+body[data-nx-state="replay"] .z30-dag-panel      { border-color: rgba(8,145,178,0.20) !important; }
+
+.z30-dag-panel-hdr {
+  background: var(--z42-panel-active) !important;
+  border-bottom: 1px solid var(--z42-border-subtle) !important;
+  padding: 5px 10px !important;
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  color: var(--nds-text-dim) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+  cursor: pointer !important;
+}
+
+.z30-dag-idle {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  padding: 16px !important;
+  font-size: 11px !important;
+  color: var(--nds-text-dim) !important;
+  font-family: var(--nds-mono) !important;
+}
+
+.z30-dag-idle-icon {
+  font-size: 16px !important;
+  opacity: 0.3 !important;
+}
+
+/* ── Z37 Risk indicator — state-coherent ────────────────────────── */
+.z37-risk-indicator {
+  border: 1px solid var(--z42-border-active) !important;
+  border-radius: 4px !important;
+  padding: 3px 7px !important;
+  font-size: 10px !important;
+  font-family: var(--nds-mono) !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+.z37-risk-indicator.z37-risk-LOW    { color: var(--nds-text-dim) !important; border-color: var(--z42-border-subtle) !important; }
+.z37-risk-indicator.z37-risk-MEDIUM { color: #D4AC45 !important; border-color: rgba(194,138,0,0.30) !important; }
+.z37-risk-indicator.z37-risk-HIGH   { color: #E55A4E !important; border-color: rgba(192,57,43,0.30) !important; }
+
+.z37-risk-label {
+  font-size: 9px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.07em !important;
+  text-transform: uppercase !important;
+}
+
+/* ── Timeline dock — state-coherent ─────────────────────────────── */
+.z33-timeline-dock {
+  border-top: 1px solid var(--z42-border-frame) !important;
+  background: var(--z42-panel-active) !important;
+  transition: border-top-color 0.3s !important;
+}
+
+body[data-nx-state="replay"] .z33-timeline-dock {
+  border-top-color: rgba(8,145,178,0.30) !important;
+  background: rgba(8,145,178,0.03) !important;
+}
+
+.z33-tl-header {
+  display: flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  padding: 5px 10px !important;
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  color: var(--nds-text-dim) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+  cursor: pointer !important;
+  border-bottom: 1px solid var(--z42-border-subtle) !important;
+}
+
+/* ── Shared execution surface border pulse (replay mode) ────────── */
+body[data-nx-state="replay"] .z30-dag-panel,
+body[data-nx-state="replay"] .z33-timeline-dock,
+body[data-nx-state="replay"] #nxTab-intel {
+  border-color: rgba(8,145,178,0.20) !important;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z44D — COGNITIVE INSPECTOR EVOLUTION
+   Inspector as a cognition-analysis surface.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── Causal section — Z37 ────────────────────────────────────────── */
+.z37-causal-section {
+  border-top: 1px solid var(--z42-border-subtle) !important;
+  padding: 8px 10px !important;
+  background: var(--z42-workspace) !important;
+}
+
+.z37-causal-title {
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  color: var(--nds-text-dim) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+  margin-bottom: 6px !important;
+}
+
+.z37-dep-chain {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 3px !important;
+}
+
+.z37-causal-block {
+  background: var(--z42-workspace) !important;
+  border: 1px solid var(--z42-border-subtle) !important;
+  border-radius: 4px !important;
+  padding: 5px 7px !important;
+}
+
+/* ── P9 routing section — cognition-level ────────────────────────── */
+.p9-routing-section {
+  background: var(--z42-workspace) !important;
+  border-radius: 4px !important;
+}
+
+/* ── P10 intelligence score — cognition surface ──────────────────── */
+.p10-mem-section {
+  padding: 8px 0 0 !important;
+}
+
+.p10-mem-title {
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  color: var(--nds-text-dim) !important;
+  margin-bottom: 5px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+}
+
+.p10-score-row {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding: 3px 0 !important;
+  font-size: 11px !important;
+  color: var(--nds-text-lo) !important;
+}
+
+.p10-score-label {
+  font-size: 10px !important;
+  color: var(--nds-text-dim) !important;
+}
+
+.p10-grade-badge {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  font-family: var(--nds-mono) !important;
+  color: var(--z42-exec-active) !important;
+  background: rgba(0,121,242,0.08) !important;
+  border-radius: 3px !important;
+  padding: 1px 5px !important;
+}
+
+.p10-score-val {
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  font-family: var(--nds-mono) !important;
+  color: var(--nds-text-md) !important;
+}
+
+/* ── Stat val — state-driven color ─────────────────────────────── */
+body[data-nx-state="running"] .nx-stat-val { color: var(--nds-text-hi) !important; }
+body[data-nx-state="failed"]  .nx-stat-val { color: #E55A4E !important; }
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z44E — OPERATOR GUIDANCE SYSTEM
+   Non-intrusive, state-aware operational advisories.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── Advisory strip (injected by JS at top of inspector) ────────── */
+.nx-advisory {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 7px !important;
+  padding: 8px 10px !important;
+  font-size: 11px !important;
+  font-family: var(--nds-font) !important;
+  color: var(--nds-text-lo) !important;
+  border-bottom: 1px solid var(--z42-border-frame) !important;
+  line-height: 1.4 !important;
+  transition: background 0.25s, border-color 0.25s !important;
+}
+
+/* State-specific advisory appearance */
+[data-nx-advisory-state="queued"].nx-advisory {
+  background: rgba(82,85,102,0.06);
+  border-bottom-color: rgba(82,85,102,0.15);
+}
+[data-nx-advisory-state="paused"].nx-advisory {
+  background: rgba(194,138,0,0.06);
+  border-bottom-color: rgba(194,138,0,0.15);
+}
+[data-nx-advisory-state="hitl"].nx-advisory {
+  background: rgba(124,93,183,0.08);
+  border-bottom-color: rgba(124,93,183,0.18);
+}
+[data-nx-advisory-state="recovery"].nx-advisory {
+  background: rgba(217,119,6,0.06);
+  border-bottom-color: rgba(217,119,6,0.15);
+}
+[data-nx-advisory-state="stabilizing"].nx-advisory {
+  background: rgba(22,163,74,0.06);
+  border-bottom-color: rgba(22,163,74,0.15);
+}
+[data-nx-advisory-state="failed"].nx-advisory {
+  background: rgba(192,57,43,0.06);
+  border-bottom-color: rgba(192,57,43,0.15);
+}
+[data-nx-advisory-state="replay"].nx-advisory {
+  background: rgba(8,145,178,0.06);
+  border-bottom-color: rgba(8,145,178,0.15);
+}
+
+.nx-advisory-icon {
+  font-size: 9px;
+  flex-shrink: 0;
+  color: var(--z44-state-color);
+  margin-top: 2px;
+  opacity: 0.8;
+  transition: color 0.25s;
+}
+
+.nx-advisory-text {
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--nds-text-lo);
+}
+
+/* State-specific advisory text colors */
+[data-nx-advisory-state="paused"] .nx-advisory-text,
+[data-nx-advisory-state="queued"] .nx-advisory-text    { color: var(--nds-text-lo); }
+[data-nx-advisory-state="hitl"] .nx-advisory-text      { color: #A58BD4; }
+[data-nx-advisory-state="recovery"] .nx-advisory-text  { color: #D4A030; }
+[data-nx-advisory-state="failed"] .nx-advisory-text    { color: #E55A4E; }
+
+/* ── HITL strip — enhanced for Z44 cognition ─────────────────────── */
+.nx-hitl-strip {
+  background: rgba(124,93,183,0.05) !important;
+  border-top: 1px solid rgba(124,93,183,0.18) !important;
+  border-bottom: 1px solid rgba(124,93,183,0.18) !important;
+}
+
+body[data-nx-state="hitl"] .nx-hitl-strip {
+  background: rgba(124,93,183,0.08) !important;
+  border-top-color: rgba(124,93,183,0.25) !important;
+  border-bottom-color: rgba(124,93,183,0.25) !important;
+}
+
+/* ── Mission strip text reflects state label ──────────────────────── */
+body[data-nx-state="hitl"] .nx-mission-strip    { color: #A58BD4; }
+body[data-nx-state="failed"] .nx-mission-strip  { color: #E55A4E; }
+body[data-nx-state="paused"] .nx-mission-strip  { color: #D4AC45; }
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z44F — LONG-SESSION CONTINUITY
+   Session age awareness, drift indicators, persistence signals.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── Session card — age-tier visual ─────────────────────────────── */
+.nx-session-card[data-session-age="fresh"]  { border-left: 2px solid var(--z44-stabilizing) !important; }
+.nx-session-card[data-session-age="active"] { border-left: 2px solid var(--z44-running) !important; }
+.nx-session-card[data-session-age="long"]   { border-left: 2px solid var(--z44-paused) !important; }
+.nx-session-card[data-session-age="idle"]   { border-left: 2px solid var(--z42-border-subtle) !important; }
+
+/* ── Inspector status — context bar enrichment during long runs ────── */
+body[data-nx-state="running"] .nx-stat[data-stat="elapsed"] .nx-stat-val {
+  color: var(--z44-running) !important;
+}
+body[data-nx-state="failed"] .nx-stat[data-stat="elapsed"] .nx-stat-val {
+  color: var(--z44-failed) !important;
+}
+
+/* ── Stabilizing state — calming visual ─────────────────────────── */
+body[data-nx-state="stabilizing"] .nx-panel.nx-center {
+  border-left-color: rgba(22,163,74,0.20) !important;
+}
+
+body[data-nx-state="stabilizing"] .nx-topbar-run-btn {
+  background: rgba(22,163,74,0.10) !important;
+  border-color: rgba(22,163,74,0.30) !important;
+  color: #4ADE80 !important;
+}
+
+/* ── Failed state — operational alert framing ────────────────────── */
+body[data-nx-state="failed"] .nx-panel.nx-center {
+  border-left-color: rgba(192,57,43,0.22) !important;
+}
+
+body[data-nx-state="failed"] .nx-error-card {
+  display: block !important;
+}
+
+/* ── HITL state — clear waiting-for-input framing ────────────────── */
+body[data-nx-state="hitl"] .nx-topbar-run-btn {
+  background: rgba(124,93,183,0.10) !important;
+  border-color: rgba(124,93,183,0.30) !important;
+  color: #A58BD4 !important;
+}
+
+/* ── Paused state — amber waiting framing ────────────────────────── */
+body[data-nx-state="paused"] .nx-topbar-run-btn {
+  background: rgba(194,138,0,0.10) !important;
+  border-color: rgba(194,138,0,0.30) !important;
+  color: #D4AC45 !important;
+}
+
+/* ── Recovery state — warm amber ─────────────────────────────────── */
+body[data-nx-state="recovery"] .nx-topbar-run-btn {
+  background: rgba(217,119,6,0.10) !important;
+  border-color: rgba(217,119,6,0.28) !important;
+  color: #D4A030 !important;
+}
+
+/* ── Queued state — muted readiness ──────────────────────────────── */
+body[data-nx-state="queued"] .nx-topbar-run-btn {
+  background: rgba(82,85,102,0.10) !important;
+  border-color: rgba(82,85,102,0.25) !important;
+  color: #8891A4 !important;
+}
+
+/* ── Replay state — cyan, distinct from blue running ─────────────── */
+body[data-nx-state="replay"] .nx-topbar-run-btn {
+  background: rgba(8,145,178,0.10) !important;
+  border-color: rgba(8,145,178,0.28) !important;
+  color: #22D3EE !important;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z44G — VISUAL COGNITIVE MATURITY CORRECTIONS
+   Forensic audit findings applied.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* Fix: p9 status dot — state-aware color */
+.p9-status-dot {
+  width: 5px !important;
+  height: 5px !important;
+  border-radius: 50% !important;
+  background: var(--z44-state-color) !important;
+  flex-shrink: 0 !important;
+  transition: background 0.25s !important;
+  display: inline-block !important;
+}
+
+/* Fix: p7 run button — unified tiny-btn style */
+.p7-run-btn {
+  width: 100% !important;
+  padding: 5px !important;
+  border-radius: 4px !important;
+  border: 1px solid var(--z42-border-active) !important;
+  background: var(--z42-workspace) !important;
+  color: var(--nds-text-lo) !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  font-family: var(--nds-font) !important;
+  cursor: pointer !important;
+  margin-top: 6px !important;
+  transition: border-color 0.1s, color 0.1s !important;
+}
+
+.p7-run-btn:not(:disabled):hover {
+  border-color: var(--z42-exec-active) !important;
+  color: var(--nds-text-hi) !important;
+}
+
+.p7-run-btn:disabled {
+  opacity: 0.4 !important;
+  cursor: not-allowed !important;
+}
+
+/* Fix: p7 toggle switch — remove inline purple */
+.p7-toggle-track {
+  background: var(--z42-exec-idle) !important;
+  transition: background 0.2s !important;
+}
+
+.p7-toggle-switch input:checked + .p7-toggle-track {
+  background: var(--z42-exec-active) !important;
+}
+
+/* Fix: p5 route info — structured */
+.p5-route-info {
+  font-size: 10px !important;
+  color: var(--nds-text-dim) !important;
+  font-family: var(--nds-mono) !important;
+  padding: 5px 0 2px !important;
+  margin-top: 4px !important;
+  border-top: 1px solid var(--z42-border-subtle) !important;
+}
+
+.p5-ri-prov {
+  color: var(--nds-text-md) !important;
+  font-weight: 500 !important;
+}
+
+.p5-ri-chain {
+  margin-top: 2px !important;
+  color: var(--nds-text-dim) !important;
+  line-height: 1.5 !important;
+}
+
+/* Fix: output/validation text slots */
+#outResult,
+#outValidation {
+  font-size: 11px !important;
+  font-family: var(--nds-mono) !important;
+  color: var(--nds-text-lo) !important;
+  background: var(--z42-workspace) !important;
+  border: 1px solid var(--z42-border-subtle) !important;
+  border-radius: 4px !important;
+  padding: 6px 7px !important;
+  line-height: 1.4 !important;
+  word-break: break-word !important;
+}
+
+/* Fix: mode-pill — operational badge */
+.mode-pill {
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  font-family: var(--nds-font) !important;
+  padding: 2px 7px !important;
+  border-radius: 3px !important;
+  border: 1px solid var(--z42-border-active) !important;
+  background: var(--z42-workspace) !important;
+  color: var(--nds-text-dim) !important;
+  transition: color 0.2s, border-color 0.2s !important;
+}
+
+.mode-pill.running {
+  color: #57ABFF !important;
+  border-color: rgba(0,121,242,0.30) !important;
+  background: rgba(0,121,242,0.06) !important;
+}
+
+/* Fix: suppress legacy #pulse element */
+#pulse { display: none !important; }
+
+/* Fix: Z28 operator board — ensure cohesion when opened */
+.z28-root {
+  font-size: 11px !important;
+}
+
+/* Fix: Z37 causal section rendering */
+.z37-causal-section .z37-causal-block {
+  border-left: 2px solid var(--z44-state-color) !important;
+  transition: border-color 0.25s !important;
+}
+
+/* Fix: legacy pill classes leaking purple into runtime UI */
+.pill.running { color: #57ABFF !important; }
+.pill.error   { color: #E55A4E !important; }
+.pill.idle    { color: var(--nds-text-dim) !important; }
+
+/* Fix: suppress large emoji in inspector labels (Phase 14, 10) */
+.nx-insp-label {
+  font-size: 10px !important;
+}
+
+/* Suppress emoji bloat — operational labels only */
+.nx-insp-label > span:first-child {
+  font-size: 10px !important;
+}

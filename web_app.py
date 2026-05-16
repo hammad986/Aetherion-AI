@@ -11599,6 +11599,14 @@ try:
 except Exception as _z38_err:
     print(f"⚠ cognition_z38_bp skipped: {_z38_err}")
 
+# --- PHASE Z39: RUNTIME STABILIZATION + COGNITIVE INTEGRITY ---
+try:
+    from routes.cognition_z39 import cognition_z39_bp
+    app.register_blueprint(cognition_z39_bp)
+    print("✅ cognition_z39_bp registered (/api/z39/*)")
+except Exception as _z39_err:
+    print(f"⚠ cognition_z39_bp skipped: {_z39_err}")
+
 # --- PHASE Z6: TELEMETRY BLUEPRINT ---
 # telemetry_routes.py has no conflicting URLs and is safe to register.
 # All routes are behind lazy imports so missing infra sub-packages never

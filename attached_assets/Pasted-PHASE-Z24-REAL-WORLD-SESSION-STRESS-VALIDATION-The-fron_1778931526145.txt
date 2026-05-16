@@ -1,0 +1,137 @@
+PHASE Z24 — REAL-WORLD SESSION STRESS VALIDATION
+
+The frontend runtime is now largely stabilized.
+
+The next objective is:
+real-world operational validation under long-running workloads.
+
+====================================================
+PRIMARY OBJECTIVE
+=================
+
+Stress-test Aetherion AI under:
+multi-hour sessions
+continuous SSE streams
+heavy logs
+terminal churn
+multiple modals
+continuous execution cycles
+and repeated navigation flows.
+
+====================================================
+MANDATORY FORENSIC TESTING
+==========================
+
+Simulate:
+
+* 8-12 hour sessions
+* continuous streaming
+* 10k+ log lines
+* repeated modal open/close
+* repeated command palette activation
+* repeated tab switching
+* repeated inspector toggles
+* reconnect storms
+* SSE interruption recovery
+* Monaco open/close cycles
+* memory growth
+* observer growth
+* detached DOM accumulation
+
+Generate:
+
+docs/Z24_STRESS_TEST_REPORT.md
+
+====================================================
+IMPLEMENTATION TARGETS
+======================
+
+1. LONG SESSION HARDENING
+
+Validate:
+
+* DOM ceilings
+* memory cleanup
+* listener cleanup
+* observer cleanup
+* log trimming
+* modal cleanup
+
+====================================================
+2. SSE STABILITY VALIDATION
+
+Stress:
+
+* reconnects
+* stale streams
+* race conditions
+* duplicate subscriptions
+
+====================================================
+3. TERMINAL STABILITY
+
+Validate:
+
+* repaint stability
+* buffer cleanup
+* scroll performance
+* rendering latency
+
+====================================================
+4. MEMORY TREND VALIDATION
+
+Track:
+
+* JS heap
+* DOM nodes
+* observers
+* timers
+* listeners
+
+over long sessions.
+
+====================================================
+5. FAILURE RECOVERY VALIDATION
+
+Test:
+
+* browser refresh recovery
+* reconnect recovery
+* stale execution cleanup
+* partial UI restoration
+
+====================================================
+STRICT RULES
+============
+
+NO:
+
+* backend rewrites
+* feature expansion
+* framework migration
+
+====================================================
+CERTIFICATION
+=============
+
+Generate:
+
+1. Z24_STABILITY_CERTIFICATION.md
+2. Z24_LONG_SESSION_MATRIX.md
+3. Z24_RUNTIME_RECOVERY_REPORT.md
+
+====================================================
+SUCCESS STATE
+=============
+
+Aetherion AI survives:
+real-world workloads
+long operational sessions
+continuous streaming
+heavy execution flows
+
+without:
+memory collapse
+runtime degradation
+UI corruption
+or interaction instability.

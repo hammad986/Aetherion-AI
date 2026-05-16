@@ -1,0 +1,129 @@
+PHASE Z23 — ACCESSIBILITY & KEYBOARD OPERATIONS HARDENING
+
+The frontend now has partial accessibility compliance.
+
+This phase hardens:
+keyboard navigation
+screen-reader compatibility
+focus visibility
+and operational accessibility.
+
+====================================================
+PRIMARY OBJECTIVE
+=================
+
+Ensure Aetherion AI can be fully operated:
+without a mouse
+with screen readers
+and under reduced-motion environments.
+
+====================================================
+MANDATORY AUDIT
+===============
+
+Perform a complete accessibility audit of:
+
+* all buttons
+* all tabs
+* all modals
+* command palette
+* nav rail
+* execution controls
+* activity bar
+* inspector
+* composer
+* terminal
+* log viewer
+* dropdowns
+* overlays
+* toast notifications
+
+Generate:
+
+docs/Z23_ACCESSIBILITY_AUDIT.md
+
+====================================================
+IMPLEMENTATION TARGETS
+======================
+
+1. FOCUS-VISIBLE SYSTEM
+
+Implement:
+consistent
+tokenized
+high-clarity
+focus-visible rings.
+
+====================================================
+2. KEYBOARD NAVIGATION
+
+Support:
+
+* arrow navigation
+* tab order discipline
+* Escape handling
+* Enter activation
+* Space activation
+
+====================================================
+3. SCREEN READER SUPPORT
+
+Implement:
+
+* aria-live discipline
+* semantic labels
+* roles
+* dialog semantics
+* status regions
+
+====================================================
+4. REDUCED MOTION DISCIPLINE
+
+Ensure:
+all animations
+transitions
+pulses
+and breathing effects
+
+fully obey:
+prefers-reduced-motion.
+
+====================================================
+5. ACCESSIBILITY VALIDATION
+
+Run:
+keyboard-only traversal
+screen-reader audit
+focus trap validation
+modal isolation checks
+
+====================================================
+STRICT RULES
+============
+
+NO:
+
+* backend changes
+* layout redesign
+* framework migration
+
+====================================================
+CERTIFICATION
+=============
+
+Generate:
+
+1. Z23_ACCESSIBILITY_CERTIFICATION.md
+2. Z23_KEYBOARD_OPERATION_MATRIX.md
+3. Z23_SCREEN_READER_REPORT.md
+
+====================================================
+SUCCESS STATE
+=============
+
+Aetherion AI becomes:
+fully operable
+accessible
+keyboard-safe
+screen-reader safe
+enterprise-grade.

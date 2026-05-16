@@ -1,0 +1,231 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   NX Accessibility Layer — Z23
+   Focus-visible rings · Screen-reader utilities · prefers-reduced-motion
+   Arrow-key tab navigation · Dialog semantics · Live regions
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── 0. Skip navigation ──────────────────────────────────────────────────── */
+.nx-skip-nav {
+  position: absolute;
+  top: -100vh;
+  left: 0;
+  z-index: calc(var(--nx-z-overlay, 100) + 10);
+  padding: 8px 16px;
+  background: var(--purple, #bc8cff);
+  color: #0d1117;
+  font-weight: 700;
+  font-size: 14px;
+  border-radius: 0 0 6px 0;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.nx-skip-nav:focus {
+  top: 0;
+  outline: none;
+}
+
+/* ── 1. Screen-reader only utility ───────────────────────────────────────── */
+.nx-sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* ── 2. Global focus-visible ring reset (Z23) ────────────────────────────── */
+/* Removes the browser default on mouse-click but restores for keyboard */
+:focus {
+  outline: none;
+}
+:focus-visible {
+  outline: 2px solid var(--purple, #bc8cff);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ── 3. Component-specific focus rings ───────────────────────────────────── */
+
+/* Tab buttons */
+.nx-tab:focus-visible {
+  outline: 2px solid var(--purple, #bc8cff);
+  outline-offset: -2px;
+  border-radius: 4px 4px 0 0;
+  z-index: 1;
+  position: relative;
+}
+
+/* Nav rail icons */
+.nx-nav-icon:focus-visible,
+.nx-icon-btn:focus-visible {
+  outline: 2px solid var(--purple, #bc8cff);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* Topbar buttons */
+.nx-topbar-run-btn:focus-visible,
+.nx-topbar-stop-btn:focus-visible,
+.nx-model-btn:focus-visible,
+.nx-palette-trigger:focus-visible {
+  outline: 2px solid var(--purple, #bc8cff);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* General buttons */
+button:focus-visible,
+[role="button"]:focus-visible {
+  outline: 2px solid var(--purple, #bc8cff);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Inputs */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--purple, #bc8cff);
+  outline-offset: 0;
+  border-color: var(--purple, #bc8cff) !important;
+}
+
+/* Command palette items */
+.nx-palette-item:focus-visible {
+  outline: 2px solid var(--purple, #bc8cff);
+  outline-offset: -2px;
+}
+.nx-palette-item.selected {
+  outline: 2px solid var(--purple, #bc8cff);
+  outline-offset: -2px;
+}
+
+/* Links */
+a:focus-visible {
+  outline: 2px solid var(--purple, #bc8cff);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+/* ── 4. Tab arrow-key navigation enhancement ─────────────────────────────── */
+/* When tablist is navigated by arrow keys, the focused tab gets a ring */
+#nxTabBar:focus-within .nx-tab:focus {
+  outline: 2px solid var(--purple, #bc8cff);
+  outline-offset: -2px;
+}
+
+/* ── 5. Dialog / modal semantics ─────────────────────────────────────────── */
+/* Ensure modals with aria-hidden=true are visually hidden too */
+[role="dialog"][aria-hidden="true"] {
+  display: none !important;
+}
+/* Backdrop dimmer always present for modals */
+[role="dialog"][aria-modal="true"] {
+  position: fixed;
+}
+
+/* ── 6. aria-live status regions ──────────────────────────────────────────── */
+/* .nx-sr-only already handles screen-reader-only live regions */
+/* Visible status bar */
+[role="status"],
+[aria-live="polite"],
+[aria-live="assertive"] {
+  /* These elements may be visible — no visual override needed */
+}
+
+/* ── 7. Reduced-motion compliance (Z23) ──────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+
+  /* All transitions: immediate */
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Named animations that appear in nx-shell.css */
+  .nx-run-dot,
+  .nx-preview-dot,
+  [class*="pulse"],
+  [class*="breathing"],
+  [class*="shimmer"] {
+    animation: none !important;
+  }
+
+  /* Live-pulse on activity indicators */
+  .p33-activity-bar,
+  [data-exec-state="running"] .nx-run-dot,
+  [data-exec-state="streaming"] .nx-run-dot {
+    animation: none !important;
+  }
+
+  /* Panel slide animations */
+  .nx-shell-navrail,
+  .nx-shell-left,
+  .nx-shell-right,
+  .p57-drawer {
+    transition: none !important;
+  }
+
+  /* Loading bar */
+  #nxGlobalLoadBar,
+  .nx-load-bar,
+  [class*="load-bar"] {
+    transition: width 0.01ms !important;
+    animation: none !important;
+  }
+
+  /* Tab hint pulse */
+  .nx-tab-hint-pulse {
+    animation: none !important;
+  }
+
+  /* Toast fade */
+  .nx-toast {
+    transition: none !important;
+  }
+
+  /* Perf HUD fade */
+  #nxPerfHud {
+    transition: none !important;
+  }
+
+  /* Global loading bar animation in nx-z19z20z21.css */
+  @keyframes nxBarSlide { from { } to { } }
+}
+
+/* ── 8. High-contrast / forced-colors support ───────────────────────────── */
+@media (forced-colors: active) {
+  :focus-visible {
+    outline: 3px solid ButtonText;
+    outline-offset: 3px;
+  }
+  .nx-run-dot,
+  .nx-preview-dot {
+    forced-color-adjust: none;
+  }
+}
+
+/* ── 9. Visible focus indicator for keyboard-navigated palette items ────── */
+.nx-palette-item[aria-selected="true"] {
+  background: var(--surface, #21262d);
+  border-left: 2px solid var(--purple, #bc8cff);
+  padding-left: 10px;
+}
+
+/* ── 10. SSE reconnecting indicator (accessible colour + text) ─────────── */
+body.nx-sse-reconnecting #nxSbStatus::after {
+  content: ' (reconnecting…)';
+  color: var(--yellow, #d29922);
+}
+/* Screen-reader version for SSE reconnect */
+body.nx-sse-reconnecting #nxSbStatusSr {
+  display: block !important;
+}

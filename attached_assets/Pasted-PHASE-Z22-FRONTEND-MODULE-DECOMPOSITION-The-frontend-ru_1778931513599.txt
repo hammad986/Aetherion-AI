@@ -1,0 +1,147 @@
+PHASE Z22 — FRONTEND MODULE DECOMPOSITION
+
+The frontend runtime has now reached operational stability.
+
+However:
+the JavaScript architecture remains heavily monolithic.
+
+runtime.js (~4200+ lines)
+dashboard.js (~3100+ lines)
+
+represent the largest remaining maintainability and stabilization risk in the frontend runtime.
+
+====================================================
+PRIMARY OBJECTIVE
+=================
+
+Perform a disciplined decomposition of the frontend runtime into:
+modular
+domain-separated
+maintainable
+dependency-safe
+execution units.
+
+====================================================
+MANDATORY FORENSIC AUDIT
+========================
+
+Before implementation:
+
+perform a full dependency and lifecycle audit of:
+
+* runtime.js
+* dashboard.js
+* ui.js
+* nx-runtime-hygiene.js
+* SSE lifecycle
+* tab state logic
+* command palette logic
+* modal systems
+* terminal systems
+* execution pipeline logic
+* activity bar
+* inspector systems
+* notification systems
+* Monaco integration
+* workspace resizing
+* log streaming
+
+Generate:
+
+docs/Z22_FRONTEND_DEPENDENCY_AUDIT.md
+
+====================================================
+IMPLEMENTATION TARGETS
+======================
+
+1. SAFE MODULE EXTRACTION
+
+Extract:
+
+* tab management
+* modal systems
+* command palette
+* activity bar
+* execution indicators
+* notification/toast systems
+* SSE status indicators
+* keyboard shortcuts
+
+into dedicated modules.
+
+====================================================
+2. GLOBAL STATE REDUCTION
+
+Reduce:
+window.*
+global mutable references
+duplicate listeners
+shared mutable arrays
+
+where safely possible.
+
+====================================================
+3. RUNTIME OWNERSHIP DISCIPLINE
+
+Every module must own:
+
+* its listeners
+* cleanup lifecycle
+* observers
+* timers
+* subscriptions
+
+====================================================
+4. EVENT BUS NORMALIZATION
+
+Audit:
+custom events
+dispatch flows
+listener duplication
+cross-module communication
+
+====================================================
+5. IMPORT DISCIPLINE
+
+Replace:
+unsafe global execution order reliance
+
+with:
+deterministic module initialization.
+
+====================================================
+STRICT RULES
+============
+
+NO:
+
+* framework migration
+* React/Vue rewrite
+* backend changes
+* SSE redesign
+
+====================================================
+CERTIFICATION
+=============
+
+Generate:
+
+1. Z22_MODULE_CERTIFICATION.md
+2. Z22_RUNTIME_OWNERSHIP_MATRIX.md
+3. Z22_EVENT_FLOW_MAP.md
+
+====================================================
+SUCCESS STATE
+=============
+
+Frontend runtime becomes:
+maintainable
+predictable
+modular
+production-safe
+
+NOT:
+global
+fragile
+execution-order dependent
+monolithic

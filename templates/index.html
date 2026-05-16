@@ -33,6 +33,7 @@
   <link rel="stylesheet" href="/static/css/nds-tokens.css">
   <link rel="stylesheet" href="/static/css/base.css">
   <link rel="stylesheet" href="/static/css/nx-z19z20z21.css">
+  <link rel="stylesheet" href="/static/css/nx-a11y.css">
 
   <!-- Phase 20.6 — Monaco editor loading is now deferred/lazy to improve startup time. -->
   <!-- Phase 32 — xterm.js real PTY terminal -->
@@ -66,6 +67,10 @@
 </head>
 
 <body>
+  <!-- Z23: Skip navigation for keyboard / screen-reader users -->
+  <a href="#nxMainContent" class="nx-skip-nav">Skip to main content</a>
+  <!-- Z23: Persistent screen-reader status region -->
+  <div id="nxSbStatusSr" class="nx-sr-only" aria-live="polite" aria-atomic="true" style="display:none"></div>
 
   <!-- ── Enterprise Auth Gate ─────────────────────────────────────────────── -->
   <div id="nx-auth-gate" class="nx-auth-hidden">
@@ -479,7 +484,7 @@
   </div>
 
   <!-- FUTURE-V3: Visual execution canvas mount — react-flow/Xyflow canvas replaces or supplements this surface when FEATURE_CANVAS_V3=true -->
-  <main class="nx-shell-center">
+  <main class="nx-shell-center" id="nxMainContent" role="main">
     <div class="nx-main" id="nxMain" style="flex:1; width:100%;">
 
 
@@ -1593,6 +1598,11 @@
 
   <!-- ── NX Runtime Bridge ── -->
   <script src="/static/js/ui.js" defer></script>
+  <!-- Z22: Modular JS layer — event bus must load first -->
+  <script src="/static/js/nx-event-bus.js" defer></script>
+  <script src="/static/js/nx-command-palette.js" defer></script>
+  <script src="/static/js/nx-keyboard-shortcuts.js" defer></script>
+  <script src="/static/js/nx-tab-manager.js" defer></script>
   <div id="legacy-shell" style="display:none !important;">
 
     <header>
@@ -3567,6 +3577,9 @@
   <script src="/static/js/nx-workspace-runtime.js" defer></script>
   <script src="/static/js/runtime.js" defer></script>
   <script src="/static/js/nx-runtime-hygiene.js" defer></script>
+  <!-- Z22: Modal system + exec indicators patch runtime.js globals — load after -->
+  <script src="/static/js/nx-modal-system.js" defer></script>
+  <script src="/static/js/nx-exec-indicators.js" defer></script>
   <script src="/static/js/activity.js" defer></script>
   <script src="/static/js/feedback.js" defer></script>
   <script src="/static/js/dashboard.js" defer></script>

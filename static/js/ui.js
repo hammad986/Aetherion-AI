@@ -140,11 +140,8 @@
         window.NX_LOAD_TASKS.push(nxInitBackgroundTasks);
       }
 
-      // 6. Keyboard shortcuts
-      if (!nxFlag('ui_keydown')) {
-        nxStep('init:keydown');
-        document.addEventListener('keydown', nxKeydown);
-      }
+      // 6. Keyboard shortcuts — owned by nx-keyboard-shortcuts.js (Z22)
+      // The document keydown listener is registered there; no duplicate here.
 
       // 7. Set initial tab actions
       nxStep('init:tab-actions');
@@ -995,118 +992,20 @@
       } catch (e) { }
     }
 
-    const NX_PALETTE_ITEMS = [
-      { icon: '▶', label: 'Run Task', hint: 'Ctrl+Enter', action: () => { if(typeof nxQueueTask === 'function') nxQueueTask(); } },
-      { icon: '📋', label: 'View Logs', hint: '', action: () => nxSetTab('logs') },
-      { icon: '👁', label: 'Preview App', hint: '', action: () => nxSetTab('preview') },
-      { icon: '📁', label: 'Code Editor', hint: '', action: () => nxSetTab('code') },
-      { icon: '💻', label: 'Terminal', hint: '', action: () => nxSetTab('terminal') },
-      { icon: '📊', label: 'Metrics', hint: '', action: () => nxSetTab('metrics') },
-      { icon: '🤖', label: 'Agent State', hint: '', action: () => nxSetTab('agents') },
-      { icon: '📅', label: 'Timeline', hint: '', action: () => nxSetTab('timeline') },
-      { icon: '🧐', label: 'Step Trace', hint: '', action: () => nxSetTab('steps') },
-      { icon: '⚙', label: 'Settings', hint: '', action: () => { if(typeof openSettings === 'function') openSettings(); } },
-      { icon: '📂', label: 'Sessions', hint: '', action: () => nxOpenPanel('sessions') },
-      { icon: '🧹', label: 'Clear Memory', hint: '', action: () => { if(typeof clearAgentMemory === 'function') clearAgentMemory(); } },
-      { icon: '💾', label: 'Save File', hint: 'Ctrl+S', action: () => typeof saveCurrentFile !== 'undefined' && saveCurrentFile() },
-      { icon: '⬇', label: 'Download Project', hint: '', action: () => { if(typeof downloadProject === 'function') downloadProject(); } },
-    ];
-
-    let nxPaletteSelected = 0;
-    let nxPaletteFiltered = [...NX_PALETTE_ITEMS];
-    let _nxPaletteLastFocus = null;  // Z19: focus restoration
-
-    function nxOpenPalette() {
-      // Z19: remember where focus was so we can return to it on close
-      _nxPaletteLastFocus = document.activeElement;
-
-      const backdrop = document.getElementById('nxPalette');
-      const input = document.getElementById('nxPaletteInput');
-      if (backdrop) backdrop.classList.add('open');
-      if (input) { input.value = ''; input.focus(); }
-      nxPaletteSelected = 0;
-      nxRenderPalette('');
+    // ── Command palette & keyboard shortcuts ──────────────────────────────
+    // Extracted to dedicated modules (Z22):
+    //   nx-command-palette.js  — owns nxOpenPalette, nxClosePalette, nxForcePaletteClose
+    //   nx-keyboard-shortcuts.js — owns the document keydown listener
+    // Stubs below are kept so any code calling these before the modules load
+    // gets a safe no-op rather than a ReferenceError.
+    if (typeof window.nxOpenPalette !== 'function') {
+      window.nxOpenPalette = function() {};
     }
-
-    function nxClosePalette(e) {
-      if (e && e.target !== document.getElementById('nxPalette')) return;
-      const pal = document.getElementById('nxPalette');
-      if (pal) pal.classList.remove('open');
-      // Z19: restore focus to the element that was active before the palette opened
-      if (_nxPaletteLastFocus && typeof _nxPaletteLastFocus.focus === 'function') {
-        _nxPaletteLastFocus.focus();
-        _nxPaletteLastFocus = null;
-      }
+    if (typeof window.nxClosePalette !== 'function') {
+      window.nxClosePalette = function() {};
     }
-
-    function nxForcePaletteClose() {
-      const pal = document.getElementById('nxPalette');
-      if (pal) pal.classList.remove('open');
-      if (_nxPaletteLastFocus && typeof _nxPaletteLastFocus.focus === 'function') {
-        _nxPaletteLastFocus.focus();
-        _nxPaletteLastFocus = null;
-      }
-    }
-
-    function nxRenderPalette(q) {
-      const list = document.getElementById('nxPaletteList');
-      if (!list) return;
-      nxPaletteFiltered = q
-        ? NX_PALETTE_ITEMS.filter(i => i.label.toLowerCase().includes(q.toLowerCase()))
-        : NX_PALETTE_ITEMS;
-      if (!nxPaletteFiltered.length) {
-        list.innerHTML = '<div class="nx-palette-empty">No commands found</div>';
-        return;
-      }
-      list.innerHTML = nxPaletteFiltered.map((item, i) =>
-        `<div class="nx-palette-item${i === nxPaletteSelected ? ' selected' : ''}" onclick="nxRunPaletteItem(${i})">
-      <span class="nx-palette-item-icon">${item.icon}</span>
-      <span class="nx-palette-item-label">${item.label}</span>
-      ${item.hint ? `<span class="nx-palette-item-hint"><kbd class="nx-kbd">${item.hint}</kbd></span>` : ''}
-    </div>`
-      ).join('');
-    }
-
-    function nxRunPaletteItem(i) {
-      document.getElementById('nxPalette').classList.remove('open');
-      nxPaletteFiltered[i]?.action?.();
-    }
-
-    window.NX_BOOT_TASKS.push( () => {
-      const pinput = document.getElementById('nxPaletteInput');
-      if (pinput) {
-        pinput.addEventListener('input', e => { nxPaletteSelected = 0; nxRenderPalette(e.target.value); });
-        pinput.addEventListener('keydown', e => {
-          if (e.key === 'ArrowDown') { e.preventDefault(); nxPaletteSelected = Math.min(nxPaletteSelected + 1, nxPaletteFiltered.length - 1); nxRenderPalette(pinput.value); }
-          else if (e.key === 'ArrowUp') { e.preventDefault(); nxPaletteSelected = Math.max(0, nxPaletteSelected - 1); nxRenderPalette(pinput.value); }
-          else if (e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); nxRunPaletteItem(nxPaletteSelected); }
-          else if (e.key === 'Escape') { document.getElementById('nxPalette').classList.remove('open'); }
-        });
-      }
-    });
-
-    function nxKeydown(e) {
-      // Ctrl+Enter — run task (use canonical nxQueueTask, fall back to legacy queueTask)
-      if (e.ctrlKey && e.key === 'Enter') {
-        e.preventDefault();
-        nxRunOrStop();
-        return;
-      }
-      if (e.ctrlKey && e.key === 'k') { e.preventDefault(); nxOpenPalette(); return; }
-      if (e.ctrlKey && e.key === ',') { e.preventDefault(); if (typeof openSettings === 'function') openSettings(); return; }
-      if (e.ctrlKey && e.key === 's' && NX.activeTab === 'code') { e.preventDefault(); if (typeof saveCurrentFile !== 'undefined') saveCurrentFile(); return; }
-      // Ctrl+Shift+E = toggle left (AI Thinking), Ctrl+Shift+I = toggle right (Inspector)
-      if (e.ctrlKey && e.shiftKey && e.key === 'E') { e.preventDefault(); if (typeof NxWorkspace !== 'undefined') NxWorkspace.toggleLeft(); else nxToggleLeft(); return; }
-      if (e.ctrlKey && e.shiftKey && e.key === 'I') { e.preventDefault(); if (typeof NxWorkspace !== 'undefined') NxWorkspace.toggleRight(); else nxToggleRight(); return; }
-      if (e.key === 'Escape') {
-        const pal = document.getElementById('nxPalette');
-        // Z19: use the focus-restoring close path, not raw classList.remove
-        if (pal && pal.classList.contains('open')) { nxForcePaletteClose(); }
-        nxCloseMore();
-        // Only call p55ClosePanel if the drawer actually exists
-        const drawer = document.getElementById('nxWorkspaceDrawer');
-        if (drawer && drawer.classList.contains('open')) nxWsDrawerClose();
-      }
+    if (typeof window.nxForcePaletteClose !== 'function') {
+      window.nxForcePaletteClose = function() {};
     }
 
     function nxOpenPanel(panel) {
@@ -1193,8 +1092,7 @@
     window.nxQueueTask = nxQueueTask;
     window.nxRunTask = nxQueueTask;
     window.nxEnsureTerminal = nxEnsureTerminal;
-    window.nxOpenPalette = nxOpenPalette;
-    window.nxClosePalette = nxClosePalette;
+    // nxOpenPalette / nxClosePalette registered by nx-command-palette.js (Z22)
     window.nxOpenPanel = nxOpenPanel;
     window.nxToast = nxToast;
     window.nxSetTask = nxSetTask;

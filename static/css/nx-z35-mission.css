@@ -1,0 +1,452 @@
+/* ═══════════════════════════════════════════════════════════════════
+   PHASE Z35 — Operational Mission Presence + Execution Density
+   Mission bar · Heat mapping · Density · Suggestions · Immersion
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── CSS Tokens ─────────────────────────────────────────────────── */
+:root {
+  --z35-planning:   #58a6ff;
+  --z35-executing:  #3fb950;
+  --z35-validating: #56d364;
+  --z35-recovering: #e3b341;
+  --z35-escalating: #f87171;
+  --z35-replay:     #d29922;
+  --z35-forensic:   #a78bfa;
+  --z35-idle:       #6e7681;
+
+  --z35-heat-low:      rgba(227,179,65, 0.15);
+  --z35-heat-med:      rgba(227,179,65, 0.28);
+  --z35-heat-high:     rgba(248,113,113, 0.22);
+  --z35-heat-critical: rgba(248,113,113, 0.38);
+
+  --z35-mission-h: 28px;
+  --z35-sugg-ease: cubic-bezier(0.16,1,0.3,1);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Z35A — Mission Bar
+   ═══════════════════════════════════════════════════════════════════ */
+.z35-mission-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  height: var(--z35-mission-h);
+  padding: 0 12px;
+  background: var(--surface, #0d1117);
+  border-bottom: 1px solid var(--border, #21262d);
+  flex-shrink: 0;
+  overflow: hidden;
+  position: relative;
+  z-index: 10;
+}
+
+/* Subtle execution-phase left accent */
+.z35-mission-bar::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--z35-phase-color, var(--z35-idle));
+  transition: background 300ms ease;
+}
+
+/* Phase-driven accent color */
+[data-z35-phase="planning"]   .z35-mission-bar::before { background: var(--z35-planning); }
+[data-z35-phase="executing"]  .z35-mission-bar::before { background: var(--z35-executing); }
+[data-z35-phase="validating"] .z35-mission-bar::before { background: var(--z35-validating); }
+[data-z35-phase="recovering"] .z35-mission-bar::before { background: var(--z35-recovering); }
+[data-z35-phase="escalating"] .z35-mission-bar::before { background: var(--z35-escalating); }
+[data-z35-phase="replay"]     .z35-mission-bar::before { background: var(--z35-replay); }
+
+/* Mission Objective */
+.z35-mission-objective {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+.z35-mission-text {
+  font-size: 10px;
+  color: var(--text-dim, #6e7681);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  transition: color 200ms ease;
+}
+
+[data-z35-phase="executing"] .z35-mission-text,
+[data-z35-phase="planning"]  .z35-mission-text {
+  color: var(--text, #e6edf3);
+}
+
+/* Mission Indicators */
+.z35-mission-indicators {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.z35-mission-ind {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.z35-mission-label {
+  font-size: 8.5px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-dim, #6e7681);
+}
+
+.z35-mission-val {
+  font-size: 9.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-dim, #6e7681);
+  transition: color 200ms ease;
+}
+
+/* Phase values */
+.z35-phase-idle       { color: var(--z35-idle); }
+.z35-phase-planning   { color: var(--z35-planning); }
+.z35-phase-executing  { color: var(--z35-executing); }
+.z35-phase-validating { color: var(--z35-validating); }
+.z35-phase-recovering { color: var(--z35-recovering); }
+.z35-phase-escalating { color: var(--z35-escalating); }
+.z35-phase-replay     { color: var(--z35-replay); }
+
+/* Confidence values */
+.z35-conf-hi  { color: var(--z35-executing); }
+.z35-conf-med { color: var(--z35-recovering); }
+.z35-conf-low { color: var(--z35-escalating); }
+
+/* Pressure Micro-Bar */
+.z35-pressure-micro {
+  width: 36px;
+  height: 3px;
+  background: var(--border, #21262d);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.z35-pressure-fill {
+  height: 100%;
+  background: var(--z35-executing);
+  border-radius: 2px;
+  transition: width 400ms ease, background 200ms ease;
+}
+
+.z35-pressure-fill.warning  { background: var(--z35-recovering); }
+.z35-pressure-fill.critical { background: var(--z35-escalating); }
+
+/* Escalation Indicator */
+.z35-escalation-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--z35-escalating);
+  animation: z35-esc-pulse 2s ease-in-out infinite;
+}
+
+@keyframes z35-esc-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+.z35-esc-label { color: var(--z35-escalating); }
+
+/* ═══════════════════════════════════════════════════════════════════
+   Z35A — Heat Mapping on DAG Nodes
+   Applied via .z35-heat-* classes on node elements
+   ═══════════════════════════════════════════════════════════════════ */
+[data-node-id].z35-heat-low      { box-shadow: 0 0 0 1px var(--z35-heat-low)      inset; }
+[data-node-id].z35-heat-med      { box-shadow: 0 0 0 1px var(--z35-heat-med)      inset; }
+[data-node-id].z35-heat-high     { box-shadow: 0 0 0 2px var(--z35-heat-high)     inset; }
+[data-node-id].z35-heat-critical {
+  box-shadow: 0 0 0 2px var(--z35-heat-critical) inset;
+  background: color-mix(in srgb, var(--surface, #0d1117) 94%, #f87171 6%);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Z35B — Execution Density + Surface Expansion
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Expanded surfaces grow within their flex containers */
+.z35-surface-expanded {
+  flex-grow: 2 !important;
+  transition: flex-grow 250ms ease;
+}
+
+.z35-surface-collapsed {
+  max-height: 32px !important;
+  overflow: hidden;
+  opacity: 0.5;
+  transition: max-height 250ms ease, opacity 200ms ease;
+}
+
+/* Attention routing */
+.z35-attention-active {
+  border-color: rgba(88,166,255,0.2) !important;
+  transition: border-color 200ms ease;
+}
+
+.z35-attention-dimmed {
+  opacity: 0.6;
+  transition: opacity 250ms ease;
+}
+
+/* Layout mode on live tab */
+[data-z35-mode="replay"]     .z30-dag-panel-hdr { border-bottom-color: rgba(210,153,34,0.25); }
+[data-z35-mode="forensic"]   .z30-dag-panel-hdr { border-bottom-color: rgba(167,139,250,0.25); }
+[data-z35-mode="escalation"] .z30-dag-panel-hdr { border-bottom-color: rgba(248,113,113,0.2); }
+[data-z35-mode="recovery"]   .z30-dag-panel-hdr { border-bottom-color: rgba(227,179,65,0.2); }
+
+/* Layout Mode Indicator */
+.z35-layout-mode-ind {
+  display: inline-flex;
+  align-items: center;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 1px 5px;
+  border-radius: 3px;
+  border: 1px solid transparent;
+  cursor: default;
+  user-select: none;
+  margin-left: 4px;
+  transition: color 150ms ease, border-color 150ms ease;
+}
+
+.z35-mode-execution  { color: var(--z35-executing);  border-color: rgba(63,185,80,0.2); }
+.z35-mode-replay     { color: var(--z35-replay);     border-color: rgba(210,153,34,0.2); }
+.z35-mode-forensic   { color: var(--z35-forensic);   border-color: rgba(167,139,250,0.2); }
+.z35-mode-escalation { color: var(--z35-escalating); border-color: rgba(248,113,113,0.2); }
+.z35-mode-recovery   { color: var(--z35-recovering); border-color: rgba(227,179,65,0.2); }
+
+/* ═══════════════════════════════════════════════════════════════════
+   Z35C — Operator Suggestion Tray
+   ═══════════════════════════════════════════════════════════════════ */
+.z35-suggestion-tray {
+  display: none;
+  flex-direction: column;
+  background: var(--surface, #0d1117);
+  border-bottom: 1px solid var(--border, #21262d);
+  flex-shrink: 0;
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 220ms var(--z35-sugg-ease);
+}
+
+.z35-suggestion-tray.visible {
+  display: flex;
+  max-height: 120px;
+}
+
+.z35-sugg-hdr {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 10px;
+  flex-shrink: 0;
+}
+
+.z35-sugg-label {
+  font-size: 8.5px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-dim, #6e7681);
+}
+
+.z35-sugg-dismiss {
+  background: none;
+  border: none;
+  color: var(--text-dim, #6e7681);
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1;
+  padding: 1px 3px;
+  border-radius: 3px;
+}
+
+.z35-sugg-dismiss:hover {
+  background: var(--surface-hover, #161b22);
+  color: var(--text, #e6edf3);
+}
+
+.z35-sugg-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 8px 6px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border, #21262d) transparent;
+}
+
+.z35-sugg-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 0;
+  border-bottom: 1px solid var(--border, #21262d);
+}
+
+.z35-sugg-row:last-child { border-bottom: none; }
+
+.z35-sugg-icon {
+  font-size: 11px;
+  flex-shrink: 0;
+  color: var(--text-dim, #6e7681);
+  width: 14px;
+  text-align: center;
+}
+
+.z35-sugg-text {
+  font-size: 9.5px;
+  color: var(--text-dim, #6e7681);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.z35-sugg-actions {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+.z35-sugg-act-btn {
+  font-size: 9px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  border: 1px solid var(--border, #21262d);
+  background: var(--surface-overlay, #161b22);
+  color: var(--text, #e6edf3);
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+
+.z35-sugg-act-btn:hover {
+  background: rgba(88,166,255,0.1);
+  border-color: rgba(88,166,255,0.3);
+}
+
+.z35-sugg-dismiss-row {
+  background: none;
+  border: none;
+  color: var(--text-dim, #6e7681);
+  cursor: pointer;
+  font-size: 12px;
+  line-height: 1;
+  padding: 1px 3px;
+  border-radius: 3px;
+}
+
+.z35-sugg-dismiss-row:hover {
+  background: var(--surface-hover, #161b22);
+  color: var(--text, #e6edf3);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Z35E — Ambient Runtime Layer
+   ═══════════════════════════════════════════════════════════════════ */
+.z35-ambient-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0;
+  transition: opacity 600ms ease;
+}
+
+/* Phase-specific ambient gradients — all very subtle */
+.z35-ambient-planning {
+  opacity: 1;
+  background: radial-gradient(ellipse at 15% 40%, rgba(88,166,255,0.04) 0%, transparent 65%);
+}
+.z35-ambient-executing {
+  opacity: 1;
+  background: radial-gradient(ellipse at 50% 45%, rgba(63,185,80,0.04) 0%, transparent 65%);
+}
+.z35-ambient-validating {
+  opacity: 1;
+  background: radial-gradient(ellipse at 80% 40%, rgba(86,211,100,0.04) 0%, transparent 65%);
+}
+.z35-ambient-recovering {
+  opacity: 1;
+  background: radial-gradient(ellipse at 50% 60%, rgba(227,179,65,0.04) 0%, transparent 65%);
+}
+.z35-ambient-escalating {
+  opacity: 1;
+  background: radial-gradient(ellipse at 50% 30%, rgba(248,113,113,0.04) 0%, transparent 65%);
+}
+.z35-ambient-replay {
+  opacity: 1;
+  background: radial-gradient(ellipse at 30% 50%, rgba(210,153,34,0.04) 0%, transparent 65%);
+}
+
+/* Under elevated pressure — barely visible border pulse on DAG surface */
+#z30DagSurface[data-z35-pressure="elevated"]::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border: 1px solid rgba(227,179,65,0.08);
+  border-radius: inherit;
+  z-index: 2;
+  transition: border-color 400ms ease;
+}
+
+#z30DagSurface[data-z35-pressure="critical"]::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border: 1px solid rgba(248,113,113,0.12);
+  border-radius: inherit;
+  z-index: 2;
+  transition: border-color 400ms ease;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Z35D — Contextual Workspace Modes
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Execution mode — DAG is dominant */
+[data-z35-mode="execution"] .z30-dag-panel {
+  flex-grow: 2;
+}
+
+/* Replay mode — timeline dock gets more space */
+[data-z35-mode="replay"] #z33TimelineDock {
+  flex-grow: 2;
+  max-height: 260px;
+}
+
+/* Forensic mode — inspector takes priority */
+[data-z35-mode="forensic"] .z34-inspector-panel {
+  width: 300px;
+}
+
+/* Recovery mode — DAG and inspector share space */
+[data-z35-mode="recovery"] .z34-inspector-panel {
+  width: 280px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Scrollbar polish
+   ═══════════════════════════════════════════════════════════════════ */
+.z35-sugg-list::-webkit-scrollbar { width: 4px; }
+.z35-sugg-list::-webkit-scrollbar-track { background: transparent; }
+.z35-sugg-list::-webkit-scrollbar-thumb { background: var(--border, #21262d); border-radius: 2px; }

@@ -1,0 +1,457 @@
+/* ═══════════════════════════════════════════════════════════════════
+   PHASE Z30 — Execution Graph + Structural Operational Visibility
+   DAG Surface, Intelligence Overlay, Instability Heatmap, Replay Controls
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── Z30 Layout Wrapper ─────────────────────────────────────────── */
+.z30-live-wrap {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex: 1;
+  min-height: 0;
+}
+
+/* ── DAG Surface Panel ──────────────────────────────────────────── */
+.z30-dag-panel {
+  position: relative;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--border, #21262d);
+  background: var(--surface, #0d1117);
+  overflow: hidden;
+  transition: height 0.2s ease;
+}
+
+.z30-dag-panel.collapsed {
+  height: 32px !important;
+}
+
+.z30-dag-panel-hdr {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  height: 32px;
+  background: var(--surface, #0d1117);
+  border-bottom: 1px solid var(--border, #21262d);
+  flex-shrink: 0;
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  z-index: 2;
+}
+
+.z30-dag-panel-hdr:hover {
+  background: var(--surface-hover, #161b22);
+}
+
+.z30-dag-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim, #6e7681);
+}
+
+.z30-dag-surface {
+  width: 100%;
+  flex: 1;
+  overflow: hidden;
+  background: var(--surface, #0d1117);
+  min-height: 0;
+}
+
+.z30-dag-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-dim, #6e7681);
+  font-size: 10px;
+  padding: 2px 5px;
+  border-radius: 3px;
+  line-height: 1;
+}
+
+.z30-dag-toggle:hover {
+  background: var(--surface-hover, #161b22);
+  color: var(--text, #e6edf3);
+}
+
+/* ── Severity + Instability badges ─────────────────────────────── */
+.z30-sev-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 1px 6px;
+  border-radius: 3px;
+  text-transform: uppercase;
+}
+
+.z30-sev-INFO     { background: rgba(56,189,248,0.1); color: #38bdf8; border: 1px solid rgba(56,189,248,0.25); }
+.z30-sev-WARNING  { background: rgba(251,191,36,0.1); color: #fbbf24; border: 1px solid rgba(251,191,36,0.3); }
+.z30-sev-DEGRADED { background: rgba(249,115,22,0.1); color: #f97316; border: 1px solid rgba(249,115,22,0.28); }
+.z30-sev-CRITICAL { background: rgba(239,68,68,0.1);  color: #ef4444; border: 1px solid rgba(239,68,68,0.28); }
+.z30-sev-STABLE   { background: rgba(34,197,94,0.1);  color: #22c55e; border: 1px solid rgba(34,197,94,0.25); }
+
+/* ── Node Intelligence Detail Panel ────────────────────────────── */
+.z30-intel-panel {
+  position: absolute;
+  right: 0;
+  top: 32px;
+  bottom: 0;
+  width: 0;
+  overflow: hidden;
+  background: var(--surface, #0d1117);
+  border-left: 1px solid var(--border, #21262d);
+  z-index: 10;
+  transition: width 0.18s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.z30-intel-panel.open {
+  width: 220px;
+}
+
+.z30-intel-hdr {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border, #21262d);
+  flex-shrink: 0;
+}
+
+.z30-intel-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text, #e6edf3);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.z30-intel-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-dim, #6e7681);
+  font-size: 13px;
+  padding: 0 2px;
+  line-height: 1;
+}
+
+.z30-intel-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 10px;
+}
+
+.z30-intel-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 3px 0;
+  border-bottom: 1px solid var(--border-subtle, #161b22);
+  font-size: 10px;
+  gap: 6px;
+}
+
+.z30-intel-row:last-child {
+  border-bottom: none;
+}
+
+.z30-intel-key {
+  color: var(--text-dim, #6e7681);
+  flex-shrink: 0;
+}
+
+.z30-intel-val {
+  color: var(--text, #e6edf3);
+  font-weight: 500;
+  text-align: right;
+  font-family: 'JetBrains Mono', monospace;
+  word-break: break-all;
+}
+
+.z30-intel-state-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 4px;
+  flex-shrink: 0;
+}
+
+.z30-intel-state-dot.running  { background: #3b82f6; }
+.z30-intel-state-dot.done     { background: #22c55e; }
+.z30-intel-state-dot.error    { background: #ef4444; }
+.z30-intel-state-dot.blocked  { background: #fbbf24; }
+.z30-intel-state-dot.queued   { background: #6b7280; }
+.z30-intel-state-dot.paused   { background: #a78bfa; }
+.z30-intel-state-dot.skipped  { background: #4b5563; }
+
+/* ── Node Logs in Intel Panel ───────────────────────────────────── */
+.z30-node-log-section {
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px solid var(--border, #21262d);
+}
+
+.z30-node-log-title {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim, #6e7681);
+  margin-bottom: 4px;
+}
+
+.z30-node-log-line {
+  font-size: 9px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text-lo, #8b949e);
+  padding: 1px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  word-break: break-word;
+  line-height: 1.4;
+}
+
+/* ── Replay Controls Bar ────────────────────────────────────────── */
+.z30-replay-bar {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: rgba(139, 92, 246, 0.07);
+  border-bottom: 1px solid rgba(139, 92, 246, 0.22);
+  flex-shrink: 0;
+}
+
+.z30-replay-bar.visible {
+  display: flex;
+}
+
+.z30-replay-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: #a78bfa;
+}
+
+.z30-replay-btn {
+  background: rgba(139, 92, 246, 0.12);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  color: #bc8cff;
+  border-radius: 3px;
+  font-size: 10px;
+  padding: 2px 7px;
+  cursor: pointer;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.z30-replay-btn:hover {
+  background: rgba(139, 92, 246, 0.2);
+}
+
+.z30-replay-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.z30-replay-counter {
+  font-size: 9px;
+  color: var(--text-dim, #6e7681);
+  font-family: 'JetBrains Mono', monospace;
+  min-width: 60px;
+}
+
+.z30-replay-scrubber {
+  flex: 1;
+  accent-color: #8b5cf6;
+  height: 3px;
+  cursor: pointer;
+}
+
+/* ── Instability Health Bar ─────────────────────────────────────── */
+.z30-health-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  background: var(--surface, #0d1117);
+  border-bottom: 1px solid var(--border, #21262d);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.z30-health-item {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 9px;
+  color: var(--text-dim, #6e7681);
+}
+
+.z30-health-heatbar {
+  width: 36px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--border, #21262d);
+  overflow: hidden;
+}
+
+.z30-health-heatbar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.4s ease;
+  background: #22c55e;
+}
+
+.z30-health-heatbar-fill.warn    { background: #fbbf24; }
+.z30-health-heatbar-fill.danger  { background: #ef4444; }
+
+.z30-instability-alert {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: rgba(239, 68, 68, 0.08);
+  border-bottom: 1px solid rgba(239, 68, 68, 0.22);
+  font-size: 10px;
+  color: #f87171;
+  flex-shrink: 0;
+}
+
+.z30-instability-alert.visible {
+  display: flex;
+}
+
+/* ── Timeline Sync Indicator ────────────────────────────────────── */
+.z30-timeline-sync-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #38bdf8;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.z30-timeline-sync-dot.active {
+  opacity: 1;
+  animation: z30-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes z30-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.3; transform: scale(0.6); }
+}
+
+/* ── Status Bar Severity Badges ─────────────────────────────────── */
+.z30-statusbar-sev {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 6px;
+}
+
+/* ── Forensic Audit Overlay ─────────────────────────────────────── */
+.z30-audit-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--border-subtle, #161b22);
+  font-size: 9px;
+}
+
+.z30-audit-ts {
+  color: var(--text-dim, #6e7681);
+  font-family: 'JetBrains Mono', monospace;
+  flex-shrink: 0;
+  min-width: 60px;
+}
+
+.z30-audit-text {
+  color: var(--text-lo, #8b949e);
+  flex: 1;
+  word-break: break-word;
+  line-height: 1.4;
+}
+
+.z30-audit-text.CRITICAL { color: #f87171; }
+.z30-audit-text.WARNING  { color: #fbbf24; }
+.z30-audit-text.DEGRADED { color: #f97316; }
+
+/* ── DAG empty/idle state ───────────────────────────────────────── */
+.z30-dag-idle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-size: 10px;
+  color: var(--text-dim, #6e7681);
+  padding: 12px;
+  text-align: center;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.z30-dag-idle-icon {
+  font-size: 1.6rem;
+  opacity: 0.4;
+}
+
+/* ── Heatmap node overlay on DAG ────────────────────────────────── */
+.z30-heatmap-overlay {
+  position: absolute;
+  top: 32px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 3;
+  background: transparent;
+  transition: opacity 0.3s;
+  opacity: 0;
+}
+
+.z30-heatmap-overlay.visible {
+  opacity: 1;
+}
+
+/* ── Retry storm flash ──────────────────────────────────────────── */
+@keyframes z30-retry-storm {
+  0%, 100% { background: rgba(251,191,36,0.05); }
+  50%       { background: rgba(251,191,36,0.12); }
+}
+
+.z30-retry-storm-active {
+  animation: z30-retry-storm 1.4s ease-in-out infinite;
+}
+
+/* ── Confidence bar ─────────────────────────────────────────────── */
+.z30-conf-bar {
+  height: 3px;
+  border-radius: 2px;
+  background: var(--border, #21262d);
+  overflow: hidden;
+  width: 100%;
+  margin-top: 2px;
+}
+
+.z30-conf-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: #22c55e;
+}
+
+.z30-conf-fill.low { background: #ef4444; }
+.z30-conf-fill.med { background: #fbbf24; }

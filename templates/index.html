@@ -817,7 +817,7 @@
         <!-- Z29: Governance + Operator Control tab -->
         <div class="nx-tab-content" id="nxTab-govern" style="padding:0;overflow:hidden;display:flex;flex-direction:column;position:relative;"></div>
 
-        <!-- Phase 33 — Live Execution Visualization tab -->
+        <!-- Phase Z30 — Live Execution Graph + Visualization tab -->
         <div class="nx-tab-content" id="nxTab-live" style="flex-direction:column;overflow:hidden">
 
           <!-- Full pipeline bar -->
@@ -837,12 +837,69 @@
             <div style="flex:1"></div>
             <button class="btn tiny" onclick="NxExecVis.clearLive()" title="Clear live panels"
               style="font-size:0.68rem;padding:2px 8px">Clear</button>
-            <button class="btn tiny" onclick="nxSetTab('logs')" style="font-size:0.68rem;padding:2px 8px">←
-              Logs</button>
+            <button class="btn tiny" onclick="nxSetTab('logs')" style="font-size:0.68rem;padding:2px 8px">← Logs</button>
+          </div>
+
+          <!-- Z30A: Instability alert banner -->
+          <div class="z30-instability-alert" id="z30InstabilityAlert" role="alert">
+            <span style="font-size:11px">⚡</span>
+            <span class="z30-alert-msg"></span>
+            <div style="flex:1"></div>
+            <button onclick="document.getElementById('z30InstabilityAlert').classList.remove('visible')"
+              style="background:none;border:none;color:inherit;cursor:pointer;font-size:12px;padding:0 2px">✕</button>
+          </div>
+
+          <!-- Z30D: Runtime health bar -->
+          <div class="z30-health-bar" id="z30HealthBar" title="Runtime instability heatmap">
+            <span class="z30-sev-badge z30-sev-STABLE">STABLE</span>
+            <span class="z30-health-item" style="color:var(--muted,#6e7681);font-size:9px">No session active</span>
+          </div>
+
+          <!-- Z30C: Replay controls bar -->
+          <div class="z30-replay-bar" id="z30ReplayBar" role="toolbar" aria-label="Replay controls">
+            <span class="z30-replay-label" id="z30ReplayMode">REPLAY</span>
+            <button class="z30-replay-btn" id="z30ReplayStart" onclick="_z30.replayStart()" title="Start replay from beginning">⏮</button>
+            <button class="z30-replay-btn" id="z30ReplayPrev"  onclick="_z30.replayPrev()"  title="Step back" disabled>‹</button>
+            <input  type="range" class="z30-replay-scrubber" id="z30ReplayScrubber" min="0" value="0"
+              oninput="_z30.replayScrub(this.value)" title="Scrub replay">
+            <button class="z30-replay-btn" id="z30ReplayNext"  onclick="_z30.replayNext()"  title="Step forward">›</button>
+            <button class="z30-replay-btn" id="z30ReplayStop"  onclick="_z30.replayStop()"  title="Exit replay — return to live" style="display:none">⏹ Live</button>
+            <span class="z30-replay-counter" id="z30ReplayCounter">0 / 0</span>
+            <button class="z30-replay-btn" onclick="_z30.replayExport()" title="Export replay JSON" style="margin-left:4px">⬇</button>
+          </div>
+
+          <!-- Z30A: Live DAG panel -->
+          <div class="z30-dag-panel" id="z30DagPanel" style="height:220px">
+            <!-- DAG panel header (click to collapse) -->
+            <div class="z30-dag-panel-hdr" onclick="_z30.toggleDagPanel()" title="Toggle DAG panel">
+              <span class="z30-dag-label">Execution DAG</span>
+              <span id="z30DagToggleIcon" style="font-size:9px;color:var(--text-dim,#6e7681)">▼</span>
+              <div style="flex:1"></div>
+              <!-- Z30B: Node count + severity badge -->
+              <span id="z30DagNodeCount" style="font-size:9px;color:var(--text-dim,#6e7681)"></span>
+              <span class="z30-sev-badge z30-sev-INFO" id="z30DagSevBadge" style="display:none"></span>
+            </div>
+            <!-- Z30A: SVG DAG surface (NxDagEngine mounts here) -->
+            <div id="z30DagSurface" style="width:100%;height:calc(100% - 32px);overflow:hidden;position:relative">
+              <div class="z30-dag-idle">
+                <span class="z30-dag-idle-icon">⬡</span>
+                <span>DAG will populate when a session starts</span>
+              </div>
+            </div>
+            <!-- Z30B: Node intelligence detail panel (slides in on node click) -->
+            <div class="z30-intel-panel" id="z30IntelPanel" role="complementary" aria-label="Node intelligence">
+              <div class="z30-intel-hdr">
+                <span class="z30-intel-title" id="z30IntelTitle">Node Detail</span>
+                <button class="z30-intel-close" onclick="_z30.closeIntelPanel()" title="Close">✕</button>
+              </div>
+              <div class="z30-intel-body" id="z30IntelBody">
+                <span style="font-size:10px;color:var(--text-dim,#6e7681)">Click a DAG node to inspect it.</span>
+              </div>
+            </div>
           </div>
 
           <!-- Split view: code stream | terminal stream -->
-          <div class="nx-live-split">
+          <div class="nx-live-split" style="flex:1;min-height:0">
 
             <!-- Left pane: live code stream -->
             <div class="nx-live-pane">
@@ -884,8 +941,8 @@
           <div class="nx-live-statusbar">
             <div class="nx-lsb-item">Stage: <span class="nx-lsb-val" id="nxLiveStageVal">—</span></div>
             <div class="nx-lsb-item">Lines: <span class="nx-lsb-val" id="nxLiveLineCount">0</span></div>
-            <div class="nx-lsb-item">Code chunks: <span class="nx-lsb-val" id="nxLiveCodeCount">0</span></div>
-            <div class="nx-lsb-item">Commands: <span class="nx-lsb-val" id="nxLiveCmdCount">0</span></div>
+            <div class="nx-lsb-item">Code: <span class="nx-lsb-val" id="nxLiveCodeCount">0</span></div>
+            <div class="nx-lsb-item">Cmds: <span class="nx-lsb-val" id="nxLiveCmdCount">0</span></div>
             <div style="flex:1"></div>
             <span id="nxLiveConnStatus" style="font-size:0.68rem;color:var(--muted)">Not connected</span>
           </div>
@@ -3708,6 +3765,9 @@
   <!-- Phase Z29 — Operator Control + Mission Governance Layer -->
   <link rel="stylesheet" href="/static/css/nx-z29-governance.css">
   <script src="/static/js/nx-z29-governance.js" defer></script>
+  <!-- Phase Z30 — Execution Graph + Structural Operational Visibility -->
+  <link rel="stylesheet" href="/static/css/nx-z30-dag.css">
+  <script src="/static/js/nx-z30-dag.js" defer></script>
   <script defer>
     // Z28: Initialize intel tab when first activated, sync session on future activations
     (function() {

@@ -1,0 +1,233 @@
+PHASE Z30 — EXECUTION GRAPH + STRUCTURAL OPERATIONAL VISIBILITY
+
+SYSTEM STATUS:
+The platform now contains:
+
+* event-sourced runtime
+* replay-safe SSE
+* DAG orchestration
+* runtime explainability
+* governance + approval engine
+* mission recovery
+* operator override system
+* confidence engine
+* context compression
+* operational intelligence
+* runtime controls
+
+The system is now:
+observable,
+governable,
+and recoverable.
+
+The next critical step is:
+structural runtime visibility.
+
+GOAL:
+Transform the execution engine into a fully inspectable operational graph where operators can visually understand:
+
+* execution flow
+* dependency chains
+* retries
+* replanning
+* blocked nodes
+* escalation paths
+* recovery branches
+* runtime instability
+
+STRICT RULES:
+🔒 NO ARCHITECTURE REWRITES
+🔒 NO FRONTEND FRAMEWORK MIGRATION
+🔒 NO FAKE AGI FEATURES
+🔒 NO OVER-ANIMATION
+🔒 NO DASHBOARD BLOAT
+🔒 STABILITY > VISUAL FLASHINESS
+🔒 OPERATIONAL CLARITY > MARKETING UI
+
+====================================================
+PHASE Z30A — LIVE EXECUTION DAG VISUALIZATION
+=============================================
+
+Build:
+a live runtime execution graph.
+
+REQUIREMENTS:
+
+1. DAG Surface
+   Render:
+
+* execution nodes
+* dependency edges
+* retry branches
+* escalation branches
+* recovery branches
+* blocked states
+
+2. Node States
+   Each node must support:
+
+* queued
+* running
+* retrying
+* completed
+* failed
+* escalated
+* paused
+* recovered
+
+3. Replay Compatibility
+   Graph must:
+
+* preserve replay integrity
+* rebuild from event stream
+* reconstruct from sessions.db
+
+4. Minimal Rendering Discipline
+   Avoid:
+
+* giant graph libraries
+* excessive animation
+* unstable DOM churn
+
+Prefer:
+lightweight canvas/SVG rendering.
+
+====================================================
+PHASE Z30B — EXECUTION INTELLIGENCE OVERLAY
+===========================================
+
+Each node must expose:
+
+* provider used
+* model used
+* retry count
+* confidence score
+* execution duration
+* token usage
+* compression events
+* recovery actions
+
+Add:
+severity indicators:
+
+* INFO
+* WARNING
+* DEGRADED
+* CRITICAL
+
+====================================================
+PHASE Z30C — REPLAY + FORENSIC NAVIGATION
+=========================================
+
+Build:
+replay navigation tooling.
+
+REQUIREMENTS:
+
+1. Node Replay
+   Operator can:
+
+* inspect node replay
+* inspect retries
+* inspect injected instructions
+* inspect override history
+
+2. Timeline ↔ DAG Sync
+   Clicking:
+   timeline event highlights DAG node.
+
+Clicking:
+DAG node jumps timeline.
+
+3. Failure Branch Visibility
+   Operator can inspect:
+
+* retry lineage
+* replan lineage
+* recovery lineage
+
+====================================================
+PHASE Z30D — RUNTIME INSTABILITY VISUALIZATION
+==============================================
+
+Build:
+operational health overlays.
+
+Detect and display:
+
+* retry storms
+* unstable providers
+* context pressure spikes
+* excessive compression
+* replay corruption warnings
+* SSE degradation
+* stuck nodes
+
+Add:
+runtime heatmap overlays.
+
+====================================================
+PHASE Z30E — UI DISCIPLINE + FORENSIC AUDIT
+===========================================
+
+Perform:
+deep runtime graph UX audit.
+
+Investigate:
+
+* graph readability
+* node density
+* operator cognitive overload
+* replay navigation usability
+* graph rendering performance
+* memory leaks
+* resize observer churn
+* SSE graph synchronization
+
+Generate:
+
+* docs/Z30_EXECUTION_GRAPH_CERTIFICATION.md
+* docs/Z30_RUNTIME_VISIBILITY_AUDIT.md
+* docs/Z30_REPLAY_GRAPH_FORENSICS.md
+* docs/Z30_DAG_PERFORMANCE_REPORT.md
+* docs/Z30_OPERATOR_GRAPH_USABILITY.md
+
+Reports MUST include:
+
+1. Remaining graph scaling ceilings
+2. Remaining replay weaknesses
+3. Remaining rendering instability
+4. Remaining operational blind spots
+5. Remaining runtime complexity risks
+6. Honest production-readiness verdict
+
+====================================================
+FINAL VALIDATION
+================
+
+Before completion:
+
+* verify graph rebuilds from replay
+* verify no graph desync
+* verify replay ↔ DAG synchronization
+* verify retry lineage integrity
+* verify escalation lineage integrity
+* verify no DOM explosion
+* verify no memory leaks
+* verify stable long-session rendering
+
+IMPORTANT:
+This phase is NOT about:
+adding more AI intelligence.
+
+This phase IS about:
+making autonomous execution
+structurally visible,
+operationally understandable,
+and production-governable.
+
+Maintain:
+🔒 Replay integrity above visuals
+🔒 Operational clarity over flashy graphics
+🔒 Runtime discipline over animation
+🔒 Stability over feature bloat

@@ -11567,6 +11567,14 @@ _mem_inject()
 _prov_inject()
 _sess_inject()
 
+# --- PHASE Z30: EXECUTION GRAPH + RUNTIME VISIBILITY ---
+try:
+    from routes.dag_z30 import dag_z30_bp
+    app.register_blueprint(dag_z30_bp)
+    print("✅ dag_z30_bp registered (/api/z30/*)")
+except Exception as _z30_err:
+    print(f"⚠ dag_z30_bp skipped: {_z30_err}")
+
 # --- PHASE Z6: TELEMETRY BLUEPRINT ---
 # telemetry_routes.py has no conflicting URLs and is safe to register.
 # All routes are behind lazy imports so missing infra sub-packages never

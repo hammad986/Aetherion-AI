@@ -1,0 +1,969 @@
+/**
+ * nx-z42.css — Phase Z42: Operational Visual Maturity + Identity System
+ * ═══════════════════════════════════════════════════════════════════════
+ * Sub-phases: A (Auth) · B (Typography) · C (Depth) · D (Color) · E (Toast) · F (Workspace)
+ *
+ * Rules:
+ *   - NO framework rewrites. NO Tailwind. NO design-system libraries.
+ *   - NO heavy animations. NO glow-spam. NO AI-startup marketing UI.
+ *   - OPERATIONAL CALMNESS > visual flashiness.
+ *   - DENSITY > empty space. TYPOGRAPHY > gradients. HIERARCHY > effects.
+ *
+ * Load order: last — overrides all earlier phase stylesheets.
+ * ═══════════════════════════════════════════════════════════════════════
+ */
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z42 TOKENS — Operational Extension Layer
+   Extends nds-tokens.css without conflict
+   ══════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Z42 Surface Elevation Hierarchy ─────────────────────────────── */
+  --z42-bg:            #0C0E14;   /* page background — deeper, less blue-shifted */
+  --z42-workspace:     #131620;   /* workspace canvas — primary work surface */
+  --z42-panel-active:  #1A1D27;   /* active panel — elevated from workspace */
+  --z42-floating:      #21253200; /* floating utility — tooltip, popup */
+  --z42-modal:         #1E2130;   /* modal — above floating */
+  --z42-overlay:       #090B10E6; /* critical overlay — maximum elevation */
+
+  /* ── Z42 Border Hierarchy ────────────────────────────────────────── */
+  --z42-border-subtle: #1E2130;   /* barely-there structural line */
+  --z42-border-frame:  #252836;   /* panel/section frame */
+  --z42-border-active: #2F3347;   /* interaction-bearing border */
+  --z42-border-focus:  #0079F2;   /* focus ring */
+
+  /* ── Z42 Operational Accent Palette (functional, not decorative) ─── */
+  --z42-exec-active:   #0079F2;   /* execution in progress */
+  --z42-exec-done:     #16A34A;   /* execution complete / success */
+  --z42-exec-warn:     #C28A00;   /* execution warning / degraded */
+  --z42-exec-err:      #C0392B;   /* execution error / critical */
+  --z42-exec-idle:     #3A3D48;   /* idle / inactive state */
+
+  /* ── Z42 Typography Scale ────────────────────────────────────────── */
+  --z42-type-display:  17px;   /* page-level identity */
+  --z42-type-heading:  14px;   /* section heading */
+  --z42-type-section:  11px;   /* section label (ALL CAPS) */
+  --z42-type-body:     13px;   /* standard body text */
+  --z42-type-op-label: 11px;   /* operational label */
+  --z42-type-meta:     11px;   /* runtime metadata */
+  --z42-type-forensic: 10px;   /* forensic / trace text */
+
+  --z42-weight-display: 700;
+  --z42-weight-heading: 600;
+  --z42-weight-section: 600;
+  --z42-weight-label:   500;
+  --z42-weight-meta:    400;
+
+  --z42-leading-display: 1.2;
+  --z42-leading-heading: 1.3;
+  --z42-leading-body:    1.5;
+  --z42-leading-dense:   1.35;
+
+  /* ── Z42 Toast Geometry ──────────────────────────────────────────── */
+  --z42-toast-bottom:   20px;
+  --z42-toast-right:    20px;
+  --z42-toast-width:    320px;
+  --z42-toast-z:        99990;
+
+  /* ── Z42 Auth Card Geometry ──────────────────────────────────────── */
+  --z42-auth-max-w:     400px;
+  --z42-auth-radius:    8px;
+  --z42-auth-pad-v:     32px;
+  --z42-auth-pad-h:     32px;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z42A — AUTH SYSTEM REDESIGN
+   Goal: operational gateway, not SaaS login page.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* Auth gate backdrop */
+#nx-auth-gate {
+  background: var(--z42-overlay) !important;
+  backdrop-filter: blur(6px) !important;       /* reduced — less blurry/floaty */
+  -webkit-backdrop-filter: blur(6px) !important;
+}
+
+/* Auth card — structured, calm, operational */
+.nx-auth-card {
+  background: var(--z42-panel-active) !important;
+  border: 1px solid var(--z42-border-frame) !important;
+  border-radius: var(--z42-auth-radius) !important;
+  width: 100% !important;
+  max-width: var(--z42-auth-max-w) !important;
+  padding: var(--z42-auth-pad-v) var(--z42-auth-pad-h) !important;
+  box-shadow:
+    0 0 0 1px var(--z42-border-subtle),
+    0 8px 32px rgba(0, 0, 0, 0.55),
+    0 2px 8px rgba(0, 0, 0, 0.3) !important;
+  animation: z42-auth-appear 0.22s cubic-bezier(0.0, 0.0, 0.2, 1) !important;
+}
+
+@keyframes z42-auth-appear {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+/* Logo — clean, no decorative glow */
+.nx-auth-logo {
+  display: flex !important;
+  align-items: center !important;
+  gap: 9px !important;
+  margin-bottom: 28px !important;
+  justify-content: center !important;
+}
+
+.nx-auth-logo-icon {
+  width: 30px !important;
+  height: 30px !important;
+  border-radius: 6px !important;
+  background: var(--z42-workspace) !important;
+  border: 1px solid var(--z42-border-frame) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: none !important;
+}
+
+.nx-auth-logo-text {
+  font-size: 15px !important;
+  font-weight: var(--z42-weight-display) !important;
+  font-family: var(--nds-font) !important;
+  color: var(--nds-text-hi) !important;
+  letter-spacing: -0.2px !important;
+  line-height: var(--z42-leading-display) !important;
+}
+
+.nx-auth-logo-text span {
+  color: var(--nds-accent-hi) !important; /* operational blue, not purple */
+}
+
+/* Tab switcher — unambiguous segmented control */
+.nx-auth-tabs {
+  display: flex !important;
+  gap: 0 !important;
+  background: var(--z42-workspace) !important;
+  border: 1px solid var(--z42-border-frame) !important;
+  border-radius: 6px !important;
+  padding: 3px !important;
+  margin-bottom: 20px !important;
+}
+
+.nx-auth-tab {
+  flex: 1 !important;
+  text-align: center !important;
+  padding: 6px 0 !important;
+  border-radius: 4px !important;
+  font-size: var(--z42-type-op-label) !important;
+  font-weight: var(--z42-weight-section) !important;
+  font-family: var(--nds-font) !important;
+  cursor: pointer !important;
+  color: var(--nds-text-lo) !important;
+  transition: color 0.12s, background 0.12s !important;
+  border: none !important;
+  background: none !important;
+  letter-spacing: 0.01em !important;
+}
+
+.nx-auth-tab.active {
+  background: var(--z42-exec-active) !important;
+  color: #ffffff !important;
+  font-weight: var(--z42-weight-heading) !important;
+}
+
+.nx-auth-tab:not(.active):hover {
+  color: var(--nds-text-hi) !important;
+  background: var(--z42-border-subtle) !important;
+}
+
+/* Field label — compact operational label style */
+.nx-auth-field {
+  margin-bottom: 12px !important;
+}
+
+.nx-auth-field label {
+  display: block !important;
+  font-size: var(--z42-type-section) !important;
+  font-weight: var(--z42-weight-section) !important;
+  color: var(--nds-text-lo) !important;
+  margin-bottom: 4px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+  line-height: var(--z42-leading-dense) !important;
+}
+
+.nx-auth-label-hint {
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  font-weight: var(--z42-weight-meta) !important;
+  color: var(--nds-text-dim) !important;
+  font-size: 10px !important;
+}
+
+/* Inputs — mature, structured */
+.nx-auth-field input {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  background: var(--z42-workspace) !important;
+  border: 1px solid var(--z42-border-active) !important;
+  border-radius: 5px !important;
+  padding: 9px 11px !important;
+  font-size: var(--z42-type-body) !important;
+  font-family: var(--nds-font) !important;
+  color: var(--nds-text-hi) !important;
+  outline: none !important;
+  transition: border-color 0.12s !important;
+  line-height: var(--z42-leading-body) !important;
+}
+
+.nx-auth-field input::placeholder {
+  color: var(--nds-text-ph) !important;
+}
+
+.nx-auth-field input:focus {
+  border-color: var(--z42-exec-active) !important;
+  box-shadow: 0 0 0 2px rgba(0, 121, 242, 0.12) !important;
+}
+
+.nx-auth-field input.error {
+  border-color: var(--z42-exec-err) !important;
+}
+
+/* Primary action button — operational blue, no purple, no gradient */
+.nx-auth-btn-primary {
+  width: 100% !important;
+  padding: 10px !important;
+  border-radius: 5px !important;
+  border: none !important;
+  cursor: pointer !important;
+  background: var(--z42-exec-active) !important;
+  color: #ffffff !important;
+  font-size: var(--z42-type-body) !important;
+  font-weight: var(--z42-weight-heading) !important;
+  font-family: var(--nds-font) !important;
+  margin-top: 4px !important;
+  margin-bottom: 10px !important;
+  display: block !important;
+  letter-spacing: 0.01em !important;
+  transition: background 0.12s, opacity 0.12s !important;
+}
+
+.nx-auth-btn-primary:hover {
+  background: var(--nds-accent-hi, #57ABFF) !important;
+  opacity: 1 !important;
+}
+
+.nx-auth-btn-primary:active {
+  background: var(--nds-accent-lo, #0053A6) !important;
+}
+
+.nx-auth-btn-primary:disabled {
+  opacity: 0.45 !important;
+  cursor: not-allowed !important;
+  background: var(--z42-exec-idle) !important;
+}
+
+/* Forgot/back links */
+.nx-auth-forgot-link {
+  display: block !important;
+  text-align: right !important;
+  font-size: var(--z42-type-meta) !important;
+  font-weight: var(--z42-weight-label) !important;
+  color: var(--nds-accent) !important;
+  cursor: pointer !important;
+  margin-top: 2px !important;
+  margin-bottom: 4px !important;
+  padding: 3px 0 !important;
+  background: none !important;
+  border: none !important;
+  font-family: var(--nds-font) !important;
+  text-decoration: none !important;
+}
+
+.nx-auth-forgot-link:hover {
+  color: var(--nds-accent-hi) !important;
+  text-decoration: underline !important;
+}
+
+.nx-auth-back-link {
+  display: block !important;
+  text-align: center !important;
+  font-size: var(--z42-type-meta) !important;
+  color: var(--nds-text-lo) !important;
+  cursor: pointer !important;
+  margin-top: 12px !important;
+  background: none !important;
+  border: none !important;
+  font-family: var(--nds-font) !important;
+  transition: color 0.1s !important;
+}
+
+.nx-auth-back-link:hover {
+  color: var(--nds-accent) !important;
+}
+
+/* Error state */
+.nx-auth-err {
+  background: rgba(192, 57, 43, 0.08) !important;
+  border: 1px solid rgba(192, 57, 43, 0.25) !important;
+  border-radius: 5px !important;
+  padding: 8px 10px !important;
+  font-size: var(--z42-type-meta) !important;
+  color: #E55A4E !important;
+  margin-bottom: 12px !important;
+  line-height: var(--z42-leading-dense) !important;
+}
+
+/* Success state */
+.nx-auth-ok {
+  background: rgba(22, 163, 74, 0.08) !important;
+  border: 1px solid rgba(22, 163, 74, 0.22) !important;
+  color: #4ADE80 !important;
+  border-radius: 5px !important;
+  padding: 8px 10px !important;
+  font-size: var(--z42-type-meta) !important;
+  margin-bottom: 12px !important;
+  line-height: var(--z42-leading-dense) !important;
+}
+
+/* OAuth divider — quiet, not a visual shout */
+.nx-auth-divider {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  margin: 16px 0 !important;
+  color: var(--nds-text-dim) !important;
+  font-size: var(--z42-type-forensic) !important;
+  letter-spacing: 0.04em !important;
+  text-transform: uppercase !important;
+}
+
+.nx-auth-divider::before,
+.nx-auth-divider::after {
+  content: '' !important;
+  flex: 1 !important;
+  height: 1px !important;
+  background: var(--z42-border-subtle) !important;
+}
+
+/* OAuth buttons — structured, not decorative */
+.nx-auth-oauth {
+  display: flex !important;
+  gap: 8px !important;
+}
+
+.nx-auth-oauth-btn {
+  flex: 1 !important;
+  padding: 8px 6px !important;
+  border-radius: 5px !important;
+  border: 1px solid var(--z42-border-active) !important;
+  background: var(--z42-workspace) !important;
+  color: var(--nds-text-md) !important;
+  font-size: var(--z42-type-meta) !important;
+  font-weight: var(--z42-weight-label) !important;
+  font-family: var(--nds-font) !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  text-decoration: none !important;
+  transition: border-color 0.1s, background 0.1s !important;
+}
+
+.nx-auth-oauth-btn:hover {
+  border-color: var(--z42-exec-active) !important;
+  background: var(--z42-border-subtle) !important;
+  color: var(--nds-text-hi) !important;
+}
+
+/* Footer */
+.nx-auth-footer {
+  margin-top: 16px !important;
+  text-align: center !important;
+  font-size: var(--z42-type-forensic) !important;
+  color: var(--nds-text-dim) !important;
+  line-height: 1.5 !important;
+}
+
+.nx-auth-footer a {
+  color: var(--nds-text-lo) !important;
+  text-decoration: none !important;
+}
+
+.nx-auth-footer a:hover {
+  color: var(--nds-accent) !important;
+  text-decoration: underline !important;
+}
+
+/* Agree checkbox label */
+.nx-auth-agree-label {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 8px !important;
+  font-size: var(--z42-type-meta) !important;
+  color: var(--nds-text-lo) !important;
+  margin-bottom: 12px !important;
+  cursor: pointer !important;
+  line-height: var(--z42-leading-dense) !important;
+}
+
+.nx-auth-agree-label a {
+  color: var(--nds-accent) !important;
+  text-decoration: none !important;
+}
+
+.nx-auth-agree-label a:hover {
+  text-decoration: underline !important;
+}
+
+/* Verify banner — non-intrusive operational notification */
+#nx-verify-banner {
+  background: var(--z42-panel-active) !important;
+  border: 1px solid rgba(194, 138, 0, 0.35) !important;
+  border-radius: 6px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important;
+  font-size: var(--z42-type-meta) !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z42B — TYPOGRAPHY SYSTEM
+   Operational type language with clear hierarchy.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* Display — top-level identity text */
+.z42-type-display {
+  font-size: var(--z42-type-display);
+  font-weight: var(--z42-weight-display);
+  line-height: var(--z42-leading-display);
+  color: var(--nds-text-hi);
+  letter-spacing: -0.3px;
+}
+
+/* Heading — section/panel titles */
+.z42-type-heading,
+.z42-heading {
+  font-size: var(--z42-type-heading);
+  font-weight: var(--z42-weight-heading);
+  line-height: var(--z42-leading-heading);
+  color: var(--nds-text-hi);
+  letter-spacing: 0;
+}
+
+/* Section label — ALL CAPS identifier */
+.z42-type-section,
+.z42-section-label {
+  font-size: var(--z42-type-section);
+  font-weight: var(--z42-weight-section);
+  line-height: var(--z42-leading-dense);
+  color: var(--nds-text-lo);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+/* Operational label — UI control label */
+.z42-type-op-label {
+  font-size: var(--z42-type-op-label);
+  font-weight: var(--z42-weight-label);
+  line-height: var(--z42-leading-dense);
+  color: var(--nds-text-md);
+}
+
+/* Runtime metadata — stats, timestamps, counts */
+.z42-type-meta,
+.z42-meta {
+  font-size: var(--z42-type-meta);
+  font-weight: var(--z42-weight-meta);
+  line-height: var(--z42-leading-dense);
+  color: var(--nds-text-lo);
+  font-family: var(--nds-mono);
+}
+
+/* Forensic text — trace output, log lines */
+.z42-type-forensic,
+.z42-forensic {
+  font-size: var(--z42-type-forensic);
+  font-weight: var(--z42-weight-meta);
+  line-height: var(--z42-leading-dense);
+  color: var(--nds-text-dim);
+  font-family: var(--nds-mono);
+  letter-spacing: 0.02em;
+}
+
+/* Enforce consistent panel header typography across older phases */
+.nx-panel .nx-tab-bar .nx-tab,
+.nx-right .nx-tab,
+.nx-left .nx-tab {
+  font-size: var(--z42-type-op-label);
+  font-weight: var(--z42-weight-section);
+  letter-spacing: 0.01em;
+}
+
+/* Prevent oversized panel section headers */
+.nx-section-title,
+.panel-section-label,
+.p9-section-title,
+.p8-section-title,
+.inspector-section {
+  font-size: var(--z42-type-section) !important;
+  font-weight: var(--z42-weight-section) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.07em !important;
+  color: var(--nds-text-dim) !important;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z42C — DEPTH + SURFACE SYSTEM
+   Clear layered elevation. No fake blur depth. No floating ambiguity.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* Layer 0 — Page background */
+body,
+html {
+  background: var(--z42-bg) !important;
+}
+
+/* Layer 1 — Workspace canvas (primary work surface) */
+.nx-body,
+.nx-center,
+.tab-content,
+.log-pane,
+.log-area,
+#logArea {
+  background: var(--z42-workspace);
+}
+
+/* Layer 2 — Active panel (elevated from workspace) */
+.nx-header {
+  background: var(--z42-panel-active) !important;
+  border-bottom: 1px solid var(--z42-border-frame) !important;
+}
+
+.nx-left,
+.nx-right,
+.nx-panel {
+  background: var(--z42-panel-active);
+  border-color: var(--z42-border-frame);
+}
+
+/* Layer 3 — Floating utility (tooltips, dropdowns, popovers) */
+.p5-prov-menu,
+.p4-suggest-box,
+.nx-modal-backdrop ~ .nx-modal,
+[class*="dropdown"],
+[class*="popover"] {
+  background: var(--z42-modal) !important;
+  border: 1px solid var(--z42-border-active) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--z42-border-subtle) !important;
+}
+
+/* Layer 4 — Modal (above floating) */
+.nx-modal,
+#feedback-modal {
+  background: var(--z42-modal) !important;
+  border: 1px solid var(--z42-border-active) !important;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.65), 0 0 0 1px var(--z42-border-subtle) !important;
+}
+
+/* Structured panel borders — consistent framing */
+.nx-panel-hdr,
+.nx-tab-bar,
+.p9-section,
+.p8-section {
+  border-bottom: 1px solid var(--z42-border-subtle);
+}
+
+/* Remove excessive glow on logo */
+.nx-logo-icon {
+  background: var(--z42-border-frame) !important;
+  box-shadow: none !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z42D — OPERATIONAL COLOR GOVERNANCE
+   Color is functional. Accent only for state, risk, focus.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* Semantic runtime color utilities */
+.z42-color-exec   { color: var(--z42-exec-active); }
+.z42-color-done   { color: var(--z42-exec-done);   }
+.z42-color-warn   { color: var(--z42-exec-warn);   }
+.z42-color-err    { color: var(--z42-exec-err);    }
+.z42-color-idle   { color: var(--nds-text-dim);    }
+.z42-color-meta   { color: var(--nds-text-lo);     }
+
+.z42-bg-exec   { background: rgba(0, 121, 242, 0.10); }
+.z42-bg-done   { background: rgba(22, 163, 74, 0.10); }
+.z42-bg-warn   { background: rgba(194, 138, 0, 0.10); }
+.z42-bg-err    { background: rgba(192, 57, 43, 0.10); }
+
+/* Reduce logo gradient — use flat operational accent */
+.nx-logo-icon {
+  background: linear-gradient(135deg, #1A2540, #0C1830) !important;
+}
+
+/* Suppress decorative purple in non-identity contexts */
+.p6-prio-btn.active.smart {
+  background: rgba(0, 79, 160, 0.18) !important;
+  color: var(--nds-accent-hi) !important;
+  border-color: rgba(0, 121, 242, 0.35) !important;
+}
+
+/* Token pill — keep blue accent, remove purple tint */
+.p4-token-pill .p4-tk {
+  color: var(--nds-accent-hi) !important;
+}
+
+/* Status dots — use operational semantic colors only */
+.p5-status-dot.green  { background: var(--z42-exec-done);   }
+.p5-status-dot.yellow { background: var(--z42-exec-warn);   }
+.p5-status-dot.grey   { background: var(--z42-exec-idle);   }
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z42E — TOAST + FEEDBACK DISCIPLINE
+   Predictable, calm, non-intrusive. Never overlaps auth/inspector.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* Toast container — fixed stack, positioned clear of auth, inspector, controls */
+#nx-toasts {
+  position: fixed !important;
+  bottom: var(--z42-toast-bottom) !important;
+  right: var(--z42-toast-right) !important;
+  z-index: var(--z42-toast-z) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-end !important;
+  gap: 6px !important;
+  pointer-events: none !important;
+  max-width: var(--z42-toast-width) !important;
+  /* Never overlap auth gate (z-index 99999) */
+}
+
+/* Individual toast — compact, structured, severity-driven */
+.nx-toast {
+  pointer-events: auto !important;
+  width: var(--z42-toast-width) !important;
+  max-width: 100% !important;
+  background: var(--z42-panel-active) !important;
+  border: 1px solid var(--z42-border-active) !important;
+  border-left: 3px solid var(--z42-exec-active) !important;
+  border-radius: 5px !important;
+  padding: 8px 10px 8px 10px !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 8px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45), 0 0 0 1px var(--z42-border-subtle) !important;
+  animation: z42-toast-in 0.18s cubic-bezier(0.0, 0.0, 0.2, 1) !important;
+  font-family: var(--nds-font) !important;
+}
+
+@keyframes z42-toast-in {
+  from { opacity: 0; transform: translateX(12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes nx-toast-out {
+  from { opacity: 1; transform: translateX(0); max-height: 80px; }
+  to   { opacity: 0; transform: translateX(16px); max-height: 0; margin: 0; padding: 0; }
+}
+
+/* Severity-driven left border color */
+.nx-toast.info    { border-left-color: var(--z42-exec-active) !important; }
+.nx-toast.success { border-left-color: var(--z42-exec-done)   !important; }
+.nx-toast.warning { border-left-color: var(--z42-exec-warn)   !important; }
+.nx-toast.error   { border-left-color: var(--z42-exec-err)    !important; }
+
+/* Toast icon */
+.nx-toast-icon {
+  font-size: 13px !important;
+  line-height: 1.4 !important;
+  flex-shrink: 0 !important;
+  margin-top: 1px !important;
+}
+
+/* Toast body */
+.nx-toast-body {
+  flex: 1 !important;
+  min-width: 0 !important;
+}
+
+.nx-toast-title {
+  font-size: var(--z42-type-meta) !important;
+  font-weight: var(--z42-weight-heading) !important;
+  color: var(--nds-text-hi) !important;
+  line-height: var(--z42-leading-dense) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.nx-toast-msg {
+  font-size: var(--z42-type-forensic) !important;
+  color: var(--nds-text-lo) !important;
+  line-height: var(--z42-leading-dense) !important;
+  margin-top: 1px !important;
+  word-break: break-word !important;
+}
+
+/* Toast close button */
+.nx-toast-close {
+  font-size: 12px !important;
+  color: var(--nds-text-dim) !important;
+  cursor: pointer !important;
+  flex-shrink: 0 !important;
+  padding: 0 2px !important;
+  line-height: 1.6 !important;
+  border-radius: 3px !important;
+  transition: color 0.1s !important;
+}
+
+.nx-toast-close:hover {
+  color: var(--nds-text-hi) !important;
+}
+
+/* Legacy single-toast (#toast) — reposition clear of panels */
+.toast {
+  bottom: var(--z42-toast-bottom) !important;
+  right: var(--z42-toast-right) !important;
+  z-index: var(--z42-toast-z) !important;
+  background: var(--z42-panel-active) !important;
+  border: 1px solid var(--z42-border-active) !important;
+  border-radius: 5px !important;
+  font-size: var(--z42-type-meta) !important;
+  font-family: var(--nds-font) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45) !important;
+  max-width: var(--z42-toast-width) !important;
+}
+
+.toast.ok  { border-left: 3px solid var(--z42-exec-done) !important; }
+.toast.err { border-left: 3px solid var(--z42-exec-err)  !important; }
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z42F — WORKSPACE IMMERSION
+   Alive, stable, operational, focused. No dead zones, no visual drift.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* Workspace body — clean canvas */
+.nx-body {
+  background: var(--z42-workspace) !important;
+}
+
+/* Header — minimal, structural */
+.nx-header {
+  height: var(--nds-topbar-h, 40px) !important;
+  border-bottom: 1px solid var(--z42-border-frame) !important;
+}
+
+/* Panel separator lines — subtle structural anchoring */
+.nx-splitter,
+.splitter {
+  background: var(--z42-border-subtle) !important;
+  width: 1px !important;
+  min-width: 1px !important;
+}
+
+/* Execution state indicator — operational runtime focus */
+.nx-run-btn[data-state="running"],
+.nx-run-btn.running {
+  background: var(--z42-exec-active) !important;
+  box-shadow: none !important;
+}
+
+.nx-run-btn[data-state="idle"],
+.nx-run-btn.idle,
+.nx-run-btn:not(.running) {
+  box-shadow: none !important;
+}
+
+/* Tab bar — density-optimized */
+.nx-tab-bar {
+  background: var(--z42-panel-active) !important;
+  border-bottom: 1px solid var(--z42-border-frame) !important;
+}
+
+.nx-tab {
+  font-size: var(--z42-type-op-label) !important;
+}
+
+.nx-tab.active {
+  color: var(--nds-text-hi) !important;
+  border-bottom-color: var(--z42-exec-active) !important;
+}
+
+/* Command input area — stable, anchored */
+.nx-cmd-wrap {
+  border-top: 1px solid var(--z42-border-frame) !important;
+  background: var(--z42-workspace) !important;
+}
+
+/* Session cards — consistent density */
+.nx-session-card {
+  background: var(--z42-panel-active) !important;
+  border: 1px solid var(--z42-border-subtle) !important;
+  border-radius: 4px !important;
+}
+
+.nx-session-card:hover {
+  border-color: var(--z42-border-active) !important;
+  background: var(--z42-panel-active) !important;
+}
+
+/* Log lines — forensic text style */
+.log-line,
+.log-entry {
+  font-size: var(--z42-type-forensic) !important;
+  font-family: var(--nds-mono) !important;
+  line-height: var(--z42-leading-dense) !important;
+}
+
+/* Panel section dividers — subtle structural rhythm */
+.nx-section-divider,
+.panel-divider {
+  height: 1px;
+  background: var(--z42-border-subtle);
+  margin: 6px 0;
+}
+
+/* Metrics / status bar — forensic read density */
+.nx-status-bar,
+.nx-metrics-row,
+.p4-token-pill {
+  font-size: var(--z42-type-forensic) !important;
+}
+
+/* Site footer — quiet, non-intrusive */
+.nx-site-footer {
+  font-size: var(--z42-type-forensic) !important;
+  color: var(--nds-text-dim) !important;
+  border-top: 1px solid var(--z42-border-subtle) !important;
+  background: var(--z42-workspace) !important;
+}
+
+/* Cookie banner — operational, minimal */
+.nx-cookie-banner {
+  background: var(--z42-panel-active) !important;
+  border: 1px solid var(--z42-border-frame) !important;
+  border-radius: 5px !important;
+  font-size: var(--z42-type-meta) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Feedback FAB — reduce glow-spam */
+#feedback-fab {
+  background: var(--z42-panel-active) !important;
+  border: 1px solid var(--z42-border-active) !important;
+  color: var(--nds-text-md) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35) !important;
+}
+
+#feedback-fab:hover {
+  background: var(--z42-modal) !important;
+  border-color: var(--z42-exec-active) !important;
+  color: var(--nds-text-hi) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+  transform: none !important;
+}
+
+/* Feedback modal — operational surface */
+#feedback-modal {
+  background: var(--z42-modal) !important;
+  border: 1px solid var(--z42-border-active) !important;
+  border-radius: 6px !important;
+}
+
+/* Scrollbar — minimal, unobtrusive */
+::-webkit-scrollbar {
+  width: 5px !important;
+  height: 5px !important;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--z42-border-active) !important;
+  border-radius: 3px !important;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--nds-text-dim) !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z42G — FORENSIC AUDIT CORRECTIONS
+   Fixes identified in the visual forensic audit.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* Fix: token pill overflow on small viewports */
+.p4-token-pill {
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Fix: inconsistent panel header padding */
+.nx-panel-hdr,
+.p9-section-hdr,
+.p8-section-hdr {
+  padding: 0 var(--nds-sp-3) !important;
+}
+
+/* Fix: text contrast on muted labels inside dark panels */
+.p5-prov-cat,
+.p5-prov-menu-head,
+.p6-rec-score,
+.p6-intel-table th {
+  color: var(--nds-text-dim) !important;
+  font-size: var(--z42-type-section) !important;
+}
+
+/* Fix: excessive rounded corners on small operational elements */
+.p6-tier-pill,
+.p5-cap-tag,
+.p6-rec-tag {
+  border-radius: 3px !important;
+}
+
+/* Fix: generic gradient on primary auth button (belt + suspenders) */
+.nx-auth-btn-primary,
+.nx-auth-btn-signup {
+  background: var(--z42-exec-active) !important;
+  background-image: none !important;
+}
+
+/* Fix: oversized section labels (visual shouting) */
+.p9-model-label,
+.p8-plan-label,
+.p7-agent-label {
+  font-size: var(--z42-type-section) !important;
+  font-weight: var(--z42-weight-section) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.07em !important;
+  color: var(--nds-text-dim) !important;
+}
+
+/* Fix: auth gate backdrop z-index vs toast stacking */
+#nx-auth-gate {
+  z-index: 100000 !important;  /* always above toasts (99990) */
+}
+
+/* Fix: verify banner — clear of toast stack */
+#nx-verify-banner {
+  z-index: 99991 !important;
+  border-radius: 5px !important;
+}
+
+/* Fix: onboarding panel generic gradient */
+.nx-onboard,
+#nx-onboard {
+  background: var(--z42-panel-active) !important;
+  border: 1px solid var(--z42-border-frame) !important;
+  border-radius: 6px !important;
+}

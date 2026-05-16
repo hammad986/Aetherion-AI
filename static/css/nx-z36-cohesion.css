@@ -1,0 +1,385 @@
+/* ═══════════════════════════════════════════════════════════════════
+   PHASE Z36 — Runtime Cohesion + Execution Intelligence
+   Node identity · Timeline pressure · Forensic reasoning · Spatial depth
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── Tokens ─────────────────────────────────────────────────────── */
+:root {
+  --z36-running:   #58a6ff;
+  --z36-done:      #3fb950;
+  --z36-error:     #f87171;
+  --z36-pending:   #6e7681;
+  --z36-recovery:  #e3b341;
+  --z36-pulse-dur: 1.4s;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Z36A — Execution Pulse
+   ═══════════════════════════════════════════════════════════════════ */
+[data-node-id].z36-pulse-active,
+[data-z36-node-id].z36-pulse-active {
+  animation: z36-pulse var(--z36-pulse-dur) ease-out forwards;
+}
+
+@keyframes z36-pulse {
+  0%   { outline: 1px solid rgba(88,166,255,0.6); outline-offset: 0px; }
+  40%  { outline: 1px solid rgba(88,166,255,0.25); outline-offset: 3px; }
+  100% { outline: 1px solid transparent; outline-offset: 5px; }
+}
+
+/* ── Cross-surface Focus Ring ───────────────────────────────────── */
+[data-node-id].z36-focus-ring {
+  outline: 1px solid rgba(88,166,255,0.45);
+  outline-offset: 1px;
+  transition: outline 120ms ease;
+}
+
+/* ── Timeline Focus Highlight ───────────────────────────────────── */
+[data-z36-node-id].z36-timeline-focus {
+  background: rgba(88,166,255,0.06) !important;
+  border-left: 2px solid rgba(88,166,255,0.35) !important;
+  transition: background 100ms ease;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Z36B — Timeline Intelligence
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Pressure indicator strips — left border accent on timeline rows */
+.z33-tl-event.z36-tl-pressure-med,
+.z33-tl-group.z36-tl-pressure-med {
+  border-left: 2px solid rgba(227,179,65,0.35) !important;
+  background: rgba(227,179,65,0.03);
+}
+
+.z33-tl-event.z36-tl-pressure-high,
+.z33-tl-group.z36-tl-pressure-high {
+  border-left: 2px solid rgba(248,113,113,0.35) !important;
+  background: rgba(248,113,113,0.03);
+}
+
+.z33-tl-event.z36-tl-pressure-critical,
+.z33-tl-group.z36-tl-pressure-critical {
+  border-left: 2px solid rgba(248,113,113,0.6) !important;
+  background: rgba(248,113,113,0.05);
+}
+
+/* Recovery chain indicator */
+.z33-tl-event.z36-tl-recovery-chain::before,
+.z33-tl-group.z36-tl-recovery-chain::before {
+  content: '⟳';
+  font-size: 8px;
+  color: var(--z36-recovery);
+  margin-right: 3px;
+  opacity: 0.7;
+}
+
+/* Retry chain */
+.z33-tl-event.z36-tl-retry-chain::before,
+.z33-tl-group.z36-tl-retry-chain::before {
+  content: '↺';
+  font-size: 8px;
+  color: var(--z36-error);
+  margin-right: 3px;
+  opacity: 0.6;
+}
+
+/* Completed */
+.z33-tl-event.z36-tl-completed,
+.z33-tl-group.z36-tl-completed {
+  opacity: 0.65;
+}
+
+/* Confidence low decay */
+.z33-tl-event.z36-tl-conf-low,
+.z33-tl-group.z36-tl-conf-low {
+  font-style: italic;
+  opacity: 0.85;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Z36C — Forensic Execution Intelligence Section
+   ═══════════════════════════════════════════════════════════════════ */
+.z36-forensic-section {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border, #21262d);
+}
+
+.z36-forensic-block {
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border, #21262d);
+}
+
+.z36-forensic-block:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.z36-forensic-title {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim, #6e7681);
+  margin-bottom: 5px;
+}
+
+/* Decision chain */
+.z36-chain {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.z36-chain-step {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 9px;
+}
+
+.z36-chain-from,
+.z36-chain-to {
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-size: 8.5px;
+  background: var(--surface-overlay, #161b22);
+  border: 1px solid var(--border, #21262d);
+  color: var(--text-dim, #6e7681);
+}
+
+.z36-chain-from.z36-state-running { color: var(--z36-running); border-color: rgba(88,166,255,0.2); }
+.z36-chain-from.z36-state-done    { color: var(--z36-done);    border-color: rgba(63,185,80,0.2); }
+.z36-chain-from.z36-state-error   { color: var(--z36-error);   border-color: rgba(248,113,113,0.2); }
+.z36-chain-to.z36-state-running   { color: var(--z36-running); border-color: rgba(88,166,255,0.2); }
+.z36-chain-to.z36-state-done      { color: var(--z36-done);    border-color: rgba(63,185,80,0.2); }
+.z36-chain-to.z36-state-error     { color: var(--z36-error);   border-color: rgba(248,113,113,0.2); }
+
+.z36-chain-arrow {
+  font-size: 8px;
+  color: var(--text-dim, #6e7681);
+  opacity: 0.4;
+}
+
+.z36-chain-ts {
+  font-size: 8px;
+  color: var(--text-dim, #6e7681);
+  opacity: 0.45;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+/* Pressure analysis */
+.z36-pressure-analysis {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 5px;
+}
+
+.z36-pa-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 9px;
+}
+
+.z36-pa-label { color: var(--text-dim, #6e7681); }
+.z36-pa-val   { color: var(--text, #e6edf3); }
+
+.z36-risk-high    { color: var(--z36-error); }
+.z36-risk-medium  { color: var(--z36-recovery); }
+.z36-risk-none    { color: var(--z36-done); }
+.z36-risk-amplified { color: var(--z36-error); }
+.z36-risk-active    { color: var(--z36-recovery); }
+
+.z36-conf-high     { color: var(--z36-done); }
+.z36-conf-moderate { color: var(--z36-recovery); }
+.z36-conf-low      { color: var(--z36-error); }
+
+/* Failure rows */
+.z36-failure-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px;
+  font-size: 9px;
+  color: var(--z36-error);
+  padding: 1px 0;
+  opacity: 0.85;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Recovery rows */
+.z36-recovery-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 9px;
+  color: var(--text-dim, #6e7681);
+  padding: 2px 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.z36-recovery-row.success { color: var(--z36-done); }
+.z36-recovery-row.fail    { color: var(--z36-error); }
+
+.z36-recovery-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+/* Drift trend */
+.z36-drift-trend {
+  font-size: 10px;
+  font-weight: 600;
+}
+.z36-drift-trend.warning { color: var(--z36-recovery); }
+.z36-drift-trend.good    { color: var(--z36-done); }
+
+/* ═══════════════════════════════════════════════════════════════════
+   Z36D — Spatial Depth Layers
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Active surface */
+[data-z36-depth="active"] {
+  opacity: 1;
+  transition: opacity 200ms ease;
+}
+
+/* Dormant surface */
+[data-z36-depth="dormant"] {
+  opacity: 0.55;
+  transition: opacity 300ms ease;
+}
+
+/* Background surface */
+[data-z36-depth="background"] {
+  opacity: 0.75;
+  transition: opacity 250ms ease;
+}
+
+/* Unstable surface — very subtle amber shift */
+[data-z36-depth="unstable"] {
+  opacity: 0.9;
+  border-color: rgba(227,179,65,0.15) !important;
+  transition: border-color 250ms ease, opacity 250ms ease;
+}
+
+/* Replayed surface — warm tint */
+[data-z36-depth="replayed"] {
+  opacity: 0.85;
+  border-color: rgba(210,153,34,0.15) !important;
+  transition: border-color 250ms ease, opacity 250ms ease;
+}
+
+/* ── Density Governance ─────────────────────────────────────────── */
+[data-z36-density="compact"] .z33-tl-event,
+[data-z36-density="compact"] .z33-tl-group {
+  padding-top: 2px !important;
+  padding-bottom: 2px !important;
+}
+
+[data-z36-density="spacious"] .z33-tl-event,
+[data-z36-density="spacious"] .z33-tl-group {
+  padding-top: 5px !important;
+  padding-bottom: 5px !important;
+}
+
+/* ── Focus Steering ─────────────────────────────────────────────── */
+[data-node-id].z36-steered {
+  outline: 1px solid rgba(227,179,65,0.35);
+  outline-offset: 2px;
+  animation: z36-steer-pulse 3s ease-in-out infinite;
+}
+
+@keyframes z36-steer-pulse {
+  0%, 100% { outline-color: rgba(227,179,65,0.35); }
+  50%       { outline-color: rgba(227,179,65,0.12); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Z36E — Continuity Thread Bar
+   ═══════════════════════════════════════════════════════════════════ */
+.z36-thread-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  padding-left: 8px;
+  border-left: 1px solid var(--border, #21262d);
+}
+
+.z36-thread-label {
+  font-size: 8.5px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-dim, #6e7681);
+}
+
+.z36-thread-list {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.z36-thr-dot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  font-size: 8px;
+  font-weight: 600;
+  cursor: default;
+  border: 1px solid transparent;
+}
+
+.z36-thr-dot.running { background: rgba(88,166,255,0.15);  border-color: rgba(88,166,255,0.3);  color: var(--z36-running); }
+.z36-thr-dot.done    { background: rgba(63,185,80,0.12);   border-color: rgba(63,185,80,0.25);  color: var(--z36-done); }
+.z36-thr-dot.error   { background: rgba(248,113,113,0.15); border-color: rgba(248,113,113,0.3); color: var(--z36-error); }
+.z36-thr-dot.pending { background: rgba(110,118,129,0.12); border-color: rgba(110,118,129,0.2); color: var(--z36-pending); }
+
+/* Drift Indicator */
+.z36-drift-indicator {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding-left: 6px;
+  border-left: 1px solid var(--border, #21262d);
+}
+
+.z36-drift-label {
+  font-size: 8.5px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-dim, #6e7681);
+}
+
+.z36-drift-val {
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--text-dim, #6e7681);
+  transition: color 200ms ease;
+}
+
+.z36-drift-stable  { color: var(--text-dim, #6e7681); }
+.z36-drift-rising  { color: var(--z36-error); }
+.z36-drift-falling { color: var(--z36-done); }
+
+/* ── Scrollbar polish ───────────────────────────────────────────── */
+.z36-forensic-section::-webkit-scrollbar { width: 3px; }
+.z36-forensic-section::-webkit-scrollbar-track { background: transparent; }
+.z36-forensic-section::-webkit-scrollbar-thumb { background: var(--border, #21262d); border-radius: 2px; }

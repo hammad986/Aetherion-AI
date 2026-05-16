@@ -1,0 +1,279 @@
+PHASE Z36 — RUNTIME COHESION + EXECUTION INTELLIGENCE
+
+CURRENT STATUS:
+Aetherion AI now supports:
+
+* mission presence
+* replay fusion
+* DAG execution
+* forensic continuity
+* execution heat mapping
+* adaptive workspace modes
+* contextual operator suggestions
+* runtime pressure awareness
+* execution density scaling
+
+However:
+the platform still lacks:
+deep runtime cohesion.
+
+The workspace behaves like:
+multiple coordinated systems.
+
+It must now evolve into:
+ONE unified operational execution surface.
+
+STRICT RULES:
+🔒 NO NEW AGENTS
+🔒 NO NEW FRAMEWORKS
+🔒 NO NEW ORCHESTRATION LAYERS
+🔒 NO AI HYPE FEATURES
+🔒 NO GAMIFICATION
+🔒 NO SAAS DASHBOARD CLUTTER
+🔒 NO VISUAL NOISE
+🔒 EXECUTION CLARITY > FEATURE COUNT
+🔒 RUNTIME COHERENCE > VISUAL NOVELTY
+🔒 ALL NEW LOGIC MUST BE OPERATIONAL
+
+====================================================
+PHASE Z36A — DAG NODE IDENTITY + EXECUTION COHESION
+===================================================
+
+GOAL:
+Create stable node identity across:
+
+* DAG
+* timeline
+* replay
+* forensics
+* recovery
+* inspector
+* execution continuity
+
+REQUIREMENTS:
+
+1. Stable data-node-id System
+   Every execution node MUST emit:
+
+* stable node id
+* lineage id
+* replay id
+* parent relationship
+* execution generation
+
+2. Unified Runtime Mapping
+   All runtime systems MUST reference:
+   the SAME node identity layer.
+
+3. Cross-Surface Synchronization
+   Hover/focus/select on:
+
+* DAG
+* timeline
+* replay
+* inspector
+
+must instantly synchronize all surfaces.
+
+4. Execution Pulse Routing
+   Active execution node emits:
+   subtle execution pulse
+   across all linked surfaces.
+
+====================================================
+PHASE Z36B — TIMELINE INTELLIGENCE EVOLUTION
+============================================
+
+PROBLEM:
+Timeline still behaves like:
+a log stream.
+
+GOAL:
+Transform timeline into:
+an execution intelligence surface.
+
+REQUIREMENTS:
+
+1. Semantic Timeline Grouping
+   Group events by:
+
+* execution branch
+* recovery chain
+* dependency cluster
+* replay lineage
+
+2. Runtime Pressure Indicators
+   Timeline rows surface:
+
+* retry pressure
+* instability
+* escalation probability
+* confidence decay
+
+3. Timeline Replay Reconstruction
+   Scrolling through replay reconstructs:
+
+* DAG state
+* inspector context
+* mission pressure
+* execution depth
+
+====================================================
+PHASE Z36C — FORENSIC EXECUTION INTELLIGENCE
+============================================
+
+GOAL:
+Evolve inspector from:
+information panel
+into:
+operational reasoning surface.
+
+REQUIREMENTS:
+
+1. Runtime Decision Chain
+   Display:
+
+* why node executed
+* why retry occurred
+* why recovery path selected
+* why escalation triggered
+
+2. Failure Pressure Analysis
+   Surface:
+
+* cascading instability
+* repeated dependency failures
+* retry amplification
+* execution bottlenecks
+
+3. Recovery Intelligence
+   Display:
+
+* historically successful recoveries
+* similar prior failures
+* recovery confidence
+* predicted stabilization likelihood
+
+====================================================
+PHASE Z36D — EXECUTION IMMERSION + SPATIAL DENSITY
+==================================================
+
+GOAL:
+Create true operational immersion
+WITHOUT visual overload.
+
+REQUIREMENTS:
+
+1. Spatial Runtime Depth
+   Different execution layers MUST feel:
+
+* active
+* dormant
+* unstable
+* replayed
+* recovering
+
+2. Density Governance
+   Adaptive density scaling based on:
+
+* runtime complexity
+* execution depth
+* replay pressure
+* mission instability
+
+3. Contextual Focus Steering
+   Workspace subtly guides:
+   operator attention
+   toward:
+
+* unstable nodes
+* replay anomalies
+* escalating failures
+* active recoveries
+
+====================================================
+PHASE Z36E — CONTINUITY + LONG-SESSION PRESENCE
+===============================================
+
+GOAL:
+Make long sessions feel:
+persistent,
+alive,
+continuous.
+
+REQUIREMENTS:
+
+1. Runtime Continuity Threads
+   Execution branches persist visually:
+   across:
+
+* retries
+* replans
+* recoveries
+* escalations
+
+2. Session Pressure Memory
+   Workspace remembers:
+
+* unstable regions
+* historical hotspots
+* repeated failures
+* recovery-heavy paths
+
+3. Execution Drift Awareness
+   Operator can visually sense:
+
+* mission fatigue
+* retry storms
+* context saturation
+* instability accumulation
+
+====================================================
+PHASE Z36F — CERTIFICATION + STRESS VALIDATION
+==============================================
+
+Generate:
+
+* docs/Z36_RUNTIME_COHESION_AUDIT.md
+* docs/Z36_NODE_INTELLIGENCE_REPORT.md
+* docs/Z36_TIMELINE_EVOLUTION.md
+* docs/Z36_FORENSIC_REASONING_CERTIFICATION.md
+* docs/Z36_EXECUTION_IMMERSION_REPORT.md
+* docs/Z36_OPERATIONAL_RUNTIME_VERDICT.md
+
+Each report MUST include:
+
+1. Remaining execution coherence gaps
+2. Remaining replay weaknesses
+3. Remaining operator overload risks
+4. Remaining continuity limitations
+5. Remaining forensic blind spots
+6. Honest production readiness verdict
+
+====================================================
+FINAL VALIDATION
+================
+
+Before completion:
+
+* verify node sync integrity
+* verify replay reconstruction stability
+* verify no FPS degradation
+* verify no memory growth
+* verify no surface desync
+* verify long-session continuity
+* verify adaptive density correctness
+* verify execution readability under stress
+* verify operational calmness maintained
+* verify runtime cohesion across all surfaces
+
+IMPORTANT:
+This phase is NOT:
+adding more intelligence systems.
+
+This phase IS:
+making the runtime feel:
+deeply unified,
+operationally intelligent,
+persistent,
+and production-grade.

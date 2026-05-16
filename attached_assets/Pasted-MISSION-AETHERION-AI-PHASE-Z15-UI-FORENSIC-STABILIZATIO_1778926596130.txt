@@ -1,0 +1,303 @@
+MISSION:
+AETHERION AI — PHASE Z15
+UI FORENSIC STABILIZATION & VISUAL SYSTEM UNIFICATION
+
+ARCHITECTURE STATUS:
+PERMANENTLY LOCKED.
+
+THIS IS NOT A REDESIGN PHASE.
+
+STRICTLY FORBIDDEN:
+
+* no framework migration
+* no React rewrite
+* no Tailwind migration
+* no runtime redesign
+* no orchestration changes
+* no feature invention
+* no visual gimmicks
+* no AGI-themed UI additions
+
+====================================================
+PRIMARY OBJECTIVE
+=================
+
+Perform a complete forensic stabilization pass over the Aetherion AI workspace UI.
+
+Goal:
+transform the current workspace from:
+“mostly working”
+into:
+“production-grade visually disciplined operational environment.”
+
+This phase prioritizes:
+CONSISTENCY
+ALIGNMENT
+DENSITY
+SURFACE STABILITY
+TOKEN DISCIPLINE
+VISUAL CALMNESS
+
+====================================================
+PHASE 1 — FORENSIC UI AUDIT
+===========================
+
+FIRST:
+perform a deep read-only forensic inspection BEFORE implementation.
+
+Generate:
+docs/Z15_UI_FORENSIC_AUDIT.md
+
+Audit ALL:
+
+* templates/index.html
+* static/css/nx-shell.css
+* static/css/layout.css
+* static/css/nds.css
+* Split.js layout surfaces
+* Monaco containers
+* nav rail structure
+* topbar structure
+* execution center
+* inspector surface
+* command palette
+* modal systems
+
+Identify:
+
+* conflicting CSS systems
+* duplicated tokens
+* layout instability
+* overflow sources
+* flex/grid conflicts
+* inline styling remnants
+* inconsistent spacing systems
+* border collisions
+* z-index inconsistencies
+* visual hierarchy failures
+* alignment drift
+* dead selectors
+* unstable hover states
+
+IMPORTANT:
+DO NOT IMPLEMENT YET.
+
+FIRST:
+produce the full forensic report.
+
+====================================================
+PHASE 2 — VISUAL TOKEN UNIFICATION
+==================================
+
+After the forensic audit:
+normalize ALL visual tokens.
+
+Target:
+single unified visual system.
+
+Requirements:
+
+* eliminate conflicting token systems
+* preserve existing dark theme
+* preserve runtime behavior
+* preserve DOM structure
+* preserve Monaco/xterm/SSE compatibility
+
+Focus:
+
+* spacing tokens
+* border tokens
+* shadow tokens
+* radius tokens
+* motion tokens
+* typography hierarchy
+
+====================================================
+PHASE 3 — NAVIGATION RAIL STABILIZATION
+=======================================
+
+The current nav rail is visually unstable.
+
+Fix:
+
+* icon alignment
+* hover bounds
+* spacing rhythm
+* label positioning
+* overflow behavior
+* active state stability
+
+Requirements:
+
+* exact 48px discipline
+* zero layout shifting
+* zero text overflow
+* muted operational styling
+* Cursor/VSCode-grade density
+
+IMPORTANT:
+the nav rail must feel:
+silent
+precise
+tactical
+
+====================================================
+PHASE 4 — TOPBAR HIERARCHY CORRECTION
+=====================================
+
+The topbar currently feels visually disconnected.
+
+Rebuild spacing hierarchy ONLY.
+
+Fix:
+
+* Run/Stop grouping
+* model selector density
+* profile alignment
+* execution balance
+* toolbar symmetry
+* command palette integration
+
+Requirements:
+
+* true 3-zone layout
+* left = navigation
+* center = execution
+* right = utilities/operator
+* no floating feel
+* no detached controls
+
+====================================================
+PHASE 5 — EXECUTION SURFACE STABILIZATION
+=========================================
+
+The center workspace currently feels:
+empty
+structurally weak
+visually unfinished.
+
+Fix:
+
+* execution hierarchy
+* panel density
+* split boundaries
+* idle state balance
+* visual anchors
+* content framing
+
+IMPORTANT:
+NO marketing hero surfaces.
+
+The workspace must feel like:
+a real operational execution environment.
+
+====================================================
+PHASE 6 — SPLIT.JS & BORDER SYSTEM STABILIZATION
+================================================
+
+Current resize borders and split lines are visually inconsistent.
+
+Audit and fix:
+
+* Split.js gutters
+* resize indicators
+* panel separators
+* border overlaps
+* duplicate outlines
+
+Requirements:
+
+* one border system only
+* subtle operational separators
+* no bright neon lines
+* no double borders
+* no jitter during resize
+
+====================================================
+PHASE 7 — VISUAL STABILITY VALIDATION
+=====================================
+
+After implementation:
+perform a complete UI verification pass.
+
+Generate:
+docs/Z15_VISUAL_STABILITY_CERTIFICATION.md
+
+Validate:
+
+* no overflow
+* no layout jumping
+* no icon drift
+* no viewport clipping
+* no z-index collisions
+* no modal clipping
+* no scroll leakage
+* no nav instability
+
+Include:
+before/after findings.
+
+====================================================
+PHASE 8 — FUTURE V2/V3 COMMENT DISCIPLINE
+=========================================
+
+Add calm FUTURE-V2/V3 anchors ONLY where needed.
+
+DO NOT spam comments.
+
+Document:
+
+* future bootstrap surface
+* future canvas execution surface
+* future autonomous ingestion surface
+
+ONLY:
+minimal disciplined comments.
+
+====================================================
+CRITICAL REQUIREMENTS
+=====================
+
+1. FIRST AUDIT → THEN IMPLEMENT.
+   Never blindly modify UI.
+
+2. PRESERVE RUNTIME.
+   No runtime breakage allowed.
+
+3. NO FEATURE EXPANSION.
+   This is stabilization only.
+
+4. NO MARKETING UI.
+   Operational calmness only.
+
+5. VERIFY IN REPLIT VIEWPORT.
+   The UI must remain stable inside Replit iframe constraints.
+
+====================================================
+SUCCESS STATE
+=============
+
+Aetherion AI should visually feel:
+
+* calm
+* tactical
+* disciplined
+* operational
+* stable
+* dense
+* production-grade
+
+NOT:
+experimental
+flashy
+chatbot-like
+or visually noisy.
+
+At the END:
+provide:
+
+1. forensic findings summary
+2. exact fixes implemented
+3. remaining visual debt
+4. screenshots verification summary
+5. honest unresolved limitations

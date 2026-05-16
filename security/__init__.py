@@ -28,6 +28,10 @@ _task_limiter           = _security_core._task_limiter
 _auth_limiter           = _security_core._auth_limiter
 _scheduler_limiter      = _security_core._scheduler_limiter
 _forgot_pw_limiter      = _security_core._forgot_pw_limiter
+_sse_conn_limiter       = _security_core._sse_conn_limiter
+_replay_limiter         = _security_core._replay_limiter
+_hitl_limiter           = _security_core._hitl_limiter
+_deletion_limiter       = _security_core._deletion_limiter
 check_rate_limit        = _security_core.check_rate_limit
 get_client_ip           = _security_core.get_client_ip
 sanitise_text           = _security_core.sanitise_text
@@ -56,6 +60,7 @@ __all__ = [
     "RateLimiter",
     "_general_limiter", "_task_limiter", "_auth_limiter",
     "_scheduler_limiter", "_forgot_pw_limiter",
+    "_sse_conn_limiter", "_replay_limiter", "_hitl_limiter", "_deletion_limiter",
     "check_rate_limit", "get_client_ip",
     "sanitise_text", "sanitise_prompt", "sanitise_task_name",
     "validate_file_path", "MAX_CONCURRENT_SESSIONS", "MAX_TOKENS_PER_REQUEST",

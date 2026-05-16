@@ -55,3 +55,14 @@ razorpay
 redis
 requests
 tiktoken
+bcrypt
+flask
+gunicorn
+psutil
+PyJWT
+python-docx
+python-dotenv
+razorpay
+redis
+requests
+tiktoken

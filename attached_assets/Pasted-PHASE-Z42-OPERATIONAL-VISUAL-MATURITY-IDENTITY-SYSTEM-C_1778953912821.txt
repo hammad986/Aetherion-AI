@@ -1,0 +1,303 @@
+PHASE Z42 — OPERATIONAL VISUAL MATURITY + IDENTITY SYSTEM
+
+CURRENT STATUS:
+Aetherion AI now possesses:
+
+* advanced runtime cognition
+* replay governance
+* entropy intelligence
+* adaptive pacing
+* predictive scheduling
+* resource-aware execution
+* operational continuity
+* runtime coordination
+
+However:
+the visual system has fallen behind the runtime maturity.
+
+The current interface still exhibits:
+
+* generic SaaS gradients
+* weak hierarchy
+* inconsistent spacing
+* immature typography
+* floating disconnected surfaces
+* toast overlap
+* weak operational identity
+* visual noise under focus
+
+The goal of Z42 is NOT:
+visual decoration.
+
+The goal IS:
+to evolve Aetherion AI into a calm,
+dense,
+operational cognition environment
+with a coherent visual operating system.
+
+STRICT RULES:
+🔒 NO FRONTEND FRAMEWORK REWRITE
+🔒 NO TAILWIND MIGRATION
+🔒 NO DESIGN-SYSTEM LIBRARIES
+🔒 NO HEAVY ANIMATIONS
+🔒 NO GLOW-SPAM
+🔒 NO "AI STARTUP" MARKETING UI
+🔒 OPERATIONAL CALMNESS > VISUAL FLASHINESS
+🔒 DENSITY > EMPTY SPACE
+🔒 TYPOGRAPHY > GRADIENTS
+🔒 HIERARCHY > EFFECTS
+
+====================================================
+PHASE Z42A — AUTH SYSTEM REDESIGN
+=================================
+
+GOAL:
+Transform the login/signup experience
+into a production-grade operational gateway.
+
+REQUIREMENTS:
+
+1. Eliminate generic SaaS appearance
+2. Remove heavy purple gradients
+3. Introduce layered depth hierarchy
+4. Add operational visual framing
+5. Improve spacing rhythm
+6. Improve typography hierarchy
+7. Improve input maturity
+8. Improve tab switching clarity
+9. Improve auth responsiveness
+10. Prevent toast overlap completely
+
+AUTH SHOULD FEEL:
+secure,
+calm,
+focused,
+operational.
+
+NOT:
+playful,
+marketing-heavy,
+template-based.
+
+====================================================
+PHASE Z42B — TYPOGRAPHY SYSTEM
+==============================
+
+GOAL:
+Create a coherent operational typography language.
+
+REQUIREMENTS:
+
+1. Define:
+
+* display
+* heading
+* section
+* operational label
+* runtime metadata
+* forensic text
+
+2. Standardize:
+
+* font weights
+* line heights
+* spacing rhythm
+* text contrast
+* semantic emphasis
+
+3. Remove:
+
+* oversized labels
+* inconsistent text density
+* visual shouting
+
+====================================================
+PHASE Z42C — DEPTH + SURFACE SYSTEM
+===================================
+
+GOAL:
+Create a real operational depth hierarchy.
+
+REQUIREMENTS:
+
+1. Define surface layers:
+
+* background
+* workspace
+* active panel
+* floating utility
+* modal
+* critical overlay
+
+2. Remove:
+
+* fake blur depth
+* excessive glow
+* floating ambiguity
+
+3. Introduce:
+
+* subtle layered separation
+* structured elevation
+* operational framing
+
+====================================================
+PHASE Z42D — OPERATIONAL COLOR GOVERNANCE
+=========================================
+
+GOAL:
+Make color functional,
+not decorative.
+
+REQUIREMENTS:
+
+1. Accent colors ONLY for:
+
+* execution state
+* risk
+* warnings
+* active focus
+* runtime severity
+
+2. Reduce:
+
+* unnecessary gradients
+* saturation overload
+* neon contrast
+
+3. Build:
+
+* calm dark operational palette
+* stable grayscale hierarchy
+* semantic runtime colors
+
+====================================================
+PHASE Z42E — TOAST + FEEDBACK DISCIPLINE
+========================================
+
+GOAL:
+All runtime feedback should feel:
+predictable,
+calm,
+non-intrusive.
+
+REQUIREMENTS:
+
+1. Prevent overlap with:
+
+* auth panels
+* runtime inspector
+* execution controls
+
+2. Introduce:
+
+* severity hierarchy
+* compact layout
+* stack discipline
+* timeout governance
+
+3. Eliminate:
+
+* aggressive shadows
+* oversized warning surfaces
+
+====================================================
+PHASE Z42F — WORKSPACE IMMERSION
+================================
+
+GOAL:
+The workspace should feel:
+alive,
+stable,
+operational,
+focused.
+
+REQUIREMENTS:
+
+1. Improve:
+
+* panel proportions
+* execution density
+* visual anchoring
+* runtime focus zones
+
+2. Reduce:
+
+* dead empty visual zones
+* disconnected surfaces
+* visual drift
+
+3. Add:
+
+* subtle operational environmental depth
+* stable workspace rhythm
+* execution-centered visual flow
+
+====================================================
+PHASE Z42G — VISUAL FORENSIC AUDIT
+==================================
+
+Perform a FULL UI FORENSIC ANALYSIS.
+
+Identify:
+
+* inconsistent spacing
+* hierarchy conflicts
+* density imbalance
+* contrast misuse
+* visual noise
+* runtime clutter
+* overlapping systems
+* weak focus flow
+* generic SaaS remnants
+* unstable layout regions
+
+Generate HONEST reports.
+
+====================================================
+REQUIRED REPORTS
+================
+
+Generate:
+
+* docs/Z42_AUTH_VISUAL_AUDIT.md
+* docs/Z42_TYPOGRAPHY_SYSTEM.md
+* docs/Z42_SURFACE_DEPTH_GOVERNANCE.md
+* docs/Z42_COLOR_DISCIPLINE_REPORT.md
+* docs/Z42_RUNTIME_FEEDBACK_AUDIT.md
+* docs/Z42_OPERATIONAL_VISUAL_VERDICT.md
+
+Each report MUST include:
+
+1. Remaining visual weaknesses
+2. Remaining operational UI risks
+3. Remaining density issues
+4. Remaining hierarchy conflicts
+5. Remaining workspace instability
+6. Honest production readiness verdict
+
+====================================================
+FINAL VALIDATION
+================
+
+Before completion:
+
+* verify auth visual maturity
+* verify typography consistency
+* verify spacing consistency
+* verify toast governance
+* verify operational calmness
+* verify workspace immersion
+* verify hierarchy clarity
+* verify runtime focus flow
+* verify visual stability during long sessions
+* verify no generic SaaS appearance remains
+
+IMPORTANT:
+This phase is NOT:
+making the UI flashy.
+
+This phase IS:
+making Aetherion AI visually feel
+as mature
+as its runtime architecture.

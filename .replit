@@ -44,3 +44,4 @@ run = ["gunicorn", "--bind=0.0.0.0:5000", "--reuse-port", "-w", "4", "--threads"
 [userenv.shared]
 FLASK_DEBUG = "0"
 NO_BROWSER = "1"
+FLASK_ENV = "production"

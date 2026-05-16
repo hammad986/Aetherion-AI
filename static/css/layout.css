@@ -119,7 +119,7 @@
       border: none;
       outline: none;
       color: var(--text);
-      font-family: 'Inter', sans-serif;
+      font-family: var(--font, 'Inter', sans-serif);
       font-size: 13px;
       resize: none;
       height: 34px;
@@ -156,7 +156,7 @@
       font-size: 12px;
       font-weight: 600;
       cursor: pointer;
-      font-family: 'Inter', sans-serif;
+      font-family: var(--font, 'Inter', sans-serif);
       white-space: nowrap;
       transition: background var(--dur), transform 0.1s, box-shadow var(--dur);
       display: flex;
@@ -235,7 +235,7 @@
       border-radius: 7px;
       cursor: pointer;
       font-size: 11px;
-      font-family: 'Inter', sans-serif;
+      font-family: var(--font, 'Inter', sans-serif);
       transition: border-color var(--dur), color var(--dur);
       white-space: nowrap;
     }
@@ -531,7 +531,7 @@
       cursor: pointer;
       font-size: 11px;
       font-weight: 600;
-      font-family: 'Inter', sans-serif;
+      font-family: var(--font, 'Inter', sans-serif);
       border: 1px solid transparent;
       transition: all var(--dur);
       white-space: nowrap;
@@ -742,7 +742,7 @@
       border-radius: 8px;
       padding: 9px 12px;
       color: var(--text);
-      font-family: 'Inter', sans-serif;
+      font-family: var(--font, 'Inter', sans-serif);
       font-size: 13px;
       outline: none;
       box-sizing: border-box;
@@ -765,7 +765,7 @@
       border-radius: 7px;
       font-size: 12px;
       font-weight: 600;
-      font-family: 'Inter', sans-serif;
+      font-family: var(--font, 'Inter', sans-serif);
       cursor: pointer;
       border: none;
       transition: all var(--dur);
@@ -1029,7 +1029,7 @@
       border-radius: 5px;
       cursor: pointer;
       font-size: 11px;
-      font-family: 'Inter', sans-serif;
+      font-family: var(--font, 'Inter', sans-serif);
       transition: all 0.15s;
     }
 
@@ -1140,7 +1140,7 @@
       padding: 4px 8px;
       border-radius: 5px;
       font-size: 11px;
-      font-family: 'Inter', sans-serif;
+      font-family: var(--font, 'Inter', sans-serif);
       outline: none;
     }
 
@@ -1213,7 +1213,7 @@
       cursor: pointer;
       font-size: 11px;
       font-weight: 500;
-      font-family: 'Inter', sans-serif;
+      font-family: var(--font, 'Inter', sans-serif);
       white-space: nowrap;
       border-bottom: 2px solid transparent;
       margin-bottom: -1px;
@@ -1292,7 +1292,7 @@
       cursor: pointer;
       font-size: 11px;
       font-weight: 500;
-      font-family: 'Inter', sans-serif;
+      font-family: var(--font, 'Inter', sans-serif);
       white-space: nowrap;
       display: flex;
       align-items: center;
@@ -1361,7 +1361,7 @@
       padding: 40px 24px;
       gap: 20px;
       background: var(--surface);
-      animation: nxFadeIn 0.35s var(--ease);
+      animation: nxFadeInUp 0.35s var(--ease);
       overflow: auto;
     }
 
@@ -1369,7 +1369,8 @@
       display: none;
     }
 
-    @keyframes nxFadeIn {
+    /* Z15 Phase 8: renamed from nxFadeIn (duplicate existed at line ~895) → nxFadeInUp */
+    @keyframes nxFadeInUp {
       from {
         opacity: 0;
         transform: translateY(10px);
@@ -1448,7 +1449,7 @@
       color: var(--text-muted);
       cursor: pointer;
       transition: all 180ms var(--ease);
-      font-family: 'Inter', sans-serif;
+      font-family: var(--font, 'Inter', sans-serif);
     }
 
     .nx-hero-chip:hover {
@@ -1558,7 +1559,7 @@
       font-size: 11px;
       font-weight: 600;
       cursor: pointer;
-      font-family: 'Inter', sans-serif;
+      font-family: var(--font, 'Inter', sans-serif);
       transition: background 0.15s;
     }
 
@@ -1969,7 +1970,7 @@
       font-size: 10px;
       font-weight: 600;
       cursor: pointer;
-      font-family: 'Inter', sans-serif;
+      font-family: var(--font, 'Inter', sans-serif);
     }
 
     .nx-fix-btn:hover {
@@ -2158,7 +2159,7 @@
       padding: 16px 20px;
       font-size: 14px;
       outline: none;
-      font-family: 'Inter', sans-serif;
+      font-family: var(--font, 'Inter', sans-serif);
       font-weight: 400;
     }
 
@@ -3601,7 +3602,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-family: 'Inter', sans-serif;
+      font-family: var(--font, 'Inter', sans-serif);
     }
 
     #nx-auth-gate.nx-auth-hidden {

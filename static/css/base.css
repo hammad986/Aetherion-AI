@@ -98,16 +98,25 @@
       border-color: #0969da;
     }
 
-    * {
+    /* Z15 Phase 8: removed universal * { transition } — was applying background/color/border
+       transitions to ALL elements including terminal output rows, live stream lines, and
+       Monaco surfaces, causing performance overhead and visual noise.
+       Theme-switch transitions are now scoped only to the elements that actually need them. */
+    .nx-header,
+    .nx-panel,
+    .nx-body,
+    .nx-left,
+    .nx-center,
+    .nx-right,
+    .nx-session-card,
+    .nx-hitl-strip,
+    .nx-tab-bar,
+    .nx-cmd-wrap,
+    .nx-run-btn,
+    .nx-model-btn,
+    .nx-icon-btn,
+    .nx-logo-icon {
       transition: var(--theme-transition);
-    }
-
-    textarea,
-    input,
-    button,
-    pre,
-    code {
-      transition: none !important;
     }
 
     /* Phase 4: Token / cost tracker pill */

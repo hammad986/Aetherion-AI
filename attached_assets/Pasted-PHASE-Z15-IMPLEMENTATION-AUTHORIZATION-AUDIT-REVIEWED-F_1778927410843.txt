@@ -1,0 +1,262 @@
+PHASE Z15 — IMPLEMENTATION AUTHORIZATION
+
+AUDIT REVIEWED.
+FINDINGS APPROVED.
+
+You are now authorized to proceed with the IMPLEMENTATION phase of Z15.
+
+CRITICAL:
+This is a SURGICAL stabilization phase.
+
+NOT a redesign.
+NOT a frontend rewrite.
+NOT a visual experimentation phase.
+
+====================================================
+PRIMARY MANDATE
+===============
+
+Preserve:
+
+* runtime integrity
+* SSE behavior
+* Monaco stability
+* Split.js resizing
+* xterm rendering
+* existing DOM hooks
+* orchestration behavior
+
+while stabilizing:
+
+* visual consistency
+* spacing discipline
+* token unification
+* layout integrity
+* UI calmness
+
+====================================================
+PHASE 2 — TOKEN UNIFICATION
+===========================
+
+Implement a canonical token bridge.
+
+GOAL:
+single source of truth.
+
+Requirements:
+
+* nds-tokens.css becomes canonical
+* nx-shell tokens become aliases ONLY
+* legacy raw tokens bridge safely
+* DO NOT hard-delete legacy tokens immediately
+* introduce compatibility bridge layer
+
+IMPORTANT:
+Backward compatibility is mandatory.
+
+DO NOT break:
+
+* legacy selectors
+* Monaco themes
+* xterm colors
+* existing overlays
+
+====================================================
+PHASE 3 — GLOBAL FOUNDATION STABILIZATION
+=========================================
+
+Stabilize:
+
+* html/body declarations
+* background hierarchy
+* font stack
+* box-sizing
+* reduced-motion handling
+* focus-visible system
+
+Requirements:
+
+* ONE canonical body background
+* ONE canonical font stack
+* ONE focus-visible implementation
+* ONE reduced-motion policy
+
+====================================================
+PHASE 4 — NAVIGATION RAIL REBUILD
+=================================
+
+The current left rail remains visually unstable.
+
+Fix:
+
+* icon alignment
+* vertical rhythm
+* label positioning
+* hover bounds
+* active state hierarchy
+* overflow clipping
+
+Requirements:
+
+* exact 48px operational rail
+* no text jitter
+* no icon drift
+* no visual collapse
+* no clipped hover states
+
+The rail must feel:
+minimal
+silent
+precise
+
+====================================================
+PHASE 5 — TOPBAR DENSITY SYSTEM
+===============================
+
+Correct:
+
+* execution controls grouping
+* toolbar spacing
+* model selector balance
+* right-side utilities spacing
+* breadcrumb density
+
+Requirements:
+
+* VSCode/Cursor-grade density
+* no floating controls
+* no detached visual islands
+* proper horizontal rhythm
+
+====================================================
+PHASE 6 — EXECUTION SURFACE STABILIZATION
+=========================================
+
+The execution workspace currently lacks:
+
+* structural hierarchy
+* density balance
+* execution anchors
+
+Fix:
+
+* panel framing
+* split balance
+* visual anchors
+* empty-state proportion
+* execution layout rhythm
+
+IMPORTANT:
+NO hero redesigns.
+NO marketing UI.
+NO glowing effects.
+
+====================================================
+PHASE 7 — BORDER & SPLIT DISCIPLINE
+===================================
+
+Audit and stabilize:
+
+* Split.js gutters
+* resize lines
+* separator hierarchy
+* double-border collisions
+
+Requirements:
+
+* single separator language
+* muted operational borders
+* zero resize jitter
+* no bright blue artifacts
+
+====================================================
+PHASE 8 — PERFORMANCE STABILIZATION
+===================================
+
+Resolve:
+
+* global transition tax
+* duplicate animations
+* duplicated keyframes
+* universal transition rules
+
+Requirements:
+
+* NEVER animate all elements globally
+* animations scoped only where required
+* preserve reduced-motion compatibility
+
+====================================================
+PHASE 9 — VALIDATION & REPORTING
+================================
+
+After implementation:
+generate:
+
+1. docs/Z15_IMPLEMENTATION_REPORT.md
+2. docs/Z15_VISUAL_STABILITY_CERTIFICATION.md
+
+Include:
+
+* exact fixes implemented
+* selectors consolidated
+* tokens unified
+* removed duplicates
+* unresolved debt
+* compatibility risks
+* before/after screenshots
+* Replit viewport validation
+* performance impact observations
+
+====================================================
+CRITICAL RULES
+==============
+
+1. STABILITY > PURITY
+   Never break runtime for cleanliness.
+
+2. NO AGGRESSIVE DELETION
+   Deprecate carefully.
+
+3. PRESERVE COMPATIBILITY
+   Especially:
+
+* Monaco
+* xterm
+* overlays
+* modals
+* SSE surfaces
+
+4. NO VISUAL GIMMICKS
+   This is operational software.
+
+5. VERIFY EVERY STEP
+   No speculative cleanup.
+
+====================================================
+SUCCESS STATE
+=============
+
+Aetherion AI should feel:
+
+* calm
+* operational
+* dense
+* stable
+* production-grade
+
+NOT:
+
+* experimental
+* flashy
+* prototype-like
+* visually fragmented
+
+At completion:
+provide:
+
+1. implementation summary
+2. unresolved risks
+3. screenshots verification
+4. remaining technical debt
+5. recommendation for next stabilization phase

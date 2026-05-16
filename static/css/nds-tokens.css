@@ -209,4 +209,41 @@
   --leftW:         var(--nds-sidebar-w);
   --rightW:        320px;
   --bottomH:       0px;
+
+  /* ━━ SHELL COMPATIBILITY BRIDGE (Z15 Phase 2: nx-shell.css token aliases) ━━━━ */
+  /* Spacing aliases: --nx-space-* → --nds-sp-* */
+  --nx-space-1:  var(--nds-sp-1);
+  --nx-space-2:  var(--nds-sp-2);
+  --nx-space-3:  var(--nds-sp-3);
+  --nx-space-4:  var(--nds-sp-4);
+  --nx-space-5:  var(--nds-sp-5);
+  --nx-space-6:  var(--nds-sp-6);
+  --nx-space-8:  var(--nds-sp-8);
+  --nx-space-10: var(--nds-sp-10);
+  --nx-space-12: var(--nds-sp-12);
+  /* Motion aliases: --nx-t-* → --nds-dur-* */
+  --nx-t-fast:   var(--nds-dur-1) var(--nds-ease-out);
+  --nx-t-normal: var(--nds-dur-3) var(--nds-ease-out);
+  --nx-t-slow:   var(--nds-dur-5) var(--nds-ease-out);
+  --nx-ease-out: var(--nds-ease-out);
+  /* Shell layout dimensions */
+  --nx-shell-topbar-height:         var(--nds-topbar-h);
+  --nx-shell-navrail-width:         48px;
+  --nx-shell-inspector-width:       300px;
+  --nx-shell-dock-height-collapsed: 32px;
+  --nx-shell-dock-height-expanded:  240px;
+  /* Shell z-index hierarchy */
+  --nx-z-surface:   10;
+  --nx-z-dock:      20;
+  --nx-z-inspector: 30;
+  --nx-z-navrail:   40;
+  --nx-z-topbar:    50;
+  --nx-z-overlay:   100;
+  /* Shell semantic color aliases */
+  --nx-color-bg-base:      var(--nds-bg);
+  --nx-color-text-primary: var(--nds-text-hi);
+  --nx-color-text-muted:   var(--nds-text-lo);
+  --nx-color-accent:       var(--nds-accent);
+  --nx-color-border:       var(--nds-surface-4);
+  --nx-font-family-base:   var(--nds-font);
 }

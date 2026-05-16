@@ -2,48 +2,16 @@
   nx-shell.css
   Nexora Workspace Shell Foundation
   Execution-First, Calm, Replit-Grade Density
+
+  Z15: All :root tokens moved to nds-tokens.css canonical bridge.
+       html/body canonical declaration lives in layout.css.
 */
 
-:root {
-  /* Strict 4pt Spacing Grid */
-  --nx-space-1: 4px;
-  --nx-space-2: 8px;
-  --nx-space-3: 12px;
-  --nx-space-4: 16px;
-  --nx-space-5: 20px;
-  --nx-space-6: 24px;
-  --nx-space-8: 32px;
-  --nx-space-10: 40px;
-  --nx-space-12: 48px;
-
-  /* Shell Dimensions */
-  --nx-shell-topbar-height: 40px;
-  --nx-shell-navrail-width: 48px;
-  --nx-shell-inspector-width: 300px;
-  --nx-shell-dock-height-collapsed: 32px;
-  --nx-shell-dock-height-expanded: 240px;
-
-  /* Z-Index Hierarchy */
-  --nx-z-surface: 10;
-  --nx-z-dock: 20;
-  --nx-z-inspector: 30;
-  --nx-z-navrail: 40;
-  --nx-z-topbar: 50;
-  --nx-z-overlay: 100;
-}
-
-/* Base Reset & Shell Container */
+/* Z15 Phase 3: Structural shell reset only — visual properties set in layout.css */
 html, body {
   margin: 0;
   padding: 0;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden; /* Prevent body scroll, everything scrolls internally */
-  font-family: var(--nx-font-family-base, 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
-  font-size: 13px; /* Calm density */
-  line-height: 1.5;
-  background-color: var(--nx-color-bg-base, #121212);
-  color: var(--nx-color-text-primary, #E0E0E0);
+  overflow: hidden;
 }
 
 .nx-shell-root {
@@ -293,35 +261,17 @@ html, body {
 
 /* ── Phase G: Operational Polish ── */
 
-/* 1. Premium Scrollbars */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: var(--nx-color-border, #30363d);
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #484f58;
-}
+/* 1. Scrollbar — Z15: global scrollbar canonical in layout.css; scoped overrides only */
 
-/* 2. Hover Consistency & Focus States */
-button:focus-visible, input:focus-visible, textarea:focus-visible {
-  outline: 1px solid var(--nx-color-accent, #bc8cff);
-  outline-offset: -1px;
-}
+/* 2. Hover Consistency & Focus States — Z15: global :focus-visible consolidated to Phase O */
 .nx-icon-btn:hover, .nx-nav-icon:hover {
-  background-color: rgba(255, 255, 255, 0.05) !important;
-  color: #E0E0E0 !important;
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--nx-color-text-primary, #E0E0E0);
 }
-/* Phase 5 fix: inset box-shadow for active indicator — no border, no layout shift */
+/* Active indicator: inset box-shadow — no border, no layout shift */
 .nx-nav-icon.active {
   background-color: rgba(255, 255, 255, 0.08) !important;
-  color: #E0E0E0 !important;
+  color: var(--nx-color-text-primary, #E0E0E0) !important;
   box-shadow: inset 2px 0 0 var(--nx-color-text-muted, #6e7681) !important;
 }
 
@@ -341,15 +291,17 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
 }
 
 /* 4. Execution Transitions */
+/* Z15 Phase 8: renamed @keyframes nx-pulse → nx-live-pulse to avoid collision with
+   layout.css @keyframes nx-pulse (box-shadow glow for .nx-run-btn.running) */
 .nx-live-dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
   background-color: #3fb950;
   box-shadow: 0 0 6px rgba(63, 185, 80, 0.6);
-  animation: nx-pulse 1.5s infinite alternate;
+  animation: nx-live-pulse 1.5s infinite alternate;
 }
-@keyframes nx-pulse {
+@keyframes nx-live-pulse {
   from { opacity: 0.6; transform: scale(0.9); }
   to { opacity: 1; transform: scale(1.1); }
 }
@@ -1256,12 +1208,7 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
    ══════════════════════════════════════════════════════════════════ */
 
 /* ── 1. Interaction Smoothness: unified transition system ── */
-:root {
-  --nx-t-fast:   120ms ease;
-  --nx-t-normal: 200ms ease;
-  --nx-t-slow:   300ms ease;
-  --nx-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-}
+/* Z15 Phase 2: --nx-t-* motion tokens consolidated to nds-tokens.css bridge */
 
 /* Eliminate flicker on panel open/close via will-change */
 .nx-overlay-panel, .nx-inspector-panel, .nx-slide-panel {
@@ -1468,28 +1415,24 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
    Phase O — Beta Hardening CSS
    ══════════════════════════════════════════════════════════════════ */
 
-/* ── Focus visibility (accessibility audit) ── */
-:focus-visible {
-  outline: 2px solid #bc8cff;
-  outline-offset: 2px;
-}
+/* ── Focus visibility (accessibility — Z15 Phase 3: single canonical focus ring) ── */
+/* Global :focus-visible handled by nds.css (box-shadow ring via --nds-focus-ring token).
+   Scoped overrides below for interactive elements that need an outline fallback. */
 button:focus-visible,
 [role="button"]:focus-visible,
 a:focus-visible,
 input:focus-visible,
 textarea:focus-visible,
 select:focus-visible {
-  outline: 2px solid #bc8cff;
+  outline: 2px solid var(--nds-accent, #0079F2);
   outline-offset: 2px;
-  border-radius: 2px;
+  border-radius: var(--nds-r-xs, 2px);
 }
 
 /* ── Motion reduction safety ── */
+/* Z15 Phase 3: canonical @media (prefers-reduced-motion) lives in nds-tokens.css.
+   Component-specific overrides only: */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
-  }
   .nx-exec-chunk { animation: none !important; }
   .nx-idle-hero  { transition: none !important; }
 }

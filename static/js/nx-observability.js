@@ -174,10 +174,9 @@
   /* ── Bus wiring ──────────────────────────────────────────────────── */
   function _wire() {
     if (!window.NxBus) { setTimeout(_wire, 200); return; }
-    const E = NxBus.EVENTS;
 
     // Stream events
-    NxBus.on(E.STREAM_CHUNK, (d) => {
+    NxBus.on('nx:stream:chunk', (d) => {
       if (!d) return;
       if (d.kind === 'think') {
         _appendThought(d.text || d.content || '');
@@ -190,21 +189,21 @@
       }
     }, { owner: 'nx-observability' });
 
-    NxBus.on(E.STREAM_OPEN, () => {
+    NxBus.on('nx:stream:open', () => {
       _setConnStatus(true, 'Live');
     }, { owner: 'nx-observability' });
 
-    NxBus.on(E.STREAM_CLOSE, () => {
+    NxBus.on('nx:stream:close', () => {
       _setConnStatus(false, 'Done');
     }, { owner: 'nx-observability' });
 
-    NxBus.on(E.STREAM_ERROR, (d) => {
+    NxBus.on('nx:stream:error', (d) => {
       _setConnStatus(false, 'Error');
       _incrementCounter('errors');
     }, { owner: 'nx-observability' });
 
     // WS / SSE connection state → conn status strip
-    NxBus.on(E.WS_STATUS, (d) => {
+    NxBus.on('nx:ws:status', (d) => {
       if (!d) return;
       const connected = d.state === 'connected';
       const label = {
@@ -227,25 +226,25 @@
     }, { owner: 'nx-observability' });
 
     // Session lifecycle
-    NxBus.on(E.SESSION_CREATED, (d) => {
+    NxBus.on('nx:session:created', (d) => {
       if (d && d.sid) NxObservability.bindSession(d.sid);
     }, { owner: 'nx-observability' });
 
-    NxBus.on(E.SESSION_RESTORED, (d) => {
+    NxBus.on('nx:session:restored', (d) => {
       if (d && d.sid) NxObservability.bindSession(d.sid);
     }, { owner: 'nx-observability' });
 
-    NxBus.on(E.SESSION_CLEARED, () => {
+    NxBus.on('nx:session:cleared', () => {
       NxObservability.bindSession(null);
       _setConnStatus(false, 'Offline');
     }, { owner: 'nx-observability' });
 
-    NxBus.on(E.AGENT_START, () => {
+    NxBus.on('nx:agent:start', () => {
       NxObservability.clear();
       _setConnStatus(false, 'Starting…');
     }, { owner: 'nx-observability' });
 
-    NxBus.on(E.AGENT_DONE, () => {
+    NxBus.on('nx:agent:done', () => {
       _setConnStatus(false, 'Done');
     }, { owner: 'nx-observability' });
   }

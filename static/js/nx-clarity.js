@@ -53,18 +53,17 @@
      ══════════════════════════════════════════════════════════════════ */
   function _wireAnalytics() {
     if (!window.NxBus) { setTimeout(_wireAnalytics, 200); return; }
-    const E = NxBus.EVENTS;
 
-    NxBus.on(E.AGENT_START,      () => NxAnalytics.track('task_started'),          { owner: 'nx-clarity' });
-    NxBus.on(E.AGENT_DONE,       () => NxAnalytics.track('task_completed'),         { owner: 'nx-clarity' });
-    NxBus.on(E.AGENT_STOP,       () => NxAnalytics.track('task_stopped'),           { owner: 'nx-clarity' });
-    NxBus.on(E.STREAM_ERROR,     () => NxAnalytics.track('stream_error'),           { owner: 'nx-clarity' });
+    NxBus.on('nx:agent:start',   () => NxAnalytics.track('task_started'),           { owner: 'nx-clarity' });
+    NxBus.on('nx:agent:done',    () => NxAnalytics.track('task_completed'),         { owner: 'nx-clarity' });
+    NxBus.on('nx:agent:stop',    () => NxAnalytics.track('task_stopped'),           { owner: 'nx-clarity' });
+    NxBus.on('nx:stream:error',  () => NxAnalytics.track('stream_error'),           { owner: 'nx-clarity' });
     NxBus.on('nx:hitl:required', () => NxAnalytics.track('hitl_escalation'),        { owner: 'nx-clarity' });
-    NxBus.on(NxBus.EVENTS.WS_STATUS, (d) => {
+    NxBus.on('nx:ws:status',     (d) => {
       if (d.state === 'reconnecting') NxAnalytics.track('reconnect_attempt');
     }, { owner: 'nx-clarity' });
-    NxBus.on(E.TAB_CHANGE, (d) => NxAnalytics.track('tab_used', d.tab),             { owner: 'nx-clarity' });
-    NxBus.on(E.SESSION_RESTORED, () => NxAnalytics.track('session_restored'),       { owner: 'nx-clarity' });
+    NxBus.on('nx:tab:change',    (d) => NxAnalytics.track('tab_used', d.tab),       { owner: 'nx-clarity' });
+    NxBus.on('nx:session:restored', () => NxAnalytics.track('session_restored'),   { owner: 'nx-clarity' });
 
     // Inspector open/close
     const insp = $('nxInspectorPanel');
@@ -208,13 +207,12 @@
      ══════════════════════════════════════════════════════════════════ */
   function _wireRecoveryMessages() {
     if (!window.NxBus) return;
-    const E = NxBus.EVENTS;
 
-    NxBus.on(E.STREAM_ERROR, (d) => {
+    NxBus.on('nx:stream:error', (d) => {
       _showStatusBanner('error', 'Something went wrong. The agent is attempting to recover automatically.');
     }, { owner: 'nx-clarity' });
 
-    NxBus.on(E.AGENT_DONE, (d) => {
+    NxBus.on('nx:agent:done', (d) => {
       if (d && d.status === 'failed') {
         _showStatusBanner('warn', 'Mission could not be completed. Check the trace for details.');
       } else {
@@ -222,7 +220,7 @@
       }
     }, { owner: 'nx-clarity' });
 
-    NxBus.on(E.WS_STATUS, (d) => {
+    NxBus.on('nx:ws:status', (d) => {
       if (d.state === 'reconnecting') {
         _showStatusBanner('warn', 'Connection lost — attempting to reconnect. Your session is preserved.');
       } else if (d.state === 'connected') {
@@ -230,7 +228,7 @@
       }
     }, { owner: 'nx-clarity' });
 
-    NxBus.on(E.SESSION_RESTORED, () => {
+    NxBus.on('nx:session:restored', () => {
       _showStatusBanner('ok', 'Session restored. Continuing from last checkpoint.');
       setTimeout(_clearStatusBanner, 4000);
     }, { owner: 'nx-clarity' });

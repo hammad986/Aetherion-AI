@@ -62,6 +62,8 @@
   <link rel="stylesheet" href="/static/css/nx-observability.css">
   <!-- AGI-Native Visual Differentiation Layer -->
   <link rel="stylesheet" href="/static/css/nx-agi-native.css">
+  <!-- Z25: Surgical Stabilization — token unification, typography, execution gravity -->
+  <link rel="stylesheet" href="/static/css/nx-z25-stabilization.css">
   <!-- Z16: Shell chrome CSS — navrail, topbar, inspector, dock, composer grid -->
   <link rel="stylesheet" href="/static/css/nx-shell.css">
 </head>
@@ -109,7 +111,7 @@
       </div>
 
       <!-- Forgot Password form -->
-      <div id="nx-form-forgot" style="display:none">
+      <div id="nx-form-forgot" class="nx-hidden">
         <div id="nx-auth-ok" class="nx-auth-ok"></div>
         <div class="nx-auth-field">
           <label>Email Address</label>
@@ -121,7 +123,7 @@
       </div>
 
       <!-- Signup form -->
-      <div id="nx-form-signup" style="display:none">
+      <div id="nx-form-signup" class="nx-hidden">
         <div class="nx-auth-field">
           <label>Full Name</label>
           <input type="text" id="nx-signup-name" placeholder="Your Name" autocomplete="name">
@@ -131,18 +133,17 @@
           <input type="email" id="nx-signup-email" placeholder="you@example.com" autocomplete="email">
         </div>
         <div class="nx-auth-field">
-          <label>Password <span style="color:var(--muted);font-weight:400;">(min 8 chars)</span></label>
+          <label>Password <span class="nx-auth-label-hint">(min 8 chars)</span></label>
           <input type="password" id="nx-signup-pw" placeholder="••••••••" autocomplete="new-password"
             onkeydown="if(event.key==='Enter') nxDoSignup()">
         </div>
-        <label
-          style="display:flex;align-items:flex-start;gap:8px;margin-top:10px;cursor:pointer;font-size:0.8rem;color:var(--muted,#8b949e)">
-          <input type="checkbox" id="nx-signup-agree" style="margin-top:2px;accent-color:var(--purple,#bc8cff)">
-          <span>I agree to the <a href="/terms-of-service" target="_blank" style="color:var(--accent,#58a6ff)">Terms of
-              Service</a> and <a href="/privacy-policy" target="_blank" style="color:var(--accent,#58a6ff)">Privacy
+        <label class="nx-auth-agree-label">
+          <input type="checkbox" id="nx-signup-agree">
+          <span>I agree to the <a href="/terms-of-service" target="_blank">Terms of
+              Service</a> and <a href="/privacy-policy" target="_blank">Privacy
               Policy</a></span>
         </label>
-        <button class="nx-auth-btn-primary" id="nx-btn-signup" onclick="nxDoSignup()" style="margin-top:10px">Create
+        <button class="nx-auth-btn-primary nx-auth-btn-signup" id="nx-btn-signup" onclick="nxDoSignup()">Create
           Account</button>
       </div>
 
@@ -208,8 +209,8 @@
   <!-- ── Email Verification Banner ── -->
   <div id="nx-verify-banner">
     <div class="nx-verify-msg">
-      <strong style="color:#d29922">⚠ Verify your email</strong><br>
-      <span id="nx-verify-banner-msg" style="color:#8b949e;font-size:0.78rem">Verify your email address to secure your
+      <strong class="nx-verify-banner-title">⚠ Verify your email</strong><br>
+      <span id="nx-verify-banner-msg">Verify your email address to secure your
         account.</span>
     </div>
     <button class="nx-verify-send" id="nx-verify-send-btn" onclick="nxSendVerificationEmail()">Send Link</button>
@@ -222,7 +223,7 @@
     <span class="nx-error-banner-label">⚠ Error</span>
     <span id="p57-error-msg" class="nx-error-banner-msg"></span>
     <button onclick="p57FixError()" class="nx-error-banner-fix">Fix with AI</button>
-    <button onclick="document.getElementById('p57-error-banner').style.display='none'" class="nx-error-banner-close">✕</button>
+    <button onclick="document.getElementById('p57-error-banner').classList.add('nx-hidden')" class="nx-error-banner-close" aria-label="Dismiss error">✕</button>
   </div>
 
   <!-- FUTURE-V2: Autonomous runtime bootstrap surface — command palette will surface live bootstrap context, ingestion state, and health probes -->

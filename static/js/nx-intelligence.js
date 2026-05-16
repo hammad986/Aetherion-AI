@@ -163,10 +163,9 @@
      ══════════════════════════════════════════════════════════════════ */
   function _wire() {
     if (!window.NxBus) { setTimeout(_wire, 200); return; }
-    const E = NxBus.EVENTS;
 
     // Track failures & trust overrides
-    NxBus.on(E.STREAM_ERROR, () => NxFailureIntel.record('tools', 'stream'), { owner: 'nx-intel' });
+    NxBus.on('nx:stream:error', () => NxFailureIntel.record('tools', 'stream'), { owner: 'nx-intel' });
     NxBus.on('nx:hitl:required', () => NxFailureIntel.record('escalations', null), { owner: 'nx-intel' });
     
     // Intercept UI clicks on HITL Reject as "Overrides" (Trust calibration)
@@ -178,7 +177,7 @@
     });
 
     // Inject feedback on mission completion
-    NxBus.on(E.AGENT_DONE, () => {
+    NxBus.on('nx:agent:done', () => {
       const execStream = $('nxExecutionStream') || $('nxTab-logs');
       if (execStream) _injectFeedbackUI(execStream);
     }, { owner: 'nx-intel' });

@@ -124,11 +124,11 @@
       if (!loginForm || !forgotForm) return;
 
       if (show) {
-        loginForm.style.display = 'none';
-        forgotForm.style.display = '';
-        if (tabs) tabs.style.display = 'none';
-        if (oauthDiv) oauthDiv.style.display = 'none';
-        if (oauthBtns) oauthBtns.style.display = 'none';
+        loginForm.classList.add('nx-hidden');
+        forgotForm.classList.remove('nx-hidden');
+        if (tabs) tabs.classList.add('nx-hidden');
+        if (oauthDiv) oauthDiv.classList.add('nx-hidden');
+        if (oauthBtns) oauthBtns.classList.add('nx-hidden');
         if (errEl) errEl.classList.remove('show');
         if (okEl) okEl.classList.remove('show');
         setTimeout(() => {
@@ -136,11 +136,11 @@
           if (em) em.focus();
         }, 50);
       } else {
-        forgotForm.style.display = 'none';
-        loginForm.style.display = '';
-        if (tabs) tabs.style.display = '';
-        if (oauthDiv) oauthDiv.style.display = '';
-        if (oauthBtns) oauthBtns.style.display = 'flex';
+        forgotForm.classList.add('nx-hidden');
+        loginForm.classList.remove('nx-hidden');
+        if (tabs) tabs.classList.remove('nx-hidden');
+        if (oauthDiv) oauthDiv.classList.remove('nx-hidden');
+        if (oauthBtns) oauthBtns.classList.remove('nx-hidden');
         if (errEl) errEl.classList.remove('show');
         if (okEl) okEl.classList.remove('show');
       }
@@ -312,8 +312,8 @@
     }
 
     window.nxAuthTab = function (tab) {
-      document.getElementById('nx-form-login').style.display = tab === 'login' ? '' : 'none';
-      document.getElementById('nx-form-signup').style.display = tab === 'signup' ? '' : 'none';
+      document.getElementById('nx-form-login').classList.toggle('nx-hidden', tab !== 'login');
+      document.getElementById('nx-form-signup').classList.toggle('nx-hidden', tab !== 'signup');
       document.getElementById('nx-tab-login').classList.toggle('active', tab === 'login');
       document.getElementById('nx-tab-signup').classList.toggle('active', tab === 'signup');
       document.getElementById('nx-auth-err').classList.remove('show');

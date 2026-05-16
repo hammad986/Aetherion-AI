@@ -228,10 +228,9 @@
      ══════════════════════════════════════════════════════════════════ */
   function _wire() {
     if (!window.NxBus) { setTimeout(_wire, 200); return; }
-    const E = NxBus.EVENTS;
 
-    NxBus.on(E.STREAM_ERROR,  () => _captureForensics(), { owner: 'nx-diagnostics' });
-    NxBus.on(E.AGENT_ERROR,   () => _captureForensics(), { owner: 'nx-diagnostics' });
+    NxBus.on('nx:stream:error',  () => _captureForensics(), { owner: 'nx-diagnostics' });
+    NxBus.on('nx:agent:error',   () => _captureForensics(), { owner: 'nx-diagnostics' });
     NxBus.on('nx:hitl:required', () => _captureForensics(), { owner: 'nx-diagnostics' });
   }
 

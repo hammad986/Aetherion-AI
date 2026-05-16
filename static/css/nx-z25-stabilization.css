@@ -1,0 +1,515 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   nx-z25-stabilization.css — Phase Z25B Surgical Stabilization Layer
+   ═══════════════════════════════════════════════════════════════════════════
+   RULES:
+   - No redesigns. No framework changes. No new visual gimmicks.
+   - Surgical fixes only: token unification, typography, panel cohesion,
+     empty states, execution gravity, command palette ergonomics.
+   - Load AFTER motion.css to win cascade.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── 1. TOKEN UNIFICATION BRIDGE ──────────────────────────────────────────
+   Problem: base.css overrides nds-tokens with #0d1117 family;
+            motion.css overrides again with #0a0a12 family.
+   Fix: Align legacy --bg/--panel/--border to match the NDS token values
+        that are already used by newer components, creating one coherent
+        surface palette. Last write wins — this file loads last.
+   ────────────────────────────────────────────────────────────────────────── */
+:root {
+  /* Unified surface palette — aligned to nds-tokens.css #0F1017 family */
+  --bg:             var(--nds-bg,        #0F1017);
+  --surface:        var(--nds-surface-0, #1A1C25);
+  --panel:          var(--nds-surface-1, #23252F);
+  --panel2:         var(--nds-surface-2, #2A2C37);
+  --panel3:         var(--nds-surface-3, #31343F);
+  --panel-border:   var(--nds-surface-4, #3A3D48);
+  --panel-border-hover: var(--nds-surface-5, #444752);
+
+  /* Unified text palette */
+  --text:           var(--nds-text-hi,   #E6E8ED);
+  --text-secondary: var(--nds-text-md,   #BFC4CA);
+  --muted:          var(--nds-text-lo,   #A2A8B2);
+  --text-muted:     var(--nds-text-lo,   #A2A8B2);
+  --text-dim:       var(--nds-text-dim,  #808080);
+
+  /* Unified accent — resolve to NDS blue, not motion.css indigo */
+  --accent:         var(--nds-accent,    #0079F2);
+  --accent-hover:   var(--nds-accent-hi, #57ABFF);
+  --accent-dim:     var(--nds-accent-subtle, rgba(0,121,242,0.06));
+  --accent-glow:    var(--nds-accent-glow,   rgba(0,121,242,0.18));
+
+  /* Unified semantic palette */
+  --green:          var(--nds-green,     #009118);
+  --red:            var(--nds-red,       #E52222);
+  --yellow:         var(--nds-yellow,    #967D00);
+  --purple:         var(--nds-purple,    #A64DFF);
+  --blue:           var(--nds-accent,    #0079F2);
+
+  /* Unified typography — Inter (actually loaded), NDS mono stack */
+  --font:           'Inter', 'Segoe UI', system-ui, sans-serif;
+  --nds-font:       'Inter', 'Segoe UI', system-ui, sans-serif;
+  --mono:           var(--nds-mono, 'JetBrains Mono', 'Fira Code', monospace);
+
+  /* Unified split-gutter colour */
+  --split-gutter:   var(--nds-surface-0, #1A1C25);
+}
+
+/* ── 2. BODY & ROOT SURFACE ───────────────────────────────────────────────── */
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+}
+
+/* ── 3. SPLIT GUTTER TOKEN FIX ────────────────────────────────────────────── */
+/* Replaces hardcoded #21262d in layout.css gutter rules */
+.gutter {
+  background: var(--split-gutter) !important;
+}
+.gutter:hover {
+  background: var(--panel-border) !important;
+}
+
+/* ── 4. TOPBAR EXECUTION GRAVITY ──────────────────────────────────────────── */
+/* Problem: run/stop controls are 26px, same visual weight as nav toggle.
+   Fix: Elevate execution control group — stronger border, slightly taller. */
+.nx-topbar-run-group {
+  height: 28px;
+  border-color: var(--panel-border-hover);
+  background: rgba(255,255,255,0.02);
+}
+
+/* Run button: accent colour on idle to signal actionability */
+.nx-topbar-run-btn {
+  color: var(--accent);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+.nx-topbar-run-btn:hover,
+.nx-topbar-run-btn:focus-visible {
+  background: var(--accent-dim);
+  color: var(--accent-hover);
+}
+
+/* Stop button — preserve red but increase contrast */
+.nx-topbar-stop-btn {
+  color: var(--red);
+  font-weight: 600;
+}
+
+/* Execution state elevation: running state makes the group more prominent */
+[data-exec-state="running"] .nx-topbar-run-group,
+[data-exec-state="streaming"] .nx-topbar-run-group {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent-dim);
+}
+[data-exec-state="failed"] .nx-topbar-run-group {
+  border-color: var(--red);
+  box-shadow: 0 0 0 1px rgba(229,34,34,0.12);
+}
+
+/* ── 5. TOPBAR BORDER UNIFICATION ─────────────────────────────────────────── */
+.nx-shell-topbar,
+.nx-header {
+  border-bottom-color: var(--panel-border);
+  background: var(--panel);
+}
+
+/* ── 6. NAV RAIL REFINEMENT ───────────────────────────────────────────────── */
+/* Icon hover tooltip — added via CSS content on title attribute where available */
+.nx-nav-icon {
+  position: relative;
+}
+
+/* Tighten inactive icon opacity — was 0.4, now slightly more readable */
+.nx-nav-icon:not(.active) svg,
+.nx-nav-icon:not(.active) i {
+  opacity: 0.55;
+  transition: opacity var(--nds-dur-2, 150ms) ease;
+}
+.nx-nav-icon:hover:not(.active) svg,
+.nx-nav-icon:hover:not(.active) i {
+  opacity: 0.85;
+}
+
+/* Active nav icon: clearer left-border accent */
+.nx-nav-icon.active {
+  border-left: 3px solid var(--accent);
+  background: var(--accent-dim);
+  color: var(--accent-hover);
+}
+.nx-nav-icon.active svg,
+.nx-nav-icon.active i {
+  opacity: 1;
+}
+
+/* ── 7. PANEL BORDER UNIFICATION ──────────────────────────────────────────── */
+/* All panel edges reference the same token */
+.nx-panel,
+.nx-shell-left,
+.nx-shell-right,
+.nx-shell-navrail,
+[class*="nx-panel"] {
+  border-color: var(--panel-border);
+}
+
+/* Panel dividers */
+.nx-divider,
+.nx-header-sep {
+  background: var(--panel-border);
+}
+.nx-divider:hover {
+  background: var(--panel-border-hover);
+}
+
+/* ── 8. TYPOGRAPHY NORMALIZATION ──────────────────────────────────────────── */
+/* Bring rem-based sizes in auxiliary components to NDS scale equivalents */
+
+/* Toast: 0.79rem → 12px (nds-type-sm) */
+.nx-toast {
+  font-size: 12px;
+  font-family: var(--font);
+}
+
+/* Cookie banner: 0.82rem → 13px (nds-type-md) */
+.nx-cookie-text {
+  font-size: 13px;
+}
+
+/* Verify banner message: 0.78rem → 12px */
+.nx-verify-msg span,
+#nx-verify-banner-msg {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* Auth card: establish clear type hierarchy */
+.nx-auth-card {
+  font-family: var(--font);
+}
+.nx-auth-logo-text {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.nx-auth-field label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+.nx-auth-field input {
+  font-size: 13px;
+  font-family: var(--font);
+}
+
+/* Settings panel: normalize section label weights */
+.nx-settings-section-label,
+[class*="section-label"],
+[class*="settings-label"] {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+/* ── 9. WORKSPACE EMPTY STATE ─────────────────────────────────────────────── */
+/* Problem: center workspace shows raw empty div when no session is active.
+   Fix: Class .nx-workspace-idle surfaces operational context without noise. */
+.nx-workspace-idle,
+.nx-empty-workspace {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  height: 100%;
+  min-height: 240px;
+  padding: 32px;
+  text-align: center;
+  color: var(--text-dim);
+  user-select: none;
+}
+
+.nx-workspace-idle__icon {
+  width: 36px;
+  height: 36px;
+  opacity: 0.25;
+}
+
+.nx-workspace-idle__title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.nx-workspace-idle__sub {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin: 0;
+  max-width: 320px;
+  line-height: 1.5;
+}
+
+.nx-workspace-idle__hints {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+.nx-workspace-idle__key {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  background: var(--surface);
+  border: 1px solid var(--panel-border);
+  border-radius: 4px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-family: var(--mono);
+  letter-spacing: 0.02em;
+}
+
+/* ── 10. LOG/CODE/TERMINAL EMPTY STATE ────────────────────────────────────── */
+.nx-pane-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 120px;
+  font-size: 12px;
+  color: var(--text-dim);
+  padding: 24px;
+  text-align: center;
+}
+
+/* ── 11. COMMAND PALETTE ERGONOMICS ───────────────────────────────────────── */
+/* Problem: flat undifferentiated item list, low-contrast selection.
+   Fix: Section separators, stronger selection background, shortcut hints. */
+
+/* Section header inside palette list */
+.nx-palette-section {
+  padding: 8px 12px 4px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  border-bottom: 1px solid var(--panel-border);
+  margin-bottom: 2px;
+  user-select: none;
+}
+
+/* Palette item: stronger selection highlight */
+.nx-palette-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 7px 12px;
+  font-size: 13px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+.nx-palette-item:hover,
+.nx-palette-item.selected,
+.nx-palette-item[aria-selected="true"] {
+  background: var(--accent-dim);
+  color: var(--text);
+  border-left: 2px solid var(--accent);
+  padding-left: 10px;
+}
+
+/* Shortcut badge in palette item */
+.nx-palette-shortcut {
+  font-size: 10px;
+  color: var(--text-dim);
+  font-family: var(--mono);
+  background: var(--surface);
+  border: 1px solid var(--panel-border);
+  border-radius: 3px;
+  padding: 1px 5px;
+  flex-shrink: 0;
+}
+
+/* Palette input: cleaner chrome */
+.nx-palette-input {
+  font-family: var(--font);
+  font-size: 14px;
+  border-bottom: 1px solid var(--panel-border);
+  background: transparent;
+  color: var(--text);
+  padding: 12px 14px;
+}
+.nx-palette-input:focus {
+  outline: none;
+  border-bottom-color: var(--accent);
+}
+.nx-palette-input::placeholder {
+  color: var(--text-dim);
+}
+
+/* ── 12. PANEL SECTION HEADERS ────────────────────────────────────────────── */
+/* Normalize all panel section header elements */
+.nx-panel-section-head,
+.nx-section-title,
+.p4-section-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  padding: 6px 12px 4px;
+  user-select: none;
+}
+
+/* ── 13. AUTH GATE INLINE STYLE REPLACEMENTS ──────────────────────────────── */
+/* Replaces surviving inline style= attributes in index.html auth gate */
+
+/* Password label hint — was style="color:var(--muted);font-weight:400;" */
+.nx-auth-field .nx-auth-label-hint {
+  color: var(--muted);
+  font-weight: 400;
+}
+
+/* TOS agree label — was style="display:flex;align-items:flex-start;gap:8px;..." */
+.nx-auth-agree-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 10px;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--muted);
+}
+.nx-auth-agree-label input[type="checkbox"] {
+  margin-top: 2px;
+  accent-color: var(--purple);
+  flex-shrink: 0;
+}
+.nx-auth-agree-label a {
+  color: var(--accent);
+  text-decoration: none;
+}
+.nx-auth-agree-label a:hover {
+  text-decoration: underline;
+}
+
+/* Signup button top margin — was style="margin-top:10px" */
+.nx-auth-btn-signup {
+  margin-top: 10px;
+}
+
+/* ── 14. BANNER ACCESSIBILITY IMPROVEMENTS ────────────────────────────────── */
+/* Verify banner: replace hardcoded inline colours */
+.nx-verify-banner-title {
+  font-weight: 700;
+  color: var(--yellow);
+}
+
+/* Error banner close button: add accessible label (handled in HTML via aria-label,
+   this rule ensures the ✕ character is visually consistent) */
+.nx-error-banner-close {
+  font-size: 14px;
+  line-height: 1;
+  color: var(--muted);
+}
+.nx-error-banner-close:hover {
+  color: var(--text);
+}
+
+/* ── 15. DISPLAY UTILITY CLASSES (replaces onclick style.display mutations) ── */
+/* These classes replace inline style="display:none" and onclick style mutations */
+.nx-hidden {
+  display: none !important;
+}
+.nx-visible-flex {
+  display: flex !important;
+}
+.nx-visible-block {
+  display: block !important;
+}
+
+/* ── 16. FOOTER EXECUTION-MODE SUPPRESSION ────────────────────────────────── */
+/* Reduce footer visual noise during active execution states */
+[data-exec-state="running"] #nx-site-footer,
+[data-exec-state="streaming"] #nx-site-footer {
+  opacity: 0.4;
+  transition: opacity 200ms ease;
+}
+
+/* ── 17. SESSION LIST EMPTY STATE ─────────────────────────────────────────── */
+.nx-session-list-empty {
+  padding: 20px 16px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+.nx-session-list-empty strong {
+  display: block;
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+/* ── 18. EXECUTION INDICATOR ELEVATION ────────────────────────────────────── */
+/* Make the run-dot slightly more perceptible — 6px → 7px, stronger colour */
+.nx-run-dot {
+  width: 7px;
+  height: 7px;
+  background: var(--green);
+}
+.nx-run-dot.visible {
+  display: inline-block;
+  animation: z25-run-pulse 1.4s ease-in-out infinite;
+}
+[data-exec-state="streaming"] .nx-run-dot {
+  background: var(--blue);
+}
+
+@keyframes z25-run-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.55; transform: scale(0.8); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nx-run-dot.visible {
+    animation: none !important;
+    opacity: 1;
+  }
+}
+
+/* ── 19. BREADCRUMB COLOUR UNIFICATION ────────────────────────────────────── */
+.nx-topbar-breadcrumb {
+  color: var(--muted);
+}
+.nx-topbar-breadcrumb-name {
+  color: var(--text);
+  font-weight: 500;
+}
+
+/* ── 20. TOAST BACKGROUND UNIFICATION ────────────────────────────────────── */
+/* Replace hardcoded hex backgrounds with token equivalents */
+.nx-toast.success {
+  background: var(--surface);
+  border-color: rgba(0, 145, 24, 0.20);
+}
+.nx-toast.error {
+  background: var(--surface);
+  border-color: rgba(229, 34, 34, 0.22);
+}
+.nx-toast.info {
+  background: var(--surface);
+  border-color: var(--panel-border);
+}
+.nx-toast.warning {
+  background: var(--surface);
+  border-color: rgba(150, 125, 0, 0.25);
+}

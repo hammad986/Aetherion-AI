@@ -27,7 +27,26 @@
     return;
   }
 
-  const BUS = NxBus.EVENTS;
+  const BUS = {
+    TAB_CHANGE:      'nx:tab:change',
+    PANEL_TOGGLE:    'nx:panel:toggle',
+    TOAST:           'nx:toast',
+    AGENT_START:     'nx:agent:start',
+    AGENT_DONE:      'nx:agent:done',
+    AGENT_ERROR:     'nx:agent:error',
+    AGENT_STATUS:    'nx:agent:status',
+    PALETTE_OPEN:    'nx:palette:open',
+    SETTINGS_OPEN:   'nx:settings:open',
+    WS_STATUS:       'nx:ws:status',
+    STREAM_OPEN:     'nx:stream:open',
+    STREAM_CHUNK:    'nx:stream:chunk',
+    STREAM_CLOSE:    'nx:stream:close',
+    STREAM_ERROR:    'nx:stream:error',
+    ACTIVITY_EVENT:  'nx:activity:event',
+    API_PLAN_LOCKED: 'nx:api:plan_locked',
+    API_RATE_LIMITED:'nx:api:rate_limited',
+    API_ERROR:       'nx:api:error',
+  };
 
   /* ── Helper: wrap a global, emit bus event, then call original ───── */
   function _wrap(name, busEvent, dataFn) {

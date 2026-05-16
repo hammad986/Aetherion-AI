@@ -83,7 +83,7 @@
     const STORM_THRESHOLD   = 5;
     let   _stormWarned      = false;
 
-    NxBus.on(NxBus.EVENTS.WS_STATUS, (d) => {
+    NxBus.on('nx:ws:status', (d) => {
       if (d.state !== 'reconnecting') { _reconnectWindow = []; _stormWarned = false; return; }
 
       const now = Date.now();

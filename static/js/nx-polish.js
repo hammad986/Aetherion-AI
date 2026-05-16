@@ -93,37 +93,36 @@
      ══════════════════════════════════════════════════════════════════ */
   function _maskLatency() {
     if (!window.NxBus) { setTimeout(_maskLatency, 200); return; }
-    const E = NxBus.EVENTS;
 
     // When stream opens: show subtle "live" indicator on run button dot
-    NxBus.on(E.STREAM_OPEN, () => {
+    NxBus.on('nx:stream:open', () => {
       const dot = $('nxRunDot');
       if (dot) dot.style.display = '';
       _hideIdleHero();
     }, { owner: 'nx-polish' });
 
     // Agent start: hide idle hero, enable run indicator
-    NxBus.on(E.AGENT_START, () => {
+    NxBus.on('nx:agent:start', () => {
       _hideIdleHero();
       const dot = $('nxRunDot');
       if (dot) dot.style.display = '';
     }, { owner: 'nx-polish' });
 
     // Done/Stop: restore idle hero if no content, stop indicator
-    NxBus.on(E.AGENT_DONE, () => {
+    NxBus.on('nx:agent:done', () => {
       const dot = $('nxRunDot');
       if (dot) dot.style.display = 'none';
       _updateRunBtn(false);
     }, { owner: 'nx-polish' });
 
-    NxBus.on(E.AGENT_STOP, () => {
+    NxBus.on('nx:agent:stop', () => {
       const dot = $('nxRunDot');
       if (dot) dot.style.display = 'none';
       _updateRunBtn(false);
     }, { owner: 'nx-polish' });
 
     // Reconnect: preserve visible state — don't blank the UI
-    NxBus.on(E.WS_STATUS, (d) => {
+    NxBus.on('nx:ws:status', (d) => {
       if (d.state === 'reconnecting') {
         const label = $('nxLiveConnStatus');
         if (label) { label.textContent = 'Reconnecting...'; label.style.color = '#f59e0b'; }

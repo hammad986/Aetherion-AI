@@ -1874,6 +1874,16 @@ except Exception as _z10_err:
         "[Z10] Worker reconciler failed to start: %s", _z10_err
     )
 
+# ── Phase Z27: start the Z26 scheduler background checker ────────
+try:
+    from runtime.scheduler import start_background_checker as _z26_start_sched
+    _z26_start_sched(interval_secs=10.0)
+    import logging as _z27_log
+    _z27_log.getLogger(__name__).info("[Z27] Runtime scheduler background checker started.")
+except Exception as _z27_sched_err:
+    import logging as _z27_log
+    _z27_log.getLogger(__name__).warning("[Z27] Scheduler checker failed to start: %s", _z27_sched_err)
+
 # ── Phase Z13: start the account lifecycle retention janitor ──────
 try:
     from account_lifecycle import start_retention_janitor as _start_janitor
@@ -7608,6 +7618,64 @@ def api_scheduler_history():
         limit = min(int(request.args.get("limit", 30)), 100)
         history = _scheduler.get_all_recent_history(limit=limit)
         return jsonify({"ok": True, "history": history})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+# ── Phase Z27: Runtime telemetry / explainability API ─────────────────────────
+
+@app.route("/api/runtime/telemetry", methods=["GET"])
+def api_runtime_telemetry():
+    """Snapshot of Z26 compression + confidence + scheduler state for the idle workspace."""
+    try:
+        snapshot = {}
+
+        try:
+            from runtime.scheduler import scheduler_telemetry as _z26_sched_snap
+            snapshot["scheduler"] = _z26_sched_snap()
+        except Exception:
+            snapshot["scheduler"] = {}
+
+        try:
+            from runtime.context_compression import compression_telemetry as _z26_ctx_stats
+            snapshot["context"] = _z26_ctx_stats()
+        except Exception:
+            snapshot["context"] = {}
+
+        try:
+            from runtime.confidence_engine import confidence_telemetry_snapshot as _z26_conf_summary
+            snapshot["confidence"] = _z26_conf_summary()
+        except Exception:
+            snapshot["confidence"] = {}
+
+        return jsonify({"ok": True, "data": snapshot})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route("/api/runtime/decisions", methods=["GET"])
+def api_runtime_decisions():
+    """Return the operator decision log from the Z26 explainability registry (last N entries)."""
+    try:
+        limit = min(int(request.args.get("limit", 50)), 200)
+        session_id = request.args.get("session_id")
+        try:
+            from runtime.explainability import get_decisions as _z26_get_log
+            log = _z26_get_log(sid=session_id, limit=limit)
+        except Exception:
+            log = []
+        return jsonify({"ok": True, "decisions": log, "count": len(log)})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route("/api/runtime/context/<session_id>", methods=["GET"])
+def api_runtime_context(session_id):
+    """Return per-session context token usage from Z26 context compression."""
+    try:
+        from runtime.context_compression import get_session_context as _z26_get_ctx
+        ctx = _z26_get_ctx(session_id)
+        return jsonify({"ok": True, "usage": ctx.token_usage(), "stats": ctx.stats()})
     except Exception as e:
         return jsonify({"ok": False, "error": str(e)}), 500
 

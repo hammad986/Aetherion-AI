@@ -186,6 +186,126 @@
   function _showIdleHero() {
     const hero = $('nxIdleHero');
     if (hero) hero.classList.remove('nx-hero-hidden');
+    _populateIdleWorkspace();
+  }
+
+  function _populateIdleWorkspace() {
+    // Populate runtime status strip + recent executions from live APIs
+    _loadIdleMetrics();
+    _loadIdleRecent();
+    _loadIdleTelemetry();
+  }
+
+  function _loadIdleMetrics() {
+    fetch('/api/system/metrics', { credentials: 'include' })
+      .then(r => r.ok ? r.json() : null)
+      .then(d => {
+        if (!d) return;
+        const modelEl = $('nxIdleModel');
+        if (modelEl) {
+          const m = (d.last_model || d.model || '—');
+          modelEl.textContent = m.length > 22 ? m.slice(0, 20) + '…' : m;
+        }
+      })
+      .catch(() => {});
+  }
+
+  function _loadIdleTelemetry() {
+    fetch('/api/runtime/telemetry', { credentials: 'include' })
+      .then(r => r.ok ? r.json() : null)
+      .then(d => {
+        if (!d || !d.ok) return;
+        const data = d.data || {};
+
+        // Confidence
+        const confEl = $('nxIdleConf');
+        if (confEl && data.confidence) {
+          const avg = data.confidence.rolling_average;
+          if (typeof avg === 'number') {
+            confEl.textContent = (avg * 100).toFixed(0) + '%';
+            confEl.style.color = avg < 0.5 ? '#f85149' : avg < 0.75 ? '#d29922' : '#3fb950';
+          }
+        }
+
+        // Context token pressure
+        const ctxEl = $('nxIdleCtx');
+        if (ctxEl && data.context) {
+          const pct = data.context.budget_pct;
+          if (typeof pct === 'number') {
+            ctxEl.textContent = pct.toFixed(0) + '%';
+            ctxEl.style.color = pct > 85 ? '#f85149' : pct > 65 ? '#d29922' : '#3fb950';
+          }
+        }
+
+        // Scheduled missions
+        const schedEl = $('nxIdleSched');
+        if (schedEl && data.scheduler) {
+          const cnt = data.scheduler.pending_count;
+          schedEl.textContent = typeof cnt === 'number' ? String(cnt) : '0';
+        }
+      })
+      .catch(() => {});
+  }
+
+  function _loadIdleRecent() {
+    const container = $('nxIdleRecent');
+    if (!container) return;
+    fetch('/api/sessions', { credentials: 'include' })
+      .then(r => r.ok ? r.json() : null)
+      .then(d => {
+        if (!d) return;
+        const sessions = Array.isArray(d) ? d : (d.sessions || []);
+        const recent = sessions.slice(0, 5);
+        if (!recent.length) return;
+        container.innerHTML = '';
+        recent.forEach(s => {
+          const task = (s.task || s.description || 'Untitled session').slice(0, 80);
+          const status = (s.status || s.last_status || '');
+          const ts = s.updated_at || s.created_at || '';
+          let badge = 'other', label = status || 'idle';
+          if (status === 'done' || status === 'completed') { badge = 'done'; label = 'done'; }
+          else if (status === 'failed' || status === 'error') { badge = 'failed'; label = 'failed'; }
+          let timeStr = '';
+          if (ts) {
+            try {
+              const dt = new Date(ts);
+              const now = new Date();
+              const diffH = (now - dt) / 3600000;
+              if (diffH < 1) timeStr = Math.round(diffH * 60) + 'm ago';
+              else if (diffH < 24) timeStr = Math.round(diffH) + 'h ago';
+              else timeStr = Math.round(diffH / 24) + 'd ago';
+            } catch(_) {}
+          }
+          const row = document.createElement('div');
+          row.className = 'nx-iw-recent-row';
+          row.title = task;
+          row.innerHTML = `<span class="nx-iw-recent-badge nx-iw-recent-badge--${badge}">${label}</span><span class="nx-iw-recent-task">${task}</span><span class="nx-iw-recent-time">${timeStr}</span>`;
+          row.onclick = () => {
+            if (s.session_id && window.loadSession) window.loadSession(s.session_id);
+          };
+          container.appendChild(row);
+        });
+      })
+      .catch(() => {});
+  }
+
+  // Update idle model when a new execution finishes
+  if (window.NxBus && NxBus.EVENTS) {
+    const E = NxBus.EVENTS;
+    NxBus.on(E.AGENT_DONE, () => {
+      _loadIdleRecent();
+      _loadIdleTelemetry();
+    }, { owner: 'nx-polish-z27' });
+  } else {
+    setTimeout(() => {
+      if (window.NxBus && NxBus.EVENTS) {
+        const E = NxBus.EVENTS;
+        NxBus.on(E.AGENT_DONE, () => {
+          _loadIdleRecent();
+          _loadIdleTelemetry();
+        }, { owner: 'nx-polish-z27' });
+      }
+    }, 500);
   }
 
   /* ══════════════════════════════════════════════════════════════════

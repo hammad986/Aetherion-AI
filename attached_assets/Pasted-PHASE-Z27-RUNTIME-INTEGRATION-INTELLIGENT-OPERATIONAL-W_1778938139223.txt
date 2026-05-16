@@ -1,0 +1,259 @@
+PHASE Z27 — RUNTIME INTEGRATION + INTELLIGENT OPERATIONAL WORKSPACE
+
+SYSTEM STATUS:
+The platform now contains:
+
+* context compression
+* confidence scoring
+* explainability systems
+* scheduling runtime
+* multimodal ingestion foundations
+
+However:
+these systems currently exist as standalone runtime modules and are NOT deeply integrated into the live execution pipeline.
+
+This phase focuses on:
+REAL runtime integration
++
+operator-grade workspace intelligence.
+
+STRICT RULES:
+🔒 NO AGI HYPE
+🔒 NO LARGE UI FRAMEWORK REWRITE
+🔒 NO REACTIVE FRONTEND MIGRATION
+🔒 NO FEATURE EXPLOSION
+🔒 STABILITY FIRST
+🔒 EXECUTION-FIRST DESIGN
+
+====================================================
+PHASE Z27A — LIVE RUNTIME INTEGRATION
+=====================================
+
+Deeply integrate the following runtime systems into the active execution lifecycle:
+
+* context_compression.py
+* confidence_engine.py
+* explainability.py
+* scheduler.py
+
+TARGET FILES:
+
+* agent.py
+* workflow_engine.py
+* execution planner/runtime layers
+* HITL escalation points
+* mission lifecycle handlers
+
+REQUIREMENTS:
+
+1. Context Compression Integration
+
+* active mission context tracking
+* rolling compression during long sessions
+* token pressure monitoring
+* summary generation triggers
+* replay-safe compression events
+* operator-visible compression telemetry
+
+2. Confidence Runtime Integration
+
+* confidence scoring per execution phase
+* retry instability penalties
+* contradiction detection hooks
+* automatic HITL escalation thresholds
+* low-confidence warnings
+* execution confidence history
+
+3. Explainability Integration
+   Generate operational explanations for:
+
+* model selection
+* replanning
+* retries
+* provider switching
+* escalation decisions
+* execution pauses
+* context compression actions
+
+IMPORTANT:
+DO NOT expose chain-of-thought.
+
+4. Scheduler Runtime Integration
+
+* delayed mission execution
+* recurring mission support
+* mission deadline tracking
+* timeout escalation
+* scheduled execution telemetry
+
+====================================================
+PHASE Z27B — INTELLIGENT OPERATIONAL WORKSPACE
+==============================================
+
+The current workspace still feels visually empty and operationally silent.
+
+Transform it into:
+a calm execution intelligence surface.
+
+WITHOUT:
+marketing aesthetics
+OR dashboard clutter.
+
+REQUIREMENTS:
+
+1. Smart Idle Workspace
+   Replace the empty black workspace with:
+
+* recent missions
+* quick-start actions
+* drag/drop upload zone
+* runtime status overview
+* scheduler queue summary
+* active model/provider state
+* recent execution summaries
+
+2. Execution Entry Surface
+   Create a lightweight mission composer:
+
+* objective input
+* optional attachments
+* scheduling option
+* runtime mode selector
+* confidence mode indicator
+
+3. Workspace Intelligence Panels
+   Add subtle operational widgets:
+
+* current runtime state
+* memory pressure
+* confidence trend
+* active compression state
+* pending approvals
+* scheduled missions
+
+IMPORTANT:
+Keep ALL visuals calm and muted.
+
+NO:
+
+* neon gradients
+* fake AI graphics
+* animated dashboards
+* marketing hero sections
+
+====================================================
+PHASE Z27C — VISUAL HIERARCHY + UX STABILITY
+============================================
+
+Deeply audit:
+
+* spacing consistency
+* empty-state discipline
+* topbar alignment
+* left-rail interaction quality
+* panel density
+* cookie banner prominence
+* execution focus clarity
+
+REQUIREMENTS:
+
+1. Reduce Workspace Emptiness
+
+* improve layout structure
+* improve content anchoring
+* reduce dead-space feeling
+
+2. Navigation Rail Polish
+
+* better active states
+* clearer hover feedback
+* spacing normalization
+* improved icon rhythm
+
+3. Topbar Discipline
+
+* align Run/Stop/model controls
+* improve execution prominence
+* reduce visual fragmentation
+
+4. Cookie Banner Discipline
+
+* reduce visual dominance
+* improve compactness
+* preserve accessibility compliance
+
+====================================================
+PHASE Z27D — EXECUTION STATE VISUALIZATION
+==========================================
+
+Operators must understand:
+what the system is doing RIGHT NOW.
+
+Implement:
+
+* execution phase indicators
+* compression activity indicator
+* confidence state indicator
+* scheduler status
+* HITL waiting state
+* retry/recovery visibility
+
+IMPORTANT:
+Subtle operational clarity ONLY.
+
+NO:
+flashy realtime dashboards.
+
+====================================================
+PHASE Z27E — FORENSIC UI AUDIT
+==============================
+
+Perform a complete forensic UI audit.
+
+Generate:
+
+* docs/Z27_UI_FORENSIC_AUDIT.md
+* docs/Z27_RUNTIME_INTEGRATION_REPORT.md
+* docs/Z27_OPERATOR_WORKSPACE_CERTIFICATION.md
+* docs/Z27_EXECUTION_VISIBILITY_REPORT.md
+* docs/Z27_FRONTEND_STABILITY_REPORT.md
+
+The audit MUST include:
+
+1. Remaining visual instability
+2. Remaining runtime disconnects
+3. Remaining dead/unused UI components
+4. Remaining accessibility issues
+5. Remaining execution visibility weaknesses
+6. Remaining operational UX gaps
+7. Honest beta-readiness verdict
+
+====================================================
+FINAL VALIDATION
+================
+
+Before completion:
+
+* run full runtime smoke tests
+* verify scheduler hooks
+* verify compression events
+* verify confidence escalation
+* verify explainability rendering
+* verify no frontend regressions
+* verify no NxBus race conditions
+
+IMPORTANT:
+DO NOT merely generate docs.
+
+Actually:
+wire the runtime systems into the real execution lifecycle.
+
+This phase is about:
+turning runtime foundations into a genuinely operational autonomous execution environment.
+
+Maintain:
+🔒 Operational calmness
+🔒 Runtime transparency
+🔒 Stability-first engineering
+🔒 Explainability over hype
+🔒 Execution discipline over flashy UI

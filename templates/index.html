@@ -182,14 +182,10 @@
 
   <!-- ── Cookie Notice Banner ── -->
   <div id="nx-cookie-banner" class="nx-cookie-banner">
-    <span class="nx-cookie-text">
-      🍪 We use essential cookies to keep you signed in and to secure your session. By continuing to use Nexora AI, you
-      accept our
-      <a href="/privacy-policy" target="_blank">Privacy Policy</a>.
-    </span>
+    <span class="nx-cookie-text">Essential cookies keep you signed in. <a href="/privacy-policy" target="_blank">Privacy Policy</a>.</span>
     <div class="nx-cookie-actions">
       <button onclick="nxAcceptCookies()" class="nx-cookie-accept">Accept</button>
-      <button onclick="document.getElementById('nx-cookie-banner').style.display='none'" class="nx-cookie-dismiss">Dismiss</button>
+      <button onclick="document.getElementById('nx-cookie-banner').style.display='none'" class="nx-cookie-dismiss">✕</button>
     </div>
   </div>
 
@@ -707,19 +703,55 @@
             Stop</button>
         </div>
 
-        <!-- Idle hero — shown when no task is running -->
+        <!-- Idle workspace — shown when no task is running -->
         <div class="nx-idle-hero" id="nxIdleHero">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:16px;opacity:0.3;"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-          <div style="font-size:13px;font-weight:500;color:#c9d1d9;margin-bottom:6px;letter-spacing:0.02em;">Ready for execution</div>
-          <div style="font-size:12px;color:#6e7681;display:flex;align-items:center;gap:12px;margin-bottom:24px;">
-            <span style="display:flex;align-items:center;gap:4px;"><kbd style="background:transparent;border:1px solid #30363d;border-radius:3px;padding:2px 4px;font-size:10px;font-family:inherit;">⌘K</kbd> Commands</span>
-            <span style="opacity:0.3;">|</span>
-            <span style="display:flex;align-items:center;gap:4px;"><kbd style="background:transparent;border:1px solid #30363d;border-radius:3px;padding:2px 4px;font-size:10px;font-family:inherit;">⌘↵</kbd> Execute</span>
+
+          <!-- Header row -->
+          <div class="nx-iw-header">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.4;flex-shrink:0"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            <span class="nx-iw-title">Ready for execution</span>
+            <span class="nx-iw-hint"><kbd>⌘K</kbd> Commands &nbsp;·&nbsp; <kbd>⌘↵</kbd> Execute</span>
           </div>
-          <div class="nx-hero-chips">
+
+          <!-- Runtime status strip -->
+          <div class="nx-iw-status-strip" id="nxIdleStatusStrip">
+            <div class="nx-iw-stat" title="Active model / provider">
+              <span class="nx-iw-stat-label">Model</span>
+              <span class="nx-iw-stat-val" id="nxIdleModel">—</span>
+            </div>
+            <div class="nx-iw-stat-sep"></div>
+            <div class="nx-iw-stat" title="Session confidence level">
+              <span class="nx-iw-stat-label">Confidence</span>
+              <span class="nx-iw-stat-val" id="nxIdleConf">—</span>
+            </div>
+            <div class="nx-iw-stat-sep"></div>
+            <div class="nx-iw-stat" title="Context token pressure">
+              <span class="nx-iw-stat-label">Context</span>
+              <span class="nx-iw-stat-val" id="nxIdleCtx">—</span>
+            </div>
+            <div class="nx-iw-stat-sep"></div>
+            <div class="nx-iw-stat" title="Scheduled missions">
+              <span class="nx-iw-stat-label">Scheduled</span>
+              <span class="nx-iw-stat-val" id="nxIdleSched">—</span>
+            </div>
+          </div>
+
+          <!-- Quick actions -->
+          <div class="nx-iw-actions">
             <button class="nx-hero-chip" onclick="nxSetTask('Run full test suite')">Run Tests</button>
             <button class="nx-hero-chip" onclick="nxSetTask('Audit workspace for errors')">Audit Workspace</button>
+            <button class="nx-hero-chip" onclick="nxSetTask('Generate project documentation')">Generate Docs</button>
+            <button class="nx-hero-chip" onclick="nxSetTask('Review code for bugs and security issues')">Security Review</button>
           </div>
+
+          <!-- Recent executions -->
+          <div class="nx-iw-section">
+            <div class="nx-iw-section-label">Recent executions</div>
+            <div id="nxIdleRecent" class="nx-iw-recent-list">
+              <div class="nx-iw-recent-empty">No recent executions</div>
+            </div>
+          </div>
+
         </div>
 
         <!-- Logs tab (position:relative for overlay banners) -->

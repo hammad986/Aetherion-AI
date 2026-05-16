@@ -99,8 +99,12 @@
         .catch(() => {});
     };
 
-    NxBus.on(NxBus.EVENTS.SESSION_RESTORED, _onSessionRestore, { owner: 'nx-hitl-bridge' });
-    NxBus.on(NxBus.EVENTS.SESSION_CREATED,  _onSessionRestore, { owner: 'nx-hitl-bridge' });
+    function _wireHitlBus() {
+      if (!window.NxBus || !NxBus.EVENTS) { setTimeout(_wireHitlBus, 150); return; }
+      NxBus.on(NxBus.EVENTS.SESSION_RESTORED, _onSessionRestore, { owner: 'nx-hitl-bridge' });
+      NxBus.on(NxBus.EVENTS.SESSION_CREATED,  _onSessionRestore, { owner: 'nx-hitl-bridge' });
+    }
+    _wireHitlBus();
 
     /* Poll for stale HITL expiry every 60s */
     setInterval(() => {

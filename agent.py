@@ -250,6 +250,31 @@ class Agent:
             _exec_dag = _milestones = _audit = _strat_mem = None
             ReplanDecision = None
 
+        # ── Z27A: Initialize Z26 cognitive runtime modules ────────────────────
+        try:
+            from runtime.context_compression import get_session_context as _z26_get_ctx
+            from runtime.confidence_engine import (
+                score_step as _z26_score_step,
+                get_tracker as _z26_get_tracker,
+            )
+            from runtime.explainability import (
+                explain_model_selection  as _z26_explain_model,
+                explain_retry            as _z26_explain_retry,
+                explain_escalation       as _z26_explain_escalation,
+                explain_replanning       as _z26_explain_replan,
+                explain_provider_switch  as _z26_explain_provider,
+                explain_context_compression as _z26_explain_compress,
+            )
+            _z26_ctx          = _z26_get_ctx(self._session_id)
+            _z26_conf_tracker = _z26_get_tracker(self._session_id)
+            _z26_enabled      = True
+        except Exception as _z26_init_err:
+            logger.debug("[Z27] Runtime modules not available: %s", _z26_init_err)
+            _z26_ctx = _z26_conf_tracker = _z26_enabled = None
+            _z26_score_step = _z26_explain_model = _z26_explain_retry = None
+            _z26_explain_escalation = _z26_explain_replan = _z26_explain_provider = None
+            _z26_explain_compress = None
+
         # ── Recall similar tasks ─────────────────────────
         similar = self.memory.find_similar_task(task)
         if similar:
@@ -458,6 +483,35 @@ class Agent:
                             "step_max": self.config.MAX_AGENT_LOOPS,
                             "model":    self.router.last_used_api or "unknown",
                         })
+                    except Exception:
+                        pass
+
+                # ── Z27A: Model selection explanation + context feed ──────────
+                if _z26_enabled:
+                    try:
+                        _used_model = self.router.last_used_api or "unknown"
+                        _z26_explain_model(
+                            self._session_id,
+                            f"step-{current_step}",
+                            model=_used_model,
+                            reason="selected by router based on plan mode and provider health",
+                            factors=[
+                                f"step={current_step + 1}/{len(plan_steps)}",
+                                f"provider={_used_model}",
+                                f"errors_so_far={error_count}",
+                            ],
+                            confidence=0.85,
+                        )
+                        _z26_ctx.add_message("user", active_step[:600])
+                        _z26_ctx.add_message("assistant", (raw or "")[:600])
+                        _ctx_usage = _z26_ctx.token_usage()
+                        if _realtime_on:
+                            self._emit_fn("agent.context_state", {
+                                "token_pct":   _ctx_usage["budget_pct"],
+                                "total_tokens": _ctx_usage["total"],
+                                "episodes":    len(_z26_ctx._episodes),
+                                "session_id":  self._session_id,
+                            })
                     except Exception:
                         pass
 
@@ -766,6 +820,39 @@ class Agent:
                         last_error     = err
                         total_failures += 1
 
+                        # ── Z27A: Confidence scoring + retry explanation ───────
+                        if _z26_enabled:
+                            try:
+                                _z26_report = _z26_score_step(
+                                    self._session_id,
+                                    f"step-{current_step}-err{error_count}",
+                                    output_text=err,
+                                    retry_count=error_count,
+                                    tool_failures=1,
+                                    evidence_count=max(1, len(completed_steps)),
+                                )
+                                _z26_conf_tracker.record(_z26_report)
+                                _z26_explain_retry(
+                                    self._session_id,
+                                    f"step-{current_step}",
+                                    attempt=error_count,
+                                    failure_reason=f"{category}: {err[:80]}",
+                                    factors=[
+                                        f"tool={action}",
+                                        f"category={category}",
+                                        f"total_failures={total_failures}",
+                                    ],
+                                )
+                                if _z26_report.requires_hitl and _realtime_on:
+                                    self._emit_fn("agent.confidence_warning", {
+                                        "score":      _z26_report.final_score,
+                                        "level":      _z26_report.level,
+                                        "alert":      _z26_report.operator_alert,
+                                        "session_id": self._session_id,
+                                    })
+                            except Exception:
+                                pass
+
                         # ── DAG: fail node + adaptive replan ───────────────────
                         if _exec_dag:
                             try:
@@ -796,6 +883,22 @@ class Agent:
                                 if _rp.decision == ReplanDecision.ESCALATE_HITL and _rp.hitl_prompt:
                                     observation += f"\n\n[REPLAN] Escalating to HITL: {_rp.hitl_prompt}"
                                 _replanner.record_replan(current_step, _rp.decision, _rp.reason)
+                                # ── Z27A: Replanning explanation ─────────────
+                                if _z26_enabled:
+                                    try:
+                                        _z26_explain_replan(
+                                            self._session_id,
+                                            f"step-{current_step}",
+                                            original_plan_summary=active_step[:80],
+                                            reason=(_rp.reason or "adaptive replanner triggered"),
+                                            factors=[
+                                                f"decision={_rp.decision}",
+                                                f"category={category}",
+                                                f"errors={error_count}",
+                                            ],
+                                        )
+                                    except Exception:
+                                        pass
                             except Exception as _rpe:
                                 logger.warning(f"[AdaptiveReplanner] Error: {_rpe}")
 
@@ -807,6 +910,22 @@ class Agent:
                                     f"{error_count} failures on step {current_step + 1}"
                                 )
                             self.router._gemini_use_pro = True
+                            # ── Z27A: Provider switch explanation ─────────────
+                            if _z26_enabled:
+                                try:
+                                    _z26_explain_provider(
+                                        self._session_id,
+                                        f"step-{current_step}",
+                                        from_provider="gemini-flash",
+                                        to_provider="gemini-pro",
+                                        reason=f"quality escalation after {error_count} failures",
+                                        factors=[
+                                            f"error_count={error_count}",
+                                            f"threshold={self.config.GEMINI_PRO_AFTER_FAILURES}",
+                                        ],
+                                    )
+                                except Exception:
+                                    pass
 
                         # User intervention after cumulative threshold OR explicit replanner escalation
                         _escalate_hitl = False
@@ -829,6 +948,25 @@ class Agent:
                                 )
                             except Exception as _gov_err:
                                 logger.warning(f"[Agent] Governance log error: {_gov_err}")
+
+                            # ── Z27A: Escalation explanation ─────────────────
+                            if _z26_enabled:
+                                try:
+                                    _z26_conf_avg = (_z26_conf_tracker.rolling_average()
+                                                     if _z26_conf_tracker else 0.0)
+                                    _z26_explain_escalation(
+                                        self._session_id,
+                                        f"step-{current_step}",
+                                        trigger=_hitl_reason[:120],
+                                        factors=[
+                                            f"total_failures={total_failures}",
+                                            f"threshold={self.config.USER_INTERVENTION_THRESHOLD}",
+                                            f"category={category}",
+                                        ],
+                                        confidence=_z26_conf_avg,
+                                    )
+                                except Exception:
+                                    pass
 
                             if _os.getenv("AETHERION_REALTIME_V1", "").lower() == "true":
                                 # ── Web-safe HITL: non-blocking threading.Event wait ──────────
@@ -1019,6 +1157,31 @@ class Agent:
         )
         if status in ("done", "timeout"):   # both paths must clear the stale checkpoint
             self.memory.clear_checkpoint()
+
+        # ── Z27A: Emit final runtime telemetry + drop Z26 session state ───────
+        if _z26_enabled and _z26_ctx:
+            try:
+                from runtime.context_compression import drop_session_context as _z26_drop_ctx
+                from runtime.confidence_engine import drop_tracker as _z26_drop_tracker
+                _z26_final_stats = {
+                    "context":    _z26_ctx.stats(),
+                    "confidence": (_z26_conf_tracker.summary()
+                                   if _z26_conf_tracker else {}),
+                    "session_id": self._session_id,
+                    "status":     status,
+                }
+                if _realtime_on:
+                    self._emit_fn("agent.runtime_telemetry", _z26_final_stats)
+                logger.info(
+                    "[Z27] Runtime telemetry | ctx_tokens=%d episodes=%d conf_avg=%.2f",
+                    _z26_ctx.token_usage()["total"],
+                    len(_z26_ctx._episodes),
+                    (_z26_conf_tracker.rolling_average() if _z26_conf_tracker else 1.0),
+                )
+                _z26_drop_ctx(self._session_id)
+                _z26_drop_tracker(self._session_id)
+            except Exception as _z26_end_err:
+                logger.debug("[Z27] Cleanup error: %s", _z26_end_err)
 
         # ── Strategy Memory: record outcome for future runs ────────────────
         if _strat_mem:

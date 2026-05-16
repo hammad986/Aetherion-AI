@@ -152,6 +152,7 @@
 }
 
 /* ── Z20: Cookie banner ─────────────────────────────────────────────────── */
+/* ── Z27C: compact cookie banner ── */
 .nx-cookie-banner {
   display: none;         /* JS sets display:flex when shown */
   position: fixed;
@@ -161,16 +162,19 @@
   z-index: var(--nx-z-overlay, 99999);
   background: #161b22;
   border-top: 1px solid var(--panel-border, #30363d);
-  padding: 14px 20px;
+  padding: 8px 16px;
   align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
+  gap: 10px;
+  flex-wrap: nowrap;
 }
 .nx-cookie-text {
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   color: var(--text-muted, #8b949e);
   flex: 1;
-  min-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
 .nx-cookie-text a {
   color: var(--purple, #bc8cff);
@@ -181,23 +185,23 @@
 }
 .nx-cookie-actions {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   flex-shrink: 0;
 }
 .nx-cookie-accept {
-  background: var(--purple, #bc8cff);
-  color: #0d1117;
-  border: none;
-  border-radius: 6px;
-  padding: 7px 18px;
-  font-size: 0.82rem;
-  font-weight: 700;
+  background: transparent;
+  color: var(--purple, #bc8cff);
+  border: 1px solid var(--purple, #bc8cff);
+  border-radius: 4px;
+  padding: 3px 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
   cursor: pointer;
   font-family: inherit;
   transition: opacity 0.15s;
 }
 .nx-cookie-accept:hover {
-  opacity: 0.88;
+  opacity: 0.8;
 }
 .nx-cookie-dismiss {
   background: transparent;

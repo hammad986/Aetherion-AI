@@ -232,15 +232,21 @@
 
       // Hide all tab contents
       document.querySelectorAll('.nx-tab-content').forEach(el => el.classList.remove('active'));
-      // Deactivate all tab buttons (primary + secondary)
-      document.querySelectorAll('.nx-tab').forEach(btn => btn.classList.remove('active'));
+      // Deactivate all tab buttons — clear both class and aria-selected (Z19)
+      document.querySelectorAll('.nx-tab').forEach(btn => {
+        btn.classList.remove('active');
+        btn.setAttribute('aria-selected', 'false');
+      });
 
       // Show target content
       const content = document.getElementById('nxTab-' + id);
       const btn = document.querySelector(`.nx-tab:not(.secondary)[data-nxtab="${id}"]`) ||
         document.querySelector(`[data-nxtab="${id}"]`);
       if (content) content.classList.add('active');
-      if (btn) btn.classList.add('active');
+      if (btn) {
+        btn.classList.add('active');
+        btn.setAttribute('aria-selected', 'true');  // Z19: keep DOM in sync
+      }
       NX.activeTab = id;
 
       // Update "More" dropdown active states
@@ -1008,8 +1014,12 @@
 
     let nxPaletteSelected = 0;
     let nxPaletteFiltered = [...NX_PALETTE_ITEMS];
+    let _nxPaletteLastFocus = null;  // Z19: focus restoration
 
     function nxOpenPalette() {
+      // Z19: remember where focus was so we can return to it on close
+      _nxPaletteLastFocus = document.activeElement;
+
       const backdrop = document.getElementById('nxPalette');
       const input = document.getElementById('nxPaletteInput');
       if (backdrop) backdrop.classList.add('open');
@@ -1020,7 +1030,22 @@
 
     function nxClosePalette(e) {
       if (e && e.target !== document.getElementById('nxPalette')) return;
-      document.getElementById('nxPalette').classList.remove('open');
+      const pal = document.getElementById('nxPalette');
+      if (pal) pal.classList.remove('open');
+      // Z19: restore focus to the element that was active before the palette opened
+      if (_nxPaletteLastFocus && typeof _nxPaletteLastFocus.focus === 'function') {
+        _nxPaletteLastFocus.focus();
+        _nxPaletteLastFocus = null;
+      }
+    }
+
+    function nxForcePaletteClose() {
+      const pal = document.getElementById('nxPalette');
+      if (pal) pal.classList.remove('open');
+      if (_nxPaletteLastFocus && typeof _nxPaletteLastFocus.focus === 'function') {
+        _nxPaletteLastFocus.focus();
+        _nxPaletteLastFocus = null;
+      }
     }
 
     function nxRenderPalette(q) {
@@ -1075,7 +1100,8 @@
       if (e.ctrlKey && e.shiftKey && e.key === 'I') { e.preventDefault(); if (typeof NxWorkspace !== 'undefined') NxWorkspace.toggleRight(); else nxToggleRight(); return; }
       if (e.key === 'Escape') {
         const pal = document.getElementById('nxPalette');
-        if (pal) pal.classList.remove('open');
+        // Z19: use the focus-restoring close path, not raw classList.remove
+        if (pal && pal.classList.contains('open')) { nxForcePaletteClose(); }
         nxCloseMore();
         // Only call p55ClosePanel if the drawer actually exists
         const drawer = document.getElementById('nxWorkspaceDrawer');

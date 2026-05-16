@@ -32,6 +32,7 @@
   <script src="https://checkout.razorpay.com/v1/checkout.js" async></script>
   <link rel="stylesheet" href="/static/css/nds-tokens.css">
   <link rel="stylesheet" href="/static/css/base.css">
+  <link rel="stylesheet" href="/static/css/nx-z19z20z21.css">
 
   <!-- Phase 20.6 — Monaco editor loading is now deferred/lazy to improve startup time. -->
   <!-- Phase 32 — xterm.js real PTY terminal -->
@@ -174,37 +175,29 @@
   </div>
 
   <!-- ── Cookie Notice Banner ── -->
-  <div id="nx-cookie-banner"
-    style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:99999;background:#161b22;border-top:1px solid #30363d;padding:14px 20px;align-items:center;gap:16px;flex-wrap:wrap">
-    <span style="font-size:0.82rem;color:#8b949e;flex:1;min-width:200px">
+  <div id="nx-cookie-banner" class="nx-cookie-banner">
+    <span class="nx-cookie-text">
       🍪 We use essential cookies to keep you signed in and to secure your session. By continuing to use Nexora AI, you
       accept our
-      <a href="/privacy-policy" target="_blank" style="color:#bc8cff">Privacy Policy</a>.
+      <a href="/privacy-policy" target="_blank">Privacy Policy</a>.
     </span>
-    <div style="display:flex;gap:8px;flex-shrink:0">
-      <button onclick="nxAcceptCookies()"
-        style="background:#bc8cff;color:#0d1117;border:none;border-radius:6px;padding:7px 18px;font-size:0.82rem;font-weight:700;cursor:pointer;font-family:inherit">Accept</button>
-      <button onclick="document.getElementById('nx-cookie-banner').style.display='none'"
-        style="background:transparent;color:#8b949e;border:1px solid #30363d;border-radius:6px;padding:7px 12px;font-size:0.82rem;cursor:pointer;font-family:inherit">Dismiss</button>
+    <div class="nx-cookie-actions">
+      <button onclick="nxAcceptCookies()" class="nx-cookie-accept">Accept</button>
+      <button onclick="document.getElementById('nx-cookie-banner').style.display='none'" class="nx-cookie-dismiss">Dismiss</button>
     </div>
   </div>
 
   <!-- ── Site Footer ── -->
-  <div id="nx-site-footer"
-    style="display:none;text-align:center;padding:16px 20px;border-top:1px solid #21262d;background:#0d1117;font-size:0.75rem;color:#8b949e">
+  <div id="nx-site-footer" class="nx-site-footer">
     <span>© 2026 Nexora AI</span>
-    <span style="margin:0 8px">·</span>
-    <a href="/privacy-policy" target="_blank" style="color:#8b949e;text-decoration:none"
-      onmouseover="this.style.color='#bc8cff'" onmouseout="this.style.color='#8b949e'">Privacy Policy</a>
-    <span style="margin:0 8px">·</span>
-    <a href="/terms-of-service" target="_blank" style="color:#8b949e;text-decoration:none"
-      onmouseover="this.style.color='#bc8cff'" onmouseout="this.style.color='#8b949e'">Terms of Service</a>
-    <span style="margin:0 8px">·</span>
-    <a href="/refund-policy" target="_blank" style="color:#8b949e;text-decoration:none"
-      onmouseover="this.style.color='#bc8cff'" onmouseout="this.style.color='#8b949e'">Refund Policy</a>
-    <span style="margin:0 8px">·</span>
-    <a href="mailto:support@nexora.ai" style="color:#8b949e;text-decoration:none"
-      onmouseover="this.style.color='#bc8cff'" onmouseout="this.style.color='#8b949e'">support@nexora.ai</a>
+    <span class="nx-footer-sep">·</span>
+    <a href="/privacy-policy" target="_blank" class="nx-footer-link">Privacy Policy</a>
+    <span class="nx-footer-sep">·</span>
+    <a href="/terms-of-service" target="_blank" class="nx-footer-link">Terms of Service</a>
+    <span class="nx-footer-sep">·</span>
+    <a href="/refund-policy" target="_blank" class="nx-footer-link">Refund Policy</a>
+    <span class="nx-footer-sep">·</span>
+    <a href="mailto:support@nexora.ai" class="nx-footer-link">support@nexora.ai</a>
   </div>
 
   <!-- ── Email Verification Banner ── -->
@@ -221,14 +214,10 @@
 
   <!-- ── Error Banner ── -->
   <div id="p57-error-banner">
-    <span style="color:#fca5a5; font-weight:600; font-size:12px;">⚠ Error</span>
-    <span id="p57-error-msg"
-      style="font-size:11px; color:#fca5a5; max-width:400px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"></span>
-    <button onclick="p57FixError()"
-      style="background:var(--red);color:white;border:none;padding:4px 10px;border-radius:5px;cursor:pointer;font-size:11px;font-weight:600;font-family:'Inter',sans-serif;">Fix
-      with AI</button>
-    <button onclick="document.getElementById('p57-error-banner').style.display='none'"
-      style="background:none;border:none;color:#fca5a5;cursor:pointer;font-size:14px;padding:0 2px;">✕</button>
+    <span class="nx-error-banner-label">⚠ Error</span>
+    <span id="p57-error-msg" class="nx-error-banner-msg"></span>
+    <button onclick="p57FixError()" class="nx-error-banner-fix">Fix with AI</button>
+    <button onclick="document.getElementById('p57-error-banner').style.display='none'" class="nx-error-banner-close">✕</button>
   </div>
 
   <!-- FUTURE-V2: Autonomous runtime bootstrap surface — command palette will surface live bootstrap context, ingestion state, and health probes -->
@@ -256,53 +245,53 @@
   <!-- FUTURE-V2: Topbar execution surface — runtime health indicator, bootstrap status badge, and environment selector mount in the center cluster -->
   <!-- ── New Operational Header ── -->
   <div class="nx-shell-root">
-  <header class="nx-shell-topbar" style="grid-area:topbar; justify-content:space-between; padding:0 12px; font-size:12px;">
+  <header class="nx-shell-topbar">
     <!-- LEFT: Nav Toggle & Breadcrumb -->
-    <div style="display:flex;align-items:center;gap:12px;flex:1;">
-      <button class="nx-icon-btn" onclick="nxToggleLeft()" title="Toggle Navigation" style="background:transparent;border:none;color:var(--text-muted);cursor:pointer;padding:4px;display:flex;align-items:center;">
+    <div class="nx-topbar-left">
+      <button class="nx-icon-btn" onclick="nxToggleLeft()" title="Toggle Navigation" aria-label="Toggle navigation panel">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
       </button>
 
-      <div style="display:flex;align-items:center;gap:6px;color:#8b949e;cursor:default;">
+      <div class="nx-topbar-breadcrumb">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
         </svg>
-        <span style="font-weight:500;color:#c9d1d9;">Nexora</span>
-        <span style="opacity:0.5;">/</span>
+        <span class="nx-topbar-breadcrumb-name">Nexora</span>
+        <span class="nx-topbar-breadcrumb-sep">/</span>
         <span id="nxCurProjectHeader" style="font-weight:500;">Workspace</span>
       </div>
     </div>
 
     <!-- CENTER: Execution & Model (Execution First) -->
-    <div style="display:flex;align-items:center;gap:8px;justify-content:center;flex:1;">
-      <div style="display:flex;align-items:center;background:rgba(255,255,255,0.03);border:1px solid #30363d;border-radius:4px;overflow:hidden;height:26px;">
-        <button id="runBtn" onclick="nxRunOrStop()" style="background:transparent;border:none;color:#E0E0E0;padding:0 12px;font-size:12px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:6px;height:100%;transition:background 0.1s;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='transparent'" title="Execute task" aria-label="Execute task">
-          <span class="nx-live-dot" id="nxRunDot" style="display:none;width:6px;height:6px;border-radius:50%;background:#3fb950;"></span>
+    <div class="nx-topbar-center">
+      <div class="nx-topbar-run-group">
+        <button id="runBtn" onclick="nxRunOrStop()" class="nx-topbar-run-btn" title="Execute task" aria-label="Execute task">
+          <span class="nx-run-dot" id="nxRunDot"></span>
           <span id="runBtnLabel" style="display:flex;align-items:center;gap:4px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Run</span>
         </button>
-        <div style="width:1px;background:#30363d;height:100%;"></div>
-        <button onclick="stopSession()" style="background:transparent;border:none;color:#f85149;padding:0 12px;font-size:12px;font-weight:500;cursor:pointer;height:100%;transition:background 0.1s;" onmouseover="this.style.background='rgba(248,81,73,0.1)'" onmouseout="this.style.background='transparent'" title="Stop execution" aria-label="Stop execution">■ Stop</button>
+        <div class="nx-topbar-divider"></div>
+        <button onclick="stopSession()" class="nx-topbar-stop-btn" title="Stop execution" aria-label="Stop execution">■ Stop</button>
       </div>
 
-      <button class="nx-model-btn" id="nxModelBtn" onclick="nxOpenPanel('settings')" title="Model & API config" aria-label="Model and API configuration" style="background:transparent;border:1px solid transparent;color:#8b949e;padding:0 8px;border-radius:4px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:4px;height:26px;transition:all 0.15s;" onmouseover="this.style.background='rgba(255,255,255,0.05)';this.style.color='#c9d1d9';" onmouseout="this.style.background='transparent';this.style.color='#8b949e';">
+      <button class="nx-model-btn" id="nxModelBtn" onclick="nxOpenPanel('settings')" title="Model & API config" aria-label="Model and API configuration">
         <span id="nxModelName">Loading…</span>
-        <span style="opacity:0.7;font-size:10px;">▾</span>
+        <span class="nx-model-btn-caret">▾</span>
       </button>
     </div>
 
     <!-- RIGHT: Utility Bar -->
-    <div style="display:flex;align-items:center;gap:4px;justify-content:flex-end;flex:1;">
+    <div class="nx-topbar-right">
       <button class="nx-palette-trigger" title="Command palette (Ctrl+K)" aria-label="Open command palette (Ctrl+K)" onclick="nxOpenPalette()">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
         <span>Search</span>
         <kbd class="nx-kbd">⌘K</kbd>
       </button>
 
-      <button class="nx-icon-btn" id="nxInspectorBtn" title="Inspector (⌘\)" aria-label="Toggle inspector panel" onclick="nxToggleInspector()" style="background:transparent;border:none;color:#8b949e;cursor:pointer;padding:4px;border-radius:4px;display:flex;align-items:center;justify-content:center;height:24px;width:24px;transition:all 0.15s;" onmouseover="this.style.color='#c9d1d9';this.style.background='rgba(255,255,255,0.05)';" onmouseout="this.style.color='#8b949e';this.style.background='transparent';">
+      <button class="nx-icon-btn" id="nxInspectorBtn" title="Inspector (⌘\)" aria-label="Toggle inspector panel" onclick="nxToggleInspector()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="15" y1="3" x2="15" y2="21"></line></svg>
       </button>
 
-      <button id="settingsBtn" class="nx-icon-btn" title="Settings" aria-label="Open settings" onclick="openSettings()" style="background:transparent;border:none;color:#8b949e;cursor:pointer;padding:4px;border-radius:4px;display:flex;align-items:center;justify-content:center;height:24px;width:24px;transition:all 0.15s;" onmouseover="this.style.color='#c9d1d9';this.style.background='rgba(255,255,255,0.05)';" onmouseout="this.style.color='#8b949e';this.style.background='transparent';">
+      <button id="settingsBtn" class="nx-icon-btn" title="Settings" aria-label="Open settings" onclick="openSettings()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       </button>
     </div>
@@ -454,7 +443,7 @@
   <!-- FUTURE-V3: Visual execution canvas tab mounts in this rail when FEATURE_CANVAS_V3=true -->
   <!-- ── Body ── -->
   
-  <nav class="nx-shell-navrail" style="grid-area:navrail;">
+  <nav class="nx-shell-navrail">
     <button class="nx-nav-icon" onclick="nxTogglePanel('files')" title="Files" aria-label="Files panel">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
     </button>
@@ -490,7 +479,7 @@
   </div>
 
   <!-- FUTURE-V3: Visual execution canvas mount — react-flow/Xyflow canvas replaces or supplements this surface when FEATURE_CANVAS_V3=true -->
-  <main class="nx-shell-center" style="grid-area:center; display:flex; height:100%; width:100%; overflow:hidden;">
+  <main class="nx-shell-center">
     <div class="nx-main" id="nxMain" style="flex:1; width:100%;">
 
 
@@ -713,7 +702,7 @@
         </div>
 
         <!-- Idle hero — shown when no task is running -->
-        <div class="nx-idle-hero" id="nxIdleHero" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:#8b949e;user-select:none;">
+        <div class="nx-idle-hero" id="nxIdleHero">
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:16px;opacity:0.3;"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
           <div style="font-size:13px;font-weight:500;color:#c9d1d9;margin-bottom:6px;letter-spacing:0.02em;">Ready for execution</div>
           <div style="font-size:12px;color:#6e7681;display:flex;align-items:center;gap:12px;margin-bottom:24px;">
@@ -721,9 +710,9 @@
             <span style="opacity:0.3;">|</span>
             <span style="display:flex;align-items:center;gap:4px;"><kbd style="background:transparent;border:1px solid #30363d;border-radius:3px;padding:2px 4px;font-size:10px;font-family:inherit;">⌘↵</kbd> Execute</span>
           </div>
-          <div class="nx-hero-chips" style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;max-width:400px;opacity:0.7;">
-            <button class="nx-hero-chip" onclick="nxSetTask('Run full test suite')" style="background:transparent;border:1px dashed #30363d;color:#8b949e;padding:4px 10px;border-radius:4px;font-size:11px;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='#8b949e';this.style.color='#c9d1d9'" onmouseout="this.style.borderColor='#30363d';this.style.color='#8b949e'">Run Tests</button>
-            <button class="nx-hero-chip" onclick="nxSetTask('Audit workspace for errors')" style="background:transparent;border:1px dashed #30363d;color:#8b949e;padding:4px 10px;border-radius:4px;font-size:11px;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='#8b949e';this.style.color='#c9d1d9'" onmouseout="this.style.borderColor='#30363d';this.style.color='#8b949e'">Audit Workspace</button>
+          <div class="nx-hero-chips">
+            <button class="nx-hero-chip" onclick="nxSetTask('Run full test suite')">Run Tests</button>
+            <button class="nx-hero-chip" onclick="nxSetTask('Audit workspace for errors')">Audit Workspace</button>
           </div>
         </div>
 
@@ -1585,23 +1574,21 @@
 
   <!-- ── Settings/Sessions Drawer ── -->
   <div class="p57-overlay" id="p57-overlay" onclick="p55ClosePanel()"></div>
-  <div class="p57-drawer" id="p57Drawer"
-    style="top:0;right:-420px;width:400px;height:100vh;background:var(--panel);border-left:1px solid var(--panel-border);z-index:1000;transition:right 240ms cubic-bezier(0.4,0,0.2,1);display:flex;flex-direction:column;position:fixed;">
-    <div class="nx-panel-hdr" style="flex-shrink:0">
+  <div class="p57-drawer" id="p57Drawer">
+    <div class="nx-panel-hdr">
       <span class="nx-panel-title" id="nxDrawerTitle">Settings</span>
       <button class="nx-tiny-btn" onclick="p55ClosePanel()">✕</button>
     </div>
-    <div style="flex:1;overflow-y:auto;padding:12px" id="p57-drawer-slot"></div>
+    <div class="p57-drawer-body" id="p57-drawer-slot"></div>
   </div>
 
   <!-- ── Detail Modal ── -->
-  <div id="p57-detail-modal"
-    style="position:fixed;inset:40px;background:var(--panel);z-index:5000;border-radius:12px;display:none;flex-direction:column;border:1px solid var(--panel-border-hover);box-shadow:0 24px 64px rgba(0,0,0,0.5)">
+  <div id="p57-detail-modal" class="p57-detail-modal">
     <div class="nx-panel-hdr">
       <span id="p57-detail-title" class="nx-panel-title">Detail</span>
       <button class="nx-tiny-btn" onclick="p57CloseDetail()">✕</button>
     </div>
-    <div id="p57-detail-body" style="flex:1;overflow:hidden;"></div>
+    <div id="p57-detail-body" class="p57-detail-body"></div>
   </div>
 
   <!-- ── NX Runtime Bridge ── -->
@@ -3579,6 +3566,7 @@
   <script src="/static/js/nx-xterm.js" defer></script>
   <script src="/static/js/nx-workspace-runtime.js" defer></script>
   <script src="/static/js/runtime.js" defer></script>
+  <script src="/static/js/nx-runtime-hygiene.js" defer></script>
   <script src="/static/js/activity.js" defer></script>
   <script src="/static/js/feedback.js" defer></script>
   <script src="/static/js/dashboard.js" defer></script>

@@ -1,0 +1,439 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   NX Phase Z19 / Z20 / Z21 — CSS Discipline Layer
+   Replaces all inline style= attributes and onmouseover/onmouseout JS hooks
+   identified during the Z19–Z21 forensic audit.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Z20: Topbar structural overrides ──────────────────────────────────────
+   grid-area:topbar is already set in nx-shell.css.
+   The remaining inline values (justify-content / padding / font-size) land
+   here so the <header> element carries zero inline style= attrs. */
+.nx-shell-topbar {
+  justify-content: space-between;
+  padding: 0 12px;
+  font-size: 12px;
+}
+
+/* Navrail and center: grid-area already in nx-shell.css; no overrides needed */
+
+/* ── Z20: Topbar flex clusters ─────────────────────────────────────────── */
+.nx-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+.nx-topbar-center {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+  flex: 1;
+}
+.nx-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  justify-content: flex-end;
+  flex: 1;
+}
+
+/* ── Z20: Topbar breadcrumb cluster ────────────────────────────────────── */
+.nx-topbar-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-muted, #8b949e);
+  cursor: default;
+}
+.nx-topbar-breadcrumb-name {
+  font-weight: 500;
+  color: var(--text, #c9d1d9);
+}
+.nx-topbar-breadcrumb-sep {
+  opacity: 0.5;
+}
+
+/* ── Z20: Topbar run / stop button group ───────────────────────────────── */
+.nx-topbar-run-group {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--panel-border, #30363d);
+  border-radius: 4px;
+  overflow: hidden;
+  height: 26px;
+}
+
+.nx-topbar-run-btn {
+  background: transparent;
+  border: none;
+  color: #e0e0e0;
+  padding: 0 12px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 100%;
+  transition: background 0.1s;
+  font-family: inherit;
+}
+.nx-topbar-run-btn:hover,
+.nx-topbar-run-btn:focus-visible {
+  background: rgba(255, 255, 255, 0.05);
+  outline: none;
+}
+
+.nx-topbar-divider {
+  width: 1px;
+  background: var(--panel-border, #30363d);
+  height: 100%;
+  flex-shrink: 0;
+}
+
+.nx-topbar-stop-btn {
+  background: transparent;
+  border: none;
+  color: #f85149;
+  padding: 0 12px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  height: 100%;
+  transition: background 0.1s;
+  font-family: inherit;
+}
+.nx-topbar-stop-btn:hover,
+.nx-topbar-stop-btn:focus-visible {
+  background: rgba(248, 81, 73, 0.1);
+  outline: none;
+}
+
+/* ── Z20: Run-dot indicator (inline display:none → class-driven) ────────── */
+.nx-run-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green, #3fb950);
+  display: none;
+  flex-shrink: 0;
+}
+.nx-run-dot.visible {
+  display: block;
+}
+
+/* ── Z20: Model button — remove inline override, add missing hover ────── */
+.nx-model-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-muted, #8b949e);
+  padding: 0 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 26px;
+  transition: background 0.15s, color 0.15s;
+  font-family: inherit;
+}
+.nx-model-btn:hover,
+.nx-model-btn:focus-visible {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text, #c9d1d9);
+  outline: none;
+}
+.nx-model-btn-caret {
+  opacity: 0.7;
+  font-size: 10px;
+}
+
+/* ── Z20: Cookie banner ─────────────────────────────────────────────────── */
+.nx-cookie-banner {
+  display: none;         /* JS sets display:flex when shown */
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: var(--nx-z-overlay, 99999);
+  background: #161b22;
+  border-top: 1px solid var(--panel-border, #30363d);
+  padding: 14px 20px;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.nx-cookie-text {
+  font-size: 0.82rem;
+  color: var(--text-muted, #8b949e);
+  flex: 1;
+  min-width: 200px;
+}
+.nx-cookie-text a {
+  color: var(--purple, #bc8cff);
+  text-decoration: none;
+}
+.nx-cookie-text a:hover {
+  text-decoration: underline;
+}
+.nx-cookie-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.nx-cookie-accept {
+  background: var(--purple, #bc8cff);
+  color: #0d1117;
+  border: none;
+  border-radius: 6px;
+  padding: 7px 18px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.15s;
+}
+.nx-cookie-accept:hover {
+  opacity: 0.88;
+}
+.nx-cookie-dismiss {
+  background: transparent;
+  color: var(--text-muted, #8b949e);
+  border: 1px solid var(--panel-border, #30363d);
+  border-radius: 6px;
+  padding: 7px 12px;
+  font-size: 0.82rem;
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color 0.15s, color 0.15s;
+}
+.nx-cookie-dismiss:hover {
+  border-color: var(--text-muted, #8b949e);
+  color: var(--text, #c9d1d9);
+}
+
+/* ── Z20: Site footer ───────────────────────────────────────────────────── */
+.nx-site-footer {
+  display: none;        /* JS sets display:block when shown */
+  text-align: center;
+  padding: 16px 20px;
+  border-top: 1px solid #21262d;
+  background: #0d1117;
+  font-size: 0.75rem;
+  color: var(--text-muted, #8b949e);
+}
+.nx-footer-sep {
+  margin: 0 8px;
+}
+.nx-footer-link {
+  color: var(--text-muted, #8b949e);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.nx-footer-link:hover {
+  color: var(--purple, #bc8cff);
+}
+
+/* ── Z20: Error banner ──────────────────────────────────────────────────── */
+.nx-error-banner-label {
+  color: #fca5a5;
+  font-weight: 600;
+  font-size: 12px;
+}
+.nx-error-banner-msg {
+  font-size: 11px;
+  color: #fca5a5;
+  max-width: 400px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.nx-error-banner-fix {
+  background: var(--red, #f85149);
+  color: white;
+  border: none;
+  padding: 4px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: inherit;
+  transition: opacity 0.15s;
+}
+.nx-error-banner-fix:hover {
+  opacity: 0.85;
+}
+.nx-error-banner-close {
+  background: none;
+  border: none;
+  color: #fca5a5;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0 2px;
+  line-height: 1;
+}
+.nx-error-banner-close:hover {
+  opacity: 0.7;
+}
+
+/* ── Z20: Idle hero — move inline style= to CSS class ──────────────────── */
+.nx-idle-hero {
+  /* Already partially defined in nx-shell.css; extend here with
+     the values previously inlined on the element */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--text-muted, #8b949e);
+  user-select: none;
+}
+
+/* ── Z20: Hero chips row ────────────────────────────────────────────────── */
+.nx-hero-chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 400px;
+  opacity: 0.7;
+}
+/* .nx-hero-chip and .nx-hero-chip:hover already live in nx-shell.css;
+   the inline style= and onmouseover/onmouseout overrides are removed from HTML */
+
+/* ── Z20: Drawer & detail modal ─────────────────────────────────────────── */
+.p57-drawer {
+  position: fixed;
+  top: 0;
+  right: -420px;
+  width: 400px;
+  height: 100vh;
+  background: var(--panel, #161b22);
+  border-left: 1px solid var(--panel-border, #30363d);
+  z-index: var(--nx-z-overlay, 1000);
+  transition: right 240ms cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+}
+.p57-drawer-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+}
+
+.p57-detail-modal {
+  position: fixed;
+  inset: 40px;
+  background: var(--panel, #161b22);
+  z-index: 5000;
+  border-radius: 12px;
+  display: none;
+  flex-direction: column;
+  border: 1px solid var(--panel-border-hover, #484f58);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+}
+.p57-detail-body {
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ── Z20: Inspector collapsible labels ──────────────────────────────────── */
+.nx-insp-collapsible-label {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.nx-insp-collapse-icon {
+  font-size: 9px;
+  color: var(--text-dim, #484f58);
+}
+
+/* ── Z20: Inspector output slot ─────────────────────────────────────────── */
+.nx-output-slot-inner {
+  font-size: 11px;
+  color: var(--text-muted, #8b949e);
+  background: var(--surface, #21262d);
+  border: 1px solid var(--panel-border, #30363d);
+  border-radius: 6px;
+  padding: 8px;
+  min-height: 40px;
+  word-break: break-all;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ── Z20: Misc inspector inline-style removals ──────────────────────────── */
+.nx-ctx-bar-wrap {
+  /* display controlled by JS; baseline hidden */
+  display: none;
+}
+.nx-bottom-hint-text {
+  font-size: 10px;
+  color: var(--text-dim, #484f58);
+}
+.nx-download-btn-wrap {
+  width: 100%;
+  justify-content: center;
+  padding: 7px;
+}
+
+/* ── Z19: Execution state — data attribute driven, no inline JS ─────────── */
+[data-exec-state="running"] .nx-run-dot        { display: block; }
+[data-exec-state="running"] .nx-topbar-run-btn { color: var(--green, #3fb950); }
+[data-exec-state="reconnecting"] .nx-topbar-run-btn { color: var(--yellow, #d29922); }
+[data-exec-state="streaming"] .nx-run-dot      { display: block; background: var(--blue, #79c0ff); }
+[data-exec-state="failed"] .nx-topbar-run-btn  { color: var(--red, #f85149); }
+
+/* ── Z19: aria-selected driven tab indicator ────────────────────────────── */
+.nx-tab[aria-selected="true"] {
+  /* already handled by .nx-tab.active in nx-shell.css;
+     this rule ensures CSS responds to the attribute as well */
+  color: var(--text, #c9d1d9);
+  border-bottom-color: var(--purple, #bc8cff);
+}
+
+/* ── Z21: Perf HUD — debug overlay (hidden unless nx-debug-perf is on body) */
+.nx-perf-hud {
+  display: none;
+  position: fixed;
+  bottom: 44px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.85);
+  border: 1px solid var(--panel-border, #30363d);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text-muted, #8b949e);
+  z-index: 9999;
+  pointer-events: none;
+  line-height: 1.7;
+  min-width: 160px;
+}
+body.nx-debug-perf .nx-perf-hud { display: block; }
+
+.nx-perf-hud-row { display: flex; justify-content: space-between; gap: 12px; }
+.nx-perf-hud-val { color: var(--text, #c9d1d9); font-weight: 600; }
+.nx-perf-hud-warn { color: var(--yellow, #d29922); }
+.nx-perf-hud-crit { color: var(--red, #f85149); }
+
+/* ── Z21: Log area bounded growth visual cue ────────────────────────────── */
+.nx-log-trimmed-notice {
+  font-size: 10px;
+  color: var(--text-dim, #484f58);
+  text-align: center;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--panel-border, #30363d);
+  margin-bottom: 4px;
+  font-style: italic;
+}
+
+/* ── Z21: SSE reconnect state indicator ─────────────────────────────────── */
+.nx-sse-reconnecting #nxSbStatus::after {
+  content: ' (reconnecting…)';
+  color: var(--yellow, #d29922);
+  font-size: 10px;
+}

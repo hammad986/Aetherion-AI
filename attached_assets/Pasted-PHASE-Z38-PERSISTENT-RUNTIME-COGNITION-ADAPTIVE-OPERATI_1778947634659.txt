@@ -1,0 +1,284 @@
+PHASE Z38 — PERSISTENT RUNTIME COGNITION + ADAPTIVE OPERATIONAL MEMORY
+
+CURRENT STATUS:
+Aetherion AI now supports:
+
+* causal dependency graphs
+* execution lineage
+* replay reconstruction
+* predictive runtime risk
+* pressure propagation
+* execution memory tracking
+* historical recovery intelligence
+* runtime continuity
+* forensic reasoning
+* operational replay depth
+
+However:
+all operational cognition is still:
+primarily transient.
+
+Execution intelligence must now evolve into:
+persistent runtime cognition.
+
+STRICT RULES:
+🔒 NO NEW AGENTS
+🔒 NO NEW FRAMEWORKS
+🔒 NO NEW AI HYPE FEATURES
+🔒 NO VECTOR DATABASES
+🔒 NO SAAS TELEMETRY SYSTEMS
+🔒 NO GAMIFICATION
+🔒 NO CHATBOT UX
+🔒 SQLITE + EXISTING EVENT SYSTEM ONLY
+🔒 OPERATIONAL STABILITY > FEATURE COUNT
+🔒 MEMORY DISCIPLINE > EXPANSION
+🔒 ALL NEW SYSTEMS MUST BE PERSISTENT, MINIMAL, AND OPERATIONAL
+
+====================================================
+PHASE Z38A — PERSISTENT EXECUTION MEMORY
+========================================
+
+GOAL:
+Execution cognition must survive:
+
+* page reloads
+* browser restarts
+* process restarts
+* replay reloads
+* long operational sessions
+
+REQUIREMENTS:
+
+1. Backend Persistence Layer
+   Create:
+   POST /api/z38/memory
+   GET /api/z38/memory/<node_id>
+
+SQLite-backed persistence only.
+
+2. Persist:
+
+* node lineage
+* retry history
+* recovery outcomes
+* escalation history
+* instability frequency
+* recovery confidence
+* execution cost
+* replay ancestry
+* pressure history
+
+3. Persistence Constraints
+   Implement:
+
+* bounded retention
+* WAL-safe writes
+* replay-safe hydration
+* corruption guards
+* schema versioning
+
+====================================================
+PHASE Z38B — ADAPTIVE RUNTIME LEARNING
+======================================
+
+GOAL:
+Runtime should improve operationally
+through historical execution behavior.
+
+REQUIREMENTS:
+
+1. Recovery Learning
+   System tracks:
+
+* best recovery strategy
+* failed recovery loops
+* historically stable paths
+* unstable execution branches
+
+2. Adaptive Risk Calibration
+   Risk engine adjusts:
+   based on historical outcomes.
+
+3. Operational Pattern Detection
+   Detect:
+
+* chronic instability regions
+* repeated escalation chains
+* retry-heavy workflows
+* persistent bottlenecks
+
+====================================================
+PHASE Z38C — EXECUTION EVOLUTION TRACKING
+=========================================
+
+GOAL:
+Operators should understand:
+how runtime behavior evolves over time.
+
+REQUIREMENTS:
+
+1. Execution Evolution Graph
+   Display:
+
+* improving branches
+* degrading branches
+* stabilization trends
+* escalation reduction
+
+2. Runtime Health Trend
+   Track:
+
+* pressure averages
+* retry reduction
+* recovery success improvement
+* risk evolution
+
+3. Historical Runtime Insights
+   Inspector surfaces:
+
+* “this workflow stabilizes after retry”
+* “this branch historically escalates”
+* “this recovery strategy degrades confidence”
+
+====================================================
+PHASE Z38D — PERSISTENT FORENSIC REPLAY
+=======================================
+
+GOAL:
+Replay should reconstruct:
+historical operational cognition.
+
+REQUIREMENTS:
+
+1. Replay Memory Hydration
+   Replay restores:
+
+* historical pressure
+* recovery history
+* escalation ancestry
+* runtime forecasts
+* dependency instability
+
+2. Persistent Replay Identity
+   Replay lineage survives:
+   across sessions and reloads.
+
+3. Long-Session Replay Compression
+   Implement:
+   bounded replay compression
+   without losing causal continuity.
+
+====================================================
+PHASE Z38E — OPERATIONAL MEMORY GOVERNANCE
+==========================================
+
+GOAL:
+Prevent cognition systems from:
+becoming unstable or bloated.
+
+REQUIREMENTS:
+
+1. Memory Bounds
+   Implement:
+
+* max node retention
+* replay pruning
+* lineage cleanup
+* stale cognition decay
+
+2. SQLite Discipline
+   Ensure:
+
+* WAL integrity
+* bounded DB growth
+* index optimization
+* replay query stability
+
+3. Runtime Stability Guards
+   Detect:
+
+* lineage corruption
+* replay drift
+* recursive dependency loops
+* pressure amplification explosions
+
+====================================================
+PHASE Z38F — OPERATIONAL UX EVOLUTION
+=====================================
+
+GOAL:
+Workspace should feel:
+historically aware,
+persistent,
+and operationally mature.
+
+REQUIREMENTS:
+
+1. Historical Runtime Presence
+   Workspace subtly reflects:
+   historical stability
+   without visual clutter.
+
+2. Persistent Operational Awareness
+   Operators can sense:
+
+* stable regions
+* risky branches
+* historically expensive paths
+* recovery-heavy workflows
+
+3. Calm Persistence
+   Maintain:
+   minimalism,
+   density,
+   and execution-first discipline.
+
+====================================================
+PHASE Z38G — CERTIFICATION + PERSISTENCE VALIDATION
+===================================================
+
+Generate:
+
+* docs/Z38_PERSISTENT_RUNTIME_MEMORY.md
+* docs/Z38_ADAPTIVE_LEARNING_REPORT.md
+* docs/Z38_RUNTIME_EVOLUTION_ANALYSIS.md
+* docs/Z38_FORENSIC_REPLAY_CERTIFICATION.md
+* docs/Z38_MEMORY_GOVERNANCE_AUDIT.md
+* docs/Z38_OPERATIONAL_COGNITION_VERDICT.md
+
+Each report MUST include:
+
+1. Remaining persistence weaknesses
+2. Remaining replay instability risks
+3. Remaining cognition blind spots
+4. Remaining memory scaling risks
+5. Remaining runtime evolution limitations
+6. Honest operational persistence verdict
+
+====================================================
+FINAL VALIDATION
+================
+
+Before completion:
+
+* verify WAL-safe persistence
+* verify replay hydration correctness
+* verify no DB growth explosions
+* verify lineage integrity
+* verify no replay corruption
+* verify adaptive risk correctness
+* verify recovery learning stability
+* verify bounded memory retention
+* verify no runtime slowdown
+* verify operational calmness maintained
+
+IMPORTANT:
+This phase is NOT:
+building AGI.
+
+This phase IS:
+making runtime cognition:
+persistent,
+adaptive,
+historically aware,
+and operationally reliable.

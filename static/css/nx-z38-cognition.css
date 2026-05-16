@@ -1,0 +1,199 @@
+/* ═══════════════════════════════════════════════════════════════════
+   PHASE Z38 — Persistent Runtime Cognition + Adaptive Operational Memory
+   Historical presence · Evolution panel · Recovery patterns
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── Tokens ─────────────────────────────────────────────────────── */
+:root {
+  --z38-risky:     #f87171;
+  --z38-stable:    #3fb950;
+  --z38-expensive: #e3b341;
+  --z38-recovery:  #58a6ff;
+  --z38-dim:       #6e7681;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Z38F — Historical Presence on DAG Nodes
+   Subtle persistent classes applied after hydration
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Historically risky — faint red halo */
+[data-node-id].z38-hist-risky {
+  box-shadow: 0 0 0 1px rgba(248,113,113,0.2);
+  transition: box-shadow 300ms ease;
+}
+
+/* Historically stable — faint green halo */
+[data-node-id].z38-hist-stable {
+  box-shadow: 0 0 0 1px rgba(63,185,80,0.15);
+  transition: box-shadow 300ms ease;
+}
+
+/* Historically expensive — faint amber halo */
+[data-node-id].z38-hist-expensive {
+  box-shadow: 0 0 0 1px rgba(227,179,65,0.2);
+  transition: box-shadow 300ms ease;
+}
+
+/* Recovery-heavy — faint blue halo */
+[data-node-id].z38-hist-recovery-heavy {
+  box-shadow: 0 0 0 1px rgba(88,166,255,0.18);
+  transition: box-shadow 300ms ease;
+}
+
+/* Historical insight tooltip on hover */
+[data-node-id][data-z38-insight]:not([data-z38-insight=""]):hover::after {
+  content: attr(data-z38-insight);
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--surface-overlay, #161b22);
+  border: 1px solid var(--border, #21262d);
+  color: var(--text-dim, #6e7681);
+  font-size: 9px;
+  padding: 4px 7px;
+  border-radius: 4px;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 999;
+  max-width: 260px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+[data-node-id] {
+  position: relative; /* needed for ::after tooltip */
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Z38C — Evolution Panel (appended to inspector)
+   ═══════════════════════════════════════════════════════════════════ */
+.z38-evolution-panel {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border, #21262d);
+}
+
+.z38-evo-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.z38-evo-title {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim, #6e7681);
+}
+
+.z38-evo-status {
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--text-dim, #6e7681);
+  transition: color 200ms ease;
+}
+
+.z38-trend-rising  { color: var(--z38-risky);    }
+.z38-trend-falling { color: var(--z38-stable);   }
+.z38-trend-stable  { color: var(--z38-dim);      }
+
+/* Sparkline */
+.z38-evo-trend {
+  margin-bottom: 6px;
+}
+
+.z38-sparkline {
+  display: flex;
+  gap: 2px;
+  align-items: flex-end;
+  margin-bottom: 3px;
+  font-family: monospace;
+}
+
+.z38-spark-bar {
+  font-size: 7px;
+  letter-spacing: -0.5px;
+  line-height: 1;
+  opacity: 0.7;
+}
+
+.z38-risk-color-LOW      { color: var(--z38-dim);       }
+.z38-risk-color-ELEVATED { color: var(--z38-expensive);  }
+.z38-risk-color-HIGH     { color: #f0883e; }
+.z38-risk-color-CRITICAL { color: var(--z38-risky);      }
+
+.z38-evo-summary {
+  font-size: 8.5px;
+  color: var(--text-dim, #6e7681);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.z38-evo-empty {
+  font-size: 9px;
+  color: var(--text-dim, #6e7681);
+  font-style: italic;
+}
+
+/* Pattern section */
+.z38-evo-patterns {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.z38-pattern-section {
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--border, #21262d);
+}
+
+.z38-pattern-section:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.z38-pattern-title {
+  font-size: 8.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim, #6e7681);
+  margin-bottom: 3px;
+}
+
+.z38-pattern-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 9px;
+  padding: 1px 0;
+}
+
+.z38-pattern-node {
+  color: var(--text, #e6edf3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 60%;
+}
+
+.z38-pattern-val {
+  font-weight: 600;
+  color: var(--text-dim, #6e7681);
+  flex-shrink: 0;
+}
+
+.z38-good { color: var(--z38-stable);   }
+.z38-warn { color: var(--z38-expensive); }
+.z38-bad  { color: var(--z38-risky);    }
+
+/* ── Scrollbar polish ───────────────────────────────────────────── */
+.z38-evolution-panel::-webkit-scrollbar { width: 3px; }
+.z38-evolution-panel::-webkit-scrollbar-track { background: transparent; }
+.z38-evolution-panel::-webkit-scrollbar-thumb { background: var(--border, #21262d); border-radius: 2px; }

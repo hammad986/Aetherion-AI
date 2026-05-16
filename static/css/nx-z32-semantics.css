@@ -1,0 +1,306 @@
+/* ═══════════════════════════════════════════════════════════════════
+   PHASE Z32 — Semantic Execution Intelligence + Adaptive Runtime Stability
+   Confidence overlay, pressure bar, compression events, replanning markers
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── Z32 Semantic Pressure Bar ───────────────────────────────────── */
+.z32-pressure-bar {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  background: var(--surface, #0d1117);
+  border-bottom: 1px solid var(--border, #21262d);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.z32-pressure-item {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 9px;
+  color: var(--text-dim, #6e7681);
+}
+
+.z32-pressure-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-dim, #6e7681);
+  flex-shrink: 0;
+}
+
+.z32-pressure-gauge {
+  width: 40px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--border, #21262d);
+  overflow: hidden;
+}
+
+.z32-pressure-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.5s ease;
+  background: #22c55e;
+}
+
+.z32-pressure-fill.elevated { background: #fbbf24; }
+.z32-pressure-fill.high     { background: #f97316; }
+.z32-pressure-fill.critical { background: #ef4444; }
+
+/* ── Pressure level badge ────────────────────────────────────────── */
+.z32-pressure-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 1px 6px;
+  border-radius: 3px;
+}
+
+.z32-pressure-badge.NOMINAL   { background: rgba(34,197,94,0.1);  color: #22c55e; border: 1px solid rgba(34,197,94,0.25); }
+.z32-pressure-badge.ELEVATED  { background: rgba(251,191,36,0.1); color: #fbbf24; border: 1px solid rgba(251,191,36,0.3); }
+.z32-pressure-badge.HIGH      { background: rgba(249,115,22,0.1); color: #f97316; border: 1px solid rgba(249,115,22,0.28); }
+.z32-pressure-badge.CRITICAL  { background: rgba(239,68,68,0.1);  color: #ef4444; border: 1px solid rgba(239,68,68,0.28); }
+
+/* ── Semantic Confidence Overlay on DAG ─────────────────────────── */
+.z32-confidence-overlay {
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  pointer-events: none;
+  z-index: 4;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.z32-confidence-overlay.visible {
+  opacity: 1;
+}
+
+.z32-conf-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 2px 8px;
+  border-radius: 10px;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.z32-conf-badge.HIGH   { background: rgba(34,197,94,0.15);  color: #22c55e; border: 1px solid rgba(34,197,94,0.3); }
+.z32-conf-badge.MEDIUM { background: rgba(251,191,36,0.15); color: #fbbf24; border: 1px solid rgba(251,191,36,0.35); }
+.z32-conf-badge.LOW    { background: rgba(239,68,68,0.15);  color: #ef4444; border: 1px solid rgba(239,68,68,0.3); animation: z32-conf-pulse 1.5s ease-in-out infinite; }
+
+@keyframes z32-conf-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
+}
+
+.z32-conf-drift {
+  font-size: 8.5px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.z32-conf-drift.up   { color: #22c55e; }
+.z32-conf-drift.down { color: #ef4444; }
+.z32-conf-drift.flat { color: #6b7280; }
+
+/* ── Predictive warning banner ───────────────────────────────────── */
+.z32-prediction-banner {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  background: rgba(251,191,36,0.07);
+  border-bottom: 1px solid rgba(251,191,36,0.2);
+  font-size: 9px;
+  color: #fbbf24;
+  flex-shrink: 0;
+}
+
+.z32-prediction-banner.visible {
+  display: flex;
+}
+
+.z32-prediction-icon { font-size: 10px; flex-shrink: 0; }
+.z32-prediction-msg  { flex: 1; }
+
+/* ── Compression event indicator ─────────────────────────────────── */
+.z32-compression-event {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  font-size: 9px;
+  background: rgba(139,92,246,0.07);
+  border-left: 2px solid #8b5cf6;
+  color: #a78bfa;
+  animation: z32-compress-flash 0.8s ease-out forwards;
+}
+
+@keyframes z32-compress-flash {
+  0%   { opacity: 1; }
+  80%  { opacity: 0.7; }
+  100% { opacity: 0; }
+}
+
+/* ── Replanning event badge on DAG nodes ─────────────────────────── */
+.z32-replan-badge {
+  font-size: 8px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 2px;
+  background: rgba(249,115,22,0.12);
+  border: 1px solid rgba(249,115,22,0.3);
+  color: #f97316;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ── Skill memory panel ──────────────────────────────────────────── */
+.z32-skills-panel {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 0;
+  overflow: hidden;
+  background: var(--surface, #0d1117);
+  border-top: 1px solid var(--border, #21262d);
+  z-index: 8;
+  transition: height 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.z32-skills-panel.open {
+  height: 140px;
+}
+
+.z32-skills-hdr {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 10px;
+  height: 28px;
+  border-bottom: 1px solid var(--border, #21262d);
+  flex-shrink: 0;
+}
+
+.z32-skills-title {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim, #6e7681);
+  flex: 1;
+}
+
+.z32-skills-list {
+  flex: 1;
+  overflow-x: auto;
+  overflow-y: hidden;
+  display: flex;
+  gap: 6px;
+  padding: 6px 10px;
+  align-items: flex-start;
+}
+
+.z32-skill-card {
+  flex-shrink: 0;
+  width: 140px;
+  background: var(--surface, #0d1117);
+  border: 1px solid var(--border, #21262d);
+  border-radius: 4px;
+  padding: 5px 7px;
+  cursor: pointer;
+  transition: border-color 0.12s, background 0.12s;
+}
+
+.z32-skill-card:hover {
+  border-color: rgba(56,189,248,0.35);
+  background: rgba(56,189,248,0.04);
+}
+
+.z32-skill-name {
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--text, #e6edf3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 126px;
+}
+
+.z32-skill-meta {
+  display: flex;
+  gap: 4px;
+  margin-top: 3px;
+  font-size: 8px;
+  color: var(--text-dim, #6e7681);
+  flex-wrap: wrap;
+}
+
+.z32-skill-meta-val {
+  color: var(--text, #e6edf3);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ── Confidence history sparkline ─────────────────────────────────── */
+.z32-conf-sparkline {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 1px;
+  height: 14px;
+}
+
+.z32-spark-bar {
+  width: 3px;
+  border-radius: 1px;
+  background: #22c55e;
+  transition: height 0.3s;
+}
+
+.z32-spark-bar.med  { background: #fbbf24; }
+.z32-spark-bar.low  { background: #ef4444; }
+
+/* ── Escalation flash on DAG surface ─────────────────────────────── */
+@keyframes z32-escalation-flash {
+  0%, 100% { box-shadow: none; }
+  50%       { box-shadow: 0 0 0 2px rgba(239,68,68,0.4) inset; }
+}
+
+.z32-escalation-active #z30DagSurface {
+  animation: z32-escalation-flash 1.2s ease-in-out 2;
+}
+
+/* ── Context layer labels ────────────────────────────────────────── */
+.z32-context-layer {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 8.5px;
+  font-weight: 600;
+  padding: 1px 5px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.z32-context-layer.hot  { background: rgba(239,68,68,0.1); color: #f87171; }
+.z32-context-layer.warm { background: rgba(251,191,36,0.1); color: #fbbf24; }
+.z32-context-layer.cold { background: rgba(56,189,248,0.1); color: #38bdf8; }

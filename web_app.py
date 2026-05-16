@@ -11583,6 +11583,14 @@ try:
 except Exception as _z31_err:
     print(f"⚠ forensics_z31_bp skipped: {_z31_err}")
 
+# --- PHASE Z32: SEMANTIC EXECUTION INTELLIGENCE + ADAPTIVE RUNTIME STABILITY ---
+try:
+    from routes.semantics_z32 import semantics_z32_bp
+    app.register_blueprint(semantics_z32_bp)
+    print("✅ semantics_z32_bp registered (/api/z32/*)")
+except Exception as _z32_err:
+    print(f"⚠ semantics_z32_bp skipped: {_z32_err}")
+
 # --- PHASE Z6: TELEMETRY BLUEPRINT ---
 # telemetry_routes.py has no conflicting URLs and is safe to register.
 # All routes are behind lazy imports so missing infra sub-packages never

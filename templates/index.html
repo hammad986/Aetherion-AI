@@ -872,6 +872,21 @@
             </button>
           </div>
 
+          <!-- Z32E: Semantic pressure bar -->
+          <div class="z32-pressure-bar" id="z32PressureBar" title="Semantic runtime pressure">
+            <span class="z32-pressure-badge NOMINAL">NOMINAL</span>
+            <span class="z32-pressure-item" style="color:var(--muted,#6e7681);font-size:9px">Awaiting session</span>
+          </div>
+
+          <!-- Z32E: Predictive warning banner -->
+          <div class="z32-prediction-banner" id="z32PredictionBanner" role="alert">
+            <span class="z32-prediction-icon">⚠</span>
+            <span class="z32-prediction-msg"></span>
+            <div style="flex:1"></div>
+            <button onclick="_z32.dismissPrediction()"
+              style="background:none;border:none;color:inherit;cursor:pointer;font-size:11px;padding:0 2px">✕</button>
+          </div>
+
           <!-- Z30C: Replay controls bar -->
           <div class="z30-replay-bar" id="z30ReplayBar" role="toolbar" aria-label="Replay controls">
             <span class="z30-replay-label" id="z30ReplayMode">REPLAY</span>
@@ -904,6 +919,8 @@
               </div>
               <!-- Z31A: Snapshot watermark -->
               <div class="z31-snapshot-watermark" id="z31SnapWatermark"></div>
+              <!-- Z32B: Semantic confidence overlay (floats top-center of DAG surface) -->
+              <div class="z32-confidence-overlay" id="z32ConfidenceOverlay" aria-label="Semantic confidence"></div>
             </div>
 
             <!-- Z31C: Historical session browser panel (slides in from left) -->
@@ -936,6 +953,18 @@
                 ⬆ Drop or click to import bundle
               </div>
             </div>
+            <!-- Z32D: Skill memory panel (slides up from bottom of DAG panel) -->
+            <div class="z32-skills-panel" id="z32SkillsPanel" role="complementary" aria-label="Procedural skill memory">
+              <div class="z32-skills-hdr">
+                <span class="z32-skills-title">Skill Memory</span>
+                <button style="background:none;border:none;color:var(--text-dim,#6e7681);cursor:pointer;font-size:11px"
+                  onclick="_z32.toggleSkills()" title="Close skill panel">✕</button>
+              </div>
+              <div class="z32-skills-list" id="z32SkillList">
+                <div style="padding:6px;font-size:9px;color:var(--text-dim,#6e7681)">Loading skills…</div>
+              </div>
+            </div>
+
             <!-- Z30B: Node intelligence detail panel (slides in on node click) -->
             <div class="z30-intel-panel" id="z30IntelPanel" role="complementary" aria-label="Node intelligence">
               <div class="z30-intel-hdr">
@@ -3821,6 +3850,9 @@
   <!-- Phase Z31 — Persistent Runtime Forensics + Execution Memory -->
   <link rel="stylesheet" href="/static/css/nx-z31-forensics.css">
   <script src="/static/js/nx-z31-forensics.js" defer></script>
+  <!-- Phase Z32 — Semantic Execution Intelligence + Adaptive Runtime Stability -->
+  <link rel="stylesheet" href="/static/css/nx-z32-semantics.css">
+  <script src="/static/js/nx-z32-semantics.js" defer></script>
   <script defer>
     // Z28: Initialize intel tab when first activated, sync session on future activations
     (function() {

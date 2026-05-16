@@ -1,0 +1,288 @@
+PHASE Z32 — SEMANTIC EXECUTION INTELLIGENCE + ADAPTIVE RUNTIME STABILITY
+
+CURRENT PLATFORM STATUS:
+The runtime now supports:
+
+* event-sourced orchestration
+* DAG execution
+* replay-safe streaming
+* forensic persistence
+* deterministic replay validation
+* historical session hydration
+* runtime instability overlays
+* export/import forensic bundles
+* governance + HITL escalation
+* operational intelligence surfaces
+
+The platform is now:
+structurally observable,
+persistent,
+and replay-safe.
+
+The next evolution is NOT:
+more UI expansion.
+
+The next evolution IS:
+semantic runtime intelligence,
+context durability,
+and adaptive execution stabilization.
+
+STRICT RULES:
+🔒 NO FRAMEWORK REWRITES
+🔒 NO EVENT PIPELINE BREAKAGE
+🔒 NO REPLAY CORRUPTION
+🔒 NO AGI MARKETING SYSTEMS
+🔒 NO MULTI-AGENT EXPLOSION
+🔒 NO USELESS DASHBOARDS
+🔒 STABILITY > FEATURE COUNT
+🔒 SEMANTIC RELIABILITY > VISUAL COMPLEXITY
+
+====================================================
+PHASE Z32A — CONTEXT COMPRESSION ENGINE
+=======================================
+
+PROBLEM:
+Long-running sessions will eventually:
+
+* overflow context windows
+* increase token cost
+* degrade reasoning quality
+* create replay noise
+
+GOAL:
+Build adaptive context compression.
+
+REQUIREMENTS:
+
+1. Sliding Context Window
+   Implement:
+   hot/warm/cold memory layers.
+
+Hot:
+active execution context.
+
+Warm:
+summarized operational state.
+
+Cold:
+archived replay + historical reasoning.
+
+2. Compression Triggers
+   Compression must activate based on:
+
+* token pressure
+* node count
+* replay growth
+* retry loops
+* context redundancy
+
+3. Semantic Summaries
+   Compress:
+   reasoning streams
+   without destroying:
+
+* recovery lineage
+* replay causality
+* validation state
+
+4. Compression Auditability
+   Every compression operation must:
+   emit replay-safe events.
+
+====================================================
+PHASE Z32B — SEMANTIC CONFIDENCE ENGINE
+=======================================
+
+PROBLEM:
+Current confidence is mostly heuristic.
+
+GOAL:
+Build semantic uncertainty estimation.
+
+REQUIREMENTS:
+
+1. Confidence Sources
+   Calculate confidence from:
+
+* validation success
+* retry chains
+* semantic contradiction
+* tool instability
+* historical failure clusters
+* unresolved dependencies
+
+2. Adaptive HITL Escalation
+   Low confidence:
+   must trigger:
+   progressive escalation.
+
+3. Confidence Drift Tracking
+   Track:
+   confidence decay over mission lifetime.
+
+4. Runtime Visualization
+   Surface:
+   semantic confidence pressure
+   inside:
+   DAG overlays,
+   timeline,
+   and replay forensics.
+
+====================================================
+PHASE Z32C — ADAPTIVE DAG REPLANNING
+====================================
+
+PROBLEM:
+Retries alone are insufficient.
+
+GOAL:
+Allow runtime to:
+adapt execution strategy dynamically.
+
+REQUIREMENTS:
+
+1. Failure-Aware Replanner
+   When:
+
+* retries exceed threshold
+* validation repeatedly fails
+* tool instability detected
+* dependency chain broken
+
+Trigger:
+replanning engine.
+
+2. DAG Restructuring
+   Support:
+
+* node replacement
+* dependency rerouting
+* fallback execution paths
+* provider switching
+* recovery branch insertion
+
+3. Replanning Transparency
+   Every replanning action:
+   must remain:
+   fully replayable,
+   fully inspectable,
+   fully exportable.
+
+====================================================
+PHASE Z32D — PROCEDURAL SKILL MEMORY
+====================================
+
+GOAL:
+Convert successful execution patterns into reusable operational skills.
+
+REQUIREMENTS:
+
+1. Skill Extraction
+   Detect:
+   repeated successful workflows.
+
+2. Skill Metadata
+   Store:
+
+* workflow fingerprint
+* validation rate
+* average retries
+* provider success
+* recovery reliability
+
+3. Skill Recall
+   Allow runtime to:
+   reuse validated execution strategies.
+
+4. Safety Constraints
+   Skill reuse must NEVER:
+   bypass governance,
+   validation,
+   or replay systems.
+
+====================================================
+PHASE Z32E — SEMANTIC FAILURE INTELLIGENCE
+==========================================
+
+GOAL:
+Upgrade runtime from:
+event awareness
+to:
+semantic operational understanding.
+
+REQUIREMENTS:
+
+1. Failure Clustering
+   Cluster:
+
+* retry storms
+* hallucinated success
+* validation contradictions
+* unstable providers
+* dependency deadlocks
+
+2. Predictive Runtime Warnings
+   Predict:
+   likely instability
+   before failure occurs.
+
+3. Runtime Pressure Metrics
+   Surface:
+
+* context pressure
+* reasoning degradation
+* recovery saturation
+* semantic instability
+
+4. Operator Intelligence
+   Expose:
+   high-signal explanations,
+   NOT raw telemetry spam.
+
+====================================================
+PHASE Z32F — CERTIFICATION + AUDIT
+==================================
+
+Generate:
+
+* docs/Z32_CONTEXT_COMPRESSION_AUDIT.md
+* docs/Z32_SEMANTIC_CONFIDENCE_REPORT.md
+* docs/Z32_REPLANNING_CERTIFICATION.md
+* docs/Z32_SKILL_MEMORY_ANALYSIS.md
+* docs/Z32_FAILURE_INTELLIGENCE_REPORT.md
+* docs/Z32_RUNTIME_STABILITY_VERDICT.md
+
+All reports MUST include:
+
+1. Remaining instability ceilings
+2. Remaining replay corruption risks
+3. Remaining semantic hallucination vectors
+4. Remaining memory pressure risks
+5. Remaining DAG recovery weaknesses
+6. Honest production-readiness assessment
+
+====================================================
+FINAL VALIDATION
+================
+
+Before completion:
+
+* verify replay survives compression
+* verify DAG integrity after replanning
+* verify no event loss
+* verify no snapshot corruption
+* verify skill reuse safety
+* verify semantic confidence stability
+* verify low-confidence escalation
+* verify long-session runtime durability
+
+IMPORTANT:
+This phase is NOT:
+building more AI hype.
+
+This phase IS:
+making the runtime:
+durable,
+adaptive,
+semantically reliable,
+and operationally trustworthy.

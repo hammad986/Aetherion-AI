@@ -275,6 +275,21 @@ class Agent:
             _z26_explain_escalation = _z26_explain_replan = _z26_explain_provider = None
             _z26_explain_compress = None
 
+        # ── Z29: Initialize Operator Control + Mission Governance runtime ──────
+        _z29_mc     = None  # mission_control module
+        _z29_ov     = None  # override_engine module
+        _z29_rec    = None  # mission_recovery module
+        _emit_z29   = self._emit_fn if _realtime_on else None
+        try:
+            from runtime import mission_control  as _z29_mc
+            from runtime import override_engine  as _z29_ov
+            from runtime import mission_recovery as _z29_rec
+            _z29_mc.register_mission(self._session_id)
+            logger.debug("[Z29] Mission control, override engine, and recovery monitor active.")
+        except Exception as _z29_init_err:
+            logger.debug("[Z29] Runtime governance modules not available: %s", _z29_init_err)
+            _z29_mc = _z29_ov = _z29_rec = None
+
         # ── Recall similar tasks ─────────────────────────
         similar = self.memory.find_similar_task(task)
         if similar:
@@ -391,6 +406,33 @@ class Agent:
 
                 loop_count     += 1
                 step_loop_count += 1
+
+                # ── Z29: check operator control signal between steps ──────────
+                if _z29_mc:
+                    try:
+                        _z29_mc.on_loop_tick(self._session_id) if _z29_rec else None
+                        _z29_sig = _z29_mc.check_signal(self._session_id)
+                        if _z29_sig == _z29_mc.MissionSignal.CANCEL:
+                            logger.info("[Z29] CANCEL signal received — terminating execution loop")
+                            break
+                        if _z29_sig == _z29_mc.MissionSignal.PAUSE:
+                            logger.info("[Z29] PAUSE signal — waiting for resume…")
+                            _resumed = _z29_mc.wait_if_paused(self._session_id)
+                            if not _resumed:
+                                logger.info("[Z29] Timeout/cancel while paused — terminating")
+                                break
+                        # Drain injected instructions and append to context
+                        _injected = _z29_mc.drain_inject_queue(self._session_id)
+                        if _injected and self.memory:
+                            for _inj in _injected:
+                                self.memory.add_message("user", f"[Operator Instruction] {_inj}")
+                        # Replan signal — trigger replan on next iteration
+                        if _z29_sig == _z29_mc.MissionSignal.REPLAN:
+                            logger.info("[Z29] REPLAN signal — resetting step to trigger replanning")
+                            last_error = "Operator requested replanning"
+                    except Exception as _z29_sig_err:
+                        logger.debug("[Z29] Signal check error: %s", _z29_sig_err)
+
                 active_step = plan_steps[current_step]
 
                 # -- Step-skip guard: jump over already-completed steps immediately --

@@ -248,6 +248,21 @@
         // Scheduler activity state
         NxBus.emit('nx:z28:scheduler', payload);
         break;
+      // ── Z29: Operator Control + Mission Governance ──────────────────
+      case 'agent.mission_control':
+        NxBus.emit('nx:z29:mission_control', payload);
+        break;
+      case 'agent.governance_request':
+      case 'agent.governance_resolved':
+        NxBus.emit('nx:z29:governance', payload);
+        break;
+      case 'agent.override_applied':
+        NxBus.emit('nx:z29:override', payload);
+        break;
+      case 'agent.stability_alert':
+      case 'agent.recovery_applied':
+        NxBus.emit('nx:z29:stability', payload);
+        break;
       default:
         // Forward unknown events generically for extensibility
         NxBus.emit('nx:sse:event', { type, ...payload });

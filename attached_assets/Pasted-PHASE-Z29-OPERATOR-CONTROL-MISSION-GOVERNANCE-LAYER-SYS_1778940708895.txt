@@ -1,0 +1,257 @@
+PHASE Z29 — OPERATOR CONTROL + MISSION GOVERNANCE LAYER
+
+SYSTEM STATUS:
+The platform now contains:
+
+* event-sourced execution runtime
+* DAG orchestration
+* replay-safe SSE infrastructure
+* runtime explainability
+* confidence tracking
+* context compression
+* operator intelligence feed
+* execution timeline visibility
+* runtime telemetry
+* HITL escalation
+* execution health surfaces
+
+The system is now:
+observable.
+
+The next critical step is:
+controlled governance.
+
+This phase transforms Nexora AI from:
+an observable autonomous runtime
+
+into:
+an operator-governed execution platform.
+
+STRICT RULES:
+🔒 NO AGI HYPE
+🔒 NO FAKE “SELF-AWARE” FEATURES
+🔒 NO REACTIVE FRAMEWORK MIGRATION
+🔒 NO ARCHITECTURAL REWRITES
+🔒 NO DASHBOARD BLOAT
+🔒 NO OVER-ANIMATION
+🔒 STABILITY > COMPLEXITY
+🔒 GOVERNANCE > FLASHINESS
+
+====================================================
+PHASE Z29A — LIVE OPERATOR CONTROL SURFACE
+==========================================
+
+Build:
+real operator runtime controls.
+
+GOAL:
+Allow operators to safely intervene during execution.
+
+REQUIREMENTS:
+
+1. Runtime Mission Controls
+   Operators must be able to:
+
+* pause execution
+* resume execution
+* cancel execution
+* trigger retry
+* inject runtime instruction
+* request replanning
+
+2. Runtime State Safety
+   Ensure:
+
+* replay compatibility preserved
+* event sequencing preserved
+* no orphan execution states
+* no duplicate retries
+* no broken SSE replay state
+
+3. Operator Action Logging
+   Every intervention must generate:
+
+* timestamp
+* operator action
+* mission id
+* previous state
+* resulting state
+* replay-safe audit event
+
+====================================================
+PHASE Z29B — GOVERNANCE + APPROVAL ENGINE
+=========================================
+
+Build:
+a structured governance layer.
+
+GOAL:
+Critical actions must require explicit approval.
+
+REQUIREMENTS:
+
+1. Approval Queue
+   Create:
+
+* governance queue
+* approval center
+* escalation panel
+* pending operator actions
+
+2. Severity Classification
+   Classify runtime actions:
+
+* INFO
+* WARNING
+* HIGH RISK
+* GOVERNANCE REQUIRED
+* CRITICAL
+
+3. Protected Operations
+   Require approval for:
+
+* destructive file deletion
+* production deployment
+* credential modification
+* mass operations
+* external execution escalation
+
+4. Approval History
+   Maintain:
+   immutable approval logs
+   compatible with replay system.
+
+====================================================
+PHASE Z29C — OPERATOR OVERRIDE ENGINE
+=====================================
+
+Allow:
+live runtime override capabilities.
+
+REQUIREMENTS:
+
+1. Runtime Override Controls
+   Operator can override:
+
+* provider
+* active model
+* retry budget
+* confidence threshold
+* execution timeout
+* compression aggressiveness
+
+2. Safe Override Discipline
+   Overrides MUST:
+
+* preserve execution continuity
+* not corrupt DAG state
+* not break replay integrity
+* be event-sourced
+
+3. Override Explainability
+   All overrides must generate:
+   operator-visible reasoning records.
+
+====================================================
+PHASE Z29D — MISSION RECOVERY + FAILURE CONTROL
+===============================================
+
+Build:
+mission recovery tooling.
+
+REQUIREMENTS:
+
+1. Recovery Surface
+   Allow operators to:
+
+* recover failed missions
+* restart from checkpoint
+* branch execution
+* inspect replay snapshots
+* inspect failure taxonomy
+
+2. Runtime Stability Protection
+   Detect:
+
+* runaway retries
+* infinite loops
+* repeated replanning storms
+* provider instability
+* SSE flooding
+* stuck missions
+
+3. Runtime Auto-Protection
+   System may:
+
+* auto-pause unstable missions
+* request operator approval
+* degrade execution safely
+* reduce retry pressure
+
+====================================================
+PHASE Z29E — UI STABILITY + GOVERNANCE UX AUDIT
+===============================================
+
+Perform:
+deep governance UX review.
+
+Investigate:
+
+* operator cognitive overload
+* runtime control clarity
+* escalation discoverability
+* governance queue readability
+* replay navigation clarity
+* mission recovery UX
+* SSE stress behavior
+* control race conditions
+
+Generate:
+
+* docs/Z29_OPERATOR_CONTROL_CERTIFICATION.md
+* docs/Z29_GOVERNANCE_ENGINE_REPORT.md
+* docs/Z29_RUNTIME_RECOVERY_AUDIT.md
+* docs/Z29_OVERRIDE_SAFETY_REPORT.md
+* docs/Z29_FRONTEND_GOVERNANCE_REVIEW.md
+
+Reports MUST include:
+
+1. Remaining governance risks
+2. Remaining runtime instability
+3. Remaining replay weaknesses
+4. Remaining operator confusion points
+5. Remaining scaling concerns
+6. Honest beta-readiness verdict
+
+====================================================
+FINAL VALIDATION
+================
+
+Before completion:
+
+* verify operator controls do not break replay
+* verify no duplicate mission states
+* verify no SSE replay corruption
+* verify no governance race conditions
+* verify pause/resume integrity
+* verify override stability
+* verify mission recovery reliability
+* verify approval queue consistency
+
+IMPORTANT:
+This phase is NOT about:
+adding more AI intelligence.
+
+This phase IS about:
+making the autonomous runtime
+controllable,
+governable,
+recoverable,
+and production-safe.
+
+Maintain:
+🔒 Operational discipline over hype
+🔒 Governance over automation chaos
+🔒 Stability over complexity
+🔒 Trustworthy execution over flashy UX
+🔒 Replay integrity above everything

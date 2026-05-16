@@ -11741,6 +11741,235 @@ def api_z28_timeline():
         return jsonify({"ok": False, "error": str(e)}), 500
 
 
+# ═══════════════════════════════════════════════════════════════════════
+# PHASE Z29 — OPERATOR CONTROL + MISSION GOVERNANCE API
+# ═══════════════════════════════════════════════════════════════════════
+
+def _z29_emit(sid: str):
+    """Return a scoped emit_fn for Z29 that routes SSE to the correct session."""
+    def _fn(event: str, payload: dict):
+        try:
+            _sse_manager.emit(event, {**payload, "session_id": sid})
+        except Exception:
+            pass
+    return _fn
+
+
+@app.route("/api/z29/mission/<sid>/control", methods=["POST"])
+def z29_mission_control(sid: str):
+    """Pause / resume / cancel / retry / inject / replan a running mission."""
+    try:
+        from runtime.mission_control import (
+            pause_mission, resume_mission, cancel_mission,
+            retry_step, inject_instruction, request_replan,
+        )
+        data   = request.get_json(silent=True) or {}
+        action = data.get("action", "").lower()
+        note   = data.get("note", "")
+        emit   = _z29_emit(sid)
+
+        if action == "pause":
+            act = pause_mission(sid, note=note or "Operator paused", emit_fn=emit)
+        elif action == "resume":
+            act = resume_mission(sid, note=note or "Operator resumed", emit_fn=emit)
+        elif action == "cancel":
+            act = cancel_mission(sid, note=note or "Operator cancelled", emit_fn=emit)
+            # Also stop the existing session worker
+            try:
+                db_update_session(sid, status="stopped")
+            except Exception:
+                pass
+        elif action == "retry":
+            act = retry_step(sid, note=note or "Operator retry", emit_fn=emit)
+        elif action == "inject":
+            instruction = data.get("instruction", "").strip()
+            if not instruction:
+                return jsonify({"ok": False, "error": "instruction required"}), 400
+            act = inject_instruction(sid, instruction=instruction, note=note or "Operator inject", emit_fn=emit)
+        elif action == "replan":
+            act = request_replan(sid, note=note or "Operator replan", emit_fn=emit)
+        else:
+            return jsonify({"ok": False, "error": f"Unknown action: {action}"}), 400
+
+        return jsonify({"ok": True, "action": action, "action_id": act.action_id,
+                        "prev_state": act.prev_state, "next_state": act.next_state})
+    except Exception as e:
+        logger.exception("[Z29] mission_control error")
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route("/api/z29/mission/<sid>/snapshot", methods=["GET"])
+def z29_mission_snapshot(sid: str):
+    try:
+        from runtime.mission_control import mission_snapshot
+        return jsonify({**mission_snapshot(sid), "ok": True})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route("/api/z29/mission/<sid>/actions", methods=["GET"])
+def z29_mission_actions(sid: str):
+    try:
+        from runtime.mission_control import get_operator_actions
+        limit = min(int(request.args.get("limit", 50)), 200)
+        return jsonify({"ok": True, "actions": get_operator_actions(sid=sid, limit=limit)})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route("/api/z29/missions", methods=["GET"])
+def z29_list_missions():
+    try:
+        from runtime.mission_control import list_missions
+        return jsonify({"ok": True, "missions": list_missions()})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+# ── Governance Engine ──────────────────────────────────────────────────────────
+
+@app.route("/api/z29/governance/queue", methods=["GET"])
+def z29_governance_queue():
+    try:
+        from runtime.governance_engine import governance_snapshot
+        return jsonify({**governance_snapshot(), "ok": True})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route("/api/z29/governance/history", methods=["GET"])
+def z29_governance_history():
+    try:
+        from runtime.governance_engine import get_approval_history
+        sid   = request.args.get("sid")
+        limit = min(int(request.args.get("limit", 100)), 500)
+        return jsonify({"ok": True, "history": get_approval_history(sid=sid, limit=limit)})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route("/api/z29/governance/approve/<request_id>", methods=["POST"])
+def z29_governance_approve(request_id: str):
+    try:
+        from runtime.governance_engine import resolve_request
+        data = request.get_json(silent=True) or {}
+        req  = resolve_request(
+            request_id, "approve",
+            resolved_by=data.get("resolved_by", "operator"),
+            resolution_note=data.get("resolution_note", "Approved"),
+        )
+        if not req:
+            return jsonify({"ok": False, "error": "Request not found or already resolved"}), 404
+        return jsonify({"ok": True, "request_id": request_id, "status": req.status})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route("/api/z29/governance/reject/<request_id>", methods=["POST"])
+def z29_governance_reject(request_id: str):
+    try:
+        from runtime.governance_engine import resolve_request
+        data = request.get_json(silent=True) or {}
+        req  = resolve_request(
+            request_id, "reject",
+            resolved_by=data.get("resolved_by", "operator"),
+            resolution_note=data.get("resolution_note", "Rejected"),
+        )
+        if not req:
+            return jsonify({"ok": False, "error": "Request not found or already resolved"}), 404
+        return jsonify({"ok": True, "request_id": request_id, "status": req.status})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+# ── Override Engine ───────────────────────────────────────────────────────────
+
+@app.route("/api/z29/overrides/<sid>", methods=["GET"])
+def z29_get_overrides(sid: str):
+    try:
+        from runtime.override_engine import get_override_snapshot
+        return jsonify({**get_override_snapshot(sid), "ok": True})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route("/api/z29/overrides/<sid>", methods=["POST"])
+def z29_apply_overrides(sid: str):
+    try:
+        from runtime.override_engine import apply_overrides_bulk
+        data      = request.get_json(silent=True) or {}
+        overrides = data.get("overrides", {})
+        note      = data.get("note", "Operator override")
+        emit      = _z29_emit(sid)
+        if not overrides:
+            return jsonify({"ok": False, "error": "No overrides provided"}), 400
+        results = apply_overrides_bulk(sid, overrides, operator_note=note, emit_fn=emit)
+        failures = {k: v[1] for k, v in results.items() if not v[0]}
+        return jsonify({
+            "ok":       not failures,
+            "applied":  [k for k, v in results.items() if v[0]],
+            "failures": failures,
+        })
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route("/api/z29/overrides/<sid>", methods=["DELETE"])
+def z29_clear_all_overrides(sid: str):
+    try:
+        from runtime.override_engine import clear_all_overrides
+        count = clear_all_overrides(sid)
+        return jsonify({"ok": True, "cleared": count})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route("/api/z29/overrides/<sid>/<key>", methods=["DELETE"])
+def z29_clear_override(sid: str, key: str):
+    try:
+        from runtime.override_engine import clear_override
+        cleared = clear_override(sid, key)
+        return jsonify({"ok": cleared, "key": key})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+# ── Mission Recovery ──────────────────────────────────────────────────────────
+
+@app.route("/api/z29/recovery/<sid>", methods=["GET"])
+def z29_recovery_snapshot(sid: str):
+    try:
+        from runtime.mission_recovery import get_recovery_snapshot
+        return jsonify({**get_recovery_snapshot(sid), "ok": True})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route("/api/z29/recovery/<sid>/action", methods=["POST"])
+def z29_recovery_action(sid: str):
+    try:
+        from runtime.mission_recovery import apply_recovery
+        data   = request.get_json(silent=True) or {}
+        action = data.get("action", "").strip()
+        params = data.get("params", {})
+        if not action:
+            return jsonify({"ok": False, "error": "action required"}), 400
+        emit   = _z29_emit(sid)
+        result = apply_recovery(sid, action=action, params=params, emit_fn=emit)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route("/api/z29/stability", methods=["GET"])
+def z29_stability_dashboard():
+    try:
+        from runtime.mission_recovery import stability_dashboard
+        return jsonify({**stability_dashboard(), "ok": True})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
 if __name__ == "__main__":
     # Phase 19: debug mode controlled by env var — never True in production
     _debug = os.getenv("FLASK_DEBUG", "0").strip() == "1"

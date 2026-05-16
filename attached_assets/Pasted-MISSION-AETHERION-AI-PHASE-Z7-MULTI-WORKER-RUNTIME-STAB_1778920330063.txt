@@ -1,0 +1,160 @@
+MISSION:
+AETHERION AI — PHASE Z7
+MULTI-WORKER RUNTIME STABILIZATION
+
+ARCHITECTURE STATUS:
+PERMANENTLY LOCKED.
+
+NO:
+
+* frontend redesign
+* orchestration redesign
+* new AI systems
+* new execution engines
+* runtime invention
+
+ONLY:
+stabilization and distributed runtime hardening.
+
+====================================================
+PRIMARY OBJECTIVE
+=================
+
+Eliminate all remaining single-worker assumptions.
+
+Transform Aetherion AI from:
+“single-worker stable”
+
+into:
+“multi-worker safe”.
+
+====================================================
+MANDATORY TARGETS
+=================
+
+1. Redis-backed session coordination
+2. SSE worker synchronization hardening
+3. Distributed queue integrity
+4. Runtime state consistency
+5. Worker-safe replay lifecycle
+6. Cross-worker session recovery
+
+====================================================
+PHASE 1 — WORKER STATE AUDIT
+============================
+
+Generate:
+Z7_WORKER_STATE_AUDIT.md
+
+Map:
+
+* all in-memory runtime state
+* all singleton assumptions
+* all thread-local assumptions
+* all worker-local structures
+
+Identify:
+
+* non-shared queues
+* non-shared replay buffers
+* non-shared execution maps
+* hidden worker-local caches
+
+====================================================
+PHASE 2 — REDIS SESSION EXTERNALIZATION
+=======================================
+
+Externalize:
+
+* active session state
+* queue ownership
+* replay metadata
+* worker heartbeats
+* execution lifecycle metadata
+
+STRICT RULE:
+No frontend payload changes.
+
+====================================================
+PHASE 3 — SSE HARDENING
+=======================
+
+Verify:
+
+* replay correctness
+* reconnect correctness
+* stale worker cleanup
+* orphan client cleanup
+* replay persistence
+* cross-worker stream continuity
+
+Generate:
+Z7_SSE_HARDENING_CERTIFICATION.md
+
+====================================================
+PHASE 4 — DISTRIBUTED QUEUE SAFETY
+==================================
+
+Guarantee:
+
+* no double execution
+* no orphan tasks
+* no duplicate session ownership
+* no stuck pending states
+
+Implement:
+distributed queue locking discipline.
+
+====================================================
+PHASE 5 — WORKER FAILOVER VALIDATION
+====================================
+
+Simulate:
+
+* worker crash
+* SSE disconnect
+* Redis restart
+* task interruption
+* replay recovery
+
+Generate:
+Z7_FAILOVER_VALIDATION_REPORT.md
+
+====================================================
+PHASE 6 — MULTI-WORKER CERTIFICATION
+====================================
+
+Test:
+Gunicorn:
+--workers 2
+--workers 4
+--workers 8
+
+Measure:
+
+* SSE continuity
+* queue integrity
+* replay correctness
+* session ownership
+* Redis overhead
+
+Generate:
+Z7_MULTIWORKER_CERTIFICATION.md
+
+====================================================
+SUCCESS CRITERIA
+================
+
+Aetherion AI becomes:
+
+* cross-worker stable
+* replay-safe
+* queue-safe
+* distributed-runtime safe
+* production concurrency safe
+
+WITHOUT:
+
+* architecture mutation
+* frontend mutation
+* orchestration redesign

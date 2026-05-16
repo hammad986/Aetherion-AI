@@ -1,0 +1,126 @@
+MISSION:
+AETHERION AI — PHASE Z8
+DISTRIBUTED EXECUTION HARDENING
+
+OBJECTIVE:
+Production-grade distributed execution integrity.
+
+====================================================
+PRIMARY GOALS
+=============
+
+1. Redis-backed distributed execution control
+2. Task durability
+3. Crash-safe execution replay
+4. Persistent recovery correctness
+5. Distributed HITL safety
+6. WAL durability under chaos
+
+====================================================
+PHASE 1 — EXECUTION DURABILITY AUDIT
+====================================
+
+Generate:
+Z8_EXECUTION_DURABILITY_AUDIT.md
+
+Map:
+
+* all execution lifecycle transitions
+* replay persistence
+* WAL checkpoint timing
+* recovery dependencies
+* session resurrection paths
+
+====================================================
+PHASE 2 — TASK DURABILITY
+=========================
+
+Guarantee:
+
+* queued tasks survive crashes
+* replay survives restart
+* partial execution recoverable
+* interrupted tasks resumable
+
+====================================================
+PHASE 3 — DISTRIBUTED HITL SAFETY
+=================================
+
+Validate:
+
+* HITL replay correctness
+* escalation consistency
+* approval routing correctness
+* replay after approval
+
+====================================================
+PHASE 4 — SQLITE CHAOS VALIDATION
+=================================
+
+Stress:
+
+* concurrent writes
+* replay writes
+* session deletion
+* export operations
+* recovery writes
+
+Verify:
+
+* WAL stability
+* rollback integrity
+* no corruption
+* no deadlocks
+
+====================================================
+PHASE 5 — REDIS FAILURE RECOVERY
+================================
+
+Simulate:
+
+* Redis outage
+* reconnect storm
+* partial pub/sub loss
+* stale ownership
+* orphan channels
+
+Generate:
+Z8_REDIS_FAILURE_REPORT.md
+
+====================================================
+PHASE 6 — CRASH RECOVERY CERTIFICATION
+======================================
+
+Force:
+
+* process kill
+* hard restart
+* worker termination
+* replay restoration
+
+Verify:
+
+* session continuity
+* execution continuity
+* replay correctness
+
+Generate:
+Z8_CRASH_RECOVERY_CERTIFICATION.md
+
+====================================================
+SUCCESS CRITERIA
+================
+
+Aetherion AI becomes:
+
+* crash-safe
+* distributed-safe
+* replay-durable
+* chaos-resistant
+* recovery-safe
+
+WITHOUT:
+
+* architecture expansion
+* orchestration mutation
+* frontend redesign

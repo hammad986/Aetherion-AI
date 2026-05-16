@@ -476,6 +476,18 @@ def _looks_text(path, sample_bytes=2048):
 from runtime.state import *
 from runtime.state import _db_lock, _BROWSER_LOCK, _hitl_lock, _hitl_state, _P7_PIPELINES, _p7_lock, _p13_summarize_lock, _p13_in_progress, _chain_lock, _editor_llm_lock, _ROUTING_LOCK, _TERMINAL_MODE_LOCK, _terminal_lock, _STEP_STORE, _STEP_LOCK, _oauth_states
 
+# ── Phase Z7: Redis multi-worker coordination layer ────────────────────────────
+from redis_layer import get_nx_redis
+_nx_redis = get_nx_redis()
+
+# ── Phase Z7: Redis SSE bridge (cross-worker event delivery) ───────────────────
+try:
+    from streaming.sse_redis import RedisSSEBridge
+    RedisSSEBridge.init()
+except Exception as _sse_bridge_err:
+    import logging as _l
+    _l.getLogger("nexora.sse_redis").warning("SSE bridge init skipped: %s", _sse_bridge_err)
+
 app = Flask(__name__)
 
 # --- NEXORA V2 BACKEND ARCHITECTURE EXTRACTION ---
@@ -1503,6 +1515,7 @@ def run_session(sid):
         ts = time.time()
         db_insert_log(sid, seq, ts, level, text)
         running["seq"] = seq
+        _nx_redis.set_running(sid, seq=seq)  # Phase Z7: sync seq to Redis
 
     def track_usage_from_line(line):
         m = ROUTE_RE.search(line)
@@ -1549,6 +1562,7 @@ def run_session(sid):
             preexec_fn=os.setsid if os.name != "nt" else None,
         )
         running["proc"] = proc
+        _nx_redis.set_proc(proc)  # Phase Z7: expose proc to Redis layer for stop signals
         usage_flush_at = time.time()
         for raw in proc.stdout:
             line = ANSI_RE.sub("", raw.rstrip("\n"))
@@ -1574,6 +1588,7 @@ def run_session(sid):
         exit_code = -1
     finally:
         running["proc"] = None
+        _nx_redis.set_proc(None)  # Phase Z7: clear proc reference in Redis layer
         files = diff_workspace(ws_before, ws_dir)
         cur = db_session(sid) or {}
         success = cur.get("success")
@@ -1762,24 +1777,31 @@ def run_session(sid):
 
 
 def queue_worker():
+    """
+    Phase Z7: Redis-backed queue worker.
+    - When Redis is available: uses BRPOP for cross-worker coordination.
+    - When Redis is unavailable: falls back to in-process deque (identical
+      to pre-Z7 behaviour).
+    A Redis stop signal (nx:stop:<sid>) allows any worker to request
+    termination of a session running on this or another worker.
+    """
     while True:
-        sid = None
-        with queue_lock:
-            if pending_queue and running["sid"] is None:
-                sid = pending_queue.popleft()
-                running["sid"] = sid
+        # Phase Z7: use Redis-aware pop (blocking, 1s timeout)
+        sid = _nx_redis.pop_blocking(timeout=1)
         if sid is None:
-            time.sleep(0.4)
+            if not _nx_redis.available:
+                time.sleep(0.3)  # local mode: small sleep between poll cycles
             continue
+
+        # Claim the slot
+        _nx_redis.set_running(sid, seq=0)
         try:
             run_session(sid)
         except Exception as e:
             db_update_session(sid, status="failed", exit_code=-1)
             print("worker error:", e, file=sys.stderr)
         finally:
-            with queue_lock:
-                running["sid"] = None
-                running["seq"] = 0
+            _nx_redis.release_running()
 
 
 _worker = threading.Thread(target=queue_worker, daemon=True)
@@ -1861,12 +1883,12 @@ def enqueue_task(task, model=None, cfg=None,
     if chain_id is not None or chain_task_id is not None:
         db_update_session(sid, chain_id=chain_id,
                           chain_task_id=chain_task_id)
-    with queue_lock:
-        pending_queue.append(sid)
-        if (cfg or {}).get("mode") == "managed":
+    # Phase Z7: Redis-aware enqueue (falls back to in-process deque when Redis unset)
+    _nx_redis.push(sid)
+    if (cfg or {}).get("mode") == "managed":
+        with queue_lock:
             now = time.time()
             managed_runs.append(now)
-            # prune old timestamps
             cutoff = now - MANAGED_LIMITS["rate_window_seconds"]
             while managed_runs and managed_runs[0] < cutoff:
                 managed_runs.popleft()
@@ -1874,9 +1896,13 @@ def enqueue_task(task, model=None, cfg=None,
 
 
 def stop_running_session(sid):
-    proc = running.get("proc")
-    if running.get("sid") != sid or not proc:
-        return False, "Session is not currently running"
+    # Phase Z7: if this worker owns the session, kill locally; otherwise signal via Redis
+    proc = _nx_redis.get_proc()
+    local_sid = _nx_redis.get_local_running_sid()
+    if local_sid != sid or not proc:
+        # Cross-worker stop: set Redis stop signal so the owning worker self-terminates
+        _nx_redis.request_stop(sid)
+        return False, "Session is not currently running on this worker — stop signal sent"
 
     def _kill_tree(p, sig):
         try:
@@ -2024,9 +2050,9 @@ def api_admin_status():
     import psutil
     cpu  = psutil.cpu_percent(interval=0.1)
     ram  = psutil.virtual_memory().percent
-    with queue_lock:
-        q_running = running.get("sid")
-        q_pending = list(pending_queue)
+    # Phase Z7: use Redis-aware multi-worker queue state
+    q_running = _nx_redis.get_any_running_sid()
+    q_pending = _nx_redis.list_pending()
     return jsonify({
         "ok": True,
         "kill_switch": is_kill_switch_active(),
@@ -2035,6 +2061,7 @@ def api_admin_status():
         "queue_running": q_running,
         "queue_pending": len(q_pending),
         "production": is_production(),
+        "redis_mode": _nx_redis.available,
     })
 
 
@@ -4139,7 +4166,8 @@ def api_review_policy_set():
 
 @app.route("/api/clear-memory", methods=["POST"])
 def api_clear_memory():
-    if running.get("sid"):
+    # Phase Z7: check multi-worker running state
+    if _nx_redis.get_any_running_sid():
         return jsonify({"ok": False, "message": "Stop the running task first"}), 409
     try:
         result = subprocess.run(
@@ -5614,8 +5642,8 @@ def api_upload():
 
 
 def _hitl_get(sid):
-    with _hitl_lock:
-        return _hitl_state.setdefault(sid, {"paused": False, "inject_queue": []})
+    """Phase Z7: Redis-backed HITL state — falls back to in-process when Redis unset."""
+    return _nx_redis.hitl_get(sid)
 
 
 
@@ -6470,10 +6498,9 @@ def api_providers():
 
 @app.route("/api/queue")
 def api_queue():
-    """Return current queue and running session state."""
-    with queue_lock:
-        pending = list(pending_queue)
-    run_sid = running.get("sid")
+    """Return current queue and running session state. Phase Z7: Redis-aware multi-worker."""
+    pending  = _nx_redis.list_pending()
+    run_sid  = _nx_redis.get_any_running_sid()
     run_sess = db_session(run_sid) if run_sid else None
     pending_sessions = []
     for sid in pending:
@@ -6481,7 +6508,7 @@ def api_queue():
         if s:
             pending_sessions.append({"id": sid, "task": s.get("task", ""), "status": "queued"})
     return jsonify({
-        "ok": True,
+        "ok":      True,
         "running": run_sess,
         "pending": pending_sessions,
     })
@@ -6489,16 +6516,47 @@ def api_queue():
 
 @app.route("/api/queue/snapshot")
 def api_queue_snapshot():
-    """Alias for /api/queue used by some UI modules."""
-    with queue_lock:
-        pending = list(pending_queue)
-    run_sid = running.get("sid")
+    """Alias for /api/queue used by some UI modules. Phase Z7: Redis-aware multi-worker."""
+    pending = _nx_redis.list_pending()
+    run_sid = _nx_redis.get_any_running_sid()
     return jsonify({
-        "ok": True,
+        "ok":         True,
         "running_sid": run_sid,
-        "pending": pending,
+        "pending":    pending,
         "queue_depth": len(pending),
+        "redis_mode":  _nx_redis.available,
     })
+
+
+@app.route("/api/workers")
+def api_workers():
+    """Phase Z7: List all live Gunicorn workers and their current sessions."""
+    workers  = _nx_redis.list_workers()
+    sse_health = {}
+    try:
+        from streaming.sse_redis import RedisSSEBridge
+        sse_health = RedisSSEBridge.health()
+    except Exception:
+        pass
+    return jsonify({
+        "ok":        True,
+        "workers":   workers,
+        "sse_bridge": sse_health,
+        "redis":     _nx_redis.health(),
+    })
+
+
+@app.route("/api/redis/health")
+def api_redis_health():
+    """Phase Z7: Redis coordination layer health check."""
+    h = _nx_redis.health()
+    sse_h = {}
+    try:
+        from streaming.sse_redis import RedisSSEBridge
+        sse_h = RedisSSEBridge.health()
+    except Exception:
+        pass
+    return jsonify({"ok": True, "queue_layer": h, "sse_layer": sse_h})
 
 
 @app.route("/api/queue-task", methods=["POST"])
@@ -6567,39 +6625,32 @@ def api_session_restart(sid):
 
 @app.route("/api/session/<sid>/pause", methods=["POST"])
 def api_session_pause(sid):
-    """Pause a running session via HITL gate."""
+    """Pause a running session via HITL gate. Phase Z7: Redis-backed cross-worker."""
     if not db_session(sid):
         return jsonify({"ok": False, "error": "not_found"}), 404
-    state = _hitl_get(sid)
-    with _hitl_lock:
-        state["paused"] = True
+    _nx_redis.hitl_set_paused(sid, True)
     return jsonify({"ok": True, "paused": True})
 
 
 @app.route("/api/session/<sid>/resume", methods=["POST"])
 def api_session_resume(sid):
-    """Resume a paused session."""
+    """Resume a paused session. Phase Z7: Redis-backed cross-worker."""
     if not db_session(sid):
         return jsonify({"ok": False, "error": "not_found"}), 404
-    state = _hitl_get(sid)
-    with _hitl_lock:
-        state["paused"] = False
+    _nx_redis.hitl_set_paused(sid, False)
     return jsonify({"ok": True, "paused": False})
 
 
 @app.route("/api/session/<sid>/inject", methods=["POST"])
 def api_session_inject(sid):
-    """Inject a message into a running/paused session."""
+    """Inject a message into a running/paused session. Phase Z7: Redis-backed cross-worker."""
     if not db_session(sid):
         return jsonify({"ok": False, "error": "not_found"}), 404
     data = request.get_json(silent=True) or {}
     message = (data.get("message") or "").strip()
     if not message:
         return jsonify({"ok": False, "error": "missing_message"}), 400
-    state = _hitl_get(sid)
-    with _hitl_lock:
-        state["inject_queue"].append(message)
-        state["paused"] = False
+    _nx_redis.hitl_inject(sid, message)
     return jsonify({"ok": True, "queued": message})
 
 

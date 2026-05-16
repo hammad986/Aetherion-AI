@@ -1,0 +1,356 @@
+/* ═══════════════════════════════════════════════════════════════════
+   PHASE Z31 — Persistent Runtime Forensics + Execution Memory Layer
+   Historical session browser, forensic panel, replay indicators
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── Forensic Sidebar / Panel ─────────────────────────────────────── */
+.z31-forensic-panel {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  overflow: hidden;
+  background: var(--surface, #0d1117);
+  border-right: 1px solid var(--border, #21262d);
+  z-index: 15;
+  transition: width 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.z31-forensic-panel.open {
+  width: 230px;
+}
+
+.z31-forensic-hdr {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 10px;
+  height: 32px;
+  border-bottom: 1px solid var(--border, #21262d);
+  flex-shrink: 0;
+}
+
+.z31-forensic-title {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim, #6e7681);
+  flex: 1;
+}
+
+.z31-forensic-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-dim, #6e7681);
+  font-size: 13px;
+  padding: 0 2px;
+}
+
+/* ── Forensic filter bar ─────────────────────────────────────────── */
+.z31-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  padding: 5px 8px;
+  border-bottom: 1px solid var(--border, #21262d);
+  flex-shrink: 0;
+}
+
+.z31-filter-chip {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 2px 7px;
+  border-radius: 10px;
+  border: 1px solid var(--border, #21262d);
+  color: var(--text-dim, #6e7681);
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+  white-space: nowrap;
+}
+
+.z31-filter-chip:hover,
+.z31-filter-chip.active {
+  background: rgba(56,189,248,0.12);
+  border-color: rgba(56,189,248,0.35);
+  color: #38bdf8;
+}
+
+.z31-filter-chip.active-failed  { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3); color: #ef4444; }
+.z31-filter-chip.active-retries { background: rgba(251,191,36,0.1); border-color: rgba(251,191,36,0.3); color: #fbbf24; }
+
+/* ── Session list ─────────────────────────────────────────────────── */
+.z31-session-list {
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.z31-session-item {
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--border-subtle, #161b22);
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.z31-session-item:hover {
+  background: var(--surface-hover, #161b22);
+}
+
+.z31-session-item.active {
+  background: rgba(56,189,248,0.06);
+  border-left: 2px solid #38bdf8;
+}
+
+.z31-session-sid {
+  font-size: 9px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text, #e6edf3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+}
+
+.z31-session-meta {
+  display: flex;
+  gap: 6px;
+  margin-top: 2px;
+  font-size: 8.5px;
+  color: var(--text-dim, #6e7681);
+}
+
+.z31-session-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 8px;
+  font-weight: 600;
+  padding: 0 5px;
+  border-radius: 3px;
+}
+
+.z31-session-badge.snaps  { background: rgba(56,189,248,0.1); color: #38bdf8; }
+.z31-session-badge.events { background: rgba(139,92,246,0.1); color: #a78bfa; }
+
+/* ── Integrity badge in session list ─────────────────────────────── */
+.z31-integrity-score {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 8.5px;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.z31-integrity-score.HEALTHY  { color: #22c55e; }
+.z31-integrity-score.DEGRADED { color: #fbbf24; }
+.z31-integrity-score.WARNING  { color: #f97316; }
+.z31-integrity-score.CORRUPT  { color: #ef4444; }
+.z31-integrity-score.UNKNOWN  { color: #6b7280; }
+
+/* ── Forensic detail pane (for selected historical session) ──────── */
+.z31-forensic-detail {
+  border-top: 1px solid var(--border, #21262d);
+  flex-shrink: 0;
+  max-height: 180px;
+  overflow-y: auto;
+  padding: 6px 10px;
+}
+
+.z31-detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 9px;
+  padding: 2px 0;
+  border-bottom: 1px solid var(--border-subtle, #161b22);
+  gap: 6px;
+}
+
+.z31-detail-key { color: var(--text-dim, #6e7681); flex-shrink: 0; }
+.z31-detail-val {
+  color: var(--text, #e6edf3);
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 500;
+  text-align: right;
+  word-break: break-all;
+}
+
+.z31-detail-actions {
+  display: flex;
+  gap: 4px;
+  margin-top: 5px;
+}
+
+/* ── Forensic action buttons ─────────────────────────────────────── */
+.z31-action-btn {
+  flex: 1;
+  background: var(--surface, #0d1117);
+  border: 1px solid var(--border, #21262d);
+  color: var(--text-dim, #6e7681);
+  font-size: 9px;
+  font-weight: 600;
+  padding: 3px 7px;
+  border-radius: 3px;
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.1s, color 0.1s, border-color 0.1s;
+  white-space: nowrap;
+}
+
+.z31-action-btn:hover {
+  background: var(--surface-hover, #161b22);
+  color: var(--text, #e6edf3);
+}
+
+.z31-action-btn.primary {
+  background: rgba(56,189,248,0.08);
+  border-color: rgba(56,189,248,0.25);
+  color: #38bdf8;
+}
+
+.z31-action-btn.primary:hover {
+  background: rgba(56,189,248,0.16);
+}
+
+.z31-action-btn.danger {
+  background: rgba(239,68,68,0.07);
+  border-color: rgba(239,68,68,0.22);
+  color: #f87171;
+}
+
+.z31-action-btn.danger:hover {
+  background: rgba(239,68,68,0.14);
+}
+
+/* ── Replay isolation badge ──────────────────────────────────────── */
+.z31-replay-isolation-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  border-radius: 3px;
+  background: rgba(139, 92, 246, 0.1);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  color: #a78bfa;
+  text-transform: uppercase;
+}
+
+/* ── Forensic panel toggle button (on health bar) ───────────────── */
+.z31-forensic-toggle {
+  background: none;
+  border: 1px solid var(--border, #21262d);
+  color: var(--text-dim, #6e7681);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 1px 7px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+
+.z31-forensic-toggle:hover,
+.z31-forensic-toggle.active {
+  background: rgba(56,189,248,0.08);
+  border-color: rgba(56,189,248,0.3);
+  color: #38bdf8;
+}
+
+/* ── Persistence indicator dot ───────────────────────────────────── */
+.z31-persist-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #6b7280;
+  flex-shrink: 0;
+  transition: background 0.3s;
+}
+
+.z31-persist-dot.saving    { background: #fbbf24; animation: z31-saving-pulse 0.6s ease-in-out 2; }
+.z31-persist-dot.saved     { background: #22c55e; }
+.z31-persist-dot.error     { background: #ef4444; }
+.z31-persist-dot.isolated  { background: #a78bfa; }
+
+@keyframes z31-saving-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+/* ── Integrity score bar ─────────────────────────────────────────── */
+.z31-integrity-bar-wrap {
+  height: 2px;
+  background: var(--border, #21262d);
+  border-radius: 1px;
+  overflow: hidden;
+  width: 36px;
+}
+
+.z31-integrity-bar-fill {
+  height: 100%;
+  border-radius: 1px;
+  transition: width 0.4s ease;
+  background: #22c55e;
+}
+
+.z31-integrity-bar-fill.warn    { background: #fbbf24; }
+.z31-integrity-bar-fill.danger  { background: #ef4444; }
+
+/* ── Import drop zone (drag-and-drop forensic bundle) ─────────────── */
+.z31-import-zone {
+  border: 1.5px dashed var(--border, #21262d);
+  border-radius: 5px;
+  padding: 10px;
+  text-align: center;
+  font-size: 9px;
+  color: var(--text-dim, #6e7681);
+  margin: 6px 8px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.z31-import-zone:hover,
+.z31-import-zone.drag-over {
+  border-color: rgba(56,189,248,0.4);
+  background: rgba(56,189,248,0.04);
+  color: #38bdf8;
+}
+
+/* ── Drift detection banner ──────────────────────────────────────── */
+.z31-drift-banner {
+  display: none;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  background: rgba(249,115,22,0.08);
+  border-bottom: 1px solid rgba(249,115,22,0.25);
+  font-size: 9px;
+  color: #fb923c;
+  flex-shrink: 0;
+}
+
+.z31-drift-banner.visible {
+  display: flex;
+}
+
+/* ── Snapshot watermark on DAG surface ───────────────────────────── */
+.z31-snapshot-watermark {
+  position: absolute;
+  bottom: 4px;
+  right: 6px;
+  font-size: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--border, #21262d);
+  pointer-events: none;
+  z-index: 1;
+  user-select: none;
+}

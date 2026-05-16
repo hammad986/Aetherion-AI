@@ -1,0 +1,257 @@
+PHASE Z31 — PERSISTENT RUNTIME FORENSICS + EXECUTION MEMORY LAYER
+
+SYSTEM STATUS:
+The platform now supports:
+
+* event-sourced execution
+* replay-safe SSE
+* DAG orchestration
+* governance + approval engine
+* mission recovery
+* runtime overrides
+* live execution graph
+* replay navigation
+* runtime instability overlays
+* execution intelligence surfaces
+
+The runtime is now:
+observable,
+governable,
+and structurally inspectable.
+
+The next mandatory evolution is:
+persistent operational memory
+and deterministic forensic replay.
+
+GOAL:
+Transform the runtime from:
+temporary live execution visibility
+
+into:
+
+a persistent forensic execution platform
+capable of:
+
+* historical replay
+* deterministic restoration
+* cross-device inspection
+* replay validation
+* forensic export
+* runtime drift detection
+
+STRICT RULES:
+🔒 NO ORCHESTRATION REWRITES
+🔒 NO EVENT PIPELINE BREAKAGE
+🔒 NO REPLAY CORRUPTION
+🔒 NO GRAPH ENGINE REPLACEMENT
+🔒 NO FAKE AGI FEATURES
+🔒 STABILITY > FEATURE COUNT
+🔒 REPLAY INTEGRITY > UI COMPLEXITY
+
+====================================================
+PHASE Z31A — PERSISTENT DAG SNAPSHOT ENGINE
+===========================================
+
+Build:
+persistent execution graph storage.
+
+REQUIREMENTS:
+
+1. DAG Snapshot Persistence
+   Persist:
+
+* node states
+* edges
+* retries
+* recovery branches
+* replay lineage
+* instability markers
+* provider/model metadata
+* confidence scores
+* token metrics
+
+Snapshots must survive:
+
+* page refresh
+* browser close
+* worker restart
+* VPS reboot
+
+2. Incremental Snapshot Strategy
+   DO NOT:
+   rewrite full DAG every event.
+
+Implement:
+incremental append/update strategy.
+
+3. WAL-Compatible Storage
+   All persistence must remain:
+   WAL-safe,
+   replay-safe,
+   cross-worker safe.
+
+====================================================
+PHASE Z31B — DETERMINISTIC REPLAY VALIDATION
+============================================
+
+Build:
+replay integrity verification.
+
+REQUIREMENTS:
+
+1. Execution Fingerprints
+   Generate:
+   deterministic execution fingerprints
+   for:
+
+* node transitions
+* retries
+* recovery paths
+* provider selections
+* override applications
+
+2. Replay Drift Detection
+   Detect:
+
+* replay mismatch
+* missing events
+* timeline corruption
+* out-of-order event streams
+* duplicate replay injections
+
+3. Replay Integrity Reports
+   Generate:
+   integrity score per session.
+
+====================================================
+PHASE Z31C — CROSS-DEVICE FORENSIC INSPECTION
+=============================================
+
+Build:
+persistent replay inspection.
+
+REQUIREMENTS:
+
+1. Historical Session Browser
+   Operators can:
+
+* browse old sessions
+* load historical DAGs
+* inspect replay history
+* inspect recovery branches
+
+2. Cross-Device Visibility
+   Replay state must:
+   load identically
+   across:
+
+* browser refresh
+* separate devices
+* separate operators
+
+3. Historical Runtime Filters
+   Add:
+
+* failed only
+* retries only
+* escalated only
+* provider filter
+* instability filter
+* time-range filter
+
+====================================================
+PHASE Z31D — FORENSIC EXPORT + RESTORE SYSTEM
+=============================================
+
+Build:
+portable forensic bundles.
+
+REQUIREMENTS:
+
+1. Export Bundle
+   Generate:
+   portable forensic package containing:
+
+* DAG snapshots
+* timeline events
+* replay lineage
+* overrides
+* governance actions
+* instability reports
+* recovery actions
+
+2. Replay Restore
+   Allow:
+   forensic bundle re-import
+   into isolated replay mode.
+
+3. Safe Isolation
+   Replay restore MUST:
+   never affect active runtime.
+
+====================================================
+PHASE Z31E — RUNTIME MEMORY + SCALING DISCIPLINE
+================================================
+
+Perform:
+deep scaling + memory audit.
+
+Investigate:
+
+* DAG growth ceilings
+* snapshot growth
+* replay memory overhead
+* rendering scalability
+* SQLite WAL pressure
+* replay hydration latency
+* graph serialization cost
+* long-session replay stability
+
+Generate:
+
+* docs/Z31_PERSISTENT_RUNTIME_CERTIFICATION.md
+* docs/Z31_REPLAY_INTEGRITY_AUDIT.md
+* docs/Z31_FORENSIC_EXPORT_REPORT.md
+* docs/Z31_RUNTIME_MEMORY_ANALYSIS.md
+* docs/Z31_SCALING_LIMITS_REPORT.md
+
+Reports MUST include:
+
+1. Remaining replay corruption risks
+2. Remaining scaling ceilings
+3. Remaining serialization bottlenecks
+4. Remaining memory leak vectors
+5. Remaining operational recovery risks
+6. Honest production-readiness verdict
+
+====================================================
+FINAL VALIDATION
+================
+
+Before completion:
+
+* verify replay survives restart
+* verify deterministic replay consistency
+* verify no graph corruption
+* verify snapshot hydration correctness
+* verify export/import isolation
+* verify replay drift detection
+* verify stable large-session replay
+* verify WAL-safe persistence
+* verify no replay memory explosion
+
+IMPORTANT:
+This phase is NOT:
+adding more AI capability.
+
+This phase IS:
+making the runtime
+historically persistent,
+forensically trustworthy,
+and operationally durable.
+
+Maintain:
+🔒 Deterministic replay over flashy UX
+🔒 Persistence integrity over feature velocity
+🔒 Operational trust over complexity
+🔒 Stability over expansion

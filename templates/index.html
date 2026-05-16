@@ -849,10 +849,27 @@
               style="background:none;border:none;color:inherit;cursor:pointer;font-size:12px;padding:0 2px">✕</button>
           </div>
 
-          <!-- Z30D: Runtime health bar -->
+          <!-- Z31B: Replay drift detection banner -->
+          <div class="z31-drift-banner" id="z31DriftBanner" role="alert">
+            <span style="font-size:10px">⚠</span>
+            <span class="z31-drift-msg"></span>
+            <div style="flex:1"></div>
+            <button onclick="document.getElementById('z31DriftBanner').classList.remove('visible')"
+              style="background:none;border:none;color:inherit;cursor:pointer;font-size:11px;padding:0 2px">✕</button>
+          </div>
+
+          <!-- Z30D: Runtime health bar (+ Z31 persist dot + forensic toggle) -->
           <div class="z30-health-bar" id="z30HealthBar" title="Runtime instability heatmap">
             <span class="z30-sev-badge z30-sev-STABLE">STABLE</span>
             <span class="z30-health-item" style="color:var(--muted,#6e7681);font-size:9px">No session active</span>
+            <span style="flex:1"></span>
+            <!-- Z31A: Persistence indicator -->
+            <span class="z31-persist-dot" id="z31PersistDot" title="Snapshot persistence idle"></span>
+            <!-- Z31C: Historical session browser toggle -->
+            <button class="z31-forensic-toggle" id="z31ForensicToggle"
+              onclick="_z31forensics.togglePanel()" title="Historical session browser">
+              History
+            </button>
           </div>
 
           <!-- Z30C: Replay controls bar -->
@@ -884,6 +901,39 @@
               <div class="z30-dag-idle">
                 <span class="z30-dag-idle-icon">⬡</span>
                 <span>DAG will populate when a session starts</span>
+              </div>
+              <!-- Z31A: Snapshot watermark -->
+              <div class="z31-snapshot-watermark" id="z31SnapWatermark"></div>
+            </div>
+
+            <!-- Z31C: Historical session browser panel (slides in from left) -->
+            <div class="z31-forensic-panel" id="z31ForensicPanel" role="complementary" aria-label="Historical sessions">
+              <div class="z31-forensic-hdr">
+                <span class="z31-forensic-title">Session History</span>
+                <button class="z31-forensic-close" onclick="_z31forensics.closePanel()" title="Close">✕</button>
+              </div>
+              <!-- Z31C: Filter chips -->
+              <div class="z31-filter-bar">
+                <button class="z31-filter-chip" data-z31-filter="all"
+                  onclick="_z31forensics.setFilter('all')">All</button>
+                <button class="z31-filter-chip" data-z31-filter="failed"
+                  onclick="_z31forensics.setFilter('failed')">Failed</button>
+                <button class="z31-filter-chip" data-z31-filter="retries"
+                  onclick="_z31forensics.setFilter('retries')">Retries</button>
+                <button class="z31-filter-chip" data-z31-filter="instability"
+                  onclick="_z31forensics.setFilter('instability')">Unstable</button>
+              </div>
+              <!-- Z31C: Session list -->
+              <div class="z31-session-list" id="z31SessionList">
+                <div style="padding:12px;font-size:9px;color:var(--text-dim,#6e7681);text-align:center">Loading sessions…</div>
+              </div>
+              <!-- Z31C: Session detail + actions -->
+              <div class="z31-forensic-detail" id="z31ForensicDetail">
+                <div style="font-size:9px;color:var(--text-dim,#6e7681);padding:4px">Select a session above.</div>
+              </div>
+              <!-- Z31D: Import drop zone -->
+              <div class="z31-import-zone" id="z31ImportZone" title="Drop forensic bundle JSON here or click to browse">
+                ⬆ Drop or click to import bundle
               </div>
             </div>
             <!-- Z30B: Node intelligence detail panel (slides in on node click) -->
@@ -3768,6 +3818,9 @@
   <!-- Phase Z30 — Execution Graph + Structural Operational Visibility -->
   <link rel="stylesheet" href="/static/css/nx-z30-dag.css">
   <script src="/static/js/nx-z30-dag.js" defer></script>
+  <!-- Phase Z31 — Persistent Runtime Forensics + Execution Memory -->
+  <link rel="stylesheet" href="/static/css/nx-z31-forensics.css">
+  <script src="/static/js/nx-z31-forensics.js" defer></script>
   <script defer>
     // Z28: Initialize intel tab when first activated, sync session on future activations
     (function() {

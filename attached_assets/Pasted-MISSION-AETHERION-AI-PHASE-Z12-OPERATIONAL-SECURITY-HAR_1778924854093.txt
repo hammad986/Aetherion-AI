@@ -1,0 +1,154 @@
+MISSION:
+AETHERION AI — PHASE Z12
+OPERATIONAL SECURITY HARDENING
+
+ARCHITECTURE STATUS:
+PERMANENTLY LOCKED.
+
+STRICTLY FORBIDDEN:
+
+* no frontend redesign
+* no orchestration rewrite
+* no runtime redesign
+* no framework migration
+* no auth provider replacement
+* no AGI feature additions
+
+====================================================
+PRIMARY OBJECTIVE
+=================
+
+Perform a deep operational security hardening pass over the existing production architecture WITHOUT changing runtime behavior.
+
+This phase is strictly:
+SECURITY
+GOVERNANCE
+HARDENING
+AUDITING
+PROTECTION
+
+====================================================
+PHASE 1 — AUTHENTICATION HARDENING AUDIT
+========================================
+
+Generate:
+docs/Z12_AUTH_SECURITY_AUDIT.md
+
+Perform deep inspection of:
+
+* JWT issuance
+* token expiry
+* refresh flows
+* brute-force protection
+* session fixation
+* replay attack boundaries
+* OAuth callback handling
+* bcrypt usage
+* fallback secret behavior
+
+Identify:
+
+* weak defaults
+* unsafe fallbacks
+* replay surfaces
+* privilege escalation vectors
+
+DO NOT REDESIGN AUTH.
+ONLY HARDEN.
+
+====================================================
+PHASE 2 — SECURITY HEADERS & RESPONSE DISCIPLINE
+================================================
+
+Safely implement:
+
+* CSP headers
+* X-Frame-Options
+* X-Content-Type-Options
+* Referrer-Policy
+* Permissions-Policy
+
+Requirements:
+
+* preserve SSE compatibility
+* preserve Monaco
+* preserve iframe preview
+* preserve Replit compatibility
+
+Generate:
+docs/Z12_HEADER_POLICY_CERTIFICATION.md
+
+====================================================
+PHASE 3 — CSRF & SESSION GOVERNANCE
+===================================
+
+Audit all:
+
+* POST
+* DELETE
+* PATCH
+* PUT endpoints
+
+Identify:
+
+* missing CSRF boundaries
+* unsafe cookie usage
+* insecure localStorage persistence
+
+Generate:
+docs/Z12_CSRF_GOVERNANCE_REPORT.md
+
+Only add protections that are:
+non-breaking
+incremental
+production-safe
+
+====================================================
+PHASE 4 — SANDBOX ENFORCEMENT AUDIT
+===================================
+
+Deeply inspect:
+
+* subprocess spawning
+* shell execution
+* execution sandbox
+* path traversal boundaries
+* file write boundaries
+* browser automation surfaces
+
+Generate:
+docs/Z12_SANDBOX_ENFORCEMENT_REPORT.md
+
+Focus:
+real-world exploit resistance.
+
+====================================================
+PHASE 5 — RATE LIMIT & ABUSE DISCIPLINE
+=======================================
+
+Audit:
+
+* login endpoints
+* execution endpoints
+* SSE streams
+* replay endpoints
+* HITL approval endpoints
+
+Generate:
+docs/Z12_RATE_LIMIT_DISCIPLINE.md
+
+Implement only:
+safe incremental protections.
+
+====================================================
+SUCCESS STATE
+=============
+
+Aetherion AI becomes:
+
+* production-safe
+* abuse-resistant
+* security-disciplined
+* operationally hardened
+
+WITHOUT architectural disruption.

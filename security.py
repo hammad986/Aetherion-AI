@@ -89,6 +89,23 @@ _forgot_pw_limiter = RateLimiter(
     max_calls=int(os.getenv("RATE_LIMIT_FORGOT_PW", "5")),
     window_seconds=3600,  # 5 requests per hour per IP
 )
+# Z12: Additional targeted limiters
+_sse_conn_limiter = RateLimiter(
+    max_calls=int(os.getenv("RATE_LIMIT_SSE",    "15")),
+    window_seconds=60,   # 15 new SSE connections/min/IP (existing streams unaffected)
+)
+_replay_limiter = RateLimiter(
+    max_calls=int(os.getenv("RATE_LIMIT_REPLAY", "30")),
+    window_seconds=60,   # 30 replay requests/min/IP
+)
+_hitl_limiter = RateLimiter(
+    max_calls=int(os.getenv("RATE_LIMIT_HITL",   "60")),
+    window_seconds=60,   # 60 HITL responses/min/IP (permissive for fast approvals)
+)
+_deletion_limiter = RateLimiter(
+    max_calls=int(os.getenv("RATE_LIMIT_DELETE",  "5")),
+    window_seconds=3600, # 5 deletion attempts per hour per IP
+)
 
 
 def get_client_ip(request) -> str:

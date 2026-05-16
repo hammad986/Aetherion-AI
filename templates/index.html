@@ -3327,26 +3327,171 @@
             <div class="section">
               <h3>Data &amp; Privacy</h3>
               <div style="display:flex;flex-direction:column;gap:10px">
-                <div
-                  style="padding:12px 14px;background:var(--panel2,#1c2230);border:1px solid var(--border,#30363d);border-radius:8px">
-                  <div style="font-size:0.87rem;font-weight:600;color:var(--text,#e6edf3);margin-bottom:4px">Request My
-                    Data</div>
-                  <div style="font-size:0.78rem;color:var(--muted,#8b949e);margin-bottom:10px">Receive a copy of all
-                    personal data associated with your account.</div>
-                  <button class="btn" onclick="nxRequestData()" style="font-size:0.8rem;padding:6px 14px">Request Data
-                    Export</button>
-                </div>
-                <div style="padding:12px 14px;background:#1f0d0d;border:1px solid #5a1d1d;border-radius:8px">
-                  <div style="font-size:0.87rem;font-weight:600;color:#f85149;margin-bottom:4px">Delete My Account</div>
-                  <div style="font-size:0.78rem;color:var(--muted,#8b949e);margin-bottom:10px">Permanently delete your
-                    account and all associated data. This action is <strong style="color:#f85149">irreversible</strong>.
+                <!-- Export JSON -->
+                <div style="padding:12px 14px;background:var(--panel2,#1c2230);border:1px solid var(--border,#30363d);border-radius:8px">
+                  <div style="font-size:0.87rem;font-weight:600;color:var(--text,#e6edf3);margin-bottom:4px">Your Data</div>
+                  <div style="font-size:0.78rem;color:var(--muted,#8b949e);margin-bottom:10px">Download a copy of all data associated with your account — sessions, messages, billing history.</div>
+                  <div style="display:flex;gap:8px;flex-wrap:wrap">
+                    <button class="btn" onclick="nxRequestData()" style="font-size:0.8rem;padding:6px 14px">Export as JSON</button>
+                    <a href="/api/account/export/zip" id="nxExportZipBtn"
+                      style="display:inline-flex;align-items:center;gap:5px;padding:6px 14px;background:var(--panel3,#161b22);border:1px solid var(--border,#30363d);border-radius:6px;color:var(--text,#e6edf3);font-size:0.8rem;text-decoration:none;cursor:pointer"
+                      onclick="nxDownloadZip(event)">
+                      Download ZIP
+                    </a>
                   </div>
-                  <button onclick="nxShowDeleteModal()"
-                    style="background:#f85149;color:#fff;border:none;border-radius:6px;padding:6px 14px;font-size:0.8rem;cursor:pointer;font-family:inherit;font-weight:600">Delete
-                    Account</button>
+                </div>
+
+                <!-- Delete Account — Z13 Phase 5: calm, recoverable UX -->
+                <div id="nxDeleteAccountSection" style="padding:12px 14px;background:var(--panel2,#1c2230);border:1px solid var(--border,#30363d);border-radius:8px">
+                  <div style="font-size:0.87rem;font-weight:600;color:var(--text,#e6edf3);margin-bottom:4px">Close Account</div>
+                  <div style="font-size:0.78rem;color:var(--muted,#8b949e);margin-bottom:10px">
+                    If you close your account, your data is scheduled for removal after a <strong style="color:var(--text,#e6edf3)">7-day recovery window</strong>. Nothing is deleted immediately — you can change your mind at any time during that period.
+                  </div>
+                  <!-- Step 1: initial state -->
+                  <div id="nxDeleteStep1">
+                    <button onclick="nxDeleteStep1()"
+                      style="background:transparent;color:var(--muted,#8b949e);border:1px solid var(--border,#30363d);border-radius:6px;padding:6px 14px;font-size:0.8rem;cursor:pointer;font-family:inherit">
+                      Close my account
+                    </button>
+                  </div>
+                  <!-- Step 2: confirmation panel (hidden by default) -->
+                  <div id="nxDeleteStep2" style="display:none">
+                    <div style="background:var(--panel3,#161b22);border:1px solid var(--border,#30363d);border-radius:8px;padding:12px;margin-bottom:10px">
+                      <div style="font-size:0.81rem;color:var(--text,#e6edf3);margin-bottom:6px;font-weight:600">Before you go</div>
+                      <ul style="font-size:0.78rem;color:var(--muted,#8b949e);margin:0 0 0 16px;padding:0;line-height:1.7">
+                        <li>Your account will be <strong style="color:var(--text)">scheduled for closure</strong>, not deleted immediately</li>
+                        <li>You have <strong style="color:var(--text)">7 days</strong> to sign back in and cancel</li>
+                        <li>All sessions, messages, and billing history will be removed after the window closes</li>
+                        <li>Active subscriptions should be cancelled separately to avoid future charges</li>
+                      </ul>
+                    </div>
+                    <div style="display:flex;gap:8px;align-items:center">
+                      <button onclick="nxDeleteConfirm()"
+                        style="background:var(--panel3,#161b22);color:#e6edf3;border:1px solid #5a1d1d;border-radius:6px;padding:6px 14px;font-size:0.8rem;cursor:pointer;font-family:inherit">
+                        Schedule account closure
+                      </button>
+                      <button onclick="nxDeleteCancel()"
+                        style="background:transparent;color:var(--muted,#8b949e);border:none;font-size:0.8rem;cursor:pointer;font-family:inherit">
+                        Never mind
+                      </button>
+                    </div>
+                  </div>
+                  <!-- Step 3: pending deletion state (shown after scheduling or on load if pending) -->
+                  <div id="nxDeleteStep3" style="display:none">
+                    <div style="background:var(--panel3,#161b22);border:1px solid #3a2a0d;border-radius:8px;padding:12px;margin-bottom:10px">
+                      <div style="font-size:0.81rem;color:#e6a817;font-weight:600;margin-bottom:4px">Account closure scheduled</div>
+                      <div style="font-size:0.78rem;color:var(--muted,#8b949e)">Your account will be permanently closed on <strong id="nxDeleteGraceDate" style="color:var(--text)">—</strong>. Until then, everything is exactly as you left it.</div>
+                    </div>
+                    <button onclick="nxDeleteUndoConfirm()"
+                      style="background:var(--accent,#7c3aed);color:#fff;border:none;border-radius:6px;padding:6px 14px;font-size:0.8rem;cursor:pointer;font-family:inherit;font-weight:600">
+                      Cancel closure — keep my account
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
+
+            <script>
+            (function() {
+              function nxFmtDate(iso) {
+                try { return new Date(iso).toLocaleDateString(undefined, {year:'numeric',month:'long',day:'numeric'}); }
+                catch(e) { return iso; }
+              }
+              window.nxDeleteStep1 = function() {
+                document.getElementById('nxDeleteStep1').style.display = 'none';
+                document.getElementById('nxDeleteStep2').style.display = '';
+              };
+              window.nxDeleteCancel = function() {
+                document.getElementById('nxDeleteStep2').style.display = 'none';
+                document.getElementById('nxDeleteStep1').style.display = '';
+              };
+              window.nxDeleteConfirm = async function() {
+                const btn = event.target;
+                btn.textContent = 'Scheduling…';
+                btn.disabled = true;
+                try {
+                  const tok = window._nxAccessToken || localStorage.getItem('nx_access_token') || '';
+                  const r = await fetch('/api/account/soft-delete', {
+                    method:'POST', headers:{'Authorization':'Bearer '+tok,'Content-Type':'application/json'}
+                  });
+                  const d = await r.json();
+                  if (d.ok) {
+                    document.getElementById('nxDeleteStep2').style.display = 'none';
+                    document.getElementById('nxDeleteStep3').style.display = '';
+                    document.getElementById('nxDeleteGraceDate').textContent = nxFmtDate(d.grace_ends);
+                    if (window.nxToast) nxToast('Account closure scheduled. You have 7 days to change your mind.', 6000);
+                  } else {
+                    btn.textContent = 'Schedule account closure';
+                    btn.disabled = false;
+                    if (window.nxToast) nxToast('Error: ' + (d.error || 'Could not schedule'), 4000);
+                  }
+                } catch(e) {
+                  btn.textContent = 'Schedule account closure';
+                  btn.disabled = false;
+                }
+              };
+              window.nxDeleteUndoConfirm = async function() {
+                const btn = event.target;
+                btn.textContent = 'Cancelling…';
+                btn.disabled = true;
+                try {
+                  const tok = window._nxAccessToken || localStorage.getItem('nx_access_token') || '';
+                  const r = await fetch('/api/account/cancel-deletion', {
+                    method:'POST', headers:{'Authorization':'Bearer '+tok,'Content-Type':'application/json'}
+                  });
+                  const d = await r.json();
+                  if (d.ok) {
+                    document.getElementById('nxDeleteStep3').style.display = 'none';
+                    document.getElementById('nxDeleteStep1').style.display = '';
+                    if (window.nxToast) nxToast('Account closure cancelled. Welcome back.', 4000);
+                  } else {
+                    btn.textContent = 'Cancel closure — keep my account';
+                    btn.disabled = false;
+                    if (window.nxToast) nxToast('Error: ' + (d.error || 'Could not cancel'), 4000);
+                  }
+                } catch(e) {
+                  btn.textContent = 'Cancel closure — keep my account';
+                  btn.disabled = false;
+                }
+              };
+              window.nxDownloadZip = function(e) {
+                const tok = window._nxAccessToken || localStorage.getItem('nx_access_token') || '';
+                if (!tok) return;
+                e.preventDefault();
+                const a = document.createElement('a');
+                a.href = '/api/account/export/zip';
+                fetch('/api/account/export/zip', {headers:{'Authorization':'Bearer '+tok}})
+                  .then(r => r.ok ? r.blob() : Promise.reject(r.status))
+                  .then(blob => {
+                    const url = URL.createObjectURL(blob);
+                    const dl = document.createElement('a');
+                    dl.href = url; dl.download = 'aetherion-data-export.zip';
+                    dl.click(); URL.revokeObjectURL(url);
+                  })
+                  .catch(() => { if (window.nxToast) nxToast('Export failed. Please try again.', 3000); });
+              };
+              // On settings open, check if deletion is already pending
+              const _origOpen = window.openSettings;
+              window.openSettings = function(tab) {
+                if (_origOpen) _origOpen(tab);
+                if (!tab || tab === 'account') {
+                  const tok = window._nxAccessToken || localStorage.getItem('nx_access_token') || '';
+                  if (tok) {
+                    fetch('/api/account/deletion-status', {headers:{'Authorization':'Bearer '+tok}})
+                      .then(r => r.json())
+                      .then(d => {
+                        if (d.pending) {
+                          document.getElementById('nxDeleteStep1').style.display = 'none';
+                          document.getElementById('nxDeleteStep2').style.display = 'none';
+                          document.getElementById('nxDeleteStep3').style.display = '';
+                          document.getElementById('nxDeleteGraceDate').textContent = nxFmtDate(d.grace_ends);
+                        }
+                      }).catch(()=>{});
+                  }
+                }
+              };
+            })();
+            </script>
           </div>
 
         </div>

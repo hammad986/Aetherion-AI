@@ -511,6 +511,7 @@ except ImportError as e:
 # ── Phase 19: Security hardening ─────────────────────────────────────────────
 from security import (
     _general_limiter, _task_limiter, _auth_limiter, _scheduler_limiter,
+    _sse_conn_limiter, _replay_limiter, _hitl_limiter, _deletion_limiter,
     check_rate_limit, get_client_ip,
     sanitise_prompt, sanitise_task_name, sanitise_text,
     validate_file_path, is_kill_switch_active,
@@ -1873,6 +1874,16 @@ except Exception as _z10_err:
         "[Z10] Worker reconciler failed to start: %s", _z10_err
     )
 
+# ── Phase Z13: start the account lifecycle retention janitor ──────
+try:
+    from account_lifecycle import start_retention_janitor as _start_janitor
+    _start_janitor()
+except Exception as _z13_err:
+    import logging as _z13_log
+    _z13_log.getLogger(__name__).warning(
+        "[Z13] Retention janitor failed to start: %s", _z13_err
+    )
+
 
 def enqueue_task(task, model=None, cfg=None,
                  chain_id=None, chain_task_id=None):
@@ -1970,6 +1981,30 @@ def _p19_rate_limit():
         ok, wait = check_rate_limit(_scheduler_limiter, request)
         if not ok:
             return jsonify({"ok": False, "error": f"Too many scheduler requests. Retry in {wait}s."}), 429
+    # SSE stream connections — rate-limit the connect, not the open stream (Z12)
+    elif path.startswith("/api/stream/"):
+        ok, wait = check_rate_limit(_sse_conn_limiter, request)
+        if not ok:
+            return jsonify({"ok": False, "error": f"Too many stream connections. Retry in {wait}s."}), 429
+    # Replay endpoints (Z12)
+    elif path.startswith("/api/replay"):
+        ok, wait = check_rate_limit(_replay_limiter, request)
+        if not ok:
+            return jsonify({"ok": False, "error": f"Too many replay requests. Retry in {wait}s."}), 429
+    # HITL approval/rejection (Z12)
+    elif path.startswith("/api/hitl"):
+        ok, wait = check_rate_limit(_hitl_limiter, request)
+        if not ok:
+            return jsonify({"ok": False, "error": f"Too many HITL requests. Retry in {wait}s."}), 429
+    # Deletion endpoints — tightest limit, per-hour window (Z12)
+    elif path in {
+        "/api/account/delete-request", "/api/account/delete",
+        "/api/account/soft-delete",    "/api/account/cancel-deletion",
+        "/api/auth/delete-account",
+    }:
+        ok, wait = check_rate_limit(_deletion_limiter, request)
+        if not ok:
+            return jsonify({"ok": False, "error": f"Too many deletion requests. Retry in {wait}s."}), 429
     # General API
     elif path.startswith("/api/"):
         ok, wait = check_rate_limit(_general_limiter, request)
@@ -1986,6 +2021,16 @@ def _p19_cors(response):
     response.headers.setdefault("X-Frame-Options", "SAMEORIGIN")
     response.headers.setdefault("X-XSS-Protection", "1; mode=block")
     response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+    # Z12: Additional security headers
+    response.headers.setdefault(
+        "Permissions-Policy",
+        "camera=(), microphone=(), geolocation=(), "
+        "payment=(self https://checkout.razorpay.com), "
+        "usb=(), fullscreen=(self), display-capture=(), "
+        "clipboard-read=(), clipboard-write=(self)",
+    )
+    # Allow Razorpay checkout popup (same-origin-allow-popups)
+    response.headers.setdefault("Cross-Origin-Opener-Policy", "same-origin-allow-popups")
     # Phase 3 Security Hardening — Content-Security-Policy
     # Only apply to text/html responses (API JSON responses don't need it, and
     # setting it on JSON can break some clients).
@@ -8377,6 +8422,144 @@ def api_account_delete():
         "message": "Account and all associated data have been permanently deleted.",
     })
     return _nx_clear_refresh_cookie(resp)
+
+
+# ── Phase Z13: Soft-delete, cancellation, and ZIP export ─────────────────────
+
+@app.route("/api/account/soft-delete", methods=["POST"])
+@token_required
+def api_account_soft_delete():
+    """
+    Schedule account for deletion with a 7-day grace period.
+    The user can cancel at any time before the grace period expires.
+    Does NOT immediately delete any data.
+    """
+    from account_lifecycle import soft_delete_user
+    result = soft_delete_user(g.user_id)
+    if not result.get("ok"):
+        return jsonify({"ok": False, "error": result.get("error", "Could not schedule deletion")}), 400
+    return jsonify({
+        "ok":        True,
+        "grace_ends": result["grace_ends"],
+        "grace_days": result["grace_days"],
+        "message":   (
+            f"Your account is scheduled for deletion in {result['grace_days']} days. "
+            "You can cancel at any time before then."
+        ),
+    })
+
+
+@app.route("/api/account/cancel-deletion", methods=["POST"])
+@token_required
+def api_account_cancel_deletion():
+    """
+    Cancel a pending soft-delete within the grace period.
+    Fully restores the account.
+    """
+    from account_lifecycle import cancel_soft_delete
+    result = cancel_soft_delete(g.user_id)
+    if not result.get("ok"):
+        return jsonify({"ok": False, "error": result.get("error", "Could not cancel deletion")}), 400
+    return jsonify(result)
+
+
+@app.route("/api/account/deletion-status", methods=["GET"])
+@token_required
+def api_account_deletion_status():
+    """Return the current soft-delete status for the authenticated user."""
+    from account_lifecycle import get_deletion_status
+    return jsonify({"ok": True, **get_deletion_status(g.user_id)})
+
+
+@app.route("/api/account/export/zip", methods=["GET"])
+@token_required
+def api_account_export_zip():
+    """
+    Download all personal data as a ZIP bundle (GDPR Art. 20).
+    Internally reuses the existing JSON export logic and wraps it in a ZIP.
+    """
+    import sqlite3 as _sq3
+    import time as _time
+    from account_lifecycle import generate_export_zip
+    from flask import make_response
+
+    uid = g.user_id
+    export = {
+        "export_generated_at": _time.strftime("%Y-%m-%dT%H:%M:%SZ", _time.gmtime()),
+        "user": {},
+        "auth_sessions": [],
+        "agent_sessions": [],
+        "chat_messages": [],
+        "decisions": [],
+        "billing": {"invoices": [], "subscriptions": []},
+    }
+
+    try:
+        c = _sq3.connect("saas_platform.db")
+        c.row_factory = _sq3.Row
+        row = c.execute(
+            "SELECT id,email,name,username,provider,created_at,total_tasks,total_tokens "
+            "FROM users WHERE id=?", (uid,)
+        ).fetchone()
+        if row:
+            export["user"] = dict(row)
+        for r in c.execute(
+            "SELECT id,device_info,ip_address,created_at,expires_at "
+            "FROM auth_sessions WHERE user_id=?", (uid,)
+        ):
+            export["auth_sessions"].append(dict(r))
+        c.close()
+    except Exception:
+        pass
+
+    try:
+        sc = _sq3.connect("sessions.db")
+        sc.row_factory = _sq3.Row
+        cols = [r[1] for r in sc.execute("PRAGMA table_info(sessions)").fetchall()]
+        if "user_id" in cols:
+            for r in sc.execute(
+                "SELECT id,task,status,created_at,model FROM sessions "
+                "WHERE user_id=? ORDER BY created_at DESC LIMIT 200", (uid,)
+            ):
+                export["agent_sessions"].append(dict(r))
+        sess_ids = [s["id"] for s in export["agent_sessions"]]
+        for sid in sess_ids[:50]:
+            for r in sc.execute(
+                "SELECT ts,role,content FROM chat_messages "
+                "WHERE session_id=? ORDER BY ts ASC", (sid,)
+            ):
+                row_d = dict(r)
+                row_d["session_id"] = sid
+                export["chat_messages"].append(row_d)
+        sc.close()
+    except Exception:
+        pass
+
+    try:
+        bc = _sq3.connect("billing.db")
+        bc.row_factory = _sq3.Row
+        for tbl in ("invoices", "subscriptions"):
+            try:
+                for r in bc.execute(
+                    f"SELECT * FROM {tbl} WHERE user_id=? ORDER BY created_at DESC LIMIT 100",
+                    (uid,)
+                ):
+                    export["billing"][tbl].append(dict(r))
+            except Exception:
+                pass
+        bc.close()
+    except Exception:
+        pass
+
+    zip_bytes = generate_export_zip(export)
+    email_slug = (export.get("user", {}).get("email") or f"user-{uid}").split("@")[0]
+    filename = f"aetherion-data-export-{email_slug}.zip"
+
+    resp = make_response(zip_bytes)
+    resp.headers["Content-Type"] = "application/zip"
+    resp.headers["Content-Disposition"] = f'attachment; filename="{filename}"'
+    resp.headers["Content-Length"] = len(zip_bytes)
+    return resp
 
 
 # ─── Session management ───────────────────────────────────────────────────────

@@ -1,0 +1,115 @@
+MISSION:
+AETHERION AI — PHASE Z13
+ACCOUNT LIFECYCLE & DATA GOVERNANCE
+
+ARCHITECTURE STATUS:
+PERMANENTLY LOCKED.
+
+THIS PHASE IS MANDATORY FOR REAL PRODUCTION READINESS.
+
+====================================================
+PRIMARY OBJECTIVE
+=================
+
+Implement complete user lifecycle governance with safe, recoverable, auditable account deletion and data cleanup.
+
+====================================================
+PHASE 1 — FORENSIC DATA OWNERSHIP AUDIT
+=======================================
+
+Generate:
+docs/Z13_DATA_OWNERSHIP_AUDIT.md
+
+Map ALL user-linked data:
+
+* sessions
+* replay logs
+* HITL audit
+* uploaded files
+* checkpoints
+* memory layers
+* Redis keys
+* analytics
+* screenshots
+* execution artifacts
+
+Build a complete dependency map.
+
+====================================================
+PHASE 2 — SAFE ACCOUNT DELETION PIPELINE
+========================================
+
+Implement:
+multi-stage async deletion flow.
+
+Requirements:
+
+* soft delete
+* grace period
+* cancellation recovery
+* WAL-safe deletion batching
+* replay cleanup
+* Redis cleanup
+* file artifact cleanup
+* orphan protection
+
+DO NOT:
+hard delete immediately.
+
+====================================================
+PHASE 3 — GDPR-LIKE EXPORT SYSTEM
+=================================
+
+Implement:
+Export My Data capability.
+
+Generate:
+
+* session history export
+* replay export
+* audit export
+* memory export
+* execution artifacts export
+
+Formats:
+JSON + ZIP bundle.
+
+====================================================
+PHASE 4 — DATA RETENTION GOVERNANCE
+===================================
+
+Implement:
+
+* replay retention policy
+* expired session cleanup
+* orphan artifact cleanup
+* zombie execution cleanup
+
+Generate:
+docs/Z13_RETENTION_GOVERNANCE.md
+
+====================================================
+PHASE 5 — DELETE ACCOUNT UI DISCIPLINE
+======================================
+
+Implement:
+calm production-grade deletion UX.
+
+Requirements:
+
+* no aggressive warning modals
+* clear consequence explanations
+* recovery countdown
+* trust-preserving wording
+
+====================================================
+SUCCESS STATE
+=============
+
+Aetherion AI becomes:
+
+* governance-safe
+* deletion-safe
+* recovery-safe
+* compliance-ready
+* trustworthy for real users

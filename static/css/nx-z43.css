@@ -1,0 +1,1420 @@
+/**
+ * nx-z43.css — Phase Z43: Operational Workspace Immersion + Live Execution Presence
+ * ═══════════════════════════════════════════════════════════════════════════════════
+ * Sub-phases:
+ *   A — Live Execution Presence
+ *   B — Workspace Immersion
+ *   C — Panel Cohesion System
+ *   D — Execution-Focused Empty States
+ *   E — Runtime Continuity Presence
+ *   F — Left Rail + Topbar Maturity
+ *   G — Visual Forensic Audit Corrections
+ *
+ * Strict rules:
+ *   ✗ NO framework rewrite           ✗ NO heavy animations
+ *   ✗ NO glow spam                   ✗ NO cyberpunk / RGB effects
+ *   ✗ NO marketing UI                ✗ NO random dashboards
+ *   ✓ OPERATIONAL CALMNESS           ✓ EXECUTION PRESENCE
+ *   ✓ DENSITY BALANCE                ✓ COMPOSITED TRANSITIONS ONLY
+ *
+ * Animation budget: opacity + transform only (GPU-composited, no layout).
+ * All pulse animations: amplitude ≤ 0.15 opacity or ≤ 2px transform.
+ * ═══════════════════════════════════════════════════════════════════════════════════
+ */
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z43 TOKENS — Runtime Layer Extension
+   ══════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* Execution state tokens */
+  --z43-exec-idle-dot:    #3A3D48;
+  --z43-exec-run-dot:     #0079F2;
+  --z43-exec-run-pulse:   rgba(0, 121, 242, 0.18);
+  --z43-exec-warn-dot:    #C28A00;
+  --z43-exec-err-dot:     #C0392B;
+
+  /* Topbar geometry */
+  --z43-topbar-h:         40px;
+  --z43-navrail-w:        44px;
+
+  /* Rail icon geometry */
+  --z43-rail-icon-size:   18px;
+  --z43-rail-icon-pad:    11px;
+
+  /* Panel rhythm */
+  --z43-section-gap:      1px;              /* between inspector sections */
+  --z43-section-pad-v:    9px;
+  --z43-section-pad-h:    12px;
+  --z43-section-label-h:  28px;
+
+  /* Empty state */
+  --z43-empty-icon-size:  28px;
+
+  /* Continuity signal */
+  --z43-age-fresh:        #16A34A;          /* session < 5 min */
+  --z43-age-active:       #0079F2;          /* session active */
+  --z43-age-long:         #C28A00;          /* session > 30 min */
+  --z43-age-stale:        #3A3D48;          /* session idle */
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z43A — LIVE EXECUTION PRESENCE
+   Make the runtime feel alive without visual noise.
+   Hooks: body[data-nx-exec="running"] / #runBtn.is-running
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── A1: Run button — state-driven appearance ─────────────────────── */
+.nx-topbar-run-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Idle state — calm, ready */
+.nx-topbar-run-btn:not(.is-running) {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid var(--z42-border-active) !important;
+  color: var(--nds-text-md) !important;
+  box-shadow: none !important;
+}
+
+.nx-topbar-run-btn:not(.is-running):hover {
+  background: rgba(0, 121, 242, 0.10) !important;
+  border-color: rgba(0, 121, 242, 0.40) !important;
+  color: var(--nds-text-hi) !important;
+}
+
+/* Running state — operational confirmation, no flash */
+.nx-topbar-run-btn.is-running {
+  background: rgba(0, 121, 242, 0.12) !important;
+  border: 1px solid rgba(0, 121, 242, 0.35) !important;
+  color: #57ABFF !important;
+  box-shadow: none !important;
+}
+
+/* ── A2: Run dot — composited-only pulse, tight amplitude ─────────── */
+.nx-run-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--z43-exec-idle-dot);
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+
+.nx-topbar-run-btn.is-running .nx-run-dot {
+  background: var(--z43-exec-run-dot);
+  animation: z43-run-dot-pulse 2.4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes z43-run-dot-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.45; }
+}
+
+/* ── A3: Topbar execution presence — ambient confirmation strip ───── */
+.nx-shell-topbar {
+  border-bottom: 1px solid var(--z42-border-frame) !important;
+  position: relative;
+}
+
+/* Execution presence underline — replaces topbar bottom border during run */
+.nx-shell-topbar::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--z42-border-frame);
+  transition: background 0.4s ease;
+  pointer-events: none;
+}
+
+body[data-nx-exec="running"] .nx-shell-topbar::after {
+  background: rgba(0, 121, 242, 0.40);
+}
+
+/* ── A4: Z33 runtime pulse — calmer, more operational ─────────────── */
+.z33-runtime-pulse {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  border: 1px solid var(--z42-border-subtle);
+  background: var(--z42-workspace);
+  font-size: 10px;
+  color: var(--nds-text-dim);
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+  cursor: default;
+}
+
+.z33-runtime-pulse:hover {
+  border-color: var(--z42-border-active);
+  color: var(--nds-text-lo);
+}
+
+.z33-pulse-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--z43-exec-idle-dot);
+  flex-shrink: 0;
+  transition: background 0.3s;
+}
+
+.z33-pulse-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+/* Idle state */
+body:not([data-nx-exec="running"]) .z33-pulse-dot {
+  background: var(--z43-exec-idle-dot);
+  animation: none;
+}
+
+/* Running state */
+body[data-nx-exec="running"] .z33-runtime-pulse {
+  border-color: rgba(0, 121, 242, 0.30);
+  color: #57ABFF;
+  background: rgba(0, 121, 242, 0.06);
+}
+
+body[data-nx-exec="running"] .z33-pulse-dot {
+  background: var(--z43-exec-run-dot);
+  animation: z43-run-dot-pulse 2.4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* ── A5: Left center-panel — running state border ─────────────────── */
+body[data-nx-exec="running"] .nx-panel.nx-center {
+  border-left: 2px solid rgba(0, 121, 242, 0.18) !important;
+}
+
+body:not([data-nx-exec="running"]) .nx-panel.nx-center {
+  border-left: none !important;
+}
+
+/* ── A6: Model button — active routing awareness ──────────────────── */
+.nx-model-btn {
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  font-family: var(--nds-font) !important;
+  color: var(--nds-text-lo) !important;
+  background: var(--z42-workspace) !important;
+  border: 1px solid var(--z42-border-frame) !important;
+  border-radius: 4px !important;
+  padding: 3px 8px 3px 7px !important;
+  gap: 5px !important;
+  display: flex !important;
+  align-items: center !important;
+  cursor: pointer !important;
+  transition: border-color 0.12s, color 0.12s !important;
+  white-space: nowrap !important;
+  max-width: 180px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.nx-model-btn:hover {
+  border-color: var(--z42-border-active) !important;
+  color: var(--nds-text-hi) !important;
+}
+
+.nx-model-btn-caret {
+  font-size: 9px !important;
+  color: var(--nds-text-dim) !important;
+  flex-shrink: 0 !important;
+}
+
+/* Running — show model as operationally active */
+body[data-nx-exec="running"] .nx-model-btn {
+  border-color: rgba(0, 121, 242, 0.25) !important;
+  color: var(--nds-text-md) !important;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z43B — WORKSPACE IMMERSION
+   Remove floating empty-panel feeling. Anchor everything.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── B1: Shell grid — tighter, anchored ──────────────────────────── */
+.nx-shell-topbar {
+  height: var(--z43-topbar-h) !important;
+  background: var(--z42-panel-active) !important;
+}
+
+/* ── B2: Center workspace — remove dead white-space ──────────────── */
+.nx-composer {
+  background: var(--z42-workspace) !important;
+  border-bottom: 1px solid var(--z42-border-frame) !important;
+  padding: 12px 14px !important;
+}
+
+/* Composer textarea — operational input, not a blank field */
+.nx-composer textarea,
+#taskInput {
+  background: var(--z42-panel-active) !important;
+  border: 1px solid var(--z42-border-active) !important;
+  border-radius: 5px !important;
+  color: var(--nds-text-hi) !important;
+  font-size: 13px !important;
+  font-family: var(--nds-font) !important;
+  padding: 10px 12px !important;
+  min-height: 52px !important;
+  resize: none !important;
+  transition: border-color 0.12s !important;
+  line-height: 1.5 !important;
+}
+
+.nx-composer textarea:focus,
+#taskInput:focus {
+  border-color: var(--z42-exec-active) !important;
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(0, 121, 242, 0.10) !important;
+}
+
+/* Composer exec toolbar — reduce dead space */
+.nx-exec-toolbar {
+  margin-top: 8px !important;
+  padding-top: 8px !important;
+  border-top: 1px solid var(--z42-border-subtle) !important;
+  gap: 8px !important;
+}
+
+.nx-exec-toolbar select {
+  background: var(--z42-workspace) !important;
+  border: 1px solid var(--z42-border-active) !important;
+  color: var(--nds-text-lo) !important;
+  border-radius: 4px !important;
+  padding: 2px 7px !important;
+  font-size: 11px !important;
+  font-family: var(--nds-font) !important;
+  outline: none !important;
+  cursor: pointer !important;
+}
+
+.nx-exec-toolbar select:hover {
+  border-color: var(--z42-border-active) !important;
+  color: var(--nds-text-md) !important;
+}
+
+/* Plus button — operational attach action */
+.nx-plus-btn {
+  background: var(--z42-workspace) !important;
+  border: 1px solid var(--z42-border-active) !important;
+  color: var(--nds-text-lo) !important;
+  border-radius: 5px !important;
+  width: 34px !important;
+  height: 34px !important;
+  font-size: 16px !important;
+  transition: border-color 0.1s, color 0.1s !important;
+}
+
+.nx-plus-btn:hover {
+  border-color: var(--z42-exec-active) !important;
+  color: var(--nds-text-hi) !important;
+}
+
+/* ── B3: Tab bar — structured visual anchor ───────────────────────── */
+.nx-tab-bar {
+  background: var(--z42-panel-active) !important;
+  border-bottom: 1px solid var(--z42-border-frame) !important;
+  padding: 0 4px !important;
+  display: flex !important;
+  align-items: flex-end !important;
+  gap: 0 !important;
+  min-height: 34px !important;
+  flex-shrink: 0 !important;
+}
+
+.nx-tab {
+  padding: 6px 12px !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  color: var(--nds-text-dim) !important;
+  border: none !important;
+  border-bottom: 2px solid transparent !important;
+  background: none !important;
+  cursor: pointer !important;
+  transition: color 0.1s, border-color 0.1s !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  white-space: nowrap !important;
+  font-family: var(--nds-font) !important;
+  border-radius: 0 !important;
+  margin-bottom: -1px !important;
+}
+
+.nx-tab:hover {
+  color: var(--nds-text-md) !important;
+}
+
+.nx-tab.active {
+  color: var(--nds-text-hi) !important;
+  border-bottom-color: var(--z42-exec-active) !important;
+  font-weight: 600 !important;
+}
+
+/* Tab activity dot — only show when tab has new content */
+.nx-tab-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--z42-exec-active);
+  display: none;
+  flex-shrink: 0;
+}
+
+.nx-tab[data-has-new="true"] .nx-tab-dot,
+.nx-tab.has-new .nx-tab-dot {
+  display: inline-block;
+}
+
+/* ── B4: Log/output pane — operational density ───────────────────── */
+.nx-log-pane,
+#logArea,
+.log-area,
+.nx-output-area {
+  background: var(--z42-workspace) !important;
+  font-size: 11px !important;
+  font-family: var(--nds-mono) !important;
+  line-height: 1.6 !important;
+  padding: 10px 12px !important;
+}
+
+/* ── B5: Bottom terminal strip — clear separation ────────────────── */
+.nx-bottom-wrap {
+  background: var(--z42-panel-active) !important;
+  border-top: 1px solid var(--z42-border-frame) !important;
+  flex-shrink: 0 !important;
+}
+
+.nx-bottom-hdr {
+  display: flex !important;
+  align-items: center !important;
+  padding: 0 12px !important;
+  height: 30px !important;
+  gap: 8px !important;
+  cursor: pointer !important;
+  border-bottom: 1px solid var(--z42-border-subtle) !important;
+}
+
+.nx-bottom-title {
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  color: var(--nds-text-dim) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+}
+
+/* ── B6: Status bar — dense, informative anchor ──────────────────── */
+.nx-statusbar {
+  height: 22px !important;
+  background: var(--z42-panel-active) !important;
+  border-top: 1px solid var(--z42-border-frame) !important;
+  display: flex !important;
+  align-items: center !important;
+  padding: 0 10px !important;
+  gap: 0 !important;
+  font-size: 10px !important;
+  font-family: var(--nds-mono) !important;
+  color: var(--nds-text-dim) !important;
+  flex-shrink: 0 !important;
+}
+
+.nx-statusbar-item {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  padding: 0 6px !important;
+  height: 100% !important;
+  white-space: nowrap !important;
+}
+
+.nx-statusbar-sep {
+  width: 1px !important;
+  height: 12px !important;
+  background: var(--z42-border-subtle) !important;
+  flex-shrink: 0 !important;
+}
+
+.nx-statusbar-right {
+  margin-left: auto !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.nx-model-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--z43-exec-idle-dot);
+  display: inline-block;
+  flex-shrink: 0;
+  transition: background 0.3s;
+}
+
+body[data-nx-exec="running"] .nx-model-dot {
+  background: var(--z43-exec-run-dot);
+  animation: z43-run-dot-pulse 2.4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z43C — PANEL COHESION SYSTEM
+   All panels feel like one cognition runtime.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── C1: Universal panel header rhythm ───────────────────────────── */
+.nx-panel-hdr {
+  height: var(--z43-section-label-h) !important;
+  min-height: var(--z43-section-label-h) !important;
+  padding: 0 var(--z43-section-pad-h) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  border-bottom: 1px solid var(--z42-border-subtle) !important;
+  background: var(--z42-panel-active) !important;
+  flex-shrink: 0 !important;
+}
+
+.nx-panel-title {
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  color: var(--nds-text-dim) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.07em !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+/* ── C2: Inspector section rhythm ────────────────────────────────── */
+.nx-inspector-section {
+  border-bottom: 1px solid var(--z42-border-subtle) !important;
+  padding: var(--z43-section-pad-v) var(--z43-section-pad-h) !important;
+}
+
+.nx-inspector-section:last-child {
+  border-bottom: none !important;
+}
+
+.nx-insp-label {
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  color: var(--nds-text-dim) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.07em !important;
+  margin-bottom: 8px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  height: 16px !important;
+}
+
+/* ── C3: Stat grid — dense, readable ────────────────────────────── */
+.nx-stat-grid {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 1px !important;
+  background: var(--z42-border-subtle) !important;
+  border: 1px solid var(--z42-border-subtle) !important;
+  border-radius: 4px !important;
+  overflow: hidden !important;
+}
+
+.nx-stat {
+  background: var(--z42-workspace) !important;
+  padding: 7px 8px !important;
+}
+
+.nx-stat-label {
+  font-size: 10px !important;
+  color: var(--nds-text-dim) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  margin-bottom: 3px !important;
+  font-weight: 500 !important;
+}
+
+.nx-stat-val {
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: var(--nds-text-hi) !important;
+  font-family: var(--nds-mono) !important;
+  line-height: 1 !important;
+}
+
+/* ── C4: Model info — structured display ─────────────────────────── */
+.nx-model-info {
+  background: var(--z42-workspace) !important;
+  border: 1px solid var(--z42-border-subtle) !important;
+  border-radius: 4px !important;
+  padding: 7px 8px !important;
+  margin-bottom: 6px !important;
+}
+
+.nx-model-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 6px !important;
+}
+
+.nx-model-name {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: var(--nds-text-hi) !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.nx-model-tag {
+  font-size: 10px !important;
+  color: var(--nds-text-dim) !important;
+  font-family: var(--nds-mono) !important;
+  flex-shrink: 0 !important;
+  background: var(--z42-border-subtle) !important;
+  border-radius: 2px !important;
+  padding: 1px 4px !important;
+}
+
+/* ── C5: Metrics bars — execution-aware color ───────────────────── */
+.nx-metrics-grid {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 6px !important;
+}
+
+.nx-metric {
+  background: var(--z42-workspace) !important;
+  border: 1px solid var(--z42-border-subtle) !important;
+  border-radius: 4px !important;
+  padding: 6px 7px !important;
+}
+
+.nx-metric-label {
+  font-size: 10px !important;
+  color: var(--nds-text-dim) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  margin-bottom: 3px !important;
+}
+
+.nx-metric-val {
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  color: var(--nds-text-hi) !important;
+  font-family: var(--nds-mono) !important;
+}
+
+.nx-metric-bar {
+  background: var(--z42-border-subtle) !important;
+  border-radius: 2px !important;
+  height: 3px !important;
+  margin-top: 5px !important;
+  overflow: hidden !important;
+}
+
+.nx-metric-fill {
+  background: var(--z42-exec-active) !important;
+  height: 100% !important;
+  border-radius: 2px !important;
+  transition: width 0.4s ease !important;
+}
+
+/* Memory bar — use a calm purple only here (identity, not decoration) */
+.nx-metric-fill[style*="background:var(--purple)"],
+.nx-metric-fill[style*="background: var(--purple)"] {
+  background: rgba(120, 90, 200, 0.6) !important;
+}
+
+/* ── C6: Observability panel — cohesion ──────────────────────────── */
+.nx-obs-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 6px 10px !important;
+  border-bottom: 1px solid var(--z42-border-subtle) !important;
+}
+
+.nx-obs-title {
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  color: var(--nds-text-dim) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.07em !important;
+}
+
+.nx-obs-feed-hdr {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 5px 8px !important;
+  border-bottom: 1px solid var(--z42-border-subtle) !important;
+  background: var(--z42-panel-active) !important;
+}
+
+.nx-obs-feed-label {
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  color: var(--nds-text-dim) !important;
+}
+
+.nx-obs-count-badge {
+  font-size: 9px !important;
+  font-family: var(--nds-mono) !important;
+  color: var(--nds-text-dim) !important;
+  background: var(--z42-border-subtle) !important;
+  border-radius: 8px !important;
+  padding: 1px 5px !important;
+}
+
+.nx-obs-conn-strip {
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  padding: 4px 10px !important;
+  font-size: 10px !important;
+  color: var(--nds-text-dim) !important;
+  border-bottom: 1px solid var(--z42-border-subtle) !important;
+  background: var(--z42-workspace) !important;
+  font-family: var(--nds-mono) !important;
+}
+
+/* ── C7: Panel panel body scroll ─────────────────────────────────── */
+.nx-panel-body {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+/* ── C8: Status badge in inspector ───────────────────────────────── */
+.nx-status-badge {
+  font-size: 10px !important;
+  font-family: var(--nds-mono) !important;
+  padding: 1px 6px !important;
+  border-radius: 3px !important;
+  border: 1px solid var(--z42-border-active) !important;
+  background: var(--z42-workspace) !important;
+  color: var(--nds-text-dim) !important;
+  transition: color 0.2s, border-color 0.2s, background 0.2s !important;
+}
+
+body[data-nx-exec="running"] .nx-status-badge {
+  color: #57ABFF !important;
+  border-color: rgba(0, 121, 242, 0.30) !important;
+  background: rgba(0, 121, 242, 0.06) !important;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z43D — EXECUTION-FOCUSED EMPTY STATES
+   Operational, not unfinished. No marketing copy.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* Generic operational empty state */
+.nx-obs-empty,
+.p4-sess-empty,
+.z33-sm-item .z33-sm-item-label[style*="color:var(--muted"],
+[class$="-empty"],
+[class*="-empty-state"] {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 14px 10px !important;
+  font-size: 11px !important;
+  color: var(--nds-text-dim) !important;
+  font-family: var(--nds-font) !important;
+  text-align: center !important;
+  line-height: 1.5 !important;
+}
+
+/* Observability empty — waiting for events */
+.nx-obs-empty {
+  font-size: 10px !important;
+  padding: 10px !important;
+  color: var(--nds-text-dim) !important;
+  font-family: var(--nds-mono) !important;
+}
+
+/* Session list empty */
+.p4-sess-empty {
+  font-size: 11px !important;
+  color: var(--nds-text-dim) !important;
+  padding: 12px 8px !important;
+  text-align: center !important;
+}
+
+/* Agent pipeline waiting state */
+.p7-pipeline-stage {
+  font-size: 10px !important;
+  color: var(--nds-text-dim) !important;
+  font-family: var(--nds-mono) !important;
+  padding: 5px 0 !important;
+  margin-bottom: 6px !important;
+}
+
+/* Center tab content — operational empty state for log/code/terminal */
+.tab-content-empty,
+[id^="nxTab-"].nx-tab-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 100%;
+  min-height: 120px;
+}
+
+.tab-content-empty-label {
+  font-size: 11px;
+  color: var(--nds-text-dim);
+  font-family: var(--nds-mono);
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z43E — RUNTIME CONTINUITY PRESENCE
+   Long sessions feel stable, continuous, persistent.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── E1: Session card — operational identity surface ─────────────── */
+.nx-session-card {
+  background: var(--z42-workspace) !important;
+  border: 1px solid var(--z42-border-frame) !important;
+  border-radius: 5px !important;
+  padding: 9px 10px !important;
+  margin: 8px !important;
+}
+
+.nx-session-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  min-height: 20px !important;
+}
+
+.nx-session-row + .nx-session-row {
+  margin-top: 4px !important;
+  border-top: 1px solid var(--z42-border-subtle) !important;
+  padding-top: 4px !important;
+}
+
+.nx-session-label {
+  font-size: 10px !important;
+  font-weight: 500 !important;
+  color: var(--nds-text-dim) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+}
+
+.nx-session-val {
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  color: var(--nds-text-md) !important;
+  font-family: var(--nds-mono) !important;
+  text-align: right !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  max-width: 130px !important;
+}
+
+/* Plan value — operational blue, not decorative purple */
+#nxActivePlanMode {
+  color: var(--z42-exec-active) !important;
+  font-weight: 600 !important;
+  font-family: var(--nds-font) !important;
+}
+
+/* ── E2: HITL strip — present when relevant ──────────────────────── */
+.nx-hitl-strip {
+  background: rgba(0, 121, 242, 0.04) !important;
+  border-top: 1px solid rgba(0, 121, 242, 0.15) !important;
+  padding: 8px 10px !important;
+  margin: 0 !important;
+}
+
+.nx-hitl-row {
+  display: flex !important;
+  gap: 5px !important;
+  margin-bottom: 6px !important;
+}
+
+.nx-hitl-inject {
+  display: flex !important;
+  gap: 5px !important;
+  margin-bottom: 5px !important;
+}
+
+.nx-hitl-input {
+  flex: 1 !important;
+  background: var(--z42-workspace) !important;
+  border: 1px solid var(--z42-border-active) !important;
+  border-radius: 4px !important;
+  padding: 5px 8px !important;
+  font-size: 11px !important;
+  font-family: var(--nds-font) !important;
+  color: var(--nds-text-hi) !important;
+  outline: none !important;
+}
+
+.nx-hitl-input:focus {
+  border-color: var(--z42-exec-active) !important;
+}
+
+.nx-hitl-status {
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  font-size: 10px !important;
+  color: var(--nds-text-dim) !important;
+}
+
+/* ── E3: Think sections — operational memory panels ──────────────── */
+.nx-think-section {
+  padding: 6px 10px !important;
+  border-top: 1px solid var(--z42-border-subtle) !important;
+  min-height: 32px !important;
+}
+
+.nx-think-label {
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  color: var(--nds-text-dim) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+  margin-bottom: 4px !important;
+}
+
+/* ── E4: P4 session history — continuity surface ─────────────────── */
+.p4-sess-section {
+  padding: 8px 10px !important;
+  border-top: 1px solid var(--z42-border-subtle) !important;
+}
+
+.p4-sess-title {
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  color: var(--nds-text-dim) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+  margin-bottom: 6px !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+}
+
+/* ── E5: Workspace memory surface ────────────────────────────────── */
+.z33-sidebar-memory {
+  background: var(--z42-workspace) !important;
+  border-top: 1px solid var(--z42-border-frame) !important;
+  padding: 8px 10px !important;
+  flex-shrink: 0 !important;
+}
+
+.z33-sm-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-bottom: 6px !important;
+}
+
+.z33-sm-title {
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  color: var(--nds-text-dim) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+}
+
+/* ── E6: Error card — operational alert, not scary ───────────────── */
+.nx-error-card {
+  background: rgba(192, 57, 43, 0.06) !important;
+  border: 1px solid rgba(192, 57, 43, 0.20) !important;
+  border-radius: 4px !important;
+  padding: 9px 10px !important;
+  margin: 0 !important;
+}
+
+.nx-error-title {
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  color: #E55A4E !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+  margin-bottom: 5px !important;
+}
+
+.nx-error-msg {
+  font-size: 11px !important;
+  color: var(--nds-text-lo) !important;
+  font-family: var(--nds-mono) !important;
+  line-height: 1.5 !important;
+  word-break: break-word !important;
+  margin-bottom: 7px !important;
+}
+
+.nx-fix-btn {
+  background: rgba(192, 57, 43, 0.10) !important;
+  border: 1px solid rgba(192, 57, 43, 0.25) !important;
+  color: #E55A4E !important;
+  border-radius: 4px !important;
+  padding: 4px 9px !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  font-family: var(--nds-font) !important;
+  cursor: pointer !important;
+  transition: background 0.1s !important;
+}
+
+.nx-fix-btn:hover {
+  background: rgba(192, 57, 43, 0.18) !important;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z43F — LEFT RAIL + TOPBAR MATURITY
+   Dense, purposeful, operationally grounded.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── F1: Nav rail — tight, purposeful icon bar ───────────────────── */
+.nx-shell-navrail {
+  background: var(--z42-panel-active) !important;
+  border-right: 1px solid var(--z42-border-frame) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  padding: 6px 0 !important;
+  gap: 2px !important;
+  overflow: hidden !important;
+}
+
+.nx-nav-icon {
+  width: var(--z43-navrail-w) !important;
+  height: var(--z43-navrail-w) !important;
+  min-height: var(--z43-navrail-w) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 5px !important;
+  border: none !important;
+  background: none !important;
+  color: var(--nds-text-dim) !important;
+  cursor: pointer !important;
+  transition: color 0.12s, background 0.12s !important;
+  position: relative !important;
+}
+
+.nx-nav-icon:hover {
+  color: var(--nds-text-md) !important;
+  background: var(--z42-border-subtle) !important;
+}
+
+.nx-nav-icon.active,
+.nx-nav-icon[data-active="true"],
+.nx-nav-icon.nx-active {
+  color: var(--nds-text-hi) !important;
+  background: rgba(0, 121, 242, 0.10) !important;
+  border-radius: 5px !important;
+}
+
+/* Active indicator — left rail left border */
+.nx-nav-icon.active::before,
+.nx-nav-icon[data-active="true"]::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 25%;
+  height: 50%;
+  width: 2px;
+  background: var(--z42-exec-active);
+  border-radius: 0 1px 1px 0;
+}
+
+.nx-nav-icon svg {
+  width: var(--z43-rail-icon-size) !important;
+  height: var(--z43-rail-icon-size) !important;
+  flex-shrink: 0 !important;
+}
+
+/* ── F2: Topbar zone layout — intentional, dense ─────────────────── */
+.nx-topbar-left {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  flex-shrink: 0 !important;
+}
+
+.nx-topbar-center {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  flex: 1 !important;
+  justify-content: center !important;
+}
+
+.nx-topbar-right {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  flex-shrink: 0 !important;
+}
+
+.nx-topbar-run-group {
+  display: flex !important;
+  align-items: center !important;
+  background: var(--z42-workspace) !important;
+  border: 1px solid var(--z42-border-frame) !important;
+  border-radius: 5px !important;
+  overflow: hidden !important;
+}
+
+.nx-topbar-run-btn {
+  padding: 0 10px !important;
+  height: 26px !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  font-family: var(--nds-font) !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  cursor: pointer !important;
+  border: none !important;
+  border-radius: 0 !important;
+}
+
+.nx-topbar-divider {
+  width: 1px !important;
+  height: 18px !important;
+  background: var(--z42-border-frame) !important;
+  flex-shrink: 0 !important;
+}
+
+.nx-topbar-stop-btn {
+  padding: 0 9px !important;
+  height: 26px !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  font-family: var(--nds-font) !important;
+  color: var(--nds-text-dim) !important;
+  background: none !important;
+  border: none !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  transition: color 0.1s !important;
+  border-radius: 0 !important;
+}
+
+.nx-topbar-stop-btn:hover {
+  color: #E55A4E !important;
+}
+
+/* Breadcrumb — identity, not navigation */
+.nx-topbar-breadcrumb {
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  font-size: 11px !important;
+  color: var(--nds-text-dim) !important;
+  font-family: var(--nds-font) !important;
+}
+
+.nx-topbar-breadcrumb-name {
+  font-weight: 600 !important;
+  color: var(--nds-text-md) !important;
+}
+
+.nx-topbar-breadcrumb-sep {
+  color: var(--nds-text-dim) !important;
+  opacity: 0.5 !important;
+}
+
+/* Icon buttons — tight, consistent */
+.nx-icon-btn {
+  width: 28px !important;
+  height: 28px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 4px !important;
+  border: none !important;
+  background: none !important;
+  color: var(--nds-text-dim) !important;
+  cursor: pointer !important;
+  transition: color 0.1s, background 0.1s !important;
+}
+
+.nx-icon-btn:hover {
+  color: var(--nds-text-md) !important;
+  background: var(--z42-border-subtle) !important;
+}
+
+.nx-icon-btn.active,
+#nxInspectorBtn.active {
+  color: var(--nds-text-hi) !important;
+  background: rgba(0, 121, 242, 0.10) !important;
+}
+
+/* Command palette trigger — functional search bar style */
+.nx-palette-trigger {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 3px 8px !important;
+  border-radius: 4px !important;
+  border: 1px solid var(--z42-border-frame) !important;
+  background: var(--z42-workspace) !important;
+  color: var(--nds-text-dim) !important;
+  font-size: 11px !important;
+  font-family: var(--nds-font) !important;
+  cursor: pointer !important;
+  transition: border-color 0.1s, color 0.1s !important;
+  white-space: nowrap !important;
+}
+
+.nx-palette-trigger:hover {
+  border-color: var(--z42-border-active) !important;
+  color: var(--nds-text-md) !important;
+}
+
+/* KBD shortcut chips */
+.nx-kbd {
+  font-size: 9px !important;
+  font-family: var(--nds-mono) !important;
+  background: var(--z42-border-frame) !important;
+  border: 1px solid var(--z42-border-active) !important;
+  border-radius: 3px !important;
+  padding: 1px 4px !important;
+  color: var(--nds-text-dim) !important;
+  line-height: 1.4 !important;
+}
+
+/* Slide panels — cohesive with rail */
+.nx-panel-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 0 12px !important;
+  height: var(--z43-section-label-h) !important;
+  border-bottom: 1px solid var(--z42-border-frame) !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  color: var(--nds-text-dim) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+  background: var(--z42-panel-active) !important;
+  flex-shrink: 0 !important;
+}
+
+.nx-close-btn {
+  background: none !important;
+  border: none !important;
+  color: var(--nds-text-dim) !important;
+  cursor: pointer !important;
+  padding: 3px !important;
+  border-radius: 3px !important;
+  font-size: 12px !important;
+  transition: color 0.1s !important;
+}
+
+.nx-close-btn:hover {
+  color: var(--nds-text-hi) !important;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z43G — FORENSIC CORRECTIONS (Audit findings)
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* Fix: inline recommendation bar — reduce visual clutter */
+.p6-inline-rec {
+  background: var(--z42-workspace) !important;
+  border-bottom: 1px solid var(--z42-border-subtle) !important;
+  padding: 4px 12px !important;
+  font-size: 11px !important;
+  color: var(--nds-text-lo) !important;
+  display: none !important; /* hidden when no recommendation */
+}
+
+.p6-inline-rec.visible {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+/* Fix: failover bar — operational, non-alarming */
+.p5-failover-bar {
+  background: rgba(194, 138, 0, 0.06) !important;
+  border-bottom: 1px solid rgba(194, 138, 0, 0.20) !important;
+  padding: 5px 12px !important;
+  font-size: 11px !important;
+  color: var(--nds-text-lo) !important;
+}
+
+/* Fix: context bar — quiet metadata bar */
+.nx-context-bar {
+  background: var(--z42-panel-active) !important;
+  border-bottom: 1px solid var(--z42-border-subtle) !important;
+  padding: 3px 12px !important;
+  font-size: 10px !important;
+  color: var(--nds-text-dim) !important;
+  min-height: 0 !important;
+}
+
+.nx-ctx-label {
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  color: var(--nds-text-dim) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  margin-right: 6px !important;
+}
+
+/* Fix: inline style purple on #nxActivePlanMode */
+#nxActivePlanMode[style*="color:#bc8cff"],
+#nxActivePlanMode[style*="color: #bc8cff"] {
+  color: var(--z42-exec-active) !important;
+}
+
+/* Fix: metrics bar purple fill */
+#nxMetMemBar[style*="background:var(--purple)"] {
+  background: rgba(120, 90, 200, 0.5) !important;
+}
+
+/* Fix: context strip — remove dead space */
+.nx-context-bar:empty {
+  display: none !important;
+}
+
+/* Fix: P9 routing section typography */
+.p9-routing-section {
+  font-size: 11px !important;
+}
+
+.p9-routing-title {
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  color: var(--nds-text-dim) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  margin-bottom: 7px !important;
+}
+
+.p9-role-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 3px 0 !important;
+  font-size: 11px !important;
+  color: var(--nds-text-lo) !important;
+}
+
+.p9-role-label {
+  font-size: 10px !important;
+  color: var(--nds-text-dim) !important;
+  font-weight: 500 !important;
+}
+
+/* Fix: P9 context bar */
+.p9-ctx-bar-wrap {
+  background: var(--z42-border-subtle) !important;
+  border-radius: 2px !important;
+  height: 3px !important;
+  margin-top: 8px !important;
+  overflow: hidden !important;
+}
+
+.p9-ctx-bar-fill {
+  background: var(--z42-exec-active) !important;
+  height: 100% !important;
+  border-radius: 2px !important;
+  transition: width 0.5s ease !important;
+}
+
+/* Fix: agent system section */
+.p7-master-toggle {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-bottom: 6px !important;
+}
+
+.p7-system-label {
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  color: var(--nds-text-md) !important;
+}
+
+/* Fix: prompt template cat buttons */
+.p4-tpl-cats {
+  display: flex !important;
+  gap: 3px !important;
+  flex-wrap: wrap !important;
+  margin-bottom: 6px !important;
+}
+
+.p4-tpl-cat {
+  font-size: 10px !important;
+  font-weight: 500 !important;
+  padding: 2px 7px !important;
+  border-radius: 3px !important;
+  border: 1px solid var(--z42-border-active) !important;
+  background: var(--z42-workspace) !important;
+  color: var(--nds-text-dim) !important;
+  cursor: pointer !important;
+  transition: background 0.1s, color 0.1s !important;
+  font-family: var(--nds-font) !important;
+}
+
+.p4-tpl-cat.active,
+.p4-tpl-cat:hover {
+  background: rgba(0, 121, 242, 0.10) !important;
+  border-color: rgba(0, 121, 242, 0.30) !important;
+  color: var(--nds-text-md) !important;
+}
+
+/* Fix: tiny buttons — unified compact look */
+.nx-tiny-btn {
+  font-size: 11px !important;
+  padding: 3px 8px !important;
+  border-radius: 4px !important;
+  border: 1px solid var(--z42-border-active) !important;
+  background: var(--z42-workspace) !important;
+  color: var(--nds-text-lo) !important;
+  cursor: pointer !important;
+  font-family: var(--nds-font) !important;
+  transition: border-color 0.1s, color 0.1s !important;
+  white-space: nowrap !important;
+}
+
+.nx-tiny-btn:hover {
+  border-color: var(--z42-exec-active) !important;
+  color: var(--nds-text-hi) !important;
+}
+
+.nx-tiny-btn:disabled {
+  opacity: 0.4 !important;
+  cursor: not-allowed !important;
+}
+
+/* Fix: drawer — anchored, not floating */
+.p57-drawer {
+  background: var(--z42-panel-active) !important;
+  border-left: 1px solid var(--z42-border-frame) !important;
+  box-shadow: -8px 0 32px rgba(0, 0, 0, 0.4) !important;
+}

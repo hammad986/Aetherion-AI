@@ -1,0 +1,169 @@
+MISSION:
+AETHERION AI — PHASE Z10
+CROSS-WORKER EXECUTION CONTROL + FINAL DISTRIBUTED SAFETY
+
+ARCHITECTURE STATUS:
+PERMANENTLY LOCKED.
+
+STRICTLY FORBIDDEN:
+
+* frontend redesign
+* orchestration redesign
+* new AI systems
+* new runtime engines
+* feature invention
+* agent framework expansion
+
+THIS IS PURE OPERATIONAL CORRECTNESS.
+
+====================================================
+PRIMARY OBJECTIVE
+=================
+
+Complete the final missing layer of distributed execution safety.
+
+Current state:
+Redis-backed runtime coordination exists.
+
+Remaining gap:
+cross-worker subprocess control and execution interruption correctness.
+
+====================================================
+CRITICAL TARGETS
+================
+
+1. Cross-worker stop signal correctness
+2. Distributed subprocess lifecycle control
+3. Worker ownership enforcement
+4. Zombie execution prevention
+5. Replay durability during interruption
+6. Graceful worker death handling
+7. Distributed execution reconciliation
+
+====================================================
+PHASE 1 — EXECUTION OWNERSHIP AUDIT
+===================================
+
+Generate:
+Z10_EXECUTION_OWNERSHIP_AUDIT.md
+
+Map:
+
+* all subprocess ownership flows
+* all worker-local process references
+* all stop/kill lifecycle paths
+* all interruption boundaries
+* all replay interruption flows
+
+Identify:
+
+* zombie process risks
+* orphan ownership risks
+* stale running state risks
+* race conditions
+
+====================================================
+PHASE 2 — CROSS-WORKER STOP CONTROL
+===================================
+
+Implement:
+robust distributed stop handling.
+
+Requirements:
+
+* any worker can request stop
+* owning worker performs actual process termination
+* stop signals survive reconnects
+* stale stop signals auto-expire
+* stop acknowledgement propagated through Redis
+
+Guarantee:
+no duplicate stop attempts.
+
+====================================================
+PHASE 3 — WORKER HEARTBEAT RECONCILIATION
+=========================================
+
+Implement:
+worker death reconciliation.
+
+If:
+worker heartbeat expires
+
+Then:
+
+* orphan sessions identified
+* stale ownership cleared
+* interrupted sessions marked recoverable
+* replay continuity preserved
+
+Generate:
+Z10_WORKER_RECONCILIATION_REPORT.md
+
+====================================================
+PHASE 4 — EXECUTION RECOVERY VALIDATION
+=======================================
+
+Simulate:
+
+* SIGTERM during execution
+* worker crash
+* Redis reconnect
+* replay interruption
+* forced stop during HITL pause
+* queue interruption
+
+Verify:
+
+* no zombie tasks
+* no duplicate execution
+* no orphan subprocesses
+* replay continuity intact
+
+====================================================
+PHASE 5 — DISTRIBUTED SAFETY CERTIFICATION
+==========================================
+
+Generate:
+Z10_DISTRIBUTED_RUNTIME_CERTIFICATION.md
+
+Must include:
+
+* stop signal latency
+* ownership correctness
+* replay recovery correctness
+* interruption durability
+* worker failover behavior
+* remaining operational ceilings
+
+====================================================
+MANDATORY RULES
+===============
+
+DO NOT:
+
+* redesign runtime
+* redesign orchestration
+* mutate frontend payloads
+* change SSE protocol
+* add frameworks
+* introduce Kubernetes abstractions
+* introduce Celery/RQ
+
+ONLY:
+surgical operational hardening.
+
+====================================================
+SUCCESS STATE
+=============
+
+Aetherion AI becomes:
+
+* cross-worker safe
+* interruption-safe
+* zombie-safe
+* ownership-safe
+* replay-safe
+* operationally reliable
+
+under real distributed runtime conditions.

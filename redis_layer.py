@@ -50,6 +50,13 @@ _RUNNING_TTL    = int(os.getenv("NX_RUNNING_TTL", "600"))    # 10 min
 _WORKER_TTL     = int(os.getenv("NX_WORKER_TTL", "60"))      # 1 min heartbeat
 _HITL_TTL       = int(os.getenv("NX_HITL_TTL", "3600"))      # 1 hour HITL window
 _STOP_TTL       = 300                                          # 5 min stop signal TTL
+_STOP_ACK_TTL   = 60                                           # 1 min stop acknowledgement TTL
+_ORPHAN_TTL     = int(os.getenv("NX_ORPHAN_TTL", "3600"))    # 1 hour orphan marker TTL
+_PROC_TTL       = int(os.getenv("NX_PROC_TTL", "600"))       # 10 min proc PID record
+
+_STOP_ACK_PFX   = "nx:stop_ack:"       # STRING — nx:stop_ack:<sid>
+_ORPHAN_PFX     = "nx:orphan:"         # STRING — nx:orphan:<sid> (recoverable session)
+_PROC_PFX       = "nx:proc:"           # HASH   — nx:proc:<sid> {pid, worker_id, started_at}
 
 
 class NexoraRedisLayer:
@@ -229,42 +236,168 @@ class NexoraRedisLayer:
         return result
 
     def release_running(self) -> None:
-        """Clear this worker's running-session record."""
+        """Clear this worker's running-session record (Z10: also clears proc PID tracking)."""
         old_sid = self._local_running.get("sid")
         self._local_running["sid"]  = None
         self._local_running["proc"] = None
         self._local_running["seq"]  = 0
+        self._local_running["pid"]  = None
         if self._ok and self._r and old_sid:
-            self._redis_call(self._r.delete, f"{_RUNNING_PFX}{self._wid}")
-            self._redis_call(self._r.delete, f"{_OWNER_PFX}{old_sid}")
-            self._redis_call(self._r.delete, f"{_STOP_PFX}{old_sid}")
+            pipe = self._r.pipeline(transaction=False)
+            pipe.delete(f"{_RUNNING_PFX}{self._wid}")
+            pipe.delete(f"{_OWNER_PFX}{old_sid}")
+            pipe.delete(f"{_STOP_PFX}{old_sid}")
+            pipe.delete(f"{_PROC_PFX}{old_sid}")
+            try:
+                pipe.execute()
+            except Exception as e:
+                logger.warning("[NexoraRedis] release_running pipeline error: %s", e)
 
-    # ── Stop Signals ────────────────────────────────────────────────────────────
+    # ── Proc PID Tracking (Z10) ─────────────────────────────────────────────────
+
+    def set_proc_pid(self, sid: str, pid: int) -> None:
+        """
+        Record the PID of the subprocess spawned for this session.
+        Stored in Redis for audit/diagnostics. Not cross-killable, but
+        enables reconciliation to identify zombie PIDs after worker death.
+        """
+        self._local_running["pid"] = pid
+        if self._ok and self._r:
+            key = f"{_PROC_PFX}{sid}"
+            self._redis_call(self._r.hset, key, mapping={
+                "pid":       str(pid),
+                "worker_id": self._wid,
+                "started_at": str(round(time.time(), 3)),
+            })
+            self._redis_call(self._r.expire, key, _PROC_TTL)
+
+    def get_proc_info(self, sid: str) -> dict:
+        """Return {pid, worker_id, started_at} for the session's subprocess, or {}."""
+        if self._ok and self._r:
+            return self._redis_call(self._r.hgetall, f"{_PROC_PFX}{sid}") or {}
+        pid = self._local_running.get("pid")
+        return {"pid": str(pid), "worker_id": self._wid} if pid else {}
+
+    def clear_proc_pid(self, sid: str) -> None:
+        self._local_running["pid"] = None
+        if self._ok and self._r:
+            self._redis_call(self._r.delete, f"{_PROC_PFX}{sid}")
+
+    # ── Stop Signals (Z10 — hardened) ───────────────────────────────────────────
 
     def request_stop(self, sid: str) -> bool:
         """
         Signal any worker to stop session `sid`.
-        Returns True if the signal was set, False if sid is not running at all.
+
+        Z10 contract:
+          • Idempotent — safe to call multiple times; ack check prevents re-fire.
+          • Cross-worker safe — Redis flag polled by owning worker's execution loop.
+          • Auto-expiring — flag TTL prevents stale stop signals from affecting
+            future executions of the same session.
+          • Returns False immediately if a stop is already acknowledged.
         """
-        # Try local first (same process)
-        if self._local_running.get("sid") == sid:
-            return True   # caller handles SIGTERM locally
-        # Cross-worker: set Redis flag
+        # Guard: don't re-issue if already acked
+        if self.is_stop_acked(sid):
+            logger.debug("[NexoraRedis] request_stop(%s): already acked — no-op", sid)
+            return False
+
+        # Set the distributed stop flag (idempotent SET with TTL)
         if self._ok and self._r:
-            result = self._redis_call(self._r.set, f"{_STOP_PFX}{sid}", "1", ex=_STOP_TTL)
-            return result is not None
+            self._redis_call(self._r.set, f"{_STOP_PFX}{sid}", "1", ex=_STOP_TTL)
+            logger.info("[NexoraRedis] Stop signal set for session %s (worker=%s)", sid, self._wid)
+            return True
+
+        # Local fallback — same-worker path; ExecutionTask.cancel() handles it
+        if self._local_running.get("sid") == sid:
+            logger.info("[NexoraRedis] Stop signal (local) for session %s", sid)
+            return True
+
         return False
 
     def check_stop_requested(self, sid: str) -> bool:
-        """Worker polls this during long execution loops."""
+        """
+        Owning worker calls this inside the execution loop to detect cross-worker
+        stop requests. Returns True if stop is signalled and not yet acknowledged.
+        """
+        # Local flag check (same-process cancellation)
+        if self._local_running.get("sid") == sid:
+            proc = self._local_running.get("proc")
+            if proc is not None and hasattr(proc, "poll") and proc.poll() is not None:
+                return True  # proc already dead
+
         if not self._ok or not self._r:
             return False
         val = self._redis_call(self._r.get, f"{_STOP_PFX}{sid}")
         return val == "1"
 
+    def ack_stop(self, sid: str) -> None:
+        """
+        Owning worker calls this after it has performed the actual process
+        termination. Clears the stop flag and writes the ack key.
+        Prevents duplicate stop attempts.
+        """
+        if self._ok and self._r:
+            pipe = self._r.pipeline(transaction=False)
+            pipe.delete(f"{_STOP_PFX}{sid}")
+            pipe.set(f"{_STOP_ACK_PFX}{sid}", self._wid, ex=_STOP_ACK_TTL)
+            try:
+                pipe.execute()
+            except Exception as e:
+                logger.warning("[NexoraRedis] ack_stop pipeline error: %s", e)
+        else:
+            # Local: just clear the local stop flag
+            pass
+        logger.info("[NexoraRedis] Stop acknowledged for session %s by worker %s", sid, self._wid)
+
+    def is_stop_acked(self, sid: str) -> bool:
+        """Returns True if the stop for this session has already been acknowledged."""
+        if not self._ok or not self._r:
+            return False
+        val = self._redis_call(self._r.get, f"{_STOP_ACK_PFX}{sid}")
+        return val is not None
+
     def clear_stop_signal(self, sid: str) -> None:
+        """Full stop-state reset: flag + ack. Called on session cleanup."""
         if self._ok and self._r:
             self._redis_call(self._r.delete, f"{_STOP_PFX}{sid}")
+            self._redis_call(self._r.delete, f"{_STOP_ACK_PFX}{sid}")
+
+    # ── Orphan Markers (Z10) ─────────────────────────────────────────────────────
+
+    def mark_orphan(self, sid: str, reason: str = "worker_death") -> None:
+        """
+        Mark a session as orphaned (worker died mid-execution).
+        Persists until consumed by recovery or TTL expiry.
+        """
+        if self._ok and self._r:
+            self._redis_call(
+                self._r.set,
+                f"{_ORPHAN_PFX}{sid}",
+                json.dumps({"reason": reason, "ts": round(time.time(), 3), "worker": self._wid}),
+                ex=_ORPHAN_TTL,
+            )
+        logger.warning("[NexoraRedis] Session %s marked orphan (%s)", sid, reason)
+
+    def list_orphans(self) -> list:
+        """Return all currently marked orphan sessions."""
+        if not self._ok or not self._r:
+            return []
+        keys = self._redis_call(self._r.keys, f"{_ORPHAN_PFX}*") or []
+        result = []
+        for k in keys:
+            sid = k[len(_ORPHAN_PFX):]
+            raw = self._redis_call(self._r.get, k)
+            try:
+                meta = json.loads(raw) if raw else {}
+            except Exception:
+                meta = {}
+            result.append({"session_id": sid, **meta})
+        return result
+
+    def clear_orphan(self, sid: str) -> None:
+        """Remove the orphan marker once recovery is complete."""
+        if self._ok and self._r:
+            self._redis_call(self._r.delete, f"{_ORPHAN_PFX}{sid}")
 
     # ── HITL State ──────────────────────────────────────────────────────────────
 

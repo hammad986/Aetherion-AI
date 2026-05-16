@@ -1863,6 +1863,16 @@ _scheduler.start(
     goal_fn=_scheduler_goal,
 )
 
+# ── Phase Z10: start the worker death reconciler ─────────────────
+try:
+    from execution.worker_reconciler import start_worker_reconciler
+    start_worker_reconciler()
+except Exception as _z10_err:
+    import logging as _z10_log
+    _z10_log.getLogger(__name__).warning(
+        "[Z10] Worker reconciler failed to start: %s", _z10_err
+    )
+
 
 def enqueue_task(task, model=None, cfg=None,
                  chain_id=None, chain_task_id=None):

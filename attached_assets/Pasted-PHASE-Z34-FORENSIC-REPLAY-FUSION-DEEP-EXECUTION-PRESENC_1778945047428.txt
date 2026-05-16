@@ -1,0 +1,294 @@
+PHASE Z34 — FORENSIC REPLAY FUSION + DEEP EXECUTION PRESENCE
+
+CURRENT STATE:
+Aetherion AI now contains:
+
+* DAG execution
+* replay persistence
+* semantic confidence
+* adaptive replanning
+* procedural skill memory
+* execution timeline dock
+* runtime-aware command palette
+* forensic exports
+* contextual sidebar memory
+* operational workspace UX
+
+However:
+
+The runtime still feels:
+fragmented,
+flat,
+and partially disconnected.
+
+Execution exists.
+Replay exists.
+DAG exists.
+Timeline exists.
+
+But they are not yet fused into:
+a single coherent operational experience.
+
+THIS PHASE IS NOT:
+adding more AI capabilities.
+
+THIS PHASE IS:
+fusing runtime,
+replay,
+timeline,
+and DAG
+into a spatially coherent forensic operating environment.
+
+STRICT RULES:
+🔒 NO NEW AI AGENTS
+🔒 NO NEW BACKEND ORCHESTRATION SYSTEMS
+🔒 NO FRAMEWORK REPLACEMENTS
+🔒 NO VISUAL HYPE
+🔒 NO NEON EFFECTS
+🔒 NO AGI MARKETING
+🔒 NO TELEMETRY OVERLOAD
+🔒 CALM EXECUTION ENVIRONMENT ONLY
+🔒 EXECUTION CLARITY > FEATURE COUNT
+🔒 REPLAY COHERENCE > NEW CAPABILITIES
+
+====================================================
+PHASE Z34A — DAG ↔ TIMELINE FORENSIC FUSION
+===========================================
+
+PROBLEM:
+Timeline and DAG currently feel:
+separate.
+
+GOAL:
+Create unified execution replay.
+
+REQUIREMENTS:
+
+1. Timeline → DAG Synchronization
+   Clicking timeline events MUST:
+
+* seek DAG state
+* highlight active execution branch
+* restore node states
+* restore confidence overlays
+* restore recovery paths
+
+2. DAG → Timeline Synchronization
+   Selecting DAG nodes MUST:
+
+* seek related timeline events
+* reveal retries
+* reveal replanning history
+* reveal confidence drift
+
+3. Replay Cursor System
+   Introduce:
+   single replay cursor
+   shared across:
+
+* DAG
+* timeline
+* forensic inspector
+* replay viewer
+
+4. Timestamp Fidelity
+   All replay systems MUST:
+   share synchronized timestamps.
+
+====================================================
+PHASE Z34B — EXECUTION SPATIAL PRESENCE
+=======================================
+
+PROBLEM:
+Workspace still feels:
+flat and empty.
+
+GOAL:
+Make execution feel:
+spatially alive.
+
+REQUIREMENTS:
+
+1. Live Execution Layer
+   During execution:
+   workspace subtly transforms:
+
+* active node glow
+* execution branch focus
+* dependency wave propagation
+* recovery branch emphasis
+
+WITHOUT:
+flashy animation.
+
+2. Runtime Depth
+   Introduce:
+   visual depth hierarchy:
+
+* active execution
+* historical execution
+* replay state
+* unstable branches
+* blocked nodes
+
+3. Spatial Awareness
+   Operator should instantly understand:
+
+* what is active
+* what failed
+* what recovered
+* what escalated
+* what is pending
+
+====================================================
+PHASE Z34C — FORENSIC INSPECTOR EVOLUTION
+=========================================
+
+PROBLEM:
+Inspector still behaves:
+like a log panel.
+
+GOAL:
+Transform inspector into:
+execution reasoning surface.
+
+REQUIREMENTS:
+
+1. Node-Centric Inspection
+   Inspector adapts to:
+   selected DAG node.
+
+2. Replay Context
+   Inspector displays:
+
+* timeline position
+* retries
+* confidence drift
+* dependency lineage
+* recovery history
+* semantic pressure snapshot
+
+3. Reasoning Chain Reconstruction
+   Allow operators to reconstruct:
+   why execution changed paths.
+
+4. Recovery Narrative
+   Show:
+   before failure →
+   failure →
+   replan →
+   recovery outcome
+
+====================================================
+PHASE Z34D — EXECUTION CONTINUITY MEMORY
+========================================
+
+PROBLEM:
+Runtime history still feels:
+disconnected between sessions.
+
+GOAL:
+Create continuity awareness.
+
+REQUIREMENTS:
+
+1. Persistent Execution Threads
+   Related sessions grouped together.
+
+2. Failure Lineage
+   Track:
+   recurring failure chains.
+
+3. Recovery Success Mapping
+   Track:
+   which replans historically succeed.
+
+4. Skill-to-Recovery Correlation
+   Show:
+   which procedural skills helped recovery.
+
+====================================================
+PHASE Z34E — VISUAL DEPTH + EXECUTION IMMERSION
+===============================================
+
+PROBLEM:
+UI still visually shallow.
+
+GOAL:
+Increase operational immersion
+WITHOUT increasing clutter.
+
+REQUIREMENTS:
+
+1. Layered Surface Hierarchy
+   Differentiate:
+
+* runtime layer
+* replay layer
+* forensic layer
+* timeline layer
+
+2. Motion Governance
+   All motion MUST:
+
+* remain slow
+* subtle
+* meaningful
+* state-driven
+
+3. Focus Management
+   Execution focus must guide operator attention naturally.
+
+4. Ambient Runtime Presence
+   Workspace should feel:
+   alive,
+   but calm.
+
+====================================================
+PHASE Z34F — CERTIFICATION + FORENSIC VALIDATION
+================================================
+
+Generate:
+
+* docs/Z34_REPLAY_FUSION_AUDIT.md
+* docs/Z34_DAG_TIMELINE_SYNC.md
+* docs/Z34_FORENSIC_INSPECTOR_REPORT.md
+* docs/Z34_EXECUTION_DEPTH_CERTIFICATION.md
+* docs/Z34_RUNTIME_CONTINUITY_ANALYSIS.md
+* docs/Z34_OPERATOR_IMMERSION_VERDICT.md
+
+Each report MUST include:
+
+1. Remaining replay weaknesses
+2. Remaining timeline inconsistencies
+3. Remaining operator confusion risks
+4. Remaining visual clutter zones
+5. Remaining forensic blind spots
+6. Honest operational verdict
+
+====================================================
+FINAL VALIDATION
+================
+
+Before completion:
+
+* verify DAG ↔ timeline synchronization
+* verify replay cursor consistency
+* verify inspector synchronization
+* verify no replay desync
+* verify no FPS degradation
+* verify no memory growth during replay
+* verify no telemetry overload
+* verify execution readability during chaos conditions
+* verify calm operational UX
+
+IMPORTANT:
+This phase is NOT:
+adding more intelligence.
+
+This phase IS:
+making Aetherion AI feel:
+coherent,
+forensic,
+operational,
+and deeply trustworthy.

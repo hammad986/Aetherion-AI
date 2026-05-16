@@ -1,0 +1,580 @@
+/* ═══════════════════════════════════════════════════════════════════
+   PHASE Z34 — Forensic Replay Fusion + Deep Execution Presence
+   Layered surface hierarchy · Motion governance · Calm immersion
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── CSS Custom Properties (depth tokens) ───────────────────────── */
+:root {
+  --z34-runtime-tint:   rgba(88, 166, 255, 0.04);
+  --z34-replay-tint:    rgba(210, 153, 34, 0.05);
+  --z34-forensic-tint:  rgba(139, 92, 246, 0.05);
+  --z34-timeline-tint:  rgba(56, 189, 148, 0.04);
+  --z34-depth-fade:     120ms;
+  --z34-wave-dur:       1.8s;
+  --z34-hi:             #58a6ff;
+  --z34-med:            #e3b341;
+  --z34-low:            #f87171;
+  --z34-success:        #3fb950;
+  --z34-replan:         #a78bfa;
+  --z34-narr-border:    #21262d;
+}
+
+/* ── Depth Layer Tints ──────────────────────────────────────────── */
+[data-z34-layer="runtime"]  { --z34-active-tint: var(--z34-runtime-tint); }
+[data-z34-layer="replay"]   { --z34-active-tint: var(--z34-replay-tint); }
+[data-z34-layer="forensic"] { --z34-active-tint: var(--z34-forensic-tint); }
+[data-z34-layer="timeline"] { --z34-active-tint: var(--z34-timeline-tint); }
+
+/* ── Live Execution Presence on DAG Surface ─────────────────────── */
+#z30DagSurface.z34-live-active {
+  position: relative;
+}
+
+#z30DagSurface.z34-live-active::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: var(--z34-active-tint, transparent);
+  transition: background var(--z34-depth-fade) ease;
+  z-index: 0;
+}
+
+/* Phase-specific wave propagation — calm, state-driven */
+#z30DagSurface[data-z34-phase="plan"]::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 20% 50%, rgba(88,166,255,0.06) 0%, transparent 70%);
+  animation: z34-wave-fade var(--z34-wave-dur) ease-out forwards;
+  z-index: 1;
+}
+
+#z30DagSurface[data-z34-phase="code"]::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 50%, rgba(63,185,80,0.06) 0%, transparent 70%);
+  animation: z34-wave-fade var(--z34-wave-dur) ease-out forwards;
+  z-index: 1;
+}
+
+#z30DagSurface[data-z34-phase="debug"]::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 80% 50%, rgba(248,113,113,0.06) 0%, transparent 70%);
+  animation: z34-wave-fade var(--z34-wave-dur) ease-out forwards;
+  z-index: 1;
+}
+
+#z30DagSurface[data-z34-phase="tool"]::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 80%, rgba(167,139,250,0.05) 0%, transparent 60%);
+  animation: z34-wave-fade var(--z34-wave-dur) ease-out forwards;
+  z-index: 1;
+}
+
+@keyframes z34-wave-fade {
+  0%   { opacity: 0.8; }
+  60%  { opacity: 0.4; }
+  100% { opacity: 0; }
+}
+
+/* Execution-active wrapper subtle border emphasis */
+.z30-live-wrap.z34-execution-active {
+  border-left: 2px solid rgba(88, 166, 255, 0.12);
+  transition: border-color var(--z34-depth-fade) ease;
+}
+
+/* ── Depth Indicator ────────────────────────────────────────────── */
+.z34-depth-indicator {
+  display: inline-flex;
+  align-items: center;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 1px 5px;
+  border-radius: 3px;
+  border: 1px solid transparent;
+  transition: color 150ms ease, border-color 150ms ease;
+  cursor: default;
+  user-select: none;
+  margin-left: 6px;
+}
+
+.z34-depth-indicator.z34-layer-runtime  {
+  color: var(--z34-hi);
+  border-color: rgba(88,166,255,0.25);
+}
+.z34-depth-indicator.z34-layer-replay   {
+  color: var(--z34-med);
+  border-color: rgba(227,179,65,0.25);
+}
+.z34-depth-indicator.z34-layer-forensic {
+  color: var(--z34-replan);
+  border-color: rgba(167,139,250,0.25);
+}
+.z34-depth-indicator.z34-layer-timeline {
+  color: var(--z34-success);
+  border-color: rgba(63,185,80,0.25);
+}
+
+/* ── Sync Pulse ─────────────────────────────────────────────────── */
+.z34-sync-pulse {
+  animation: z34-sync-pulse 1.2s ease-out;
+}
+
+@keyframes z34-sync-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(88,166,255,0.5); opacity: 1; }
+  50%  { box-shadow: 0 0 0 5px rgba(88,166,255,0.1); }
+  100% { box-shadow: 0 0 0 0 transparent; opacity: 0.6; }
+}
+
+/* ── Timeline Cursor Highlight (Z34A) ───────────────────────────── */
+.z33-tl-event.z34-tl-cursor,
+.z33-tl-group.z34-tl-cursor {
+  background: rgba(88, 166, 255, 0.08);
+  border-left: 2px solid rgba(88, 166, 255, 0.5);
+  transition: background 200ms ease;
+}
+
+/* ── Forensic Inspector Panel (Z34C) ────────────────────────────── */
+.z34-inspector-panel {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 260px;
+  background: var(--surface, #0d1117);
+  border-left: 1px solid var(--border, #21262d);
+  display: flex;
+  flex-direction: column;
+  z-index: 50;
+  transform: translateX(100%);
+  transition: transform 220ms cubic-bezier(0.16,1,0.3,1);
+  overflow: hidden;
+}
+
+.z34-inspector-panel.open {
+  transform: translateX(0);
+}
+
+.z34-inspector-hdr {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 10px;
+  height: 32px;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--border, #21262d);
+  background: var(--surface, #0d1117);
+}
+
+.z34-inspector-label {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-dim, #6e7681);
+}
+
+.z34-inspector-title {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text, #e6edf3);
+  flex: 1;
+}
+
+.z34-inspector-close {
+  background: none;
+  border: none;
+  color: var(--text-dim, #6e7681);
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
+.z34-inspector-close:hover {
+  background: var(--surface-hover, #161b22);
+  color: var(--text, #e6edf3);
+}
+
+.z34-inspector-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 10px 16px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border, #21262d) transparent;
+}
+
+/* Timeline Position Context */
+.z34-insp-tl-pos {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 0 8px;
+  border-bottom: 1px solid var(--border, #21262d);
+  margin-bottom: 8px;
+}
+
+/* Metrics Grid */
+.z34-insp-metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.z34-insp-metric {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 5px 6px;
+  background: var(--surface-overlay, #161b22);
+  border-radius: 4px;
+  border: 1px solid var(--border, #21262d);
+}
+
+.z34-insp-label {
+  font-size: 8.5px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-dim, #6e7681);
+}
+
+.z34-insp-val {
+  font-size: 10px;
+  color: var(--text, #e6edf3);
+  font-variant-numeric: tabular-nums;
+}
+
+.z34-insp-val.z34-warn { color: var(--z34-low); }
+.z34-insp-val.z34-conf-hi  { color: var(--z34-success); }
+.z34-insp-val.z34-conf-med { color: var(--z34-med); }
+.z34-insp-val.z34-conf-low { color: var(--z34-low); }
+
+/* State dot */
+.z34-insp-state-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-dim, #6e7681);
+  flex-shrink: 0;
+}
+.z34-insp-state-dot.running { background: var(--z34-hi); }
+.z34-insp-state-dot.done    { background: var(--z34-success); }
+.z34-insp-state-dot.error   { background: var(--z34-low); }
+.z34-insp-state-dot.pending { background: var(--text-dim, #6e7681); }
+
+/* Section containers */
+.z34-insp-section {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border, #21262d);
+}
+
+.z34-insp-section-title {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim, #6e7681);
+  margin-bottom: 6px;
+}
+
+/* Confidence Drift Strip */
+.z34-conf-drift-strip {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 28px;
+  padding: 2px 0;
+}
+
+.z34-conf-drift-bar {
+  flex: 1;
+  min-width: 4px;
+  border-radius: 2px 2px 0 0;
+  background: var(--z34-success);
+  transition: height 200ms ease;
+}
+.z34-conf-drift-bar.med { background: var(--z34-med); }
+.z34-conf-drift-bar.low { background: var(--z34-low); }
+
+/* Recovery Narrative */
+.z34-recovery-narrative {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.z34-narr-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 9.5px;
+  color: var(--text-dim, #6e7681);
+  padding: 4px 6px;
+  border-radius: 4px;
+  border-left: 2px solid transparent;
+}
+
+.z34-narr-step.before   { border-left-color: var(--border, #21262d); }
+.z34-narr-step.failure  { border-left-color: var(--z34-low); color: var(--z34-low); }
+.z34-narr-step.replan   { border-left-color: var(--z34-replan); color: var(--z34-replan); }
+.z34-narr-step.recovery { border-left-color: var(--z34-success); color: var(--z34-success); }
+
+.z34-narr-icon {
+  flex-shrink: 0;
+  font-size: 11px;
+  line-height: 1.3;
+}
+
+/* Dependency Lineage */
+.z34-insp-deps {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px;
+}
+
+.z34-insp-dep-node {
+  font-size: 9px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: var(--surface-overlay, #161b22);
+  border: 1px solid var(--border, #21262d);
+  color: var(--text-dim, #6e7681);
+}
+
+.z34-insp-dep-node.active {
+  border-color: rgba(88,166,255,0.4);
+  color: var(--z34-hi);
+  background: rgba(88,166,255,0.07);
+}
+
+.z34-insp-dep-arrow {
+  font-size: 9px;
+  color: var(--text-dim, #6e7681);
+  opacity: 0.5;
+}
+
+/* Retry rows */
+.z34-insp-retry-row {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  padding: 2px 0;
+  font-size: 9px;
+  border-bottom: 1px solid var(--border, #21262d);
+}
+
+.z34-insp-retry-n    { color: var(--z34-med); font-weight: 600; min-width: 18px; }
+.z34-insp-retry-text { color: var(--text-dim, #6e7681); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.z34-insp-retry-ts   { color: var(--text-dim, #6e7681); opacity: 0.5; flex-shrink: 0; }
+
+/* Replan rows */
+.z34-insp-replan-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 0;
+  font-size: 9.5px;
+}
+
+.z34-insp-replan-trigger { color: var(--text-dim, #6e7681); }
+.z34-insp-replan-outcome.success { color: var(--z34-success); }
+.z34-insp-replan-outcome.fail    { color: var(--z34-low); }
+
+/* Replay Cursor Position */
+#z34ReplayCursorPos {
+  font-size: 9px;
+  color: var(--z34-med);
+  font-variant-numeric: tabular-nums;
+  margin-left: 6px;
+}
+
+/* ── Execution Continuity Panel (Z34D) ──────────────────────────── */
+.z34-cont-footer {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border, #21262d);
+}
+
+.z34-cont-header {
+  padding: 0 8px 6px;
+}
+
+.z34-cont-label {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-dim, #6e7681);
+}
+
+.z34-continuity-panel {
+  padding: 0 6px 8px;
+}
+
+.z34-cont-empty {
+  font-size: 9px;
+  color: var(--text-dim, #6e7681);
+  text-align: center;
+  padding: 8px 0;
+  opacity: 0.6;
+}
+
+.z34-cont-section {
+  margin-bottom: 10px;
+}
+
+.z34-cont-title {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim, #6e7681);
+  margin-bottom: 5px;
+}
+
+/* Failure Lineage Chain */
+.z34-lineage-chain {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+
+.z34-lineage-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 3px;
+  transition: background 120ms ease;
+}
+
+.z34-lineage-node:hover { background: var(--surface-hover, #161b22); }
+
+.z34-lineage-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--z34-low);
+  opacity: 0.6;
+}
+
+.z34-lineage-node.latest .z34-lineage-dot {
+  opacity: 1;
+  box-shadow: 0 0 0 2px rgba(248,113,113,0.2);
+}
+
+.z34-lineage-age {
+  font-size: 7.5px;
+  color: var(--text-dim, #6e7681);
+}
+
+.z34-lineage-connector {
+  font-size: 8px;
+  color: var(--text-dim, #6e7681);
+  opacity: 0.3;
+  margin: 0 1px;
+}
+
+/* Session Threads */
+.z34-thread-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 0;
+}
+
+.z34-thread-label {
+  font-size: 8.5px;
+  color: var(--text-dim, #6e7681);
+  min-width: 48px;
+}
+
+.z34-thread-sessions {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.z34-thread-sess-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--border, #21262d);
+  border: 1px solid var(--text-dim, #6e7681);
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+
+.z34-thread-sess-dot:hover { background: rgba(88,166,255,0.3); }
+.z34-thread-sess-dot.active {
+  background: var(--z34-hi);
+  border-color: var(--z34-hi);
+  box-shadow: 0 0 0 2px rgba(88,166,255,0.2);
+}
+
+/* ── Z34E: Visual Depth Layers ──────────────────────────────────── */
+
+/* Replay mode — warm overlay on the DAG panel */
+[data-z34-mode="replay"] .z30-dag-panel {
+  background: color-mix(in srgb, var(--surface, #0d1117) 96%, #e3b341 4%);
+}
+
+[data-z34-mode="replay"] .z30-dag-panel-hdr {
+  border-bottom-color: rgba(227,179,65,0.2);
+}
+
+/* Forensic layer — subtle purple tint */
+[data-z34-layer="forensic"] .z30-dag-panel {
+  background: color-mix(in srgb, var(--surface, #0d1117) 97%, #a78bfa 3%);
+}
+
+/* Timeline layer indicator */
+[data-z34-layer="timeline"] #z33TimelineDock {
+  border-top-color: rgba(63,185,80,0.2);
+}
+
+/* ── Inspector slide-in doesn't break live wrap ─────────────────── */
+.z30-live-wrap {
+  position: relative;
+}
+
+/* When inspector is open, dim the rest slightly */
+.z34-inspector-panel.open ~ *,
+.z34-inspector-panel.open + * {
+  /* Do not dim — forensic clarity > visual drama */
+}
+
+/* ── Blocked / pending node depth hierarchy ─────────────────────── */
+/* Applied by Z34 via data attributes on DAG surface */
+[data-z34-severity="CRITICAL"] #z30DagSurface {
+  border-color: rgba(248,113,113,0.2);
+}
+
+[data-z34-severity="WARNING"] #z30DagSurface {
+  border-color: rgba(227,179,65,0.15);
+}
+
+/* ── Scrollbar polish ───────────────────────────────────────────── */
+.z34-inspector-body::-webkit-scrollbar { width: 4px; }
+.z34-inspector-body::-webkit-scrollbar-track { background: transparent; }
+.z34-inspector-body::-webkit-scrollbar-thumb { background: var(--border, #21262d); border-radius: 2px; }

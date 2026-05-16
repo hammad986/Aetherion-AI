@@ -1,62 +1,36 @@
-# Aetherion AI — Production Requirements
-# Generated: 2026-05-13  (deduplicated + pinned for beta stability)
+# Nexora AI — Production Requirements
 
-# ── Core web framework ────────────────────────────────────────────────────────
+# Core web framework
 Flask>=3.0.0,<4.0
 gunicorn>=21.2.0
 
-# ── HTTP & API ────────────────────────────────────────────────────────────────
+# HTTP & API
 requests>=2.31.0
 
-# ── Authentication ────────────────────────────────────────────────────────────
+# Authentication
 bcrypt>=4.0.0
 PyJWT>=2.8.0
 
-# ── Environment & config ──────────────────────────────────────────────────────
+# Environment & config
 python-dotenv>=1.0.0
 
-# ── Token counting ────────────────────────────────────────────────────────────
+# Token counting
 tiktoken>=0.7.0
 
-# ── Payments ─────────────────────────────────────────────────────────────────
+# Payments
 razorpay>=2.0.1
 
-# ── Document generation ───────────────────────────────────────────────────────
+# Document generation
 python-docx>=1.0.0
 
-# ── System monitoring ────────────────────────────────────────────────────────
+# System monitoring
 psutil>=5.9.0
 
-# ── Distributed infrastructure (optional, falls back gracefully) ──────────────
-redis>=5.0.0          # Redis SSE bridge + session pub/sub
-
-# ── Vector store (optional, memory explainability) ────────────────────────────
-# chromadb>=0.4.0      # Uncomment to enable semantic memory search
+# Distributed infrastructure (optional, falls back gracefully)
+redis>=5.0.0
 bcrypt
 docx
 Flask
-gunicorn
-psutil
-PyJWT
-python-docx
-python-dotenv
-razorpay
-redis
-requests
-tiktoken
-bcrypt
-flask
-gunicorn
-psutil
-PyJWT
-python-docx
-python-dotenv
-razorpay
-redis
-requests
-tiktoken
-bcrypt
-flask
 gunicorn
 psutil
 PyJWT

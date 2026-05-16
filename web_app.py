@@ -11578,6 +11578,169 @@ try:
 except Exception as _tel_err:
     print(f"⚠️  telemetry_bp registration skipped: {_tel_err}")
 
+# ══════════════════════════════════════════════════════════════════════════════
+# PHASE Z28 — OPERATOR INTELLIGENCE LAYER
+# Decision Feed · Execution Timeline · Context Pressure · Execution Health
+# ══════════════════════════════════════════════════════════════════════════════
+
+@app.route("/api/z28/decisions")
+def api_z28_decisions():
+    """Z28A: Return operator-safe decision records for a session."""
+    sid   = request.args.get("sid", "")
+    limit = min(int(request.args.get("limit", 80)), 200)
+    dtype = request.args.get("type")  # optional filter
+    try:
+        from runtime.explainability import get_decisions
+        decisions = get_decisions(sid=sid or None, decision_type=dtype or None, limit=limit)
+        return jsonify({"ok": True, "decisions": decisions, "count": len(decisions)})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e), "decisions": []}), 500
+
+
+@app.route("/api/z28/health")
+def api_z28_health():
+    """Z28D: Return execution health / confidence state for a session."""
+    sid = request.args.get("sid", "")
+    try:
+        from runtime.confidence_engine import (
+            get_tracker, confidence_telemetry_snapshot, get_confidence_telemetry
+        )
+        from runtime.explainability import get_decisions
+
+        tracker = get_tracker(sid) if sid else None
+        summary = tracker.summary() if tracker else {}
+
+        # Recent telemetry for the sparkline
+        recent_tel = [t for t in get_confidence_telemetry(limit=30) if not sid or t.get("sid") == sid]
+        conf_history = [round(t["score"], 3) for t in recent_tel[-20:]]
+
+        # Retry count from recent decisions
+        recent_decisions = get_decisions(sid=sid or None, limit=50)
+        retry_count   = sum(1 for d in recent_decisions if d["decision_type"] == "retry")
+        escalated     = any(d["decision_type"] == "escalation" for d in recent_decisions[-5:])
+
+        # Active provider from most recent model_selection
+        active_provider = "—"
+        for d in reversed(recent_decisions):
+            if d["decision_type"] == "model_selection":
+                # Extract from summary e.g. "Selected model 'gpt-4o': ..."
+                s = d.get("summary", "")
+                if "'" in s:
+                    active_provider = s.split("'")[1]
+                break
+
+        # Derive confidence signals from most recent decisions
+        signals = []
+        for d in recent_decisions[-10:]:
+            dtype = d.get("decision_type", "")
+            if dtype == "retry":
+                signals.append({"type": "retry",        "detail": d.get("summary","")[:60], "penalty": 0.10})
+            elif dtype == "escalation":
+                signals.append({"type": "escalation",   "detail": d.get("summary","")[:60], "penalty": 0.35})
+            elif dtype == "context_compression":
+                signals.append({"type": "compression",  "detail": d.get("summary","")[:60], "penalty": 0.0})
+            elif dtype == "provider_switch":
+                signals.append({"type": "provider",     "detail": d.get("summary","")[:60], "penalty": 0.0})
+
+        return jsonify({
+            "ok":                 True,
+            "sid":                sid,
+            "confidence_level":   summary.get("level", "high"),
+            "confidence_score":   summary.get("rolling_avg"),
+            "confidence_history": conf_history,
+            "sustained_low":      summary.get("sustained_low", False),
+            "sustained_critical": summary.get("sustained_critical", False),
+            "retry_count":        retry_count,
+            "hitl_active":        escalated,
+            "active_provider":    active_provider,
+            "signals":            signals,
+        })
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route("/api/z28/context-pressure")
+def api_z28_context_pressure():
+    """Z28C: Return context compression + token pressure telemetry for a session."""
+    sid = request.args.get("sid", "")
+    try:
+        from runtime.context_compression import get_compression_audit_log
+        audit = get_compression_audit_log(limit=50)
+
+        # Filter to session if provided
+        if sid:
+            audit = [e for e in audit if e.get("sid") == sid]
+
+        compression_count = sum(1 for e in audit if e.get("event") == "episode_compressed")
+        critical_note_adds = sum(1 for e in audit if e.get("event") == "critical_note_added")
+
+        # Most recent token_pct from audit (agent.py emits this via context_state)
+        # Fall back to session-level aggregation
+        token_pct   = 0
+        total_tokens = 0
+        episodes    = 0
+        critical_notes = 0
+
+        # Check if we have a live SessionContext for this sid
+        try:
+            from runtime.context_compression import _sessions as _cc_sessions  # internal registry
+            ctx = _cc_sessions.get(sid) if sid else None
+            if ctx:
+                usage = ctx.token_usage()
+                token_pct    = usage.get("budget_pct", 0)
+                total_tokens = usage.get("total", 0)
+                episodes     = len(ctx._episodes)
+                critical_notes = len(ctx._critical_notes)
+        except Exception:
+            pass
+
+        return jsonify({
+            "ok":               True,
+            "sid":              sid,
+            "budget_pct":       round(token_pct, 1),
+            "total_tokens":     total_tokens,
+            "episodes":         episodes,
+            "compression_count": compression_count,
+            "critical_notes":   critical_notes,
+            "audit_tail":       audit[-10:],
+        })
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route("/api/z28/timeline")
+def api_z28_timeline():
+    """Z28B: Return execution phase timeline for a session."""
+    sid = request.args.get("sid", "")
+    try:
+        from runtime.explainability import get_decisions, get_session_explanation_summary
+        decisions = get_decisions(sid=sid or None, limit=100)
+        summary   = get_session_explanation_summary(sid) if sid else {}
+
+        # Derive timeline phases from decision sequence
+        phases = []
+        seen_types = set()
+        for d in decisions:
+            dt = d.get("decision_type", "")
+            if dt not in seen_types:
+                seen_types.add(dt)
+                phases.append({
+                    "phase":     dt,
+                    "ts":        d.get("ts"),
+                    "summary":   d.get("summary","")[:80],
+                    "outcome":   d.get("outcome","")[:60],
+                })
+
+        return jsonify({
+            "ok":      True,
+            "sid":     sid,
+            "phases":  phases,
+            "summary": summary,
+        })
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
 if __name__ == "__main__":
     # Phase 19: debug mode controlled by env var — never True in production
     _debug = os.getenv("FLASK_DEBUG", "0").strip() == "1"

@@ -490,7 +490,7 @@ class Agent:
                 if _z26_enabled:
                     try:
                         _used_model = self.router.last_used_api or "unknown"
-                        _z26_explain_model(
+                        _z26_rec_model = _z26_explain_model(
                             self._session_id,
                             f"step-{current_step}",
                             model=_used_model,
@@ -502,6 +502,8 @@ class Agent:
                             ],
                             confidence=0.85,
                         )
+                        if _realtime_on and _z26_rec_model:
+                            self._emit_fn("agent.explain", _z26_rec_model.to_dict())
                         _z26_ctx.add_message("user", active_step[:600])
                         _z26_ctx.add_message("assistant", (raw or "")[:600])
                         _ctx_usage = _z26_ctx.token_usage()
@@ -832,7 +834,7 @@ class Agent:
                                     evidence_count=max(1, len(completed_steps)),
                                 )
                                 _z26_conf_tracker.record(_z26_report)
-                                _z26_explain_retry(
+                                _z26_rec_retry = _z26_explain_retry(
                                     self._session_id,
                                     f"step-{current_step}",
                                     attempt=error_count,
@@ -843,6 +845,8 @@ class Agent:
                                         f"total_failures={total_failures}",
                                     ],
                                 )
+                                if _realtime_on and _z26_rec_retry:
+                                    self._emit_fn("agent.explain", _z26_rec_retry.to_dict())
                                 if _z26_report.requires_hitl and _realtime_on:
                                     self._emit_fn("agent.confidence_warning", {
                                         "score":      _z26_report.final_score,
@@ -886,7 +890,7 @@ class Agent:
                                 # ── Z27A: Replanning explanation ─────────────
                                 if _z26_enabled:
                                     try:
-                                        _z26_explain_replan(
+                                        _z26_rec_replan = _z26_explain_replan(
                                             self._session_id,
                                             f"step-{current_step}",
                                             original_plan_summary=active_step[:80],
@@ -897,6 +901,8 @@ class Agent:
                                                 f"errors={error_count}",
                                             ],
                                         )
+                                        if _realtime_on and _z26_rec_replan:
+                                            self._emit_fn("agent.explain", _z26_rec_replan.to_dict())
                                     except Exception:
                                         pass
                             except Exception as _rpe:
@@ -913,7 +919,7 @@ class Agent:
                             # ── Z27A: Provider switch explanation ─────────────
                             if _z26_enabled:
                                 try:
-                                    _z26_explain_provider(
+                                    _z26_rec_prov = _z26_explain_provider(
                                         self._session_id,
                                         f"step-{current_step}",
                                         from_provider="gemini-flash",
@@ -924,6 +930,8 @@ class Agent:
                                             f"threshold={self.config.GEMINI_PRO_AFTER_FAILURES}",
                                         ],
                                     )
+                                    if _realtime_on and _z26_rec_prov:
+                                        self._emit_fn("agent.explain", _z26_rec_prov.to_dict())
                                 except Exception:
                                     pass
 
@@ -954,7 +962,7 @@ class Agent:
                                 try:
                                     _z26_conf_avg = (_z26_conf_tracker.rolling_average()
                                                      if _z26_conf_tracker else 0.0)
-                                    _z26_explain_escalation(
+                                    _z26_rec_esc = _z26_explain_escalation(
                                         self._session_id,
                                         f"step-{current_step}",
                                         trigger=_hitl_reason[:120],
@@ -965,6 +973,8 @@ class Agent:
                                         ],
                                         confidence=_z26_conf_avg,
                                     )
+                                    if _realtime_on and _z26_rec_esc:
+                                        self._emit_fn("agent.explain", _z26_rec_esc.to_dict())
                                 except Exception:
                                     pass
 

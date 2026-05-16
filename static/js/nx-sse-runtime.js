@@ -231,6 +231,23 @@
       case 'heartbeat':
         // Watchdog only — no forwarding
         break;
+      // ── Z28: Operator Intelligence Layer ─────────────────────────
+      case 'agent.explain':
+        // Live decision record — route to Z28 decision feed
+        NxBus.emit('nx:z28:decision', payload);
+        break;
+      case 'agent.context_state':
+        // Context compression / token pressure state
+        NxBus.emit('nx:z28:context', payload);
+        break;
+      case 'agent.confidence_warning':
+        // Confidence score drop / HITL threshold warning
+        NxBus.emit('nx:z28:health', payload);
+        break;
+      case 'agent.scheduler_state':
+        // Scheduler activity state
+        NxBus.emit('nx:z28:scheduler', payload);
+        break;
       default:
         // Forward unknown events generically for extensibility
         NxBus.emit('nx:sse:event', { type, ...payload });

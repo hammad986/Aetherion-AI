@@ -1,0 +1,263 @@
+PHASE Z28 — OPERATOR INTELLIGENCE LAYER + LIVE EXECUTION EXPLAINABILITY
+
+SYSTEM STATUS:
+The platform now contains:
+
+* live runtime integration
+* context compression
+* confidence scoring
+* explainability systems
+* runtime telemetry
+* scheduling runtime
+* intelligent idle workspace
+
+However:
+operators still cannot deeply understand:
+WHAT the system is doing
+WHY it is doing it
+and
+HOW stable the execution currently is.
+
+This phase establishes:
+a real operator intelligence layer.
+
+STRICT RULES:
+🔒 NO AGI HYPE
+🔒 NO CHATGPT-LIKE CHAT UI
+🔒 NO DASHBOARD BLOAT
+🔒 NO REACTIVE FRAMEWORK MIGRATION
+🔒 NO LARGE ARCHITECTURAL REWRITES
+🔒 STABILITY FIRST
+🔒 OPERATIONAL CLARITY FIRST
+
+====================================================
+PHASE Z28A — LIVE DECISION FEED
+===============================
+
+Build a real-time operational decision feed.
+
+GOAL:
+Expose:
+high-level execution reasoning
+WITHOUT exposing chain-of-thought.
+
+The operator must see:
+
+* why retries occurred
+* why provider/model switches happened
+* why HITL escalation triggered
+* why replanning occurred
+* why context compression activated
+* why execution paused/resumed
+
+REQUIREMENTS:
+
+1. Live Feed Surface
+   Create:
+
+* calm side-panel OR timeline-integrated feed
+* chronological operational decisions
+* timestamped decision records
+* severity levels
+* execution phase linkage
+
+2. Decision Types
+   Support:
+
+* model selection
+* retry reasoning
+* escalation reasoning
+* replanning reasoning
+* compression reasoning
+* provider switch reasoning
+* scheduler execution reasoning
+
+3. Feed Discipline
+   DO NOT:
+
+* expose hidden reasoning
+* expose chain-of-thought
+* expose prompt internals
+
+ONLY expose:
+operator-safe execution explanations.
+
+====================================================
+PHASE Z28B — EXECUTION TIMELINE INTELLIGENCE
+============================================
+
+The current execution flow lacks:
+deep operational readability.
+
+Implement:
+a structured runtime timeline.
+
+REQUIREMENTS:
+
+1. Timeline Phases
+   Clearly visualize:
+
+* planning
+* execution
+* validation
+* retries
+* replanning
+* compression
+* escalation
+* completion
+
+2. Runtime State Indicators
+   Display:
+
+* active provider
+* confidence state
+* retry pressure
+* compression state
+* scheduler state
+* HITL waiting state
+
+3. Execution Flow Clarity
+   The operator should instantly understand:
+
+* current execution phase
+* blocked states
+* degraded states
+* unstable states
+
+====================================================
+PHASE Z28C — CONTEXT + MEMORY PRESSURE VISIBILITY
+=================================================
+
+Operators currently cannot see:
+runtime cognitive pressure.
+
+Implement:
+
+1. Context Pressure Indicators
+   Show:
+
+* active token load
+* compressed segments
+* retained summaries
+* mission memory pressure
+
+2. Compression Telemetry
+   Visualize:
+
+* compression triggers
+* summary retention count
+* replay-safe compression markers
+
+3. Context Stability Warnings
+   Surface:
+
+* unstable long sessions
+* runaway context growth
+* excessive retry memory inflation
+
+IMPORTANT:
+Keep visuals subtle and operational.
+
+====================================================
+PHASE Z28D — CONFIDENCE + EXECUTION HEALTH LAYER
+================================================
+
+Build:
+a calm execution health layer.
+
+REQUIREMENTS:
+
+1. Confidence State Surface
+   Display:
+
+* stable
+* uncertain
+* degraded
+* escalation required
+
+2. Runtime Health Signals
+   Track:
+
+* retry frequency
+* tool instability
+* provider instability
+* execution drift
+* scheduler latency
+* stalled missions
+
+3. Mission Risk Surface
+   Operators should understand:
+   whether a mission is:
+
+* healthy
+* risky
+* unstable
+* likely hallucinating
+
+====================================================
+PHASE Z28E — UI STABILITY + FORENSIC REVIEW
+===========================================
+
+Perform:
+a deep forensic frontend/runtime review.
+
+Investigate:
+
+* remaining MutationObserver warnings
+* DOM growth pressure
+* idle workspace density
+* topbar fragmentation
+* execution layout balance
+* remaining race conditions
+* SSE event flooding
+* replay rendering stability
+
+Generate:
+
+* docs/Z28_OPERATOR_INTELLIGENCE_CERTIFICATION.md
+* docs/Z28_RUNTIME_HEALTH_REPORT.md
+* docs/Z28_CONTEXT_PRESSURE_ANALYSIS.md
+* docs/Z28_EXECUTION_READABILITY_AUDIT.md
+* docs/Z28_FRONTEND_FORENSIC_REPORT.md
+
+The reports MUST include:
+
+1. Remaining runtime instability
+2. Remaining frontend instability
+3. Remaining execution ambiguity
+4. Remaining operator confusion points
+5. Remaining replay weaknesses
+6. Remaining scaling risks
+7. Honest beta-readiness verdict
+
+====================================================
+FINAL VALIDATION
+================
+
+Before completion:
+
+* verify all decision events stream correctly
+* verify replay compatibility
+* verify no chain-of-thought exposure
+* verify no frontend regressions
+* verify no new NxBus race conditions
+* verify MutationObserver pressure does not worsen
+* verify long-session stability
+* verify scheduler/runtime integration remains stable
+
+IMPORTANT:
+This phase is NOT about:
+more AI capabilities.
+
+This phase is about:
+making the autonomous runtime understandable,
+observable,
+auditable,
+and operationally trustworthy.
+
+Maintain:
+🔒 Operational clarity over AI mystique
+🔒 Runtime transparency over hype
+🔒 Stability over complexity
+🔒 Explainability over hidden reasoning
+🔒 Calm execution UX over flashy dashboards

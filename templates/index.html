@@ -667,6 +667,12 @@
           <div style="flex:1"></div>
           <div class="nx-tab-actions" id="nxTabActions"></div>
 
+          <!-- Z28: Operator Intelligence Tab -->
+          <button class="nx-tab" role="tab" aria-selected="false" aria-controls="nxTab-intel" data-nxtab="intel" onclick="nxSetTab('intel'); document.dispatchEvent(new Event('nx:tab:intel'));" title="Operator Intelligence — Decision feed, timeline, health">
+            Intel
+            <span class="nx-tab-dot" id="nxIntelDot"></span>
+          </button>
+
           <!-- Hidden legacy tabs to preserve JS bindings -->
           <div id="nx-legacy-tabs" style="display:none;">
             <button class="nx-tab" data-nxtab="chat" onclick="nxSetTab('chat');p12LoadChat(currentSession)"></button>
@@ -800,6 +806,8 @@
         <div class="nx-tab-content" id="nxTab-timeline"></div>
         <!-- Steps tab -->
         <div class="nx-tab-content" id="nxTab-steps"></div>
+        <!-- Z28: Operator Intelligence tab -->
+        <div class="nx-tab-content" id="nxTab-intel" style="padding:0;overflow:hidden;display:flex;flex-direction:column;"></div>
 
         <!-- Phase 33 — Live Execution Visualization tab -->
         <div class="nx-tab-content" id="nxTab-live" style="flex-direction:column;overflow:hidden">
@@ -3686,5 +3694,45 @@
   <script src="/static/js/nx-diagnostics.js" defer></script>
   <script src="/static/js/nx-clarity.js" defer></script>
   <script src="/static/js/nx-intelligence.js" defer></script>
+  <!-- Phase Z28 — Operator Intelligence Layer -->
+  <link rel="stylesheet" href="/static/css/nx-z28-operator.css">
+  <script src="/static/js/nx-z28-operator.js" defer></script>
+  <script defer>
+    // Z28: Initialize intel tab when first activated, sync session on future activations
+    (function() {
+      function _initIntelTab() {
+        var container = document.getElementById('nxTab-intel');
+        if (!container) return;
+        if (container.querySelector('.z28-root')) return; // already mounted
+        var sid = window.currentSession || null;
+        if (window._z28 && window._z28.mount) {
+          window._z28.mount(container, sid);
+        }
+      }
+      // Listen for tab activation events
+      document.addEventListener('nx:tab:intel', _initIntelTab);
+      // Also hook into NxBus SESSION_CREATED so new sessions sync automatically
+      function _tryBusHook() {
+        if (!window.NxBus || !NxBus.EVENTS) { setTimeout(_tryBusHook, 300); return; }
+        NxBus.on(NxBus.EVENTS.SESSION_CREATED, function(e) {
+          if (window._z28 && e && e.session_id) window._z28.setSid(e.session_id);
+          // Light up Intel tab dot on new decision
+          var dot = document.getElementById('nxIntelDot');
+          if (dot) { dot.style.opacity = '1'; dot.style.background = '#bc8cff'; }
+        });
+        NxBus.on('nx:z28:decision', function() {
+          var dot = document.getElementById('nxIntelDot');
+          if (dot && dot.style.background !== '#bc8cff') {
+            dot.style.opacity = '1'; dot.style.background = '#bc8cff';
+          }
+        });
+      }
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', _tryBusHook);
+      } else {
+        _tryBusHook();
+      }
+    })();
+  </script>
 </body>
 </html>

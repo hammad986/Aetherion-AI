@@ -1,0 +1,273 @@
+PHASE Z25 — OPERATIONAL UX FORENSIC STABILIZATION + EXECUTION ENVIRONMENT DISCIPLINE
+
+ARCHITECTURE STATUS:
+🔒 PERMANENTLY LOCKED
+NO BACKEND REWRITES.
+NO ORCHESTRATION CHANGES.
+NO EVENT PAYLOAD MODIFICATIONS.
+NO NEW AI FEATURES.
+NO FRAMEWORK MIGRATION.
+
+MISSION:
+The current workspace is technically cleaner after Z22/Z23/Z24, but the UI still lacks true operational cohesion, execution gravity, compositional hierarchy, and calm production-grade interaction discipline.
+
+This phase is NOT about “making the UI pretty.”
+This is a forensic operational UX stabilization pass.
+
+You must deeply audit the current execution environment and identify:
+
+* visual instability
+* spacing imbalance
+* weak execution focus
+* dead empty-state behavior
+* hierarchy inconsistencies
+* typography fragmentation
+* interaction noise
+* panel cohesion issues
+* weak command palette ergonomics
+* accessibility regressions
+* execution-state ambiguity
+* layout asymmetry
+* visual dead zones
+* runtime clutter
+* operator confusion points
+
+CRITICAL:
+You are REQUIRED to:
+
+1. PERFORM A FORENSIC UI AUDIT FIRST
+2. GENERATE REPORTS
+3. THEN IMPLEMENT ONLY SURGICAL STABILIZATION FIXES
+
+DO NOT blindly redesign the UI.
+
+====================================================
+PHASE Z25A — FORENSIC OPERATIONAL UX AUDIT
+==========================================
+
+FIRST:
+Perform a deep UI forensic analysis across:
+
+* templates/index.html
+* static/css/*
+* nx-shell.css
+* layout.css
+* nx-a11y.css
+* runtime UI modules
+* topbar
+* left rail
+* panel grid
+* execution controls
+* command palette
+* empty state
+* execution workspace
+* runtime overlays
+* modal systems
+* inspector surfaces
+* typography scale
+* spacing systems
+* animation systems
+* z-index layering
+* panel borders
+* visual rhythm
+* execution flow perception
+
+Generate:
+docs/Z25_OPERATIONAL_UX_FORENSIC_REPORT.md
+
+The report MUST include:
+
+* exact visual instability findings
+* layout hierarchy findings
+* interaction friction findings
+* typography inconsistencies
+* dead-space analysis
+* compositional imbalance
+* execution gravity weaknesses
+* runtime distraction sources
+* accessibility regressions
+* operator cognition analysis
+* command palette UX weaknesses
+* empty-state operational failures
+* panel cohesion analysis
+* visual density map
+* topbar balance analysis
+* nav rail usability analysis
+
+====================================================
+PHASE Z25B — EXECUTION ENVIRONMENT STABILIZATION
+================================================
+
+ONLY AFTER THE AUDIT:
+
+Implement SURGICAL stabilization improvements.
+
+STRICT RULES:
+
+* NO redesigns
+* NO React/Vue migration
+* NO backend modifications
+* NO runtime rewrites
+* NO new framework
+* NO new visual gimmicks
+* NO glowing cyberpunk styling
+* NO heavy gradients
+* NO animated nonsense
+
+GOAL:
+The workspace should feel like:
+“a calm operational execution environment”
+—not—
+“an unfinished developer dashboard.”
+
+TARGET AREAS:
+
+1. EXECUTION GRAVITY
+
+* strengthen the visual center of execution
+* improve operator eye flow
+* establish clear workspace focal hierarchy
+
+2. EMPTY-STATE INTELLIGENCE
+   Replace dead empty space with subtle operational awareness:
+
+* runtime status
+* mission readiness
+* active model
+* keyboard hints
+* recent execution context
+* trust state
+* operational health
+  WITHOUT becoming noisy.
+
+3. TYPOGRAPHY DISCIPLINE
+
+* unify typography scale
+* normalize weight hierarchy
+* improve readability
+* remove inconsistent sizing
+
+4. PANEL COHESION
+
+* improve divider consistency
+* normalize border contrast
+* improve panel rhythm
+* reduce visual fragmentation
+
+5. COMMAND PALETTE REFINEMENT
+
+* improve hierarchy
+* improve spacing
+* improve keyboard UX
+* improve selection ergonomics
+* improve operational feel
+* preserve calm visual discipline
+
+6. TOPBAR BALANCE
+
+* normalize spacing distribution
+* improve left/center/right balance
+* improve execution-control visibility
+* reduce asymmetry
+
+7. NAV RAIL REFINEMENT
+
+* improve icon spacing
+* improve active-state discipline
+* improve visual alignment
+* preserve minimalism
+
+8. EXECUTION WORKSPACE IDENTITY
+   The workspace should visually communicate:
+   “execution environment”
+   —not—
+   “empty HTML shell.”
+
+====================================================
+PHASE Z25C — EXECUTION UX VALIDATION
+====================================
+
+After implementation:
+
+Generate:
+
+* docs/Z25_EXECUTION_ENVIRONMENT_CERTIFICATION.md
+* docs/Z25_OPERATOR_VISUAL_STABILITY_REPORT.md
+* docs/Z25_RUNTIME_UI_DISCIPLINE_MATRIX.md
+
+Include:
+
+* before/after UX findings
+* accessibility validation
+* runtime stability validation
+* interaction consistency analysis
+* keyboard flow validation
+* execution-state visibility validation
+* typography normalization report
+* visual rhythm verification
+* empty-state validation
+* operator cognition improvements
+
+====================================================
+IMPORTANT REAL-WORLD ENGINEERING DIRECTIVE
+==========================================
+
+Additionally:
+Begin groundwork analysis for REAL execution isolation.
+
+DO NOT IMPLEMENT YET.
+
+ONLY:
+perform a forensic feasibility analysis for:
+
+* Docker worker isolation
+* gVisor compatibility
+* execution CPU limits
+* memory limits
+* filesystem isolation
+* restricted networking
+* process timeout enforcement
+
+Generate:
+docs/Z25_EXECUTION_SANDBOX_FEASIBILITY.md
+
+The report must include:
+
+* current execution risks
+* current sandbox weaknesses
+* realistic beta-grade isolation path
+* operational cost analysis
+* deployment implications
+* Replit compatibility concerns
+* VPS compatibility concerns
+* migration difficulty assessment
+* recommended staged rollout strategy
+
+IMPORTANT:
+NO implementation yet.
+ONLY forensic analysis + operational planning.
+
+====================================================
+FINAL OUTPUT
+============
+
+At completion:
+Provide:
+
+1. Honest UI stability verdict
+2. Remaining operational UX weaknesses
+3. Remaining runtime architecture weaknesses
+4. Remaining execution isolation risks
+5. Exact next stabilization priorities
+6. Whether the platform now feels:
+
+   * experimental
+   * developer-grade
+   * operational beta
+   * production-grade
+
+STRICTLY MAINTAIN:
+🔒 Stability > visual hype
+🔒 Operational clarity > flashy UI
+🔒 Execution discipline > feature expansion
+🔒 Real engineering > AI marketing

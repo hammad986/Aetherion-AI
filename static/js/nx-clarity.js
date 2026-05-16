@@ -52,7 +52,7 @@
      2. BUS WIRING FOR ANALYTICS
      ══════════════════════════════════════════════════════════════════ */
   function _wireAnalytics() {
-    if (!window.NxBus) return;
+    if (!window.NxBus) { setTimeout(_wireAnalytics, 200); return; }
     const E = NxBus.EVENTS;
 
     NxBus.on(E.AGENT_START,      () => NxAnalytics.track('task_started'),          { owner: 'nx-clarity' });

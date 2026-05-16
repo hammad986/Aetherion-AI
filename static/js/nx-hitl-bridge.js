@@ -59,7 +59,7 @@
 
   /* ── Wire NxBus ────────────────────────────────────────────────── */
   function _wire() {
-    if (!window.NxBus) return;
+    if (!window.NxBus) { setTimeout(_wire, 200); return; }
 
     /* Track active HITL event IDs */
     NxBus.on('nx:hitl:required', d => {

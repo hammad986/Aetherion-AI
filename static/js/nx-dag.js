@@ -613,7 +613,7 @@
 
   /* ── NxBus wiring ───────────────────────────────────────────────── */
   function _wireEvents() {
-    if (!window.NxBus) return;
+    if (!window.NxBus) { setTimeout(_wireEvents, 200); return; }
 
     /* Full snapshot updates from backend DAG */
     NxBus.on('agent.dag_update', applySnapshot, { owner: 'nx-dag-engine' });

@@ -162,7 +162,7 @@
      4. BUS WIRING
      ══════════════════════════════════════════════════════════════════ */
   function _wire() {
-    if (!window.NxBus) return;
+    if (!window.NxBus) { setTimeout(_wire, 200); return; }
     const E = NxBus.EVENTS;
 
     // Track failures & trust overrides

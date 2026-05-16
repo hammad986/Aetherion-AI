@@ -77,7 +77,7 @@
      — This guard adds a cross-module storm detector.
      ══════════════════════════════════════════════════════════════════ */
   function _guardSseStorm() {
-    if (!window.NxBus) return;
+    if (!window.NxBus) { setTimeout(_guardSseStorm, 200); return; }
     let _reconnectWindow = [];
     const STORM_WINDOW_MS   = 10000;
     const STORM_THRESHOLD   = 5;

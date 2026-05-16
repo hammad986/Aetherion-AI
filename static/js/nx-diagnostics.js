@@ -227,7 +227,7 @@
      BUS WIRING — capture forensics on error/escalation
      ══════════════════════════════════════════════════════════════════ */
   function _wire() {
-    if (!window.NxBus) return;
+    if (!window.NxBus) { setTimeout(_wire, 200); return; }
     const E = NxBus.EVENTS;
 
     NxBus.on(E.STREAM_ERROR,  () => _captureForensics(), { owner: 'nx-diagnostics' });

@@ -328,7 +328,7 @@
    * ─────────────────────────────────────────────────────────────────
    */
   function _wireAgiSurfaceBridge() {
-    if (!window.NxBus) return;
+    if (!window.NxBus) { setTimeout(_wireAgiSurfaceBridge, 200); return; }
     const E = NxBus.EVENTS;
 
     /* Translate nx:stream:chunk {kind:'think'} → agent.thought */

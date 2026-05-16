@@ -92,7 +92,7 @@
      2. LATENCY MASKING
      ══════════════════════════════════════════════════════════════════ */
   function _maskLatency() {
-    if (!window.NxBus) return;
+    if (!window.NxBus) { setTimeout(_maskLatency, 200); return; }
     const E = NxBus.EVENTS;
 
     // When stream opens: show subtle "live" indicator on run button dot
@@ -222,7 +222,7 @@
      5. SESSION CONTINUITY — smooth reconnect experience
      ══════════════════════════════════════════════════════════════════ */
   function _initSessionContinuity() {
-    if (!window.NxBus) return;
+    if (!window.NxBus) { setTimeout(_initSessionContinuity, 200); return; }
     const E = NxBus.EVENTS;
 
     NxBus.on(E.SESSION_RESTORED, (d) => {
@@ -319,7 +319,7 @@
      ══════════════════════════════════════════════════════════════════ */
   function _enhancePalette() {
     // Register mission-aware palette commands on NxBus PALETTE_OPEN
-    if (!window.NxBus) return;
+    if (!window.NxBus) { setTimeout(_enhancePalette, 200); return; }
 
     NxBus.on(NxBus.EVENTS.PALETTE_OPEN, () => {
       // Inject mission-context items into palette if it supports it

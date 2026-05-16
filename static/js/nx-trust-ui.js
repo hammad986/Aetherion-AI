@@ -574,7 +574,7 @@
     });
 
     // Completion events — show honest report + confidence
-    NxBus.on(NxBus.EVENTS.AGENT_DONE, (payload) => {
+    NxBus.on('nx:agent:done', (payload) => {
       _lastCompletionPayload = payload;  // Store for explainability
       if (payload.confidence != null) {
         _renderCompletionReport(payload);
@@ -622,25 +622,25 @@
     });
 
     // Task start — show panel and reset session signals
-    NxBus.on(NxBus.EVENTS.AGENT_RUN, () => {
+    NxBus.on('nx:agent:start', () => {
       _currentSessionSignals = [];
       _lastCompletionPayload = null;
       _showPanel();
     });
 
     // Session cleared/created — purge cross-session contamination
-    NxBus.on(NxBus.EVENTS.SESSION_CLEARED, () => {
+    NxBus.on('nx:session:cleared', () => {
       _currentSessionSignals = [];
       _lastCompletionPayload = null;
       _hidePanel();
     });
-    NxBus.on(NxBus.EVENTS.SESSION_CREATED, () => {
+    NxBus.on('nx:session:created', () => {
       _currentSessionSignals = [];
       _lastCompletionPayload = null;
     });
 
     // Agent stop — hide after brief delay
-    NxBus.on(NxBus.EVENTS.AGENT_STOP, () => {
+    NxBus.on('nx:agent:stop', () => {
       _appendTrustItem({
         type: 'contradiction',
         verified: false,

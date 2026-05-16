@@ -1,47 +1,5 @@
 /* ── NX UI — Advanced AI Platform Interface ──────────────────────────────── */
-    :root {
-      --bg: #09090f;
-      --surface: #0d0d14;
-      --panel: #111118;
-      --panel2: #161620;
-      --panel-border: #1e1e2e;
-      --panel-border-hover: #2e2e45;
-      --accent: #6366f1;
-      --accent-hover: #818cf8;
-      --accent-dim: rgba(99, 102, 241, 0.12);
-      --accent-glow: rgba(99, 102, 241, 0.25);
-      --green: #22c55e;
-      --green-dim: rgba(34, 197, 94, 0.12);
-      --red: #ef4444;
-      --red-dim: rgba(239, 68, 68, 0.12);
-      --yellow: #f59e0b;
-      --yellow-dim: rgba(245, 158, 11, 0.12);
-      --blue: #3b82f6;
-      --blue-dim: rgba(59, 130, 246, 0.12);
-      --purple: #a855f7;
-      --purple-dim: rgba(168, 85, 247, 0.12);
-      --text: #e8e8f0;
-      --text-muted: #7878a0;
-      --text-dim: #454560;
-      --space-1: 4px;
-      --space-2: 8px;
-      --space-3: 12px;
-      --space-4: 16px;
-      --space-5: 20px;
-      --space-6: 24px;
-      --type-xs: 11px;
-      --type-sm: 12px;
-      --type-md: 13px;
-      --type-lg: 16px;
-      --shadow-1: 0 6px 18px rgba(0, 0, 0, 0.18);
-      --shadow-2: 0 18px 40px rgba(0, 0, 0, 0.28);
-      --hdr: 52px;
-      --leftW: 0px;
-      --rightW: 290px;
-      --bottomH: 0px;
-      --ease: cubic-bezier(0.4, 0, 0.2, 1);
-      --dur: 220ms;
-    }
+
 
     * {
       box-sizing: border-box;
@@ -56,7 +14,7 @@
     }
 
     body {
-      font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+      font-family: var(--nds-font, 'IBM Plex Sans', system-ui, sans-serif);
       background: var(--bg);
       color: var(--text);
       display: flex;
@@ -995,6 +953,35 @@
       content: '';
       position: absolute;
       inset: 0 -4px;
+    }
+
+    /* ── Split.js Premium Gutters ── */
+    .gutter {
+      background-color: var(--nds-surface-4);
+      background-repeat: no-repeat;
+      background-position: 50%;
+      transition: background-color var(--nds-dur-3) var(--nds-ease-std), box-shadow var(--nds-dur-2);
+      z-index: 100;
+    }
+    
+    .gutter.gutter-horizontal {
+      cursor: col-resize;
+      width: 1px !important;
+    }
+    
+    .gutter.gutter-horizontal:hover, .gutter.gutter-horizontal.is-dragging {
+      background-color: var(--nds-accent);
+      box-shadow: 0 0 0 2px var(--nds-accent-glow);
+    }
+    
+    .gutter.gutter-vertical {
+      cursor: row-resize;
+      height: 1px !important;
+    }
+    
+    .gutter.gutter-vertical:hover, .gutter.gutter-vertical.is-dragging {
+      background-color: var(--nds-accent);
+      box-shadow: 0 0 0 2px var(--nds-accent-glow);
     }
 
     /* ── Panel base ── */
@@ -2126,38 +2113,39 @@
     .nx-palette-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.6);
+      background: rgba(0, 0, 0, 0.4);
       z-index: 9000;
       display: none;
       align-items: flex-start;
       justify-content: center;
-      padding-top: 80px;
-      backdrop-filter: blur(4px);
+      padding-top: 15vh;
+      backdrop-filter: blur(8px);
     }
 
     .nx-palette-backdrop.open {
       display: flex;
-      animation: nx-fade-in 0.15s ease;
+      animation: nx-fade-in 0.15s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     @keyframes nx-fade-in {
       from {
         opacity: 0;
-        transform: scale(0.97)
+        transform: scale(0.98) translateY(-10px);
       }
 
       to {
         opacity: 1;
-        transform: scale(1)
+        transform: scale(1) translateY(0);
       }
     }
 
     .nx-palette {
-      width: 560px;
-      background: var(--panel);
-      border: 1px solid var(--panel-border-hover);
-      border-radius: 12px;
-      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+      width: 600px;
+      background: rgba(24, 24, 27, 0.85);
+      backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(0,0,0,0.8);
       overflow: hidden;
     }
 
@@ -2165,12 +2153,13 @@
       width: 100%;
       background: transparent;
       border: none;
-      border-bottom: 1px solid var(--panel-border);
-      color: var(--text);
-      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      color: #E0E0E0;
+      padding: 16px 20px;
       font-size: 14px;
       outline: none;
       font-family: 'Inter', sans-serif;
+      font-weight: 400;
     }
 
     .nx-palette-input::placeholder {
@@ -2187,15 +2176,15 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 8px 10px;
-      border-radius: 7px;
+      padding: 8px 12px;
+      border-radius: 6px;
       cursor: pointer;
       transition: background 0.1s;
     }
 
     .nx-palette-item:hover,
     .nx-palette-item.selected {
-      background: var(--accent-dim);
+      background: rgba(255, 255, 255, 0.06);
     }
 
     .nx-palette-item-icon {
@@ -2203,12 +2192,13 @@
       width: 20px;
       text-align: center;
       flex-shrink: 0;
+      color: #8b949e;
     }
 
     .nx-palette-item-label {
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 500;
-      color: var(--text);
+      color: #E0E0E0;
     }
 
     .nx-palette-item-hint {

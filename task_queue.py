@@ -4,9 +4,12 @@ task_queue.py — Phase 35: Distributed Worker System
 Priority queue + N worker threads, retry/backoff, watchdog, checkpoint.
 """
 from __future__ import annotations
-import heapq, json, logging, os, sqlite3, threading, time, traceback, uuid
+import heapq, json, logging, os, platform, signal, sqlite3, subprocess
+import threading, time, traceback, uuid
 from dataclasses import dataclass, field
 from typing import Any, Callable, Dict, List, Optional
+
+_IS_WINDOWS = platform.system() == "Windows"
 
 logger = logging.getLogger(__name__)
 
@@ -62,6 +65,10 @@ class Task:
     worker_id:   str   = ""
     checkpoint:  dict  = field(default_factory=dict)
     _seq:        int   = field(default=0)
+    # Process lifecycle tracking (Phase: Orphan Governance)
+    pid:         int   = 0    # PID of the process running this task
+    pgid:        int   = 0    # Process group ID (POSIX) for tree-kill
+    _hb_stop:    threading.Event = field(default_factory=threading.Event)
 
     def __lt__(self, other: "Task") -> bool:
         return (self.priority, self._seq) < (other.priority, other._seq)
@@ -178,37 +185,111 @@ class TaskQueue:
             t.start(); self._workers.append(t)
 
     def _worker_loop(self, worker_index: int, worker_id: str):
+        """Worker loop with BaseException recovery — never dies on OOM or unexpected crash."""
         while not self._stop.is_set():
             try:
-                from hardware_monitor import get_hardware_monitor
-                if get_hardware_monitor().status()["low_resource_mode"]:
-                    if worker_index > 0:
-                        # Yield if not the primary worker in low resource mode
-                        time.sleep(2.0)
-                        continue
-            except ImportError:
-                pass
+                try:
+                    from hardware_monitor import get_hardware_monitor
+                    if get_hardware_monitor().status()["low_resource_mode"]:
+                        if worker_index > 0:
+                            time.sleep(2.0)
+                            continue
+                except ImportError:
+                    pass
 
-            self._has_work.wait(timeout=2.0)
-            task = self._dequeue()
-            if task is None: self._has_work.clear(); continue
-            self._run_task(task, worker_id)
+                self._has_work.wait(timeout=2.0)
+                task = self._dequeue()
+                if task is None:
+                    self._has_work.clear()
+                    continue
+                self._run_task(task, worker_id)
+            except BaseException as be:
+                # Recover from OOM, KeyboardInterrupt, etc. — log and continue
+                logger.critical("[Worker:%s] Fatal crash recovered: %s", worker_id, be)
+                time.sleep(1.0)  # brief pause before resuming
 
     def _dequeue(self) -> Optional[Task]:
         with self._lock:
             return heapq.heappop(self._heap) if self._heap else None
 
+    # ── Process group termination ────────────────────────────────────────────
+
+    def _record_pids(self, task: Task) -> None:
+        """Record the current process PID and group at task start."""
+        task.pid = os.getpid()
+        if not _IS_WINDOWS:
+            try:
+                task.pgid = os.getpgid(task.pid)
+            except OSError:
+                task.pgid = 0
+
+    def _terminate_task_process(self, task: Task) -> None:
+        """
+        Best-effort process group termination.
+        POSIX: SIGTERM → 3s wait → SIGKILL on process group.
+        Windows: taskkill /F /T on PID.
+        Emits 'task_process_killed' event for observability.
+        """
+        pid  = task.pid
+        pgid = task.pgid
+        if not pid:
+            return
+
+        killed = False
+        if _IS_WINDOWS:
+            try:
+                subprocess.run(
+                    ["taskkill", "/F", "/T", "/PID", str(pid)],
+                    capture_output=True, timeout=5,
+                )
+                killed = True
+                logger.info("[Watchdog] taskkill /F /T /PID %d for task %s", pid, task.id)
+            except Exception as e:
+                logger.warning("[Watchdog] taskkill failed for PID %d: %s", pid, e)
+        else:
+            # Try SIGTERM on process group first
+            target = pgid or pid
+            kill_fn = (lambda sig: os.killpg(target, sig)) if pgid else (lambda sig: os.kill(target, sig))
+            try:
+                kill_fn(signal.SIGTERM)
+                time.sleep(3)
+                kill_fn(signal.SIGKILL)  # Escalate
+                killed = True
+                logger.info("[Watchdog] SIGKILL sent to pgid=%d for task %s", target, task.id)
+            except ProcessLookupError:
+                killed = True  # Already gone
+                logger.debug("[Watchdog] Process pgid=%d already gone for task %s", target, task.id)
+            except Exception as e:
+                logger.warning("[Watchdog] Kill failed for task %s: %s", task.id, e)
+
+        if killed:
+            self._emit("task_process_killed", {
+                "id":   task.id,
+                "pid":  pid,
+                "pgid": pgid,
+                "reason": "watchdog_kill",
+            })
+
     def _run_task(self, task: Task, worker_id: str):
         task.status = STATUS_RUNNING; task.started_at = time.time()
         task.heartbeat = time.time(); task.worker_id = worker_id
         task.attempts += 1
+        self._record_pids(task)  # Capture PID before fn() runs
         self._persist(task)
         self._emit("task_started", {"id": task.id, "name": task.name,
-                                    "worker": worker_id, "attempt": task.attempts})
-        def _hb():
-            while task.status == STATUS_RUNNING:
-                task.heartbeat = time.time(); time.sleep(HEARTBEAT_INTERVAL)
-        threading.Thread(target=_hb, daemon=True).start()
+                                    "worker": worker_id, "attempt": task.attempts,
+                                    "pid": task.pid})
+
+        # Bounded heartbeat — terminates via _hb_stop event
+        task._hb_stop.clear()
+        def _hb(t: Task):
+            while not t._hb_stop.wait(timeout=HEARTBEAT_INTERVAL):
+                if t.status != STATUS_RUNNING:
+                    break
+                t.heartbeat = time.time()
+        threading.Thread(target=_hb, args=(task,), daemon=True,
+                         name=f"hb-{task.id[:8]}").start()
+
         try:
             task.result = task.fn(*task.args, **task.kwargs)
             task.status = STATUS_DONE; task.finished_at = time.time()
@@ -239,12 +320,30 @@ class TaskQueue:
                 self._emit("task_failed", {"id": task.id, "name": task.name,
                     "error": task.error[:300], "attempts": task.attempts})
         finally:
+            task._hb_stop.set()  # Stop heartbeat thread cleanly
             if task.status not in (STATUS_RETRYING,): self._persist(task)
 
     def _start_watchdog(self):
-        threading.Thread(target=self._watchdog_loop, daemon=True).start()
+        threading.Thread(target=self._watchdog_loop, daemon=True,
+                         name="task-watchdog").start()
+
+    def _prune_tasks(self, max_entries: int = 2000) -> None:
+        """Cap _tasks dict to prevent unbounded memory growth.
+        Retains all running/queued tasks + the newest max_entries completed ones."""
+        with self._lock:
+            completed = sorted(
+                [t for t in self._tasks.values()
+                 if t.status in (STATUS_DONE, STATUS_FAILED, STATUS_KILLED)],
+                key=lambda t: t.finished_at, reverse=True,
+            )
+            to_prune = completed[max_entries:]
+            for t in to_prune:
+                del self._tasks[t.id]
+        if to_prune:
+            logger.debug("[TaskQueue] Pruned %d completed tasks from memory", len(to_prune))
 
     def _watchdog_loop(self):
+        prune_counter = 0
         while not self._stop.is_set():
             time.sleep(HEARTBEAT_INTERVAL)
             now = time.time()
@@ -252,11 +351,20 @@ class TaskQueue:
                 running = [t for t in self._tasks.values() if t.status == STATUS_RUNNING]
             for task in running:
                 if (now - task.heartbeat) > STUCK_TASK_TIMEOUT:
+                    task._hb_stop.set()       # Stop heartbeat thread
                     task.status = STATUS_KILLED
                     task.error = f"Stuck: no heartbeat for {STUCK_TASK_TIMEOUT}s"
                     task.finished_at = now
                     self._persist(task)
-                    self._emit("task_killed", {"id": task.id, "reason": "stuck"})
+                    self._emit("task_killed", {"id": task.id, "reason": "stuck",
+                                               "pid": task.pid, "pgid": task.pgid})
+                    # Terminate orphan process tree
+                    self._terminate_task_process(task)
+            # Prune _tasks every 5 watchdog cycles (~25s)
+            prune_counter += 1
+            if prune_counter >= 5:
+                prune_counter = 0
+                self._prune_tasks()
 
     def checkpoint(self, task_id: str, state: dict):
         with self._lock:

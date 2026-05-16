@@ -1,0 +1,85 @@
+version: '3.9'
+
+services:
+  # ── Redis (SSE pub/sub + session routing) ───────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru --save ""
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+    volumes:
+      - redis-data:/data
+
+  # ── Aetherion AI Application ─────────────────────────────────────────────────
+  aetherion:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: aetherion-ai:latest
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      # Runtime mode
+      - FLASK_ENV=production
+      - AETHERION_REALTIME_V1=true
+      # Redis SSE bridge (enables multi-worker mode)
+      - REDIS_URL=redis://redis:6379/0
+      # Worker config (4 workers when Redis available)
+      - GUNICORN_WORKERS=4
+      - GUNICORN_THREADS=16
+      - GUNICORN_TIMEOUT=120
+      # Session security
+      - HITL_TIMEOUT_SECONDS=300
+      # Crash recovery
+      - REAP_INTERVAL_S=120
+      - MAX_TASK_AGE_H=8
+      - SESSION_PRUNE_DAYS=30
+      # Token budget
+      - GUNICORN_MAX_REQUESTS=1000
+      - GUNICORN_MAX_JITTER=100
+      # PYTHONUNBUFFERED for log streaming
+      - PYTHONUNBUFFERED=1
+    env_file:
+      - .env
+    volumes:
+      - aetherion-data:/app/data
+      - aetherion-workspaces:/app/workspaces
+      - aetherion-logs:/app/logs
+      - aetherion-sessions:/app/sessions
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 25s
+    deploy:
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 4G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "5"
+
+volumes:
+  redis-data:
+  aetherion-data:
+  aetherion-workspaces:
+  aetherion-logs:
+  aetherion-sessions:

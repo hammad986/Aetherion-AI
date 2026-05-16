@@ -322,3 +322,11 @@
     background: #d29922;
     animation: uxit-pulse 1s infinite;
   }
+
+/* ── Debug Kill-Switches ─────────────────────────────────────────── */
+html.nx-disable-animations *,
+html.nx-disable-animations *::before,
+html.nx-disable-animations *::after {
+  animation: none !important;
+  transition: none !important;
+}

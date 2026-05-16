@@ -38,27 +38,29 @@ class JobManager:
                 return {"final_answer": "Task complete (legacy stub)"}
             return _legacy_runner
 
-        # Feature-flag ON: wire real Agent execution.
+        # Feature-flag ON: wire real Agent execution with Coordination Bus.
         def _real_runner(t: ExecutionTask):
             """
-            Bridges ExecutionTask lifecycle into Agent.run().
-            - emit_fn forwards SSE events to all subscribers of the session.
-            - Cancellation: the task's _cancel_event is checked after each
-              SSE emission; if set, we raise an interrupt inside the emit path
-              so the agent loop terminates cleanly on the next iteration.
+            Bridges ExecutionTask lifecycle into Agent.run() with full
+            multi-agent coordination scaffolding (resource governance,
+            workspace locking, agent registry, memory arbitration).
             """
             from agent import Agent
             from config import Config
             from memory import Memory
+            from execution.coordination_bus import CoordinationBus
+            from execution.agent_registry import AgentRole
 
             prompt = t.payload.get("prompt", "").strip()
             if not prompt:
                 return {"ok": False, "error": "missing_prompt"}
 
+            # ── Stand up coordination bus for this execution ──────────────────
+            bus = CoordinationBus.for_session(session_id, emit_fn=None)
+
             def _emit(kind: str, payload: dict) -> None:
                 """SSE bridge: broadcast event; honour cancellation signal."""
                 if t.is_cancelled:
-                    # Raise to unwind the agent loop via the except clause.
                     raise InterruptedError(f"Task {t.execution_id} cancelled by operator.")
                 try:
                     SSEManager.broadcast_to_session(
@@ -67,8 +69,16 @@ class JobManager:
                         {"execution_id": t.execution_id, **payload},
                     )
                 except Exception as _sse_err:
-                    # SSE broadcast failures must never crash the agent.
                     logger.warning(f"[JobManager] SSE broadcast failed: {_sse_err}")
+
+            # Wire emit_fn into bus for coordination snapshots
+            bus._emit = _emit
+
+            try:
+                agent_instance = bus.register_agent(current_step="initializing")
+            except ValueError as _reg_err:
+                logger.warning(f"[JobManager] Agent registration conflict: {_reg_err}")
+                agent_instance = None  # proceed without registration (single-agent fallback)
 
             try:
                 cfg    = Config()
@@ -79,7 +89,20 @@ class JobManager:
                     emit_fn=_emit,
                     session_id=session_id,
                 )
+                # Attach the coordination bus so agent can use workspace locks
+                agent._coordination_bus = bus
+                agent._execution_id = t.execution_id
+
                 result = agent.run(prompt)
+
+                # Record coordination outcome into memory arbiter
+                bus.write_memory(
+                    key="last_task_outcome",
+                    value=f"completed: {str(result)[:100]}",
+                    confidence=0.85,
+                    verified=True,
+                )
+                bus.emit_coordination_snapshot()
                 return {"ok": True, "output": result}
 
             except InterruptedError as _ie:
@@ -89,6 +112,9 @@ class JobManager:
             except Exception as _e:
                 logger.exception(f"[JobManager] Real runner crashed: {_e}")
                 return {"ok": False, "error": str(_e)}
+
+            finally:
+                bus.deregister_agent(status="completed" if not t.is_cancelled else "cancelled")
 
         return _real_runner
 

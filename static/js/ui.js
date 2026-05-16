@@ -62,6 +62,7 @@
     }
 
     function nxHydrateLayoutState() {
+      if (nxFlag('layoutrestore')) return;
       const stored = nxReadLayoutStore();
       if (Number.isFinite(stored.leftW)) {
         NX.leftW = stored.leftW;
@@ -422,6 +423,7 @@
     }
 
     function nxStartMetrics() {
+      if (nxFlag('metrics')) return;
       nxRefreshMetrics();
       NX.metricTimer = setInterval(nxRefreshMetrics, 8000);
     }
@@ -613,6 +615,7 @@
     }
 
     function nxWatchInspectorSlots() {
+      if (nxFlag('inspector')) return;
       const checkSlot = (slotId, sectionId) => {
         const slot = document.getElementById(slotId);
         const section = document.getElementById(sectionId);
@@ -630,10 +633,17 @@
     }
 
     function nxRunOrStop() {
-      if (NX.lastStatus === 'running' && NX.activeSid) {
-        fetch('/api/session/' + NX.activeSid + '/stop', { method: 'POST' })
-          .then(() => { nxSetGlobalStatus('idle'); })
-          .catch(() => { });
+      const sid = NX.activeSid || (typeof currentSession !== 'undefined' ? currentSession : null);
+      if (NX.lastStatus === 'running' && sid) {
+        // Use the full stopSession() from runtime.js when available (it also refreshes queue/sessions).
+        // Fall back to a bare POST when runtime hasn't loaded yet.
+        if (typeof stopSession === 'function') {
+          stopSession();
+        } else {
+          fetch('/api/session/' + sid + '/stop', { method: 'POST' })
+            .then(() => { nxSetGlobalStatus('idle'); })
+            .catch(() => {});
+        }
       } else {
         if (typeof window.NX?.markFirstInteraction === 'function') {
           window.NX.markFirstInteraction();
@@ -880,9 +890,20 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ task: taskFinal, model: model || null, plan_mode: NX.planMode })
-      }).then(r => r.json()).then(d => {
-        if (!d.ok) { toast(d.error || 'Failed to queue', 'err'); return; }
-        document.getElementById('taskInput').value = '';
+      }).then(async r => {
+        const d = await r.json().catch(() => ({ ok: false, error: 'Server error' }));
+        // ── 403 = plan restriction (Elite/managed quota locked) ────────────────
+        if (r.status === 403 || (d.error && /elite|locked|plan|upgrade|limit/i.test(d.error))) {
+          nxShowPlanLockedToast(d.error);
+          return;
+        }
+        // ── 429 = rate limited ─────────────────────────────────────────────────
+        if (r.status === 429) {
+          toast('⏳ Rate limited — please wait a moment.', 'warn'); return;
+        }
+        if (!d.ok) { toast(d.error || 'Failed to queue task.', 'err'); return; }
+        const inp = document.getElementById('taskInput');
+        if (inp) inp.value = '';
         NX.activeSid = d.session_id;
         nxSetGlobalStatus('running');
         if (typeof selectSession === 'function') selectSession(d.session_id);
@@ -890,11 +911,45 @@
         if (typeof loadQueue === 'function') loadQueue();
         const planEl = document.getElementById('nxActivePlanMode');
         const p = NX_PLANS[NX.planMode] || NX_PLANS.elite;
-        if (planEl) {
-          planEl.textContent = p.label;
-          planEl.style.color = p.color;
-        }
-      }).catch(e => toast('Queue error: ' + e, 'err'));
+        if (planEl) { planEl.textContent = p.label; planEl.style.color = p.color; }
+      }).catch(e => toast('Network error — is the server running? ' + e, 'err'));
+    }
+
+    // ── Plan-locked CTA toast ─────────────────────────────────────────────────
+    function nxShowPlanLockedToast(serverMsg) {
+      // Remove any existing plan-locked toast to avoid stacking
+      const existing = document.getElementById('nxPlanLockedToast');
+      if (existing) existing.remove();
+
+      const msg = serverMsg && serverMsg.length < 120 ? serverMsg
+        : 'Elite runs are locked on your current plan.';
+
+      const t = document.createElement('div');
+      t.id = 'nxPlanLockedToast';
+      t.style.cssText = [
+        'position:fixed;bottom:24px;left:50%;transform:translateX(-50%)',
+        'background:#1c1c2e;border:1px solid rgba(188,140,255,.45)',
+        'border-radius:10px;padding:12px 18px',
+        'display:flex;align-items:center;gap:14px',
+        'box-shadow:0 8px 32px rgba(0,0,0,.6)',
+        'z-index:99999;max-width:480px;min-width:280px',
+        'animation:nxSlideUp .22s ease',
+      ].join(';');
+
+      t.innerHTML = `
+        <span style="font-size:20px">🔒</span>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:600;color:#e6edf3;margin-bottom:2px">Plan restriction</div>
+          <div style="font-size:11px;color:#8b949e;line-height:1.4">${msg}</div>
+        </div>
+        <button onclick="if(typeof p8OpenUpgradeModal==='function')p8OpenUpgradeModal();document.getElementById('nxPlanLockedToast')?.remove();"
+          style="background:linear-gradient(135deg,#bc8cff,#8b5cf6);color:#fff;border:none;border-radius:7px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit">Upgrade ↗</button>
+        <button onclick="this.parentElement.remove()"
+          style="background:none;border:none;color:#8b949e;cursor:pointer;font-size:16px;padding:0 2px;line-height:1">✕</button>
+      `;
+      document.body.appendChild(t);
+      // Auto-dismiss after 8s
+      setTimeout(() => t.remove(), 8000);
     }
 
     document.addEventListener('click', e => {
@@ -1006,36 +1061,40 @@
     });
 
     function nxKeydown(e) {
-      if (e.ctrlKey && e.key === 'Enter') { e.preventDefault(); if(typeof queueTask === 'function') queueTask(); }
-      if (e.ctrlKey && e.key === 'k') { e.preventDefault(); nxOpenPalette(); }
-      if (e.ctrlKey && e.key === 's' && NX.activeTab === 'code') { e.preventDefault(); if (typeof saveCurrentFile !== 'undefined') saveCurrentFile(); }
+      // Ctrl+Enter — run task (use canonical nxQueueTask, fall back to legacy queueTask)
+      if (e.ctrlKey && e.key === 'Enter') {
+        e.preventDefault();
+        nxRunOrStop();
+        return;
+      }
+      if (e.ctrlKey && e.key === 'k') { e.preventDefault(); nxOpenPalette(); return; }
+      if (e.ctrlKey && e.key === ',') { e.preventDefault(); if (typeof openSettings === 'function') openSettings(); return; }
+      if (e.ctrlKey && e.key === 's' && NX.activeTab === 'code') { e.preventDefault(); if (typeof saveCurrentFile !== 'undefined') saveCurrentFile(); return; }
+      // Ctrl+Shift+E = toggle left (AI Thinking), Ctrl+Shift+I = toggle right (Inspector)
+      if (e.ctrlKey && e.shiftKey && e.key === 'E') { e.preventDefault(); if (typeof NxWorkspace !== 'undefined') NxWorkspace.toggleLeft(); else nxToggleLeft(); return; }
+      if (e.ctrlKey && e.shiftKey && e.key === 'I') { e.preventDefault(); if (typeof NxWorkspace !== 'undefined') NxWorkspace.toggleRight(); else nxToggleRight(); return; }
       if (e.key === 'Escape') {
-        document.getElementById('nxPalette').classList.remove('open');
+        const pal = document.getElementById('nxPalette');
+        if (pal) pal.classList.remove('open');
         nxCloseMore();
-        p55ClosePanel();
+        // Only call p55ClosePanel if the drawer actually exists
+        const drawer = document.getElementById('nxWorkspaceDrawer');
+        if (drawer && drawer.classList.contains('open')) nxWsDrawerClose();
       }
     }
 
     function nxOpenPanel(panel) {
-      const slot = document.getElementById('p57-drawer-slot');
-      const title = document.getElementById('nxDrawerTitle');
-      if (!slot) return;
-      if (panel === 'sessions') {
-        if (title) title.textContent = 'Sessions';
-        const sessEl = document.getElementById('tabSessions') || document.getElementById('settingsSessions');
-        slot.innerHTML = '';
-        if (sessEl) { slot.appendChild(sessEl); }
-        else {
-          slot.innerHTML = '<div style="color:var(--text-muted);font-size:12px;padding:8px">Loading sessions…</div>';
-          if (typeof openSettings === 'function') openSettings('sessions');
-          return;
+      // Route panel requests: sessions → Settings modal sessions tab,
+      // everything else → Settings modal at the relevant tab.
+      if (typeof openSettings === 'function') {
+        if (panel === 'sessions') {
+          openSettings('sessions');
+        } else if (panel === 'settings' || !panel) {
+          openSettings();
+        } else {
+          openSettings(panel);
         }
-      } else {
-        if (title) title.textContent = 'Settings';
-        if (typeof openSettings === 'function') openSettings();
-        return;
       }
-      p55OpenPanel();
     }
 
     function nxSetTask(text) {
@@ -1068,23 +1127,21 @@
     }
     function p57CloseDetail() { document.getElementById('p57-detail-modal').style.display = 'none'; }
     function p57FixError() {
-      const msg = document.getElementById('nxErrorMsg')?.textContent || document.getElementById('p57-error-msg')?.textContent || '';
+      const msg = document.getElementById('nxErrorMsg')?.textContent
+               || document.getElementById('p57-error-msg')?.textContent
+               || '';
       if (!msg) return;
       const inp = document.getElementById('taskInput');
-      if (inp) inp.value = 'Fix this error: ' + msg.slice(0, 200);
-      if (typeof queueTask === 'function') queueTask();
+      if (inp) { inp.value = 'Fix this error: ' + msg.slice(0, 200); inp.focus(); }
+      // Use the canonical run path — never the stale queueTask alias
+      nxQueueTask();
     }
 
-    const _nxRunObserver = new MutationObserver(() => {
-      const lbl = document.getElementById('runBtnLabel');
-      if (!lbl) return;
-      const isRunning = lbl.textContent.includes('Stop') || lbl.textContent.includes('Running');
-      nxSetGlobalStatus(isRunning ? 'running' : 'idle');
-    });
-    window.NX_BOOT_TASKS.push( () => {
-      const lbl = document.getElementById('runBtnLabel');
-      if (lbl) _nxRunObserver.observe(lbl, { childList: true, characterData: true, subtree: true });
-    });
+    // NOTE: The MutationObserver on runBtnLabel has been intentionally removed.
+    // It created a status feedback loop: nxSetGlobalStatus updates the label text,
+    // the observer fires, calls nxSetGlobalStatus again → infinite cycle.
+    // Status is now driven exclusively by nxSetGlobalStatus() calls from nxQueueTask
+    // and stopSession, which is the canonical single source of truth.
 
     window.nxSetTab = nxSetTab;
     window.nxSwitchTab = nxSetTab;

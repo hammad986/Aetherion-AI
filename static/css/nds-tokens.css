@@ -1,0 +1,212 @@
+/**
+ * nds-tokens.css — Nexora Design System: Canonical Token Layer
+ * ═══════════════════════════════════════════════════════════════
+ * GOVERNANCE: This is the SINGLE SOURCE OF TRUTH for all tokens.
+ *
+ * Rules:
+ *   1. Never define --nds-* tokens in any other file.
+ *   2. layout.css / motion.css use --nds-* aliases for compatibility.
+ *   3. All new components must use --nds-* tokens directly.
+ *   4. Load ORDER: nds-tokens.css → layout.css → motion.css → nds.css
+ *
+ * Ownership: frontend/design-system
+ * ═══════════════════════════════════════════════════════════════
+ */
+
+/* ── Reduced-motion: must come first ─────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+:root {
+  /* ━━ SURFACE TOKENS (Transplanted from Replit Premium Dark) ━━━━━ */
+  --nds-bg:          #0F1017;   /* page background */
+  --nds-surface-0:   #1A1C25;   /* deepest surface */
+  --nds-surface-1:   #23252F;   /* panel */
+  --nds-surface-2:   #2A2C37;   /* elevated panel */
+  --nds-surface-3:   #31343F;   /* tooltip / popover */
+  --nds-surface-4:   #3A3D48;   /* border default */
+  --nds-surface-5:   #444752;   /* border hover */
+  --nds-surface-overlay: #0F1017A0;
+
+  /* ━━ ACCENT TOKENS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+  --nds-accent:      #0079F2;
+  --nds-accent-hi:   #57ABFF;   /* hover */
+  --nds-accent-lo:   #0053A6;   /* dim bg */
+  --nds-accent-glow: rgba(0, 121, 242, 0.18);   /* shadow */
+  --nds-accent-subtle: rgba(0, 121, 242, 0.06); /* hover bg */
+  --nds-accent-border: #004182; /* border */
+
+  /* ━━ SEMANTIC COLOR TOKENS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+  --nds-green:       #009118;
+  --nds-green-lo:    #046113;
+  --nds-green-glow:  rgba(0, 145, 24, 0.40);
+  --nds-red:         #E52222;
+  --nds-red-lo:      #A60808;
+  --nds-yellow:      #967D00;
+  --nds-yellow-lo:   #635300;
+  --nds-blue:        #0079F2;
+  --nds-blue-lo:     #0053A6;
+  --nds-purple:      #A64DFF;
+  --nds-purple-lo:   #7633B8;
+  --nds-purple-border: #582987;
+
+  /* ━━ TEXT TOKENS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+  --nds-text-hi:       #E6E8ED;   /* primary */
+  --nds-text-md:       #BFC4CA;   /* secondary */
+  --nds-text-lo:       #A2A8B2;   /* muted */
+  --nds-text-dim:      #808080;   /* decorative */
+  --nds-text-ph:       #545454;   /* placeholder */
+
+  /* ━━ TYPOGRAPHY TOKENS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+  --nds-font:          'IBM Plex Sans', system-ui, sans-serif;
+  --nds-mono:          'AetherionHack', 'JetBrains Mono', 'Fira Code', monospace;
+  --nds-type-2xs:      10px;
+  --nds-type-xs:       11px;
+  --nds-type-sm:       12px;
+  --nds-type-md:       13px;
+  --nds-type-lg:       15px;
+  --nds-type-xl:       18px;
+  --nds-leading-tight: 1.3;
+  --nds-leading-body:  1.5;
+
+  /* ━━ SPACING TOKENS (4px grid) ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+  --nds-sp-0: 2px;
+  --nds-sp-1: 4px;
+  --nds-sp-2: 8px;
+  --nds-sp-3: 12px;
+  --nds-sp-4: 16px;
+  --nds-sp-5: 20px;
+  --nds-sp-6: 24px;
+  --nds-sp-8: 32px;
+  --nds-sp-10: 40px;
+  --nds-sp-12: 48px;
+
+  /* ━━ RADIUS TOKENS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+  --nds-r-xs:   2px;
+  --nds-r-sm:   4px;
+  --nds-r-md:   6px;
+  --nds-r-lg:   8px;
+  --nds-r-xl:   12px;
+  --nds-r-pill: 9999px;
+
+  /* ━━ ELEVATION / SHADOW TOKENS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+  --nds-shadow-xs: 0 1px 3px rgba(0,0,0,0.20);
+  --nds-shadow-sm: 0 2px 8px rgba(0,0,0,0.28);
+  --nds-shadow-md: 0 6px 20px rgba(0,0,0,0.38);
+  --nds-shadow-lg: 0 16px 48px rgba(0,0,0,0.52);
+  --nds-shadow-float: 0 8px 32px rgba(0,0,0,0.60), 0 0 0 1px var(--nds-surface-4);
+  --nds-shadow-accent: 0 0 16px var(--nds-accent-glow);
+
+  /* ━━ MOTION TOKENS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+  --nds-ease-out:    cubic-bezier(0.0, 0.0, 0.2, 1);
+  --nds-ease-in:     cubic-bezier(0.4, 0.0, 1.0, 1);
+  --nds-ease-std:    cubic-bezier(0.4, 0.0, 0.2, 1);
+  --nds-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --nds-ease-snap:   cubic-bezier(0.2, 0.0, 0.0, 1);
+  --nds-dur-0:  0ms;
+  --nds-dur-1:  80ms;   /* instant */
+  --nds-dur-2:  150ms;  /* fast */
+  --nds-dur-3:  200ms;  /* default */
+  --nds-dur-4:  260ms;  /* moderate */
+  --nds-dur-5:  380ms;  /* slow */
+  --nds-dur-6:  500ms;  /* preset transition */
+
+  /* ━━ LAYOUT TOKENS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+  --nds-topbar-h:    40px;
+  --nds-tabbar-h:    32px;
+  --nds-statusbar-h: 22px;
+  --nds-panel-hdr-h: 32px;
+  --nds-sidebar-w:   240px;
+
+  /* ━━ INTERACTION STANDARDS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+  --nds-focus-ring:  0 0 0 2px var(--nds-accent-lo), 0 0 0 1px var(--nds-accent);
+  --nds-hover-bg:    var(--nds-surface-2);
+  --nds-active-scale: 0.98;
+
+  /* ━━ TOAST TIMING ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+  --nds-toast-dur-info:  4000ms;
+  --nds-toast-dur-err:   7000ms;
+  --nds-toast-dur-warn:  5000ms;
+
+  /* ━━ LEGACY ALIASES (for layout.css / motion.css compatibility) ━━━━━ */
+  --bg:               var(--nds-bg);
+  --surface:          var(--nds-surface-0);
+  --panel:            var(--nds-surface-1);
+  --panel2:           var(--nds-surface-2);
+  --panel3:           var(--nds-surface-3);
+  --panel-border:     var(--nds-surface-4);
+  --panel-border-hover: var(--nds-surface-5);
+  --accent:           var(--nds-accent);
+  --accent-hover:     var(--nds-accent-hi);
+  --accent-dim:       var(--nds-accent-lo);
+  --accent-glow:      var(--nds-accent-glow);
+  --accent-subtle:    var(--nds-accent-subtle);
+  --green:            var(--nds-green);
+  --green-dim:        var(--nds-green-lo);
+  --red:              var(--nds-red);
+  --red-dim:          var(--nds-red-lo);
+  --yellow:           var(--nds-yellow);
+  --yellow-dim:       var(--nds-yellow-lo);
+  --blue:             var(--nds-blue);
+  --blue-dim:         var(--nds-blue-lo);
+  --purple:           var(--nds-purple);
+  --purple-dim:       var(--nds-purple-lo);
+  --text:             var(--nds-text-hi);
+  --text-secondary:   var(--nds-text-md);
+  --text-muted:       var(--nds-text-lo);
+  --text-dim:         var(--nds-text-dim);
+  --text-placeholder: var(--nds-text-ph);
+  --font:             var(--nds-font);
+  --mono:             var(--nds-mono);
+  
+  --space-1: var(--nds-sp-1);
+  --space-2: var(--nds-sp-2);
+  --space-3: var(--nds-sp-3);
+  --space-4: var(--nds-sp-4);
+  --space-5: var(--nds-sp-5);
+  --space-6: var(--nds-sp-6);
+  --sp-1: var(--nds-sp-1); --sp-2: var(--nds-sp-2);
+  --sp-3: var(--nds-sp-3); --sp-4: var(--nds-sp-4);
+  --sp-5: var(--nds-sp-5); --sp-6: var(--nds-sp-6);
+  
+  --type-xs: var(--nds-type-xs);
+  --type-sm: var(--nds-type-sm);
+  --type-md: var(--nds-type-md);
+  --type-lg: var(--nds-type-lg);
+  
+  --r-xs:  var(--nds-r-xs);
+  --r-sm:  var(--nds-r-sm);
+  --r-md:  var(--nds-r-md);
+  --r-lg:  var(--nds-r-lg);
+  --r-xl:  var(--nds-r-xl);
+  
+  --shadow-1:     var(--nds-shadow-sm);
+  --shadow-2:     var(--nds-shadow-md);
+  --shadow-sm:    var(--nds-shadow-sm);
+  --shadow-md:    var(--nds-shadow-md);
+  --shadow-lg:    var(--nds-shadow-lg);
+  --shadow-float: var(--nds-shadow-float);
+  
+  --ease:          var(--nds-ease-std);
+  --ease-out:      var(--nds-ease-out);
+  --ease-in:       var(--nds-ease-in);
+  --ease-spring:   var(--nds-ease-spring);
+  --ease-snap:     var(--nds-ease-snap);
+  
+  --dur-instant:   var(--nds-dur-1);
+  --dur-fast:      var(--nds-dur-2);
+  --dur:           var(--nds-dur-3);
+  --dur-moderate:  var(--nds-dur-4);
+  --dur-slow:      var(--nds-dur-5);
+  
+  --hdr:           var(--nds-topbar-h);
+  --leftW:         var(--nds-sidebar-w);
+  --rightW:        320px;
+  --bottomH:       0px;
+}

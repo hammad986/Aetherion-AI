@@ -17,7 +17,20 @@
     href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230d1117'/%3E%3Cpolygon points='16,3 20.5,11.5 30,13 23,20 24.7,29.5 16,25 7.3,29.5 9,20 2,13 11.5,11.5' fill='%23bc8cff' stroke='%236b3fa0' stroke-width='0.5'/%3E%3C/svg%3E">
   <!-- Phase 35 — Centralized Modular Boot System -->
   <script src="/static/js/boot.js"></script>
+  <!-- NDS Architecture: event bus + state governance -->
+  <script src="/static/js/nx-bus.js"></script>
+  <script src="/static/js/nx-state.js"></script>
+  <script src="/static/js/nx-timeline.js"></script>
+  <script src="/static/js/nx-dag.js"></script>
+  <!-- Trust Engine UI -->
+  <script src="/static/js/nx-trust-ui.js"></script>
+  <!-- AGI-Native Runtime Surface -->
+  <script src="/static/js/nx-signals.js"></script>
+  <script src="/static/js/nx-agi-surface.js"></script>
+  <script src="/static/js/nx-hitl-bridge.js"></script>
+  <script src="/static/js/nx-session-cleanup.js"></script>
   <script src="https://checkout.razorpay.com/v1/checkout.js" async></script>
+  <link rel="stylesheet" href="/static/css/nds-tokens.css">
   <link rel="stylesheet" href="/static/css/base.css">
 
   <!-- Phase 20.6 — Monaco editor loading is now deferred/lazy to improve startup time. -->
@@ -26,6 +39,8 @@
   <script src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.8.0/lib/xterm-addon-fit.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/xterm-addon-web-links@0.9.0/lib/xterm-addon-web-links.min.js" defer></script>
+  <!-- Split.js for robust pane management -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/split.js/1.6.5/split.min.js"></script>
 
   <link rel="stylesheet" href="/static/css/components.css">
 
@@ -39,6 +54,12 @@
   <link rel="stylesheet" href="/static/css/graphs.css">
   <link rel="stylesheet" href="/static/css/support.css">
   <link rel="stylesheet" href="/static/css/stability.css">
+  <link rel="stylesheet" href="/static/css/motion.css">
+  <link rel="stylesheet" href="/static/css/nds.css">
+  <!-- AGI Frontend Foundation: Observability Panel -->
+  <link rel="stylesheet" href="/static/css/nx-observability.css">
+  <!-- AGI-Native Visual Differentiation Layer -->
+  <link rel="stylesheet" href="/static/css/nx-agi-native.css">
 </head>
 
 <body>
@@ -217,170 +238,68 @@
     </div>
   </div>
 
-  <!-- ── Header ── -->
-  <header class="nx-header">
-    <!-- Logo -->
-    <div class="nx-logo" title="Nexora AI Platform">
-      <div class="nx-logo-icon">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
-            fill="white" stroke="rgba(255,255,255,0.3)" stroke-width="0.5" />
+  <!-- ── Hidden Legacy Controls (Preserved for JS) ── -->
+  <div id="nx-legacy-header-controls" style="display:none;">
+    <div id="nxPlanSelector"><div id="nxPlanBadge"><span id="nxPlanLabel"></span></div><div id="nxPlanDropdown"><span id="nxPlanCheck-lite"></span><span id="nxPlanCheck-pro"></span><span id="nxPlanCheck-elite"></span></div></div>
+    <span id="nxGlobalStatus"></span>
+    <div id="p5ProvBadge"><span id="p5ProvDot"></span><span id="p5ProvName"></span><div id="p5ProvMenu"><div id="p5ProvMenuList"></div></div></div>
+    <div id="p4TokenPill"><span id="p4TkCount"></span><span id="p4CostVal"></span></div>
+    <button id="p4ThemeBtn" onclick="p4ToggleTheme()"></button>
+    <span id="nxSessCount"></span>
+    <div id="p8SubBadge"><span id="p8SubIcon"></span><span id="p8SubName"></span><span id="p8SubExpiry"></span></div>
+    <div id="nxBellWrap"><button id="nxBellBtn" onclick="nxBellToggle(event)"><span id="nxBellBadge"></span></button><div id="nxNotifPanel"><button id="nxNotifReadAll" onclick="nxNotifMarkAllRead()"></button><div id="nxNotifList"><div id="nxNotifEmpty"></div></div></div></div>
+  </div>
+
+  <!-- ── New Operational Header ── -->
+  <div class="nx-shell-root">
+  <header class="nx-shell-topbar" style="grid-area:topbar; justify-content:space-between; padding:0 12px; font-size:12px;">
+    <!-- LEFT: Nav Toggle & Breadcrumb -->
+    <div style="display:flex;align-items:center;gap:12px;flex:1;">
+      <button class="nx-icon-btn" onclick="nxToggleLeft()" title="Toggle Navigation" style="background:transparent;border:none;color:var(--text-muted);cursor:pointer;padding:4px;display:flex;align-items:center;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
+
+      <div style="display:flex;align-items:center;gap:6px;color:#8b949e;cursor:default;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
         </svg>
-      </div>
-      <div>
-        <div class="nx-logo-brand">Nexora</div>
-      </div>
-      <span class="nx-logo-badge">AI</span>
-    </div>
-
-    <!-- Plan mode selector -->
-    <div class="nx-plan-selector" id="nxPlanSelector">
-      <div class="nx-plan-badge elite" id="nxPlanBadge" onclick="nxTogglePlanDropdown()" title="Execution plan mode">
-        <span id="nxPlanLabel">⚡ Elite</span>
-        <span class="nx-plan-caret">▾</span>
-      </div>
-      <div class="nx-plan-dropdown" id="nxPlanDropdown">
-        <div class="nx-plan-option" onclick="nxSetPlan('lite')">
-          <div class="nx-plan-dot" style="background:#3fb950"></div>
-          <div>
-            <div class="nx-plan-name">Lite</div>
-            <div class="nx-plan-desc">Fast responses, no planning</div>
-          </div>
-          <span class="nx-plan-check" id="nxPlanCheck-lite" style="display:none">✓</span>
-        </div>
-        <div class="nx-plan-option" onclick="nxSetPlan('pro')">
-          <div class="nx-plan-dot" style="background:#388bfd"></div>
-          <div>
-            <div class="nx-plan-name">Pro</div>
-            <div class="nx-plan-desc">Reasoning + multi-step planning</div>
-          </div>
-          <span class="nx-plan-check" id="nxPlanCheck-pro" style="display:none">✓</span>
-        </div>
-        <div class="nx-plan-option active" onclick="nxSetPlan('elite')">
-          <div class="nx-plan-dot" style="background:#bc8cff"></div>
-          <div>
-            <div class="nx-plan-name">Elite</div>
-            <div class="nx-plan-desc">Full autonomy · debug · self-correct</div>
-          </div>
-          <span class="nx-plan-check" id="nxPlanCheck-elite">✓</span>
-        </div>
+        <span style="font-weight:500;color:#c9d1d9;">Nexora</span>
+        <span style="opacity:0.5;">/</span>
+        <span id="nxCurProjectHeader" style="font-weight:500;">Workspace</span>
       </div>
     </div>
 
-    <!-- Command bar -->
-    <div class="nx-cmd-wrap" id="nxCmdWrap">
-      <!-- Plus/attach menu -->
-      <div style="position:relative">
-        <button class="nx-plus-btn" id="nxPlusBtn" onclick="nxTogglePlusMenu()"
-          title="Attach file, image, or import repo">+</button>
-        <div class="nx-plus-menu" id="nxPlusMenu">
-          <div class="nx-plus-opt" onclick="nxPlusMenu_file()">
-            <span class="nx-plus-opt-icon">📄</span> Upload File
-          </div>
-          <div class="nx-plus-opt" onclick="nxPlusMenu_image()">
-            <span class="nx-plus-opt-icon">🖼️</span> Upload Image
-          </div>
-          <div class="nx-plus-opt" onclick="nxPlusMenu_folder()">
-            <span class="nx-plus-opt-icon">📁</span> Upload Folder
-          </div>
-          <div class="nx-plus-opt" onclick="nxOpenGithubModal()">
-            <span class="nx-plus-opt-icon">
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
-                <path
-                  d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
-              </svg>
-            </span> Import from GitHub
-          </div>
-        </div>
+    <!-- CENTER: Execution & Model (Execution First) -->
+    <div style="display:flex;align-items:center;gap:8px;justify-content:center;flex:1;">
+      <div style="display:flex;align-items:center;background:rgba(255,255,255,0.03);border:1px solid #30363d;border-radius:4px;overflow:hidden;height:26px;">
+        <button id="runBtn" onclick="nxRunOrStop()" style="background:transparent;border:none;color:#E0E0E0;padding:0 12px;font-size:12px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:6px;height:100%;transition:background 0.1s;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='transparent'" title="Execute task">
+          <span class="nx-live-dot" id="nxRunDot" style="display:none;width:6px;height:6px;border-radius:50%;background:#3fb950;"></span>
+          <span id="runBtnLabel" style="display:flex;align-items:center;gap:4px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Run</span>
+        </button>
+        <div style="width:1px;background:#30363d;height:100%;"></div>
+        <button onclick="stopSession()" style="background:transparent;border:none;color:#f85149;padding:0 12px;font-size:12px;font-weight:500;cursor:pointer;height:100%;transition:background 0.1s;" onmouseover="this.style.background='rgba(248,81,73,0.1)'" onmouseout="this.style.background='transparent'" title="Stop execution">■ Stop</button>
       </div>
-      <!-- Hidden file inputs -->
-      <input type="file" id="nxFileInput" style="display:none"
-        accept=".py,.js,.ts,.html,.css,.txt,.md,.json,.yaml,.yml,.csv,.sh,.sql,.xml,.toml,.ini,.cfg"
-        onchange="handleFileUpload(this)">
-      <input type="file" id="nxImageInput" style="display:none" accept=".png,.jpg,.jpeg,.gif,.webp,.svg"
-        onchange="handleFileUpload(this)">
-      <input type="file" id="nxFolderInput" style="display:none" webkitdirectory multiple
-        onchange="nxHandleFolderUpload(this)">
-      <div class="p4-suggest-wrap" style="flex:1;position:relative;display:flex;flex-direction:column">
-        <textarea id="taskInput" placeholder="Describe what you want to build… (Ctrl+Enter to run)" autocomplete="off"
-          spellcheck="false" oninput="p4OnTaskInput(this.value);p6OnTaskType(this.value)"
-          onfocus="p4OnTaskInput(this.value)" onblur="setTimeout(()=>p4CloseSuggest(),200)"></textarea>
-        <div class="p4-suggest-box" id="p4SuggestBox"></div>
-      </div>
-      <button class="nx-cmd-attach" title="Voice input" id="nxVoiceBtn" onclick="toggleVoice()">🎤</button>
-      <button class="nx-run-btn" id="runBtn" onclick="nxRunOrStop()">
-        <span class="nx-live-dot" id="nxRunDot" style="display:none"></span>
-        <span id="runBtnLabel">▶ Run</span>
+
+      <button class="nx-model-btn" id="nxModelBtn" onclick="nxOpenPanel('settings')" title="Model & API config" style="background:transparent;border:1px solid transparent;color:#8b949e;padding:0 8px;border-radius:4px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:4px;height:26px;transition:all 0.15s;" onmouseover="this.style.background='rgba(255,255,255,0.05)';this.style.color='#c9d1d9';" onmouseout="this.style.background='transparent';this.style.color='#8b949e';">
+        <span id="nxModelName">Loading…</span>
+        <span style="opacity:0.7;font-size:10px;">▾</span>
       </button>
     </div>
 
-    <div class="nx-header-right">
-      <div class="nx-model-btn" id="nxModelBtn" onclick="nxOpenPanel('settings')" title="Model & API config">
-        <span class="nx-model-dot" id="nxModelDot"></span>
-        <span id="nxModelName">Loading…</span>
-        <span style="color:var(--text-dim)">▾</span>
-      </div>
-      <span class="nx-status-badge" id="nxGlobalStatus">Idle</span>
-      <!-- Phase 5: Active provider badge + selector -->
-      <div class="p5-provider-badge" id="p5ProvBadge" onclick="p5ToggleProvMenu(event)"
-        title="Active AI provider — click to switch">
-        <span class="p5-dot" id="p5ProvDot" style="background:#3fb950"></span>
-        <span class="p5-name" id="p5ProvName">AUTO</span>
-        <span class="p5-arrow">▾</span>
-        <div class="p5-prov-menu" id="p5ProvMenu">
-          <div class="p5-prov-menu-head">🤖 Select AI Provider</div>
-          <div id="p5ProvMenuList"></div>
-        </div>
-      </div>
-      <!-- Phase 4: Live token + cost tracker -->
-      <div class="p4-token-pill" id="p4TokenPill" title="Tokens used · Estimated cost (session total)"
-        style="display:none">
-        <span>🔢</span>
-        <span class="p4-tk" id="p4TkCount">0</span>tok
-        <span style="color:#30363d">·</span>
-        <span class="p4-cost">$<span id="p4CostVal">0.0000</span></span>
-      </div>
-      <!-- Phase 4: Theme toggle -->
-      <button class="p4-theme-btn" id="p4ThemeBtn" onclick="p4ToggleTheme()" title="Toggle light/dark theme">🌙</button>
-      <button class="nx-icon-btn" title="Sessions (S)" onclick="nxOpenPanel('sessions')">📁 <span id="nxSessCount"
-          style="font-size:11px;color:var(--text-muted)">0</span></button>
-      <button class="nx-icon-btn" title="Command palette (Ctrl+K)" onclick="nxOpenPalette()">⌘K</button>
-      <!-- Phase 8: Subscription badge + upgrade button -->
-      <div class="p8-sub-badge p8-free" id="p8SubBadge" onclick="p8OpenUpgradeModal()"
-        title="Your subscription plan — click to upgrade">
-        <span id="p8SubIcon">🆓</span>
-        <span id="p8SubName">Free</span>
-        <span id="p8SubExpiry" style="font-size:9px;opacity:.7;display:none"></span>
-      </div>
-      <!-- Notification Bell -->
-      <div class="nx-bell-wrap" id="nxBellWrap">
-        <button class="nx-bell-btn" id="nxBellBtn" onclick="nxBellToggle(event)" title="Notifications"
-          aria-label="Notifications">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round">
-            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-          </svg>
-          <span class="nx-bell-badge" id="nxBellBadge" style="display:none">0</span>
-        </button>
-        <!-- Dropdown panel -->
-        <div class="nx-notif-panel" id="nxNotifPanel" style="display:none">
-          <div class="nx-notif-header">
-            <span class="nx-notif-title">Notifications</span>
-            <button class="nx-notif-readall" id="nxNotifReadAll" onclick="nxNotifMarkAllRead()">Mark all read</button>
-          </div>
-          <div class="nx-notif-list" id="nxNotifList">
-            <div class="nx-notif-empty" id="nxNotifEmpty">No notifications yet</div>
-          </div>
-        </div>
-      </div>
-      <button class="nx-icon-btn" title="Settings" onclick="openSettings()">⚙</button>
-      <button class="nx-icon-btn" title="Sign Out" onclick="nxLogout()" style="margin-left:4px;color:var(--red,#f85149)">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-          <polyline points="16 17 21 12 16 7" />
-          <line x1="21" y1="12" x2="9" y2="12" />
-        </svg>
+    <!-- RIGHT: Utility Bar -->
+    <div style="display:flex;align-items:center;gap:4px;justify-content:flex-end;flex:1;">
+      <button class="nx-icon-btn" title="Command palette (Ctrl+K)" onclick="nxOpenPalette()" style="background:transparent;border:1px solid #30363d;border-radius:4px;color:#8b949e;cursor:pointer;padding:0 8px;font-size:11px;font-family:inherit;height:24px;display:flex;align-items:center;gap:6px;margin-right:8px;transition:all 0.15s;" onmouseover="this.style.border='1px solid #8b949e';this.style.color='#c9d1d9';" onmouseout="this.style.border='1px solid #30363d';this.style.color='#8b949e';">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <span>Search</span>
+        <span style="opacity:0.5;font-size:10px;border:1px solid #30363d;border-radius:2px;padding:0 3px;">⌘K</span>
+      </button>
+
+      <button class="nx-icon-btn" id="nxInspectorBtn" title="Inspector (⌘\)" onclick="nxToggleInspector()" style="background:transparent;border:none;color:#8b949e;cursor:pointer;padding:4px;border-radius:4px;display:flex;align-items:center;justify-content:center;height:24px;width:24px;transition:all 0.15s;" onmouseover="this.style.color='#c9d1d9';this.style.background='rgba(255,255,255,0.05)';" onmouseout="this.style.color='#8b949e';this.style.background='transparent';">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="15" y1="3" x2="15" y2="21"></line></svg>
+      </button>
+
+      <button id="settingsBtn" class="nx-icon-btn" title="Settings" onclick="openSettings()" style="background:transparent;border:none;color:#8b949e;cursor:pointer;padding:4px;border-radius:4px;display:flex;align-items:center;justify-content:center;height:24px;width:24px;transition:all 0.15s;" onmouseover="this.style.color='#c9d1d9';this.style.background='rgba(255,255,255,0.05)';" onmouseout="this.style.color='#8b949e';this.style.background='transparent';">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       </button>
     </div>
   </header>
@@ -528,11 +447,48 @@
   </div>
 
   <!-- ── Body ── -->
-  <div class="nx-body">
-    <div class="nx-main" id="nxMain">
+  
+  <nav class="nx-shell-navrail" style="grid-area:navrail;">
+    <button class="nx-nav-icon" onclick="nxTogglePanel('files')" title="Files">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
+    </button>
+    <button class="nx-nav-icon" onclick="nxTogglePanel('chat')" title="Chat">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+    </button>
+    <button class="nx-nav-icon" onclick="nxTogglePanel('history')" title="History">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+    </button>
+    <div style="flex:1"></div>
+    <button class="nx-nav-icon" onclick="nxTogglePanel('settings')" title="Settings">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+    </button>
+  </nav>
+
+  <div id="nx-slide-panels" style="grid-area:center; position:relative; z-index:100;">
+    <div class="nx-slide-panel" id="nxPanel-files">
+       <div class="nx-panel-header">Files <button class="nx-close-btn" onclick="nxClosePanels()">✕</button></div>
+       <div class="nx-panel-content" id="nxPanelContent-files"></div>
+    </div>
+    <div class="nx-slide-panel" id="nxPanel-chat">
+       <div class="nx-panel-header">Chat <button class="nx-close-btn" onclick="nxClosePanels()">✕</button></div>
+       <div class="nx-panel-content" id="nxPanelContent-chat"></div>
+    </div>
+    <div class="nx-slide-panel" id="nxPanel-history">
+       <div class="nx-panel-header">History <button class="nx-close-btn" onclick="nxClosePanels()">✕</button></div>
+       <div class="nx-panel-content" id="nxPanelContent-history"></div>
+    </div>
+    <div class="nx-slide-panel" id="nxPanel-settings">
+       <div class="nx-panel-header">Settings <button class="nx-close-btn" onclick="nxClosePanels()">✕</button></div>
+       <div class="nx-panel-content" id="nxPanelContent-settings"></div>
+    </div>
+  </div>
+
+  <main class="nx-shell-center" style="grid-area:center; display:flex; height:100%; width:100%; overflow:hidden;">
+    <div class="nx-main" id="nxMain" style="flex:1; width:100%;">
+
 
       <!-- ── LEFT: AI Thinking & Controls ── -->
-      <div class="nx-panel nx-left" id="nxLeft">
+      <div class="nx-panel nx-left" id="nxLeft" style="display:none !important;">
         <div class="nx-panel-hdr">
           <span class="nx-panel-title">
             <span class="nx-pulse" id="nxThinkPulse" style="display:none"></span>
@@ -643,81 +599,91 @@
         </div>
       </div><!-- /nx-left -->
 
-      <div class="nx-divider" id="nxDivLeft"></div>
+
 
       <!-- ── CENTER: Tabbed Workspace ── -->
       <div class="nx-panel nx-center" id="nxCenter">
-        <div class="nx-tab-bar" id="nxTabBar">
-          <!-- Primary tabs: always visible -->
-          <button class="nx-tab active" data-nxtab="logs" onclick="nxSetTab('logs')">
+        <!-- Execution Composer (Moved from Header) -->
+        <div class="nx-composer" style="padding:16px;border-bottom:1px solid #27272A;background:#121212;flex-shrink:0;">
+          <div style="display:flex;gap:8px;align-items:flex-start;">
+            <div style="position:relative">
+              <button class="nx-plus-btn" id="nxPlusBtn" onclick="nxTogglePlusMenu()" title="Attach file, image, or import repo" style="width:36px;height:36px;border-radius:6px;border:1px solid #27272A;background:#202024;color:#E0E0E0;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;">+</button>
+              <div class="nx-plus-menu" id="nxPlusMenu" style="top:44px;">
+                <div class="nx-plus-opt" onclick="nxPlusMenu_file()"><span class="nx-plus-opt-icon">📄</span> Upload File</div>
+                <div class="nx-plus-opt" onclick="nxPlusMenu_image()"><span class="nx-plus-opt-icon">🖼️</span> Upload Image</div>
+                <div class="nx-plus-opt" onclick="nxPlusMenu_folder()"><span class="nx-plus-opt-icon">📁</span> Upload Folder</div>
+                <div class="nx-plus-opt" onclick="nxOpenGithubModal()">🔗 Import from GitHub</div>
+              </div>
+            </div>
+            
+            <input type="file" id="nxFileInput" style="display:none" accept=".py,.js,.ts,.html,.css,.txt,.md,.json,.yaml,.yml,.csv,.sh,.sql,.xml,.toml,.ini,.cfg" onchange="handleFileUpload(this)">
+            <input type="file" id="nxImageInput" style="display:none" accept=".png,.jpg,.jpeg,.gif,.webp,.svg" onchange="handleFileUpload(this)">
+            <input type="file" id="nxFolderInput" style="display:none" webkitdirectory multiple onchange="nxHandleFolderUpload(this)">
+
+            <div class="p4-suggest-wrap" style="flex:1;position:relative;">
+              <textarea id="taskInput" placeholder="Execute task or define requirements... (⌘+Enter)" autocomplete="off" spellcheck="false" oninput="p4OnTaskInput(this.value);p6OnTaskType(this.value)" onfocus="p4OnTaskInput(this.value)" onblur="setTimeout(()=>p4CloseSuggest(),200)" style="width:100%;min-height:56px;background:#202024;border:1px solid #27272A;border-radius:6px;padding:12px;color:#E0E0E0;font-family:inherit;font-size:14px;resize:none;box-sizing:border-box;"></textarea>
+              <div class="p4-suggest-box" id="p4SuggestBox"></div>
+
+              <div class="nx-exec-toolbar" style="display:flex;gap:12px;margin-top:12px;padding-top:10px;border-top:1px dashed #27272A;width:100%;">
+                <div style="display:flex;gap:8px;align-items:center;flex:1;">
+                  <select style="background:#202024;border:1px solid #27272A;color:#8b949e;border-radius:4px;padding:2px 6px;font-size:11px;outline:none;cursor:pointer;">
+                    <option>Mode: Autonomous</option>
+                    <option>Mode: Architect</option>
+                    <option>Mode: Debug</option>
+                  </select>
+                  <select style="background:#202024;border:1px solid #27272A;color:#8b949e;border-radius:4px;padding:2px 6px;font-size:11px;outline:none;cursor:pointer;">
+                    <option>Scope: Workspace</option>
+                    <option>Scope: Active File</option>
+                  </select>
+                  <div style="color:#8b949e;font-size:11px;display:flex;align-items:center;gap:6px;margin-left:8px;">
+                    <span style="width:6px;height:6px;border-radius:50%;background:#3fb950;display:inline-block;box-shadow:0 0 4px #3fb950;"></span>
+                    Target: Local Shell
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            <button class="nx-cmd-attach" title="Voice input" id="nxVoiceBtn" onclick="toggleVoice()" style="width:36px;height:36px;border-radius:6px;border:1px solid #27272A;background:#202024;color:#E0E0E0;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;">🎤</button>
+          </div>
+        </div>
+        <div class="nx-tab-bar" id="nxTabBar" style="display:flex; gap:24px; border-bottom:1px solid #27272A; padding:0 16px; background:#18181B;">
+          <!-- 4-Tab System -->
+          <button class="nx-tab active" data-nxtab="logs" onclick="nxSetTab('logs')" style="background:transparent;border:none;border-bottom:2px solid #bc8cff;color:#E0E0E0;padding:12px 0;font-size:13px;font-weight:600;cursor:pointer;position:relative;">
             <span class="nx-pulse" id="nxLogPulse" style="display:none"></span>
-            Logs
+            Output
             <span class="nx-tab-dot"></span>
           </button>
-          <button class="nx-tab" data-nxtab="preview" onclick="nxSetTab('preview')">
-            Preview
-            <span class="nx-tab-dot"></span>
-          </button>
-          <button class="nx-tab" data-nxtab="code" onclick="nxSetTab('code')">
+          <button class="nx-tab" data-nxtab="code" onclick="nxSetTab('code')" style="background:transparent;border:none;border-bottom:2px solid transparent;color:#8b949e;padding:12px 0;font-size:13px;font-weight:600;cursor:pointer;">
             Code
             <span class="nx-tab-dot"></span>
           </button>
-          <button class="nx-tab" data-nxtab="chat" onclick="nxSetTab('chat');p12LoadChat(currentSession)">
-            💬 Chat
-            <span class="nx-tab-dot" id="p12ChatDot"></span>
+          <button class="nx-tab" data-nxtab="terminal" onclick="nxSetTab('terminal')" style="background:transparent;border:none;border-bottom:2px solid transparent;color:#8b949e;padding:12px 0;font-size:13px;font-weight:600;cursor:pointer;">
+            Terminal
+            <span class="nx-tab-dot"></span>
           </button>
-          <button class="nx-tab" data-nxtab="live" onclick="nxSetTab('live')" id="nxLiveTabBtn"
-            title="Real-time execution view">
-            ⚡ Live
-            <span class="nx-tab-dot" id="nxLiveDot" style="display:none"></span>
+          <button class="nx-tab" data-nxtab="preview" onclick="nxSetTab('preview')" style="background:transparent;border:none;border-bottom:2px solid transparent;color:#8b949e;padding:12px 0;font-size:13px;font-weight:600;cursor:pointer;">
+            Preview
+            <span class="nx-tab-dot"></span>
           </button>
-
-          <!-- More ▾ dropdown for secondary tabs -->
-          <div class="nx-more-wrap">
-            <button class="nx-more-btn" id="nxMoreBtn" onclick="nxToggleMore(event)">More ▾</button>
-            <div class="nx-more-dropdown" id="nxMoreDropdown">
-              <div class="nx-more-item" data-nxtab="terminal" onclick="nxSetTab('terminal');nxCloseMore()">💻 Terminal
-              </div>
-              <div class="nx-more-item" data-nxtab="metrics" onclick="nxSetTab('metrics');nxCloseMore()">📊 Metrics
-              </div>
-              <div class="nx-more-item" data-nxtab="agents" onclick="nxSetTab('agents');nxCloseMore()">🤖 Agents</div>
-              <div class="nx-more-item" data-nxtab="timeline" onclick="nxSetTab('timeline');nxCloseMore()">📅 Timeline
-              </div>
-              <div class="nx-more-item" data-nxtab="steps" onclick="nxSetTab('steps');nxCloseMore()">🧐 Steps</div>
-              <div style="border-top:1px solid var(--panel-border);margin:3px 0"></div>
-              <div class="nx-more-item" data-nxtab="learning"
-                onclick="nxSetTab('learning');p15LoadDashboard();nxCloseMore()">📊 Learning</div>
-              <div class="nx-more-item" data-nxtab="goals" onclick="nxSetTab('goals');p16InitGoals();nxCloseMore()">🎯
-                Goal Mode</div>
-              <div class="nx-more-item" data-nxtab="graph" onclick="nxSetTab('graph');p17InitGraph();nxCloseMore()">🧩
-                Execution Graph</div>
-              <div class="nx-more-item" data-nxtab="scheduler"
-                onclick="nxSetTab('scheduler');p18InitScheduler();nxCloseMore()">⏱ Scheduler</div>
-            </div>
-          </div>
-
-          <!-- Hidden tab targets still needed for content -->
-          <button class="nx-tab secondary" data-nxtab="terminal" onclick="nxSetTab('terminal')">Terminal<span
-              class="nx-tab-dot"></span></button>
-          <button class="nx-tab secondary" data-nxtab="metrics" onclick="nxSetTab('metrics')">Metrics<span
-              class="nx-tab-dot"></span></button>
-          <button class="nx-tab secondary" data-nxtab="agents" onclick="nxSetTab('agents')">Agents<span
-              class="nx-tab-dot"></span></button>
-          <button class="nx-tab secondary" data-nxtab="timeline" onclick="nxSetTab('timeline')">Timeline<span
-              class="nx-tab-dot"></span></button>
-          <button class="nx-tab secondary" data-nxtab="steps" onclick="nxSetTab('steps')">Steps<span
-              class="nx-tab-dot"></span></button>
-          <button class="nx-tab secondary" data-nxtab="learning" onclick="nxSetTab('learning');p15LoadDashboard()">📊
-            Learning<span class="nx-tab-dot"></span></button>
-          <button class="nx-tab secondary" data-nxtab="goals" onclick="nxSetTab('goals');p16InitGoals()">🎯 Goals<span
-              class="nx-tab-dot"></span></button>
-          <button class="nx-tab secondary" data-nxtab="graph" onclick="nxSetTab('graph');p17InitGraph()">🧩 Graph<span
-              class="nx-tab-dot"></span></button>
-          <button class="nx-tab secondary" data-nxtab="scheduler" onclick="nxSetTab('scheduler');p18InitScheduler()">⏱
-            Scheduler<span class="nx-tab-dot"></span></button>
-
-          <!-- Tab-specific action bar -->
+          
+          <div style="flex:1"></div>
           <div class="nx-tab-actions" id="nxTabActions"></div>
+
+          <!-- Hidden legacy tabs to preserve JS bindings -->
+          <div id="nx-legacy-tabs" style="display:none;">
+            <button class="nx-tab" data-nxtab="chat" onclick="nxSetTab('chat');p12LoadChat(currentSession)"></button>
+            <button class="nx-tab" data-nxtab="live" onclick="nxSetTab('live')" id="nxLiveTabBtn"><span id="nxLiveDot"></span></button>
+            <button class="nx-more-btn" id="nxMoreBtn" onclick="nxToggleMore(event)"></button>
+            <div id="nxMoreDropdown"></div>
+            <button class="nx-tab secondary" data-nxtab="metrics" onclick="nxSetTab('metrics')"></button>
+            <button class="nx-tab secondary" data-nxtab="agents" onclick="nxSetTab('agents')"></button>
+            <button class="nx-tab secondary" data-nxtab="timeline" onclick="nxSetTab('timeline')"></button>
+            <button class="nx-tab secondary" data-nxtab="steps" onclick="nxSetTab('steps')"></button>
+            <button class="nx-tab secondary" data-nxtab="learning" onclick="nxSetTab('learning')"></button>
+            <button class="nx-tab secondary" data-nxtab="goals" onclick="nxSetTab('goals')"></button>
+            <button class="nx-tab secondary" data-nxtab="graph" onclick="nxSetTab('graph')"></button>
+            <button class="nx-tab secondary" data-nxtab="scheduler" onclick="nxSetTab('scheduler')"></button>
+          </div>
         </div>
 
         <!-- IMMERSIVE EXECUTION SYSTEM — AI Activity Bar -->
@@ -740,28 +706,17 @@
         </div>
 
         <!-- Idle hero — shown when no task is running -->
-        <div class="nx-idle-hero" id="nxIdleHero">
-          <div class="nx-hero-logo">A</div>
-          <div class="nx-hero-text">
-            <div class="nx-hero-heading">What do you want to build?</div>
-            <div class="nx-hero-sub">Describe a task and the AI agent will plan, code, and run it — step by step.</div>
+        <div class="nx-idle-hero" id="nxIdleHero" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:#8b949e;user-select:none;">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:16px;opacity:0.3;"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          <div style="font-size:13px;font-weight:500;color:#c9d1d9;margin-bottom:6px;letter-spacing:0.02em;">Ready for execution</div>
+          <div style="font-size:12px;color:#6e7681;display:flex;align-items:center;gap:12px;margin-bottom:24px;">
+            <span style="display:flex;align-items:center;gap:4px;"><kbd style="background:transparent;border:1px solid #30363d;border-radius:3px;padding:2px 4px;font-size:10px;font-family:inherit;">⌘K</kbd> Commands</span>
+            <span style="opacity:0.3;">|</span>
+            <span style="display:flex;align-items:center;gap:4px;"><kbd style="background:transparent;border:1px solid #30363d;border-radius:3px;padding:2px 4px;font-size:10px;font-family:inherit;">⌘↵</kbd> Execute</span>
           </div>
-          <div class="nx-hero-chips">
-            <button class="nx-hero-chip" onclick="nxSetTask('Build a Flask REST API with CRUD endpoints')">Flask REST
-              API</button>
-            <button class="nx-hero-chip" onclick="nxSetTask('Create a login system with SQLite auth')">Login
-              System</button>
-            <button class="nx-hero-chip"
-              onclick="nxSetTask('Build a real-time dashboard with charts')">Dashboard</button>
-            <button class="nx-hero-chip" onclick="nxSetTask('Write unit tests for this project')">Generate
-              Tests</button>
-            <button class="nx-hero-chip" onclick="nxSetTask('Optimize and refactor all Python files')">Refactor
-              Code</button>
-            <button class="nx-hero-chip" onclick="nxSetTask('Add a REST API endpoint for file uploads')">File Upload
-              API</button>
-          </div>
-          <div class="nx-hero-hint">
-            Press <kbd>Ctrl+Enter</kbd> to run &nbsp;·&nbsp; <kbd>Ctrl+K</kbd> for commands
+          <div class="nx-hero-chips" style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;max-width:400px;opacity:0.7;">
+            <button class="nx-hero-chip" onclick="nxSetTask('Run full test suite')" style="background:transparent;border:1px dashed #30363d;color:#8b949e;padding:4px 10px;border-radius:4px;font-size:11px;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='#8b949e';this.style.color='#c9d1d9'" onmouseout="this.style.borderColor='#30363d';this.style.color='#8b949e'">Run Tests</button>
+            <button class="nx-hero-chip" onclick="nxSetTask('Audit workspace for errors')" style="background:transparent;border:1px dashed #30363d;color:#8b949e;padding:4px 10px;border-radius:4px;font-size:11px;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='#8b949e';this.style.color='#c9d1d9'" onmouseout="this.style.borderColor='#30363d';this.style.color='#8b949e'">Audit Workspace</button>
           </div>
         </div>
 
@@ -785,7 +740,24 @@
         <!-- Code/Files tab -->
         <div class="nx-tab-content" id="nxTab-code"></div>
         <!-- Terminal tab -->
-        <div class="nx-tab-content" id="nxTab-terminal"></div>
+        <div class="nx-tab-content" id="nxTab-terminal" style="display:flex; flex-direction:column; height:100%;">
+          <!-- Terminal header / quick actions -->
+          <div style="display:flex; align-items:center; padding:4px 8px; border-bottom:1px solid var(--panel-border); background:var(--panel); gap:8px;">
+            <div id="xtermStatus" style="font-size:11px; color:var(--text-muted);">Initializing...</div>
+            <div style="flex:1;"></div>
+            <input type="text" id="xtermQuickInput" placeholder="Quick command..." style="font-size:11px; padding:2px 6px; background:var(--bg); border:1px solid var(--panel-border); color:var(--text); width:200px;" onkeydown="if(event.key==='Enter'){xtermRunQuick();}" />
+            <button id="xtermRunBtn" class="nx-tiny-btn" onclick="xtermRunQuick()">▶ Run</button>
+            <button class="nx-tiny-btn" onclick="xtermClear()">Clear</button>
+          </div>
+          <!-- Terminal content area -->
+          <div style="flex:1; position:relative;">
+            <div id="xtermSkeleton" style="position:absolute; inset:0; padding:12px; font-family:monospace; font-size:12px; color:var(--text-muted);">
+              Booting terminal interface...<br/>
+              Connecting to PTY...
+            </div>
+            <div id="xtermMount" style="position:absolute; inset:0; overflow:hidden;"></div>
+          </div>
+        </div>
         <!-- Metrics tab -->
         <div class="nx-tab-content" id="nxTab-metrics"></div>
         <!-- Agents tab -->
@@ -1286,10 +1258,10 @@
         </div>
       </div><!-- /nx-center -->
 
-      <div class="nx-divider" id="nxDivRight"></div>
+
 
       <!-- ── RIGHT: Inspector ── -->
-      <div class="nx-panel nx-right" id="nxRight">
+      <div class="nx-panel nx-right" id="nxRight" style="display:none !important;">
         <div class="nx-panel-hdr">
           <span class="nx-panel-title">Inspector</span>
           <div class="nx-panel-actions">
@@ -1298,6 +1270,67 @@
           </div>
         </div>
         <div class="nx-panel-body" id="nxRightBody">
+
+          <!-- ── Observability Panel (AGI Runtime Foundation v1) ── -->
+          <div id="nx-obs-panel">
+            <!-- Header -->
+            <div class="nx-obs-header">
+              <span class="nx-obs-title">Observability</span>
+              <button id="nx-obs-clear" title="Clear feeds">Clear</button>
+            </div>
+
+            <!-- Connection status -->
+            <div class="nx-obs-conn-strip">
+              <span id="nx-obs-conn-dot"></span>
+              <span id="nx-obs-conn-label">Not connected</span>
+              <span class="nx-obs-session-info">sid: <span id="nx-obs-session-label">—</span></span>
+            </div>
+
+            <!-- HITL Banner (shown when hitl.required fires) -->
+            <div id="nx-obs-hitl-banner"></div>
+            <div id="nx-hitl-result" style="display:none"></div>
+
+            <!-- Feeds -->
+            <div class="nx-obs-feeds">
+              <!-- Thought feed -->
+              <div class="nx-obs-feed-section" style="flex:1.4">
+                <div class="nx-obs-feed-hdr">
+                  <span class="nx-obs-feed-label">🧠 Thoughts</span>
+                  <span class="nx-obs-count-badge" id="nx-obs-count-thinks">0</span>
+                </div>
+                <div id="nx-obs-think-feed">
+                  <div class="nx-obs-empty">Waiting for agent events…</div>
+                </div>
+              </div>
+              <!-- Action feed -->
+              <div class="nx-obs-feed-section" style="flex:1">
+                <div class="nx-obs-feed-hdr">
+                  <span class="nx-obs-feed-label">⚡ Actions</span>
+                  <span class="nx-obs-count-badge" id="nx-obs-count-actions">0</span>
+                </div>
+                <div id="nx-obs-action-feed">
+                  <div class="nx-obs-empty">No actions yet.</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Stats footer -->
+            <div class="nx-obs-stats">
+              <div class="nx-obs-stat">
+                <span>🧠</span>
+                <span class="nx-obs-stat-val" id="nx-obs-count-thinks-footer">0</span>
+              </div>
+              <div class="nx-obs-stat">
+                <span>⚡</span>
+                <span class="nx-obs-stat-val" id="nx-obs-count-actions-footer">0</span>
+              </div>
+              <div class="nx-obs-stat nx-obs-stat-err">
+                <span>✗</span>
+                <span class="nx-obs-stat-val" id="nx-obs-count-errors">0</span>
+              </div>
+            </div>
+          </div>
+          <!-- /Observability Panel -->
 
           <!-- Status Stats -->
           <div class="nx-inspector-section">
@@ -1591,7 +1624,7 @@
           <h3>What should the agent do?</h3>
           <!-- Multimodal input: text + voice + upload -->
           <div class="task-input-row">
-            <textarea id="taskInput" class="task-input"
+            <textarea id="taskInput-legacy" class="task-input"
               placeholder="e.g. Build a Flask login system&#10;&#10;Press Ctrl+Enter to run."
               style="min-height:90px"></textarea>
             <div class="input-side">
@@ -1610,15 +1643,15 @@
             </div>
           </div>
           <!-- Voice transcript preview -->
-          <div class="voice-transcript-preview" id="voiceTranscriptPreview"></div>
+          <div class="voice-transcript-preview" id="voiceTranscriptPreview-legacy"></div>
           <!-- Upload chips -->
-          <div id="uploadChips"></div>
+          <div id="uploadChips-legacy"></div>
         </div>
 
         <div class="section">
-          <button class="btn primary large run-glow" id="runBtn" style="width:100%" onclick="queueTask()">
+          <button class="btn primary large run-glow" id="runBtn-legacy" style="width:100%" onclick="queueTask()">
             <span class="live-dot"></span>
-            <span id="runBtnLabel">▶ Run Task</span>
+            <span id="runBtnLabel-legacy">▶ Run Task</span>
           </button>
           <div id="queueList" style="font-size:0.76rem; color:var(--muted); margin-top:8px; text-align:center">
             Idle
@@ -1629,8 +1662,8 @@
         <div class="hitl-panel" id="hitlPanel" style="display:none">
           <h4>⚙ Agent Control</h4>
           <div class="hitl-controls">
-            <button class="btn tiny hitl-pause" id="hitlPauseBtn" onclick="hitlPause()">&#9646;&#9646; Pause</button>
-            <button class="btn tiny hitl-resume" id="hitlResumeBtn" onclick="hitlResume()" style="display:none">▶
+            <button class="btn tiny hitl-pause" id="hitlPauseBtn-legacy" onclick="hitlPause()">&#9646;&#9646; Pause</button>
+            <button class="btn tiny hitl-resume" id="hitlResumeBtn-legacy" onclick="hitlResume()" style="display:none">▶
               Resume</button>
             <button class="btn tiny" onclick="hitlRetry()">↻ Retry</button>
           </div>
@@ -1640,8 +1673,8 @@
             <button class="btn tiny" onclick="hitlInject()">Inject</button>
           </div>
           <div class="hitl-status">
-            <span class="hitl-dot" id="hitlDot"></span>
-            <span id="hitlStatusText">Agent running</span>
+            <span class="hitl-dot" id="hitlDot-legacy"></span>
+            <span id="hitlStatusText-legacy">Agent running</span>
           </div>
         </div>
 
@@ -2066,9 +2099,9 @@
 
             <!-- Phase 32 — xterm.js REAL interactive terminal -->
             <div id="xtermContainer" style="flex:1;min-height:0;background:#0c0c0c;position:relative">
-              <div id="xtermMount" style="width:100%;height:100%"></div>
+              <div id="xtermMount-legacy" style="width:100%;height:100%"></div>
               <!-- Skeleton loader shown while PTY is initializing -->
-              <div id="xtermSkeleton" style="
+              <div id="xtermSkeleton-legacy" style="
                         position:absolute;inset:0;background:#0c0c0c;
                         padding:14px;display:flex;flex-direction:column;gap:6px;
                         animation:skelPulse 1.6s ease-in-out infinite;
@@ -2090,11 +2123,11 @@
               <span style="font-family:ui-monospace,monospace;color:var(--accent);font-size:0.82rem;opacity:0.7">
                 PTY
               </span>
-              <span id="xtermStatus" style="font-size:0.72rem;color:var(--muted)">Initializing…</span>
+              <span id="xtermStatus-legacy" style="font-size:0.72rem;color:var(--muted)">Initializing…</span>
               <div style="flex:1"></div>
-              <button class="btn tiny" onclick="xtermRunQuick()" id="xtermRunBtn" title="Run command in terminal">▶
+              <button class="btn tiny" onclick="xtermRunQuick()" id="xtermRunBtn-legacy" title="Run command in terminal">▶
                 Run</button>
-              <input id="xtermQuickInput" type="text" placeholder="Quick command…" style="background:#0d1117;border:1px solid var(--border);color:var(--text);
+              <input id="xtermQuickInput-legacy" type="text" placeholder="Quick command…" style="background:#0d1117;border:1px solid var(--border);color:var(--text);
                                   padding:3px 8px;border-radius:5px;font-family:ui-monospace,monospace;
                                   font-size:0.8rem;width:200px;outline:none;"
                 onkeydown="if(event.key==='Enter'){xtermRunQuick();}">
@@ -2585,7 +2618,7 @@
           <div class="pane-body">
             <div class="status-grid">
               <div class="label">Status</div>
-              <div class="value"><span class="pill idle" id="stStatus">No session</span></div>
+              <div class="value"><span class="pill idle" id="stStatus-legacy">No session</span></div>
               <div class="label">Mode</div>
               <div class="value muted" id="stMode">—</div>
               <div class="label">Stage</div>
@@ -2597,7 +2630,7 @@
               <div class="label">Retries</div>
               <div class="value" id="stRetry">0</div>
               <div class="label">Elapsed</div>
-              <div class="value" id="stElapsed">—</div>
+              <div class="value" id="stElapsed-legacy">—</div>
               <div class="label">Session</div>
               <div class="value muted" id="stSession">—</div>
               <!-- Phase 30 Observability Metrics -->
@@ -3312,8 +3345,24 @@
           </div>
 
         </div>
-      </div>
+      
+    </div> <!-- /nx-shell-center closing -->
+
+  
+  <aside class="nx-shell-inspector" id="nxInspectorPanel">
+    <div class="nx-inspector-header">
+      <h3>Inspector</h3>
+      <button onclick="nxToggleInspector()" style="background:none; border:none; color:var(--nx-color-text-muted, #8b949e); cursor:pointer;">✕</button>
     </div>
+    <div class="nx-inspector-content" id="nxInspectorContent">
+      <!-- Injected from nxRight -->
+    </div>
+  </aside>
+
+  <footer class="nx-shell-dock" id="nxDock" style="grid-area:dock; background:var(--nx-color-bg-surface, #18181B); border-top:1px solid #27272A; padding:8px 16px; display:flex; gap:16px; align-items:center; overflow-x:auto;">
+    <!-- Elements injected here via JS -->
+  </footer>
+</div> <!-- /nx-shell-root -->
 
     <div class="toast" id="toast"></div>
 
@@ -3369,6 +3418,14 @@
       </div>
     </div>
 
+  <!-- AGI Frontend Foundation: SSE Runtime + Observability + HITL -->
+  <script src="/static/js/nx-sse-runtime.js" defer></script>
+  <script src="/static/js/nx-observability.js" defer></script>
+  <script src="/static/js/nx-hitl-panel.js" defer></script>
+  <!-- AGI Workspace Layer: Monaco tabs + xterm + task execution UX -->
+  <script src="/static/js/nx-monaco.js" defer></script>
+  <script src="/static/js/nx-xterm.js" defer></script>
+  <script src="/static/js/nx-workspace-runtime.js" defer></script>
   <script src="/static/js/runtime.js" defer></script>
   <script src="/static/js/activity.js" defer></script>
   <script src="/static/js/feedback.js" defer></script>
@@ -3386,6 +3443,8 @@
   </div>
 </div>
 
+  <script src="/static/js/workspace.js" defer></script>
+  <script src="/static/js/nx-activity.js" defer></script>
   <script src="/static/js/evolution.js" defer></script>
 
 <!-- ══════════════════════════════════════════════════════════════════════
@@ -3405,5 +3464,41 @@
   <script src="/static/js/support.js" defer></script>
   <script src="/static/js/ux_trust.js" defer></script>
   <script src="/static/js/stability.js" defer></script>
+  <script src="/static/js/nx-onboard.js" defer></script>
+  <script src="/static/js/nx-shim.js" defer></script>
+  <script src="/static/js/nx-devtools.js" defer></script>
+
+  <!-- Phase I: Persistent Execution Strip -->
+  <div class="nx-exec-strip" id="nxExecStrip">
+    <div class="nx-exec-strip-item">
+      <span>STATE</span>
+      <span id="nxExecStripState" style="color:#484f58;">IDLE</span>
+    </div>
+    <div class="nx-exec-strip-divider"></div>
+    <div class="nx-exec-strip-item">
+      <span>MODEL</span>
+      <span id="nxExecStripModel" style="color:#6e7681;">—</span>
+    </div>
+    <div class="nx-exec-strip-divider"></div>
+    <div class="nx-exec-strip-item">
+      <span>SESSION</span>
+      <span id="nxExecStripSess" style="color:#6e7681;">—</span>
+    </div>
+    <div class="nx-exec-strip-divider"></div>
+    <div class="nx-exec-strip-item" style="margin-left:auto;">
+      <span id="nxLiveConnStatus-legacy" style="color:#484f58;">Not connected</span>
+    </div>
+  </div>
+
+  <script src="/static/js/nx-chunker.js" defer></script>
+  <script src="/static/js/nx-orchestrator.js" defer></script>
+  <script src="/static/js/nx-trust-intel.js" defer></script>
+  <script src="/static/js/nx-mission.js" defer></script>
+  <script src="/static/js/nx-surface-fusion.js" defer></script>
+  <script src="/static/js/nx-polish.js" defer></script>
+  <script src="/static/js/nx-hardening.js" defer></script>
+  <script src="/static/js/nx-diagnostics.js" defer></script>
+  <script src="/static/js/nx-clarity.js" defer></script>
+  <script src="/static/js/nx-intelligence.js" defer></script>
 </body>
 </html>

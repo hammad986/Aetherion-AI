@@ -13,6 +13,12 @@ import time
 import threading
 import webbrowser
 
+# ── Force UTF-8 stdout so emoji/Unicode prints don't crash on Windows cp1252
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+if hasattr(sys.stderr, 'reconfigure'):
+    sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+
 # ── Environment bootstrap ──────────────────────────────────────────────
 def _bootstrap():
     """Ensure we're running in the correct environment."""
@@ -51,9 +57,9 @@ print(r"""
  \___/| .__/ \___|_| |_|_| |_|\__,_|_| |_|\__,_|/_/  \_\_____|___|
       |_|
 """)
-print(f"  🤖  Nexora AI Platform — Production Build")
-print(f"  🌐  Starting server on http://localhost:{PORT}")
-print(f"  ⌨   Press Ctrl+C to stop\n")
+print("  [AI] Nexora AI Platform - Production Build")
+print(f"  [WEB] Starting server on http://localhost:{PORT}")
+print("  [KEY] Press Ctrl+C to stop\n")
 
 # ── Auto-open browser after 1.5s ──────────────────────────────────────
 def _open_browser():

@@ -128,64 +128,9 @@
       { icon: '🚀', text: 'Create a full-stack web project with Flask' },
     ];
 
-    function _injectOnboarding() {
-      if (!$id('nx-onboard-panel')) {
-        const panel = document.createElement('div');
-        panel.id = 'nx-onboard-panel';
-        panel.innerHTML = `
-      <div class="nx-onboard-title">
-        <span>👋</span> Welcome to Nexora AI
-      </div>
-      <div class="nx-onboard-sub">
-        Your autonomous AI coding assistant. Describe what you want to build and the AI will plan, code, and run it for you.
-      </div>
-      <div class="nx-onboard-prompts">
-        ${ONBOARD_PROMPTS.map(p => `
-          <div class="nx-onboard-prompt" onclick="nxStableUsePrompt(${JSON.stringify(p.text).replace(/"/g, '&quot;')})">
-            <span class="nx-op-icon">${p.icon}</span>
-            <span>${_escToast(p.text)}</span>
-          </div>`).join('')}
-      </div>
-      <div class="nx-onboard-dismiss" onclick="nxStableDismissOnboard()">Dismiss</div>
-    `;
-        // Try to insert after the hero section in the main area
-        const heroArea = document.getElementById('nxHero') || document.getElementById('nxCenter');
-        if (heroArea) heroArea.insertBefore(panel, heroArea.firstChild);
-        else document.body.appendChild(panel);
-      }
-      // Show if no sessions and not dismissed
-      _checkShowOnboarding();
-    }
-
-    function _checkShowOnboarding() {
-      if (localStorage.getItem(ONBOARD_KEY)) return;
-      const panel = $id('nx-onboard-panel');
-      if (!panel) return;
-      // Show only if logged in but no sessions
-      const token = typeof nxGetToken === 'function' ? nxGetToken() : null;
-      if (!token) return;
-      fetch('/api/sessions').then(r => r.json()).then(d => {
-        const count = Array.isArray(d) ? d.length : (d.sessions || []).length;
-        if (count === 0 && panel) panel.style.display = 'block';
-      }).catch(() => { });
-    }
-
-    window.nxStableUsePrompt = function (text) {
-      // Fill the task input and dismiss onboard
-      const ta = document.getElementById('nxTaskInput') || document.getElementById('taskInput');
-      if (ta) { ta.value = text; ta.dispatchEvent(new Event('input', { bubbles: true })); }
-      if (typeof nxSetTask === 'function') nxSetTask(text);
-      nxStableDismissOnboard();
-      // Focus the run button
-      const rb = document.getElementById('runBtn');
-      if (rb) rb.focus();
-    };
-
-    window.nxStableDismissOnboard = function () {
-      localStorage.setItem(ONBOARD_KEY, '1');
-      const panel = $id('nx-onboard-panel');
-      if (panel) panel.style.display = 'none';
-    };
+    // Onboarding is handled exclusively by NdsOnboard in nx-onboard.js.
+    // Do not add a secondary onboarding panel here — it causes duplicate modals.
+    // NdsOnboard uses key 'nx_onboarded_v1' and shows a workspace-preset picker.
 
     /* ══════════════════════════════════════════════════════════════════════
        PART 3 — SESSION RECOVERY
@@ -205,73 +150,38 @@
     }
 
     // On load, restore last session if none is active
+    let _restoreInFlight = false;
+
     function _restoreLastSession() {
       const lastSid = localStorage.getItem(LAST_SESSION_KEY);
       if (!lastSid) return;
       // Wait for sessions to load, then select
       setTimeout(() => {
         if (typeof currentSession !== 'undefined' && currentSession) return;
-        if (typeof selectSession === 'function') {
-          // Verify session still exists before restoring
-          fetch(`/api/session/${lastSid}`).then(r => r.json()).then(d => {
-            if (d && d.id) selectSession(lastSid);
-          }).catch(() => { });
-        }
+        if (_restoreInFlight) return;  // another restore already in-flight
+        if (typeof selectSession !== 'function') return;
+        _restoreInFlight = true;
+        // Verify session still exists before restoring
+        fetch(`/api/session/${lastSid}`)
+          .then(r => r.json())
+          .then(d => { if (_restoreInFlight && d && d.id) selectSession(lastSid); })
+          .catch(() => {})
+          .finally(() => { _restoreInFlight = false; });
       }, 1200);
     }
 
-    // SSE auto-reconnect — patch openLogStream with exponential back-off
-    function _patchSSEReconnect() {
-      if (typeof window.openLogStream !== 'function') {
-        setTimeout(_patchSSEReconnect, 500); return;
-      }
-      if (window._sseReconnectPatched) return;
-      window._sseReconnectPatched = true;
-      const orig = window.openLogStream;
-      let _reconnectTimer = null;
-      let _reconnectDelay = 2000;
+    // Cancel any pending restore if another session is selected first
+    document.addEventListener('NxBusReady', () => {
+      NxBus.on(NxBus.EVENTS.SESSION_CREATED,  () => { _restoreInFlight = false; },
+               { owner: 'stability:restoreGuard' });
+      NxBus.on(NxBus.EVENTS.SESSION_RESTORED, () => { _restoreInFlight = false; },
+               { owner: 'stability:restoreGuard' });
+    });
 
-      window.openLogStream = function (sid) {
-        orig.call(this, sid);
-        // Intercept onerror on the new stream
-        const es = window.logStream;
-        if (!es) return;
-        const _origErr = es.onerror;
-        es.onerror = function (e) {
-          if (_origErr) _origErr.call(this, e);
-          _showSSEReconnecting();
-          clearTimeout(_reconnectTimer);
-          _reconnectTimer = setTimeout(() => {
-            _hideSSEReconnecting();
-            _reconnectDelay = Math.min(_reconnectDelay * 1.5, 15000);
-            if (typeof currentSession !== 'undefined' && currentSession) {
-              window.openLogStream(currentSession);
-            }
-          }, _reconnectDelay);
-        };
-        const _origMsg = es.onmessage;
-        es.onmessage = function (e) {
-          if (_origMsg) _origMsg.call(this, e);
-          _hideSSEReconnecting();
-          _reconnectDelay = 2000; // reset on success
-        };
-      };
-    }
-
-    function _showSSEReconnecting() {
-      let badge = $id('nx-sse-status');
-      if (!badge) {
-        badge = document.createElement('div');
-        badge.id = 'nx-sse-status';
-        badge.innerHTML = '<div class="nx-sse-dot"></div><span>Reconnecting…</span>';
-        document.body.appendChild(badge);
-      }
-      badge.classList.add('show');
-    }
-    function _hideSSEReconnecting() {
-      const badge = $id('nx-sse-status');
-      if (badge) badge.classList.remove('show');
-    }
+    // SSE reconnect is handled exclusively by NxSSERuntime (nx-sse-runtime.js).
+    // The canonical SSE state machine (IDLE→CONNECTING→CONNECTED→RECONNECTING→CLOSED)
+    // with exponential backoff is in NxSSERuntime. Do NOT add a secondary reconnect here.
+    // Monitor connection state via NxBus.on(NxBus.EVENTS.WS_STATUS, ...) instead.
 
     /* ══════════════════════════════════════════════════════════════════════
        PART 4 — FAILSAFE SYSTEM
@@ -464,9 +374,9 @@
       _initLoadingBar();
       patchFetch();
       _patchSelectSession();
-      _patchSSEReconnect();
+      // NOTE: SSE reconnect handled by NxSSERuntime (nx-sse-runtime.js) exclusively
+      // NOTE: Onboarding handled by NdsOnboard (nx-onboard.js) exclusively
       _patchGlobalStatusFailsafe();
-      _injectOnboarding();
       _injectLogFilter();
       _restoreLastSession();
 

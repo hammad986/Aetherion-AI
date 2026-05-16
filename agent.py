@@ -52,11 +52,14 @@ AGENT RULES:
 3.  Always read a file before editing it.
 4.  After writing code, RUN it to verify it works.
 5.  If code fails, FIX it — never give up before {max_retries} attempts.
-6.  Set "done": true IMMEDIATELY after the current step's goal is achieved.
-    A step is done the moment its primary action succeeds (file written, package
-    installed, server started). Do NOT wait for extra confirmation actions.
-7.  For web projects: use server_start (not run_shell/run_python) to launch the server,
-    then browser_navigate to confirm it is live.
+6.  Set "done": true only when ALL of the following are true:
+    (a) The tool action returned success, AND
+    (b) The outcome matches the step goal (e.g. file runs, server responds, test passes), AND
+    (c) No new errors were introduced.
+    Do NOT set "done": true immediately after write_file — first run or test the result.
+    Exception: pure setup steps (pip install, git init) may set done=true on tool success.
+7.  For web projects: use server_start to launch the server, then server_test or
+    browser_navigate to confirm it responds — THEN set done=true.
 8.  Write production-quality code. No TODOs, no stubs, no placeholder comments.
 9.  If a prior action failed, do NOT repeat the exact same action+args. Change approach.
 10. File paths: pass only the filename or relative path inside workspace (e.g. "app.py").
@@ -64,11 +67,14 @@ AGENT RULES:
 11. To install packages: run_shell("pip install <pkg1> <pkg2>").
     Chains like "pip install X && pip install Y" are also supported.
 12. When an error is given, read its category and apply the stated strategy exactly.
-13. NEVER write the same file a second time in the same step. If write_file already
-    succeeded for a file, set "done": true — do not rewrite it.
+13. NEVER write the same file a second time in the same step. Once write_file succeeds,
+    run or test the file — do not rewrite it without reading it first.
 14. NEVER repeat an action that already succeeded in the current step.
     The system tracks which actions have already been completed; duplicates are skipped.
 15. Each plan step executes exactly ONCE unless it FAILED. Move forward, not backward.
+16. If you are uncertain about the target file, intended behavior, or correct approach:
+    set action=null and use "output" to ask ONE focused clarification question.
+    Do NOT guess when uncertain — ask.
 """
 
 
@@ -120,6 +126,10 @@ class Agent:
         # If emit_fn is not supplied the agent behaves exactly as before (no-op).
         self._emit_fn   = emit_fn if callable(emit_fn) else (lambda kind, payload: None)
         self._session_id = session_id
+        # Wire memory explainability — memory emits agent.memory_retrieved
+        # for every retrieval when realtime mode is on.
+        self.memory._emit_fn = self._emit_record
+
 
     # ──────────────────────────────────────────────────────────────────────────
     # Phase 8 — structured records for the outer orchestrator
@@ -154,11 +164,91 @@ class Agent:
         print(f"{'━'*55}")
         # ── REALTIME WIRING (Op-1): emit task.start event ─────────────────────
         import os as _os
-        if _os.getenv("AETHERION_REALTIME_V1", "").lower() == "true":
+        _realtime_on = _os.getenv("AETHERION_REALTIME_V1", "").lower() == "true"
+        if _realtime_on:
             try:
                 self._emit_fn("agent.task_start", {"task": task[:200], "session_id": self._session_id})
             except Exception:
                 pass
+
+        # ── Trust Engine: pre-task clarification check ───────────────────
+        try:
+            from trust_engine import ClarificationEngine, AssumptionExposer
+            _clarifier   = ClarificationEngine(workspace_dir=str(self.tools.workspace))
+            _assumptioner = AssumptionExposer(
+                emit_fn=self._emit_fn if _realtime_on else None,
+                session_id=self._session_id,
+            )
+            _workspace_files = (
+                self.tools.list_files().get("output", "").splitlines()
+            )
+            _clarity = _clarifier.score_task(task, _workspace_files)
+            if _clarity["should_pause"] and _clarity["question"]:
+                logger.info(f"[Trust] Ambiguous task (confidence={_clarity['confidence']:.0%}). Emitting HITL.")
+                print(f"  [TRUST] Task ambiguity detected ({int(_clarity['confidence']*100)}%). "
+                      f"Question: {_clarity['question']}")
+                if _realtime_on:
+                    try:
+                        from execution.hitl import global_hitl_tracker
+                        hitl_payload = {
+                            "prompt": _clarity["question"],
+                            "last_error": "",
+                            "hitl_type": "clarification",
+                            "context": {
+                                "confidence": _clarity["confidence"],
+                                "ambiguities": _clarity["ambiguities"],
+                                "task_preview": task[:100],
+                            },
+                        }
+                        hint = global_hitl_tracker.request_input(
+                            self._session_id, hitl_payload, timeout=300
+                        )
+                        if hint and hint.strip():
+                            task = task + f"\n[User clarification: {hint.strip()}]"
+                            print(f"  [TRUST] Clarification received, proceeding.")
+                    except Exception as _he:
+                        logger.warning(f"[Trust] HITL clarification failed: {_he}. Proceeding with assumption.")
+        except ImportError:
+            _clarifier    = None
+            _assumptioner = None
+            _workspace_files = []
+
+        # ── Semantic Validation Engine ────────────────────────────────────
+        try:
+            from semantic_validator import SemanticValidator, SelfTestGenerator, ConfidenceModelV2
+            _sem_validator   = SemanticValidator(
+                tools=self.tools,
+                workspace_dir=str(self.tools.workspace),
+                emit_fn=self._emit_fn if _realtime_on else None,
+                session_id=self._session_id,
+            )
+            _self_tester     = SelfTestGenerator(
+                tools=self.tools,
+                workspace_dir=str(self.tools.workspace),
+            )
+            _conf_model      = ConfidenceModelV2()
+        except ImportError:
+            _sem_validator = None
+            _self_tester   = None
+            _conf_model    = None
+
+        # ── Execution Planning Intelligence ───────────────────────────────
+        try:
+            from execution_planner import (
+                ExecutionDAG, MilestoneTracker, AdaptiveReplanner,
+                StrategyMemory, PlannerAudit, ReplanDecision,
+            )
+            _exec_dag    = ExecutionDAG()
+            _milestones  = MilestoneTracker()
+            _audit       = PlannerAudit()
+            _strat_mem   = StrategyMemory(
+                workspace_dir=str(self.tools.workspace),
+                emit_fn=self._emit_fn if _realtime_on else None,
+                session_id=self._session_id,
+            )
+        except ImportError:
+            _exec_dag = _milestones = _audit = _strat_mem = None
+            ReplanDecision = None
 
         # ── Recall similar tasks ─────────────────────────
         similar = self.memory.find_similar_task(task)
@@ -205,6 +295,26 @@ class Agent:
         # Execution counters (always start fresh -- not persisted in checkpoint)
         step_loop_count = 0   # loops within the current step (resets on step advance)
         total_failures  = 0   # cumulative errors across all steps this session
+
+        # ── Build execution DAG from plan ────────────────────────────
+        if _exec_dag and plan_steps:
+            try:
+                _exec_dag.build_from_plan(plan_steps, plan_stages)
+                # Emit initial DAG state
+                if _realtime_on:
+                    self._emit_fn("agent.dag_update", {
+                        **_exec_dag.to_sse_payload(),
+                        "session_id": self._session_id,
+                    })
+            except Exception as _de:
+                logger.warning(f"[ExecutionDAG] Build failed: {_de}")
+
+        # Emit strategy caution signals BEFORE execution starts
+        if _strat_mem:
+            try:
+                _strat_mem.emit_caution_signals(task, step=0)
+            except Exception:
+                pass
 
         if not plan_steps:
             plan_steps = [task]
@@ -277,6 +387,36 @@ class Agent:
                     f"Failures {total_failures}/{self.config.MAX_TOTAL_ATTEMPTS}"
                 )
 
+                # ── DAG: mark step as running; audit for chaos ──
+                _step_advanced_this_loop = False
+                if _exec_dag:
+                    try:
+                        _exec_dag.start(current_step)
+                    except Exception:
+                        pass
+                if _audit:
+                    try:
+                        _chaos = _audit.record_loop(
+                            step_index=current_step,
+                            action="(pending)",
+                            fingerprint=f"{current_step}:{step_loop_count}",
+                            step_advanced=False,
+                        )
+                        for _cs in _chaos:
+                            print(f"  [PLANNER AUDIT] {_cs}")
+                            if _realtime_on:
+                                self._emit_fn("agent.trust_signal", {
+                                    "type": "contradiction",
+                                    "verified": False,
+                                    "confidence": 0.20,
+                                    "message": _cs,
+                                    "step": current_step,
+                                    "action": "audit",
+                                    "session_id": self._session_id,
+                                })
+                    except Exception:
+                        pass
+
                 # -- Pattern memory injection: prepend top-1 relevant learning --
                 top_pattern = self.memory.learnings_prompt(active_step)
                 pattern_hint = f"\n[Memory] Relevant pattern: {top_pattern[:200]}" if top_pattern and top_pattern.strip() != "No learnings yet." else ""
@@ -303,6 +443,24 @@ class Agent:
                     self.memory.log_task(task, "error", msg)
                     return msg
 
+                # ── REALTIME: emit budget_update after every LLM call ─────────
+                import os as _os_budget
+                if _os_budget.getenv("AETHERION_REALTIME_V1", "").lower() == "true":
+                    try:
+                        _total_tokens = sum(
+                            getattr(h, "total_tokens", 0)
+                            for h in self.router.health.values()
+                        )
+                        self._emit_record("agent.budget_update", {
+                            "tokens":   _total_tokens,
+                            "token_max": getattr(self.config, "MAX_TOKENS", 100000),
+                            "steps":    len(completed_steps),
+                            "step_max": self.config.MAX_AGENT_LOOPS,
+                            "model":    self.router.last_used_api or "unknown",
+                        })
+                    except Exception:
+                        pass
+
                 parsed = self._parse(raw)
                 if not parsed:
                     logger.warning(f"[Agent] Bad JSON:\n{raw[:200]}")
@@ -319,6 +477,12 @@ class Agent:
                 args = parsed.get("args", {})
                 output = parsed.get("output", "")
                 done = parsed.get("done", False)
+
+                # ── Trust Engine: Contradiction Detection ─────────────────────
+                # Catch: done=True but last action failed (LLM hallucinating success)
+                _realtime = _os.getenv("AETHERION_REALTIME_V1", "").lower() == "true"
+                if done and action and result if 'result' in dir() else False:
+                    pass  # evaluated below after result is available
 
                 if thought:
                     print(f"\n  💭 {thought}")
@@ -374,6 +538,20 @@ class Agent:
 
                     args_preview = ", ".join(f"{k}={repr(v)[:40]}" for k, v in args.items())
                     print(f"  🔧 {action}({args_preview})")
+
+                    # ── Trust Engine: pre-action assumption exposure ───────
+                    if _assumptioner:
+                        _assumptions = _assumptioner.expose_before_action(
+                            action=action,
+                            args=args,
+                            step_text=active_step,
+                            step_index=current_step,
+                            workspace_files=_workspace_files,
+                        )
+                        if _assumptions:
+                            banner = _assumptioner.format_assumption_banner(_assumptions, action)
+                            if banner:
+                                print(f"  {banner}")
                     # ── REALTIME WIRING (Op-1): emit agent.action event ───────
                     import os as _os
                     if _os.getenv("AETHERION_REALTIME_V1", "").lower() == "true":
@@ -403,11 +581,33 @@ class Agent:
                     err = result["error"]
 
                     if success:
-                        print(f"  OK {out[:250]}")
+                        print(f"  ✓ {out[:250]}")
                         observation = f"TOOL '{action}' SUCCEEDED for step '{active_step}':\n{out}"
                         error_count = 0
                         last_output = out
-                        # ── REALTIME WIRING (Op-1): emit tool success ─────────
+
+                        # ── Trust Engine: contradiction guard ─────────────────
+                        # If LLM set done=True on a write_file without a verify
+                        # step following, inject a verification nudge.
+                        _is_code_write = action in ("write_file", "diff_edit",
+                            "search_replace", "ast_replace")
+                        _written_path = (args or {}).get("path", "")
+                        _needs_verify = (
+                            _is_code_write
+                            and done
+                            and _written_path.endswith((".py", ".js", ".ts", ".sh"))
+                            and current_step < len(plan_steps) - 1  # not final step
+                        )
+                        if _needs_verify:
+                            done = False  # override premature done
+                            observation += (
+                                "\n\n[TRUST ENGINE] File written but not yet verified. "
+                                f"You must run or test '{_written_path}' before setting done=true. "
+                                "Use run_python or run_shell to confirm it executes without errors."
+                            )
+                            print(f"  [TRUST] Overrode done=true — verification required for {_written_path}")
+
+                        # ── REALTIME WIRING: emit tool success + trust signal ──
                         import os as _os
                         if _os.getenv("AETHERION_REALTIME_V1", "").lower() == "true":
                             try:
@@ -423,11 +623,104 @@ class Agent:
                                     "path": (args or {}).get("path", ""),
                                     "session_id": self._session_id,
                                 })
+                                # Emit assumption/trust signal for file mutations
+                                if _file_mutating and _written_path:
+                                    self._emit_fn("agent.trust_signal", {
+                                        "type": "verification" if _needs_verify else "action_success",
+                                        "verified": not _needs_verify,
+                                        "confidence": 0.6 if _needs_verify else 0.85,
+                                        "message": (
+                                            f"Written {_written_path} — awaiting run verification"
+                                            if _needs_verify
+                                            else f"Written {_written_path}"
+                                        ),
+                                        "step": current_step,
+                                        "action": action,
+                                        "session_id": self._session_id,
+                                    })
                             except Exception:
                                 pass
+
+                        # ── Semantic Validation: post-success behavioral check ──
+                        _sem_result = None
+                        _SEMANTICALLY_VALIDATED = {
+                            "write_file", "run_python", "run_shell",
+                            "server_start", "server_test",
+                            "browser_navigate", "browser_click", "browser_fill",
+                        }
+                        if _sem_validator and action in _SEMANTICALLY_VALIDATED:
+                            try:
+                                _sem_result = _sem_validator.validate_after(
+                                    action=action,
+                                    args=args or {},
+                                    tool_output=out,
+                                    step_text=active_step,
+                                    step_index=current_step,
+                                )
+                                if _sem_result:
+                                    # Feed into confidence model
+                                    if _conf_model:
+                                        _conf_model.record(
+                                            "semantic_validation",
+                                            passed=_sem_result.passed(),
+                                            score=_sem_result.semantic_confidence,
+                                        )
+                                    # If semantic check fails hard, force re-try
+                                    if not _sem_result.passed() and not _sem_result.retryable is False:
+                                        done = False
+                                        _fail_names = [
+                                            c.name for c in _sem_result.checks
+                                            if not c.passed and not c.optional
+                                        ]
+                                        observation += (
+                                            f"\n\n[SEMANTIC VALIDATOR] Tool succeeded but behavioral "
+                                            f"checks failed: {', '.join(_fail_names[:3])}.\n"
+                                            f"Category: {_sem_result.failure_category or 'behavioral'}.\n"
+                                            f"Evidence: {_sem_result.summary}\n"
+                                            "Fix the root cause before setting done=true."
+                                        )
+                                        print(f"  [SEMANTIC] FAIL — {_sem_result.summary[:120]}")
+                            except Exception as _sve:
+                                logger.warning(f"[SemanticValidator] Error: {_sve}")
+
+                        # ── Self-test for Python files ──────────────────────
+                        if (_self_tester and action == "write_file"
+                                and (args or {}).get("path", "").endswith(".py")
+                                and "[syntax:OK]" in out):
+                            try:
+                                _st = _self_tester.generate_and_run(
+                                    path=(args or {}).get("path", ""),
+                                    content=(args or {}).get("content", ""),
+                                )
+                                if _conf_model:
+                                    _conf_model.record("self_test", passed=_st["passed"])
+                                if not _st["passed"]:
+                                    done = False
+                                    observation += (
+                                        f"\n\n[SELF-TEST] Smoke test FAILED for {(args or {}).get('path')}.\n"
+                                        f"Evidence: {_st['evidence'][:200]}\n"
+                                        "The file has a runtime import or logic error. Fix it."
+                                    )
+                                    print(f"  [SELF-TEST] FAIL: {_st['evidence'][:100]}")
+                                else:
+                                    print(f"  [SELF-TEST] PASS: {_st['evidence'][:80]}")
+                            except Exception as _ste:
+                                logger.warning(f"[SelfTest] Error: {_ste}")
+
+                        # Record confidence from execution success
+                        if _conf_model:
+                            _conf_model.record("execution_success", passed=True, score=1.0)
+                            # Syntax check signal from tool output
+                            if "[syntax:OK]" in out:
+                                _conf_model.record("syntax_check", passed=True, score=1.0)
+                            elif "[syntax:ERROR" in out:
+                                _conf_model.record("syntax_check", passed=False, score=0.0)
+
                         # Record action + step as completed
                         step_completed_actions[current_step].add(fingerprint)
                         completed_steps.add(active_step)
+
+                        # \u2500\u2500 DAG: mark complete + emit milestone \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n                        _step_advanced_this_loop = True\n                        _sem_conf = _sem_result.semantic_confidence if _sem_result else 0.85\n                        if _exec_dag:\n                            try:\n                                _exec_dag.complete(current_step, semantic_confidence=_sem_conf)\n                                if _realtime_on:\n                                    self._emit_fn(\"agent.dag_update\", {\n                                        **_exec_dag.to_sse_payload(),\n                                        \"session_id\": self._session_id,\n                                    })\n                            except Exception:\n                                pass\n                        if _milestones:\n                            try:\n                                _new_ms = _milestones.evaluate_step(current_step, active_step, out)\n                                for _ms_name in _new_ms:\n                                    print(f\"  \u2713 Milestone: {_ms_name}\")\n                                    if _realtime_on:\n                                        self._emit_fn(\"agent.trust_signal\", {\n                                            \"type\": \"action_success\",\n                                            \"verified\": True,\n                                            \"confidence\": _milestones.progress_ratio(),\n                                            \"message\": f\"Milestone: {_ms_name.replace('_', ' ').title()} achieved\",\n                                            \"step\": current_step,\n                                            \"action\": \"milestone\",\n                                            \"session_id\": self._session_id,\n                                        })\n                                if _realtime_on and _new_ms:\n                                    self._emit_fn(\"agent.milestone_update\", {\n                                        **_milestones.to_sse_payload(),\n                                        \"session_id\": self._session_id,\n                                    })\n                            except Exception:\n                                pass\n
 
                         # Log stage completion when last step of a stage finishes
                         if plan_stages and step_stage_map.get(active_step):
@@ -447,14 +740,13 @@ class Agent:
                         if len(state_stack) > 40:
                             state_stack = state_stack[-40:]
 
-                        # If LLM forgot to set done=True, nudge it strongly
-                        if not done:
+                        # If LLM forgot to set done=True on a non-code step, nudge it
+                        if not done and not _needs_verify:
                             observation += (
                                 f"\n\n[SYSTEM] The action SUCCEEDED. "
                                 f"Step goal: '{active_step}'.\n"
-                                "If this step is now complete, you MUST set \"done\": true "
-                                "in your NEXT response. "
-                                "Do NOT write the same file again or repeat this action."
+                                "If this step is now complete AND you have verified the result, "
+                                "set \"done\": true in your next response."
                             )
                     else:
                         print(f"  ❌ {err[:250]}")
@@ -474,6 +766,39 @@ class Agent:
                         last_error     = err
                         total_failures += 1
 
+                        # ── DAG: fail node + adaptive replan ───────────────────
+                        if _exec_dag:
+                            try:
+                                _exec_dag.fail(current_step, err, error_category=category)
+                                from execution_planner import AdaptiveReplanner, ReplanDecision
+                                _replanner = AdaptiveReplanner(
+                                    dag=_exec_dag,
+                                    emit_fn=self._emit_fn if _realtime_on else None,
+                                    session_id=self._session_id,
+                                )
+                                _sem_failed = (
+                                    _sem_result is not None and not _sem_result.passed()
+                                ) if '_sem_result' in dir() else False
+                                _rp = _replanner.evaluate(
+                                    step_index=current_step,
+                                    error_count=error_count,
+                                    error_category=category,
+                                    semantic_failed=_sem_failed,
+                                    is_critical=_exec_dag.nodes.get(current_step, None) and
+                                                _exec_dag.nodes[current_step].is_critical_path,
+                                    per_step_retry=self.config.PER_STEP_RETRY,
+                                )
+                                if _rp.injected_steps:
+                                    observation += (
+                                        f"\n\n[ADAPTIVE REPLAN] Injecting recovery steps: "
+                                        + " → ".join(_rp.injected_steps[:2])
+                                    )
+                                if _rp.decision == ReplanDecision.ESCALATE_HITL and _rp.hitl_prompt:
+                                    observation += f"\n\n[REPLAN] Escalating to HITL: {_rp.hitl_prompt}"
+                                _replanner.record_replan(current_step, _rp.decision, _rp.reason)
+                            except Exception as _rpe:
+                                logger.warning(f"[AdaptiveReplanner] Error: {_rpe}")
+
                         # Escalate to Gemini-pro after GEMINI_PRO_AFTER_FAILURES per-step failures
                         if error_count >= self.config.GEMINI_PRO_AFTER_FAILURES:
                             if not self.router._gemini_use_pro:
@@ -483,12 +808,28 @@ class Agent:
                                 )
                             self.router._gemini_use_pro = True
 
-                        # User intervention after USER_INTERVENTION_THRESHOLD cumulative failures
+                        # User intervention after cumulative threshold OR explicit replanner escalation
+                        _escalate_hitl = False
+                        _hitl_reason = f"Last: [{category.upper()}] {err[:100]}"
+                        
                         if total_failures == self.config.USER_INTERVENTION_THRESHOLD:
-                            print(
-                                f"\n  ⚠️  {total_failures} cumulative failures. "
-                                f"Last: [{category.upper()}] {err[:100]}"
-                            )
+                            _escalate_hitl = True
+                        if '_rp' in locals() and _rp.decision == ReplanDecision.ESCALATE_HITL:
+                            _escalate_hitl = True
+                            _hitl_reason = _rp.hitl_prompt or "Replanner requested HITL escalation."
+
+                        if _escalate_hitl:
+                            print(f"\n  ⚠️  HITL Escalation. {_hitl_reason}")
+                            try:
+                                from governance_layer import get_governance_layer
+                                get_governance_layer().log_audit(
+                                    event_type="hitl_escalation",
+                                    description=f"Task: {self.task[:100]}... Step: {active_step[:100]}... Reason: {_hitl_reason}",
+                                    result="Awaiting operator approval"
+                                )
+                            except Exception as _gov_err:
+                                logger.warning(f"[Agent] Governance log error: {_gov_err}")
+
                             if _os.getenv("AETHERION_REALTIME_V1", "").lower() == "true":
                                 # ── Web-safe HITL: non-blocking threading.Event wait ──────────
                                 # The daemon worker thread blocks here (NOT a gunicorn request
@@ -496,7 +837,7 @@ class Agent:
                                 try:
                                     from execution.hitl import global_hitl_tracker
                                     _hitl_payload = {
-                                        "prompt": "Enter a hint or correction for the agent",
+                                        "prompt": _hitl_reason,
                                         "last_error": err[:200],
                                         "error_category": category,
                                         "total_failures": total_failures,
@@ -679,23 +1020,74 @@ class Agent:
         if status in ("done", "timeout"):   # both paths must clear the stale checkpoint
             self.memory.clear_checkpoint()
 
+        # ── Strategy Memory: record outcome for future runs ────────────────
+        if _strat_mem:
+            try:
+                _failure_cats = []
+                if _sem_scorecard:
+                    _failure_cats = list(_sem_scorecard.get("failure_categories", []))
+                _strat_mem.record_outcome(
+                    task=task,
+                    plan_steps=plan_steps,
+                    success=(status == "done" and len(completed_steps) == len(plan_steps)),
+                    failure_categories=_failure_cats,
+                )
+            except Exception:
+                pass
+
+        # ── Trust Engine: honest completion report ────────────────────────────
+        # Merge semantic confidence into final score
+        _sem_scorecard = {}
+        if _sem_validator:
+            try:
+                _sem_scorecard = _sem_validator.session_scorecard()
+            except Exception:
+                _sem_scorecard = {}
+
+        completion_report = self._build_completion_report(
+            task=task,
+            status=status,
+            completed_steps=completed_steps,
+            plan_steps=plan_steps,
+            loop_count=loop_count,
+            total_failures=total_failures,
+            last_output=last_output,
+            semantic_scorecard=_sem_scorecard,
+        )
+
         print(f"\n{'━'*55}")
-        print(f"✅ Status: {status.upper()} | API: {self.router.last_used_api} | Loops: {loop_count}")
+        print(f"Status: {status.upper()} | API: {self.router.last_used_api} | Loops: {loop_count}")
+        print(f"Completion: {completion_report[:120]}")
         print(f"{'━'*55}\n")
-        # ── REALTIME WIRING (Op-1): emit task completion event ────────────────
+
         import os as _os
         if _os.getenv("AETHERION_REALTIME_V1", "").lower() == "true":
             try:
+                confidence = self._completion_confidence(
+                    completed_steps, plan_steps, total_failures, status
+                )
                 self._emit_fn("agent.task_complete", {
                     "status": status,
                     "loops": loop_count,
                     "api": self.router.last_used_api or "",
-                    "output": str(last_output)[:300],
+                    "output": completion_report[:400],
+                    "confidence": confidence,
+                    "completed_steps": len(completed_steps),
+                    "total_steps": len(plan_steps),
+                    "session_id": self._session_id,
+                })
+                self._emit_fn("agent.trust_signal", {
+                    "type": "completion",
+                    "verified": confidence >= 0.70,
+                    "confidence": confidence,
+                    "message": completion_report[:200],
+                    "step": len(plan_steps),
+                    "action": "task_complete",
                     "session_id": self._session_id,
                 })
             except Exception:
                 pass
-        return last_output or "Task completed."
+        return completion_report
 
     # ──────────────────────────────────────────────────────────────────────────
     # Simple chat (no tools)
@@ -705,6 +1097,122 @@ class Agent:
         resp = self.router.chat(self.memory.get_messages())
         self.memory.add_message("assistant", resp)
         return resp
+
+    # ──────────────────────────────────────────────────────────────────────────
+    # Trust Engine — Completion Report & Confidence Scoring
+    # ──────────────────────────────────────────────────────────────────────────
+    def _completion_confidence(
+        self,
+        completed_steps: set,
+        plan_steps: list,
+        total_failures: int,
+        status: str,
+        semantic_scorecard: dict = None,
+    ) -> float:
+        """
+        Returns 0.0–1.0 computed from HARD evidence only.
+        Breakdown:
+          40% semantic validation scores (behavioral checks)
+          30% step completion ratio
+          15% failure penalty
+          15% status + plan depth
+        """
+        if not plan_steps:
+            return 0.5
+
+        step_ratio      = len(completed_steps) / len(plan_steps)
+        failure_penalty = min(0.35, total_failures * 0.07)
+        status_adj      = {"done": 0.0, "timeout": -0.20, "crashed": -0.35, "failed": -0.25}.get(status, -0.08)
+        plan_bonus      = 0.05 if len(plan_steps) >= 3 else 0.0
+
+        # Semantic validation contribution (strongest signal)
+        sem_score = 0.0
+        sem_weight = 0.0
+        if semantic_scorecard and semantic_scorecard.get("validation_count", 0) > 0:
+            sem_score  = semantic_scorecard.get("semantic_confidence", 0.5)
+            sem_weight = 0.40  # Semantic checks carry 40% of final confidence
+
+        exec_weight = 1.0 - sem_weight
+        exec_score  = step_ratio - failure_penalty + status_adj + plan_bonus
+        exec_score  = max(0.0, min(1.0, exec_score))
+
+        confidence = sem_score * sem_weight + exec_score * exec_weight
+        return round(max(0.0, min(1.0, confidence)), 2)
+
+    def _build_completion_report(
+        self,
+        task: str,
+        status: str,
+        completed_steps: set,
+        plan_steps: list,
+        loop_count: int,
+        total_failures: int,
+        last_output: str,
+        semantic_scorecard: dict = None,
+    ) -> str:
+        """
+        Evidence-backed completion report. Never claims success without evidence.
+        """
+        n_done  = len(completed_steps)
+        n_total = len(plan_steps)
+        sem     = semantic_scorecard or {}
+        confidence = self._completion_confidence(
+            completed_steps, plan_steps, total_failures, status,
+            semantic_scorecard=sem,
+        )
+
+        # Build semantic evidence line
+        sem_line = ""
+        if sem.get("validation_count", 0) > 0:
+            sem_line = (
+                f" | Semantic: {sem.get('checks_passed', 0)}/{sem.get('checks_run', 0)} checks, "
+                f"{int(sem.get('semantic_confidence', 0) * 100)}% behavioral confidence"
+            )
+            if sem.get("failure_categories"):
+                sem_line += f" | Failures: {', '.join(sem['failure_categories'])}"
+
+        if status == "done" and n_done == n_total and n_total > 0 and confidence >= 0.70:
+            verb = "successfully" if total_failures == 0 else f"with {total_failures} error(s) self-corrected"
+            return (
+                f"Task completed {verb}. "
+                f"{n_done}/{n_total} steps verified. "
+                f"Confidence: {int(confidence*100)}%{sem_line}. "
+                f"({last_output[:180] if last_output else 'No output captured.'})"
+            )
+
+        if status == "done" and n_done == n_total and confidence < 0.70:
+            return (
+                f"Task steps executed but confidence is below threshold ({int(confidence*100)}%). "
+                f"{n_done}/{n_total} steps ran with {total_failures} failure(s){sem_line}. "
+                "Manual review recommended before relying on this output. "
+                f"Last output: {last_output[:180] if last_output else 'None.'}"
+            )
+
+        if status == "done" and n_done < n_total:
+            remaining = [s for s in plan_steps if s not in completed_steps]
+            return (
+                f"Partial completion: {n_done}/{n_total} steps completed. "
+                f"Incomplete: {'; '.join(r[:60] for r in remaining[:3])}. "
+                f"Confidence: {int(confidence*100)}%{sem_line}. "
+                f"Last output: {last_output[:130] if last_output else 'None.'}"
+            )
+
+        if status == "timeout":
+            return (
+                f"Task timed out after {loop_count} iterations. "
+                f"{n_done}/{n_total} steps completed{sem_line}. "
+                "The task may be partially complete. Review workspace files manually. "
+                f"Last output: {last_output[:130] if last_output else 'None.'}"
+            )
+
+        return (
+            f"Task ended with status '{status}'. "
+            f"{n_done}/{n_total} steps completed. "
+            f"{total_failures} failure(s). "
+            f"Confidence: {int(confidence*100)}%{sem_line}. "
+            f"Last output: {last_output[:130] if last_output else 'No output captured.'}"
+        )
+
 
     # ──────────────────────────────────────────────────────────────────────────
     # JSON parser

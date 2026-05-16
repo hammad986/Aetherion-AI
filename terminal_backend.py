@@ -95,7 +95,7 @@ def _detect_shell() -> str:
 _DEFAULT_SHELL = _detect_shell()
 
 # ── Constants ──────────────────────────────────────────────────────────────────
-IDLE_TIMEOUT_SECS = 600
+IDLE_TIMEOUT_SECS = 1800   # 30 min — raised from 10min to protect background dev servers
 MAX_HISTORY       = 500
 OUTPUT_BUF_LINES  = 3000
 PTY_COLS          = 220
@@ -510,6 +510,7 @@ class PtySession:
     # ── SSE Subscription ──────────────────────────────────────────────
 
     def subscribe(self, client_id: str) -> "queue.Queue[Optional[str]]":
+        self._purge_dead_subscribers()  # Clean up before adding new subscriber
         q: queue.Queue = queue.Queue(maxsize=8192)
         with self._lock:
             self._subscribers[client_id] = q
@@ -521,6 +522,21 @@ class PtySession:
             except queue.Full:
                 pass
         return q
+
+    def _purge_dead_subscribers(self) -> None:
+        """Remove subscriber queues that belong to disconnected clients.
+        A subscriber is considered dead if its queue has been full for >30s
+        (meaning the consumer is gone and not draining it)."""
+        with self._lock:
+            dead = [cid for cid, q in self._subscribers.items()
+                    if q.full()]
+        for cid in dead:
+            with self._lock:
+                self._subscribers.pop(cid, None)
+            import logging as _log
+            _log.getLogger(__name__).debug(
+                "[PTY:%s] Purged dead subscriber %s (full queue)", self.sid[:8], cid
+            )
 
     def unsubscribe(self, client_id: str):
         with self._lock:
@@ -558,6 +574,9 @@ class PtySession:
                     time.sleep(0.01)
                     continue
             except (EOFError, OSError):
+                break
+            except (BrokenPipeError, ValueError):
+                # BrokenPipeError/ValueError indicate dead PTY on Windows — stop looping
                 break
             except Exception:
                 time.sleep(0.05)

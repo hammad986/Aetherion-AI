@@ -547,6 +547,8 @@ class LLMRouter:
         if self._gemini_keys:    available.append("gemini")
         if c.OPENROUTER_API_KEY: available.append("openrouter")
         if c.TOGETHER_API_KEY:   available.append("together")
+        if c.OPENAI_API_KEY:     available.append("openai")
+        if c.ANTHROPIC_API_KEY:  available.append("anthropic")
         # Phase 9: DeepSeek direct (also available via OpenRouter as fallback)
         if c.DEEPSEEK_API_KEY:   available.append("deepseek")
         return available
@@ -596,6 +598,8 @@ class LLMRouter:
             return self._call_ollama_chat(model or c.MODELS["local"], messages, max_tokens)
         if name == "local":
             return self._ollama(messages, max_tokens) if not model else self._call_ollama_chat(model, messages, max_tokens)
+        if name == "openai":
+            return self._compat(c.OPENAI_URL, c.OPENAI_API_KEY, model or c.MODELS.get("openai", "gpt-4o-mini"), messages, max_tokens)
         # Phase 9: DeepSeek direct endpoint (OpenAI-compatible)
         if name == "deepseek":
             return self._compat(c.DEEPSEEK_URL, c.DEEPSEEK_API_KEY,

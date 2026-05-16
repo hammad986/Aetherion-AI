@@ -197,7 +197,7 @@
 
         window.setInterval = function (fn, delay, ...args) {
             nx.debugFlags.counters.intervalsScheduled += 1;
-            if (nx.hasDebugFlag('intervals')) {
+            if (nx.hasDebugFlag('intervals') || nx.hasDebugFlag('polling')) {
                 console.warn('[NX:DEBUG] interval blocked', delay);
                 return 0;
             }
@@ -205,7 +205,7 @@
         };
         window.setTimeout = function (fn, delay, ...args) {
             nx.debugFlags.counters.timeoutsScheduled += 1;
-            if (nx.hasDebugFlag('timeouts') && Number(delay || 0) >= 100) {
+            if (nx.hasDebugFlag('timeouts')) {
                 console.warn('[NX:DEBUG] timeout blocked', delay);
                 return 0;
             }
@@ -214,24 +214,38 @@
         if (origRaf) {
             window.requestAnimationFrame = function (callback) {
                 nx.debugFlags.counters.rafScheduled += 1;
-                if (nx.hasDebugFlag('raf')) {
-                    console.warn('[NX:DEBUG] requestAnimationFrame blocked');
+                if (nx.hasDebugFlag('raf') || nx.hasDebugFlag('animations')) {
                     return 0;
                 }
-                return origRaf(callback);
+                return origRaf((ts) => {
+                    const t0 = now();
+                    callback(ts);
+                    const dur = now() - t0;
+                    if (dur > 16) {
+                        nx.logLayoutDiagnostic({ type: 'slow-raf', durationMs: Math.round(dur) });
+                    }
+                });
             };
         }
         if (typeof OrigMutationObserver === 'function') {
             window.MutationObserver = class DebugMutationObserver extends OrigMutationObserver {
                 constructor(callback) {
                     nx.debugFlags.counters.mutationObservers += 1;
+                    const wrapped = (mutations, obs) => {
+                        const t0 = now();
+                        callback(mutations, obs);
+                        const dur = now() - t0;
+                        if (dur > 10) {
+                            nx.logLayoutDiagnostic({ type: 'slow-mutation', durationMs: Math.round(dur), count: mutations.length });
+                        }
+                    };
                     if (nx.hasDebugFlag('mutationobservers')) {
                         console.warn('[NX:DEBUG] MutationObserver blocked');
                         super(() => {});
                         this.__nxBlocked = true;
                         return;
                     }
-                    super(callback);
+                    super(wrapped);
                 }
                 observe(...args) {
                     if (this.__nxBlocked) return;
@@ -243,13 +257,21 @@
             window.ResizeObserver = class DebugResizeObserver extends OrigResizeObserver {
                 constructor(callback) {
                     nx.debugFlags.counters.resizeObservers += 1;
+                    const wrapped = (entries, obs) => {
+                        const t0 = now();
+                        callback(entries, obs);
+                        const dur = now() - t0;
+                        if (dur > 10) {
+                            nx.logLayoutDiagnostic({ type: 'slow-resize', durationMs: Math.round(dur), count: entries.length });
+                        }
+                    };
                     if (nx.hasDebugFlag('resizeobservers')) {
                         console.warn('[NX:DEBUG] ResizeObserver blocked');
                         super(() => {});
                         this.__nxBlocked = true;
                         return;
                     }
-                    super(callback);
+                    super(wrapped);
                 }
                 observe(...args) {
                     if (this.__nxBlocked) return;
@@ -351,8 +373,18 @@
             try {
                 const observer = new PerformanceObserver((list) => {
                     list.getEntries().forEach((entry) => {
-                        if (entry.duration > 50) {
-                            recordPerformance('long-task', { durationMs: Math.round(entry.duration) });
+                        if (entry.duration > 40) { // Lowered to 40ms for stricter capture
+                            const diag = ensureDiagnostics(window.NX);
+                            const record = { 
+                                type: 'long-task', 
+                                durationMs: Math.round(entry.duration),
+                                startTime: Math.round(entry.startTime),
+                                at: now() 
+                            };
+                            pushBounded(diag.performance, record);
+                            if (entry.duration > 200) {
+                                console.warn('[NX:STABILITY] CRITICAL LONG TASK', record);
+                            }
                         }
                     });
                 });
@@ -361,7 +393,70 @@
                 recordError('perf-observer', error, {});
             }
         }
+
+        // Track rAF recursion and frequency
+        let lastRafAt = 0;
+        let rafCount = 0;
+        let rafFrames = [];
+        const origRaf = window.requestAnimationFrame.bind(window);
+        window.requestAnimationFrame = function (cb) {
+            nx.debugFlags.counters.rafScheduled += 1;
+            if (nx.hasDebugFlag('raf') || nx.hasDebugFlag('animations')) return 0;
+            
+            const wrappedCb = (timestamp) => {
+                const t0 = now();
+                cb(timestamp);
+                const dur = now() - t0;
+                if (dur > 16) {
+                    nx.logLayoutDiagnostic({ type: 'slow-raf', durationMs: Math.round(dur) });
+                }
+            };
+            return origRaf(wrappedCb);
+        };
+
+        // Emergency Telemetry Dump
+        window.nxDumpDiagnostics = function() {
+            const diag = ensureDiagnostics(nx);
+            const report = {
+                state: nx.state,
+                uptime: now() - diag.bootStartedAt,
+                counters: nx.debugFlags.counters,
+                recentErrors: diag.errors.slice(-5),
+                recentLongTasks: diag.performance.filter(p => p.type === 'long-task').slice(-5),
+                domCount: document.getElementsByTagName('*').length,
+                timers: 'Inaccessible via JS, check counters',
+                flags: Array.from(nx.debugFlags.disable)
+            };
+            console.log('[NX:TELEMETRY] EMERGENCY DUMP', report);
+            return report;
+        };
+
+        // Patch WebSockets for kill-switch
+        const OrigWS = window.WebSocket;
+        window.WebSocket = function(...args) {
+            nx.debugFlags.counters.intervalsScheduled += 1; // Reuse for general async
+            if (nx.hasDebugFlag('websockets') || nx.hasDebugFlag('sockets')) {
+                console.warn('[NX:DEBUG] WebSocket blocked', args[0]);
+                return {
+                    send() {}, close() {},
+                    addEventListener() {}, removeEventListener() {},
+                    readyState: 3
+                };
+            }
+            return new OrigWS(...args);
+        };
+        window.WebSocket.prototype = OrigWS.prototype;
     }
+
+    // Instrument Event Loop Starvation
+    let lastHeartbeat = now();
+    setInterval(() => {
+        const delta = now() - lastHeartbeat - 1000;
+        if (delta > 100) {
+            recordPerformance('event-loop-lag', { lagMs: Math.round(delta) });
+        }
+        lastHeartbeat = now();
+    }, 1000);
 
     window.nxBoot = async function () {
         if (bootStarted) return;
@@ -382,6 +477,9 @@
                 disableSources: Array.from(nx.debugFlags.disableSources),
                 disableTasks: Array.from(nx.debugFlags.disableTasks),
             });
+            if (nx.hasDebugFlag('animations')) {
+                document.documentElement.classList.add('nx-disable-animations');
+            }
         }
 
         const startTime = now();

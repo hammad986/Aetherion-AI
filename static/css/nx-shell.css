@@ -1,0 +1,1729 @@
+/* 
+  nx-shell.css
+  Nexora Workspace Shell Foundation
+  Execution-First, Calm, Replit-Grade Density
+*/
+
+:root {
+  /* Strict 4pt Spacing Grid */
+  --nx-space-1: 4px;
+  --nx-space-2: 8px;
+  --nx-space-3: 12px;
+  --nx-space-4: 16px;
+  --nx-space-5: 20px;
+  --nx-space-6: 24px;
+  --nx-space-8: 32px;
+  --nx-space-10: 40px;
+  --nx-space-12: 48px;
+
+  /* Shell Dimensions */
+  --nx-shell-topbar-height: 40px;
+  --nx-shell-navrail-width: 48px;
+  --nx-shell-inspector-width: 300px;
+  --nx-shell-dock-height-collapsed: 32px;
+  --nx-shell-dock-height-expanded: 240px;
+
+  /* Z-Index Hierarchy */
+  --nx-z-surface: 10;
+  --nx-z-dock: 20;
+  --nx-z-inspector: 30;
+  --nx-z-navrail: 40;
+  --nx-z-topbar: 50;
+  --nx-z-overlay: 100;
+}
+
+/* Base Reset & Shell Container */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden; /* Prevent body scroll, everything scrolls internally */
+  font-family: var(--nx-font-family-base, 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+  font-size: 13px; /* Calm density */
+  line-height: 1.5;
+  background-color: var(--nx-color-bg-base, #121212);
+  color: var(--nx-color-text-primary, #E0E0E0);
+}
+
+.nx-shell-root {
+  display: grid;
+  width: 100vw;
+  height: 100vh;
+  /* 
+    Grid Layout:
+    [Nav Rail] [Center Execution] [Right Inspector]
+  */
+  grid-template-columns: var(--nx-shell-navrail-width) 1fr auto;
+  grid-template-rows: var(--nx-shell-topbar-height) 1fr auto;
+  grid-template-areas:
+    "topbar topbar topbar"
+    "navrail center inspector"
+    "navrail dock inspector";
+  background-color: var(--nx-color-bg-canvas, #0D0D0D);
+}
+
+/* Phase B Prep: Top Operational Bar */
+.nx-shell-topbar {
+  grid-area: topbar;
+  height: var(--nx-shell-topbar-height);
+  background-color: var(--nx-color-bg-surface, #18181B);
+  border-bottom: 1px solid var(--nx-color-border, #27272A);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--nx-space-4);
+  z-index: var(--nx-z-topbar);
+  user-select: none;
+}
+
+/* Phase C Prep: Navigation Rail */
+.nx-shell-navrail {
+  grid-area: navrail;
+  width: var(--nx-shell-navrail-width);
+  background-color: var(--nx-color-bg-surface-elevated, #202024);
+  border-right: 1px solid var(--nx-color-border, #27272A);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: var(--nx-space-2);
+  gap: var(--nx-space-2);
+  z-index: var(--nx-z-navrail);
+}
+
+/* Phase D Prep: Execution-First Center */
+.nx-shell-center {
+  grid-area: center;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  background-color: var(--nx-color-bg-base, #121212);
+}
+
+/* The 4-tab execution surface container */
+.nx-execution-surface {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Phase E Prep: Bottom Contextual Dock */
+.nx-shell-dock {
+  grid-area: dock;
+  height: var(--nx-shell-dock-height-collapsed);
+  background-color: var(--nx-color-bg-surface, #18181B);
+  border-top: 1px solid var(--nx-color-border, #27272A);
+  z-index: var(--nx-z-dock);
+  transition: height 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+.nx-shell-dock.is-expanded {
+  height: var(--nx-shell-dock-height-expanded);
+}
+
+/* Phase F Prep: Right Contextual Inspector */
+.nx-shell-inspector {
+  position: absolute;
+  top: var(--nx-shell-topbar-height);
+  right: 0;
+  bottom: 0; /* Cover dock? Or bottom: var(--nx-shell-dock-height-collapsed) */
+  width: var(--nx-shell-inspector-width);
+  background-color: var(--nx-color-bg-surface, #18181B);
+  border-left: 1px solid var(--nx-color-border, #27272A);
+  z-index: 45; /* Above navrail, below topbar */
+  transform: translateX(100%);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s;
+  opacity: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.nx-shell-inspector.is-open {
+  transform: translateX(0);
+  opacity: 1;
+  box-shadow: -10px 0 40px rgba(0,0,0,0.7);
+}
+
+.nx-inspector-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--nx-color-border, #27272A);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nx-inspector-header h3 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--nx-color-text-primary, #E0E0E0);
+}
+
+.nx-inspector-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+/* 
+  Utility Classes for Dense, Calm Typography
+  Replit-grade execution-first feel
+*/
+.nx-text-xs { font-size: 11px; line-height: 14px; }
+.nx-text-sm { font-size: 12px; line-height: 16px; }
+.nx-text-base { font-size: 13px; line-height: 20px; }
+.nx-font-mono { font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace; }
+
+/* Responsive Shell Adjustments */
+@media (max-width: 768px) {
+  .nx-shell-root {
+    grid-template-columns: var(--nx-shell-navrail-width) 1fr;
+    grid-template-areas:
+      "topbar topbar"
+      "navrail center"
+      "navrail dock";
+  }
+  .nx-shell-inspector {
+    position: absolute;
+    right: 0;
+    top: var(--nx-shell-topbar-height);
+    bottom: 0;
+    box-shadow: -4px 0 24px rgba(0,0,0,0.5);
+  }
+}
+
+
+/* Phase D: Contextual Slide-Over Panels */
+.nx-nav-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  background: transparent;
+  border: none;
+  color: #8b949e;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+.nx-nav-icon:hover, .nx-nav-icon.active {
+  color: #E0E0E0;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.nx-slide-panel {
+  position: absolute;
+  top: var(--nx-shell-topbar-height);
+  bottom: 0;
+  left: var(--nx-shell-navrail-width);
+  width: 320px;
+  background: var(--nx-color-bg-surface-elevated, #202024);
+  border-right: 1px solid var(--nx-color-border, #27272A);
+  z-index: var(--nx-z-overlay);
+  box-shadow: 4px 0 24px rgba(0,0,0,0.3);
+  display: none;
+  flex-direction: column;
+  /* subtle enter animation */
+  animation: slidePanelEnter 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slidePanelEnter {
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.nx-slide-panel .nx-panel-header {
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--nx-color-border, #27272A);
+  font-weight: 600;
+  color: #E0E0E0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 11px;
+}
+.nx-slide-panel .nx-close-btn {
+  background: transparent;
+  border: none;
+  color: #8b949e;
+  cursor: pointer;
+  padding: 4px;
+}
+.nx-slide-panel .nx-close-btn:hover { color: #E0E0E0; }
+
+.nx-slide-panel .nx-panel-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+/* ── Phase G: Operational Polish ── */
+
+/* 1. Premium Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--nx-color-border, #30363d);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #484f58;
+}
+
+/* 2. Hover Consistency & Focus States */
+button:focus-visible, input:focus-visible, textarea:focus-visible {
+  outline: 1px solid var(--nx-color-accent, #bc8cff);
+  outline-offset: -1px;
+}
+.nx-icon-btn:hover, .nx-nav-icon:hover {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  color: #E0E0E0 !important;
+}
+.nx-nav-icon.active {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  color: #E0E0E0 !important;
+  border-left: 2px solid #8b949e;
+}
+
+/* 3. Empty States & Loading States */
+.nx-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--nx-color-text-muted, #8b949e);
+  font-size: 13px;
+  text-align: center;
+  border: 1px dashed var(--nx-color-border, #30363d);
+  border-radius: 6px;
+  padding: 24px;
+}
+
+/* 4. Execution Transitions */
+.nx-live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #3fb950;
+  box-shadow: 0 0 6px rgba(63, 185, 80, 0.6);
+  animation: nx-pulse 1.5s infinite alternate;
+}
+@keyframes nx-pulse {
+  from { opacity: 0.6; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1.1); }
+}
+
+/* Smooth transitions for panels */
+.nx-panel-content {
+  transition: opacity 0.2s ease-in-out;
+}
+
+
+/* ── Phase H: Execution Timeline Transformation ── */
+.p12-chat-msgs {
+  gap: 20px !important;
+  padding: 24px 20px !important;
+}
+
+.p12-msg {
+  max-width: 100% !important;
+  align-self: stretch !important;
+  align-items: flex-start !important;
+  border-left: 2px solid var(--nx-color-border, #30363d);
+  padding-left: 16px !important;
+  position: relative;
+}
+
+.p12-msg::before {
+  content: "";
+  position: absolute;
+  left: -5px;
+  top: 14px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--nx-color-border, #30363d);
+}
+
+.p12-msg.user {
+  border-left-color: var(--nx-color-accent, #bc8cff);
+}
+.p12-msg.user::before {
+  background: var(--nx-color-accent, #bc8cff);
+}
+
+.p12-msg.assistant {
+  border-left-color: #3fb950;
+}
+.p12-msg.assistant::before {
+  background: #3fb950;
+  box-shadow: 0 0 6px rgba(63, 185, 80, 0.4);
+}
+
+.p12-msg-bubble {
+  background: transparent !important;
+  border: none !important;
+  padding: 4px 0 !important;
+  border-radius: 0 !important;
+  width: 100%;
+}
+
+.p12-msg.user .p12-msg-bubble {
+  color: var(--nx-color-text-primary, #E0E0E0) !important;
+  font-weight: 500;
+  font-size: 14px !important;
+}
+
+.p12-msg.assistant .p12-msg-bubble {
+  color: var(--nx-color-text-muted, #8b949e) !important;
+  font-size: 13px !important;
+}
+
+/* Move meta above bubble */
+.p12-msg-meta {
+  display: flex !important;
+  order: -1; 
+  margin-bottom: 6px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.p12-msg.user .p12-msg-meta {
+  color: var(--nx-color-accent, #bc8cff) !important;
+}
+.p12-msg.user .p12-msg-meta::before {
+  content: "USER REQUIREMENT";
+}
+
+.p12-msg.assistant .p12-msg-meta {
+  color: #3fb950 !important;
+}
+.p12-msg.assistant .p12-msg-meta::before {
+  content: "SYSTEM EXECUTION";
+}
+
+/* Hide raw timestamp text if possible via structure, or just hide specific generic chatbot stuff */
+.p12-msg-meta .p12-status-dot {
+  display: none !important;
+}
+
+/* Agent State System Indicators */
+.nx-exec-state {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  display: inline-block;
+  margin-bottom: 8px;
+  color: #8b949e;
+}
+.nx-exec-state.planning { border-color: #bc8cff; color: #bc8cff; }
+.nx-exec-state.executing { border-color: #3fb950; color: #3fb950; }
+.nx-exec-state.validating { border-color: #f59e0b; color: #f59e0b; }
+.nx-exec-state.escalated { border-color: #f85149; color: #f85149; }
+
+/* Preview Orchestration */
+.nx-panel[data-nxtab="preview"] {
+  background: #0d1117;
+  padding: 16px;
+}
+.nx-preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  font-size: 12px;
+  color: #8b949e;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+.nx-preview-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.nx-preview-status::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #3fb950;
+}
+
+/* Command Palette Minimal Polish */
+.nx-palette {
+  background: var(--nx-color-bg-panel, #161b22) !important;
+  border: 1px solid var(--nx-color-border, #30363d) !important;
+  box-shadow: 0 24px 48px rgba(0,0,0,0.8) !important;
+}
+.nx-palette-input {
+  background: transparent !important;
+  border-bottom: 1px solid var(--nx-color-border, #30363d) !important;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   Phase I — Execution Chunking + Artifact Orchestration
+   ══════════════════════════════════════════════════════════════════ */
+
+/* Execution Chunk Group */
+.nx-exec-chunk {
+  background: #111115;
+  border: 1px solid #27272A;
+  border-radius: 6px;
+  margin: 6px 0;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.nx-exec-chunk:last-child {
+  border-color: #3d3d42;
+}
+
+.nx-chunk-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+  user-select: none;
+  background: #16161a;
+  border-bottom: 1px solid #27272A;
+}
+.nx-chunk-header:hover {
+  background: #1c1c22;
+}
+
+.nx-chunk-icon { font-size: 11px; }
+.nx-chunk-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.nx-chunk-ts {
+  margin-left: auto;
+  font-size: 9.5px;
+  color: #484f58;
+  font-family: 'JetBrains Mono', monospace;
+}
+.nx-chunk-caret {
+  font-size: 10px;
+  color: #484f58;
+  transition: transform 0.15s;
+}
+
+.nx-exec-chunk.nx-chunk-collapsed .nx-chunk-caret { transform: rotate(-90deg); }
+.nx-exec-chunk.nx-chunk-collapsed .nx-chunk-body { display: none; }
+
+/* Sealed (completed) group */
+.nx-exec-chunk.nx-chunk-sealed .nx-chunk-header {
+  border-bottom-color: transparent;
+}
+
+.nx-chunk-body {
+  padding: 8px 12px;
+  font-size: 11.5px;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  line-height: 1.65;
+  color: #6e7681;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+/* Progressive disclosure — overflow clip */
+.nx-chunk-body.nx-chunk-overflow {
+  max-height: 140px;
+}
+
+.nx-chunk-row {
+  display: flex;
+  gap: 8px;
+  padding: 1px 0;
+}
+.nx-chunk-tool {
+  color: #f59e0b;
+  font-weight: 700;
+  font-size: 10px;
+  min-width: 80px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding-top: 1px;
+}
+.nx-chunk-text {
+  color: #8b949e;
+  word-break: break-word;
+  flex: 1;
+}
+
+/* ── File Artifact Cards ── */
+.nx-artifact-card {
+  border: 1px solid #1c2230;
+  border-radius: 5px;
+  background: #0d1117;
+  margin: 4px 0;
+  padding: 6px 12px;
+}
+.nx-artifact-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+}
+.nx-artifact-icon { font-size: 12px; }
+.nx-artifact-path {
+  font-family: 'JetBrains Mono', monospace;
+  color: #8b949e;
+  flex: 1;
+  font-size: 11px;
+}
+.nx-artifact-action {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+.nx-artifact-status {
+  font-size: 9px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-weight: 600;
+}
+.nx-artifact-status--healthy  { background:#3fb95022; color:#3fb950; border:1px solid #3fb95033; }
+.nx-artifact-status--degraded { background:#f59e0b22; color:#f59e0b; border:1px solid #f59e0b33; }
+.nx-artifact-status--failed   { background:#f8514922; color:#f85149; border:1px solid #f8514933; }
+
+/* ── Persistent Execution Strip ── */
+.nx-exec-strip {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 16px;
+  height: 24px;
+  background: #0d1117;
+  border-top: 1px solid #1c2230;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #484f58;
+  flex-shrink: 0;
+  z-index: 10;
+}
+.nx-exec-strip-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+.nx-exec-strip-item span { color: #6e7681; }
+.nx-exec-strip-divider {
+  width: 1px;
+  height: 10px;
+  background: #1c2230;
+}
+#nxExecStripState {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  transition: color 0.3s;
+}
+
+/* ── Preview Artifact States ── */
+.nx-preview-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-bottom: 1px solid #27272A;
+  font-size: 11px;
+  color: #484f58;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.nx-preview-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #3fb950;
+}
+.nx-preview-dot.validating { background: #f59e0b; animation: nx-pulse 1.2s infinite; }
+.nx-preview-dot.building   { background: #79c0ff; animation: nx-pulse 1.2s infinite; }
+.nx-preview-dot.failed     { background: #f85149; }
+.nx-preview-dot.degraded   { background: #f59e0b; }
+
+
+/* ══════════════════════════════════════════════════════════════════
+   Phase J — Cross-Surface Orchestration CSS
+   ══════════════════════════════════════════════════════════════════ */
+
+/* Active tab execution dot */
+.nx-tab-dot-active {
+  background: #3fb950 !important;
+  box-shadow: 0 0 5px rgba(63,185,80,0.5);
+}
+
+/* Tab in execution state */
+.nx-tab-exec-active {
+  color: #E0E0E0 !important;
+}
+
+/* Pipeline stage: active / done */
+.nx-exec-stage.active .nx-stage-dot {
+  background: #f59e0b;
+  box-shadow: 0 0 5px rgba(245,158,11,0.4);
+  animation: nx-pulse 1.2s infinite;
+}
+.nx-exec-stage.active {
+  color: #E0E0E0 !important;
+}
+.nx-exec-stage.done .nx-stage-dot {
+  background: #3fb950;
+}
+.nx-exec-stage.done {
+  color: #3fb950 !important;
+}
+
+/* Preview overlay */
+.nx-preview-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: none;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 14px;
+  background: rgba(13,17,23,0.88);
+  backdrop-filter: blur(4px);
+  border-bottom: 1px solid #27272A;
+  z-index: 20;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+/* Inspector sections */
+.nx-inspector-section {
+  border-bottom: 1px solid #1c2230;
+  padding: 10px 0;
+}
+.nx-inspector-section:first-child { padding-top: 0; }
+.nx-inspector-section:last-child { border-bottom: none; }
+
+.nx-inspector-section-label {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 5px;
+}
+.nx-inspector-section-body {
+  font-size: 11.5px;
+  color: #6e7681;
+  line-height: 1.6;
+  font-family: 'JetBrains Mono', monospace;
+  word-break: break-word;
+}
+
+/* File tree transient group */
+.nx-transient-group {
+  margin-top: 8px;
+  border-top: 1px dashed #1c2230;
+  padding-top: 6px;
+}
+.nx-transient-label {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #484f58;
+  margin-bottom: 4px;
+  padding: 0 8px;
+}
+.nx-transient-file {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  font-size: 11px;
+  font-family: 'JetBrains Mono', monospace;
+  color: #6e7681;
+  cursor: default;
+}
+.nx-transient-file:hover { background: rgba(255,255,255,0.03); }
+.nx-transient-action {
+  font-size: 8.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-left: auto;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   Phase K — Trusted Execution Intelligence CSS
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── Confidence bar in inspector header ── */
+.nx-trust-conf-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+.nx-trust-conf-lbl {
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #484f58;
+  text-transform: uppercase;
+}
+.nx-trust-conf-track {
+  width: 52px;
+  height: 3px;
+  background: #1c2230;
+  border-radius: 2px;
+  overflow: hidden;
+}
+.nx-trust-conf-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.5s ease, background 0.4s ease;
+}
+#nxTrustConfLabel {
+  font-size: 9.5px;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+  min-width: 30px;
+  text-align: right;
+  transition: color 0.4s ease;
+}
+
+/* ── Evidence pills ── */
+.nx-trust-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 6px;
+}
+.nx-trust-pill {
+  font-size: 8.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 1px 6px;
+  border-radius: 3px;
+}
+.nx-trust-pill--ok {
+  background: rgba(63,185,80,0.12);
+  color: #3fb950;
+  border: 1px solid rgba(63,185,80,0.25);
+}
+.nx-trust-pill--fail {
+  background: rgba(248,81,73,0.12);
+  color: #f85149;
+  border: 1px solid rgba(248,81,73,0.25);
+}
+
+/* ── HITL escalation card ── */
+.nx-hitl-card {
+  border: 1px solid #30363d;
+  border-left: 3px solid #f59e0b;
+  border-radius: 6px;
+  background: #0d1117;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+}
+.nx-hitl-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.nx-hitl-badge {
+  font-size: 8.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 2px 6px;
+  border-radius: 3px;
+  border: 1px solid;
+  background: transparent;
+}
+.nx-hitl-title {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #c9d1d9;
+}
+.nx-hitl-prompt {
+  font-size: 11px;
+  color: #8b949e;
+  line-height: 1.6;
+  font-family: 'JetBrains Mono', monospace;
+  margin-bottom: 8px;
+  word-break: break-word;
+}
+.nx-hitl-dep {
+  font-size: 10.5px;
+  color: #6e7681;
+  margin-bottom: 6px;
+}
+.nx-hitl-dep code {
+  background: #161b22;
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: #f59e0b;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+}
+.nx-hitl-conf {
+  font-size: 9.5px;
+  color: #f59e0b;
+  font-weight: 600;
+  margin-bottom: 10px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.nx-hitl-actions {
+  display: flex;
+  gap: 6px;
+}
+.nx-hitl-btn {
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid;
+  background: transparent;
+  transition: opacity 0.15s;
+}
+.nx-hitl-btn:hover { opacity: 0.8; }
+.nx-hitl-approve {
+  color: #3fb950;
+  border-color: rgba(63,185,80,0.4);
+}
+.nx-hitl-reject {
+  color: #f85149;
+  border-color: rgba(248,81,73,0.4);
+}
+.nx-hitl-inspect {
+  color: #8b949e;
+  border-color: #30363d;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   Phase L — Strategic Execution Narrative CSS
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── Mission Header Card ── */
+.nx-mission-card {
+  background: #0d1117;
+  border: 1px solid #1c2230;
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin-bottom: 8px;
+  flex-shrink: 0;
+}
+.nx-mission-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 3px;
+}
+.nx-mission-objective {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c9d1d9;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.nx-mission-phase {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-family: 'JetBrains Mono', monospace;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: color 0.3s;
+}
+.nx-mission-strategy {
+  font-size: 10.5px;
+  color: #6e7681;
+  font-family: 'JetBrains Mono', monospace;
+  min-height: 14px;
+  transition: opacity 0.3s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Completion Narrative Card ── */
+.nx-completion-card {
+  background: #0d1117;
+  border: 1px solid #1c2230;
+  border-left: 3px solid #3fb950;
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin-bottom: 8px;
+}
+.nx-completion-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.nx-completion-icon {
+  color: #3fb950;
+  font-size: 12px;
+}
+.nx-completion-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: #c9d1d9;
+  flex: 1;
+}
+.nx-completion-duration {
+  font-size: 9.5px;
+  color: #484f58;
+  font-family: 'JetBrains Mono', monospace;
+}
+.nx-completion-conf {
+  font-size: 9.5px;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+  color: #3fb950;
+}
+.nx-completion-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.nx-completion-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 10.5px;
+  border-bottom: 1px solid #1c2230;
+  padding-bottom: 3px;
+}
+.nx-completion-row:last-child { border-bottom: none; }
+.nx-completion-row > span:first-child {
+  color: #484f58;
+  font-size: 9.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  min-width: 80px;
+}
+.nx-completion-row > span:last-child {
+  color: #8b949e;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  text-align: right;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   Phase M — Unified Execution Environment CSS
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── Tab hint pulse (soft focus, no tab switch) ── */
+@keyframes nx-tab-hint-pulse {
+  0%,100% { background: transparent; }
+  50%      { background: rgba(188,140,255,0.08); }
+}
+.nx-tab-hint {
+  animation: nx-tab-hint-pulse 1s ease 2;
+  border-bottom-color: #bc8cff !important;
+  color: #E0E0E0 !important;
+}
+
+/* ── Context Banner (minimal auto-dismiss strip) ── */
+.nx-context-banner {
+  position: absolute;
+  top: var(--nx-shell-topbar-height, 40px);
+  right: 320px;
+  background: #0d1117;
+  border: 1px solid #27272A;
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+  padding: 5px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10.5px;
+  color: #8b949e;
+  z-index: 50;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 0.2s, transform 0.2s;
+  pointer-events: none;
+  cursor: default;
+}
+.nx-context-banner.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.nx-cb-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: #bc8cff; flex-shrink: 0;
+}
+.nx-cb-msg { flex: 1; }
+.nx-cb-tab {
+  font-weight: 600;
+  color: #bc8cff;
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ── Monaco tab file state indicators ── */
+.nx-file-modified {
+  border-bottom: 2px solid #f59e0b !important;
+}
+.nx-file-unstable {
+  border-bottom: 2px solid #f85149 !important;
+  color: #f85149 !important;
+}
+.nx-file-validated {
+  border-bottom: 2px solid #3fb950 !important;
+}
+.nx-file-recovery {
+  border-bottom: 2px solid #f59e0b !important;
+  opacity: 0.7;
+}
+
+/* ── Terminal Mission Header ── */
+.nx-term-mission-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px;
+  background: #0d1117;
+  border-bottom: 1px solid #1c2230;
+  font-size: 9.5px;
+  font-weight: 600;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+.nx-tm-phase {
+  text-transform: uppercase;
+  transition: color 0.3s;
+}
+.nx-tm-sep {
+  color: #1c2230;
+}
+.nx-tm-op {
+  color: #484f58;
+  font-weight: 400;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 240px;
+}
+
+/* ── Inspector Chain Grouping ── */
+.nx-insp-chain {
+  border-left: 2px solid #27272A;
+  padding: 6px 0 6px 10px;
+  margin-bottom: 8px;
+}
+.nx-insp-chain[data-kind="reasoning"]  { border-left-color: #79c0ff; }
+.nx-insp-chain[data-kind="action"]     { border-left-color: #f59e0b; }
+.nx-insp-chain[data-kind="validation"] { border-left-color: #3fb950; }
+.nx-insp-chain[data-kind="escalation"] { border-left-color: #f85149; }
+
+.nx-insp-chain--sealed {
+  opacity: 0.7;
+}
+
+.nx-insp-chain-row {
+  font-size: 10.5px;
+  color: #6e7681;
+  font-family: 'JetBrains Mono', monospace;
+  line-height: 1.55;
+  padding: 1px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.nx-insp-chain-row:first-child {
+  color: #8b949e;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   Phase N — Operator Experience & Flow Polish CSS
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── 1. Interaction Smoothness: unified transition system ── */
+:root {
+  --nx-t-fast:   120ms ease;
+  --nx-t-normal: 200ms ease;
+  --nx-t-slow:   300ms ease;
+  --nx-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Eliminate flicker on panel open/close via will-change */
+.nx-overlay-panel, .nx-inspector-panel, .nx-slide-panel {
+  will-change: transform;
+}
+
+/* Tab content: soft fade instead of instant display swap */
+.nx-tab-content {
+  transition: opacity var(--nx-t-fast);
+}
+.nx-tab-fading {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* ── 2. Exec Strip: idle vs active state ── */
+.nx-exec-strip {
+  transition: opacity var(--nx-t-normal);
+}
+.nx-strip-idle {
+  opacity: 0.45;
+}
+.nx-exec-strip:hover {
+  opacity: 1 !important;
+}
+
+/* ── 3. Idle Hero: clean operational empty state ── */
+.nx-idle-hero {
+  transition: opacity var(--nx-t-normal), transform var(--nx-t-normal);
+  opacity: 1;
+  transform: translateY(0);
+}
+.nx-hero-hidden {
+  opacity: 0 !important;
+  transform: translateY(-8px) !important;
+  pointer-events: none !important;
+}
+
+/* Hero: remove marketing text aesthetic */
+.nx-hero-heading {
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  color: #c9d1d9 !important;
+  letter-spacing: -0.01em !important;
+}
+.nx-hero-sub {
+  font-size: 11.5px !important;
+  color: #6e7681 !important;
+  max-width: 420px !important;
+  line-height: 1.6 !important;
+}
+
+/* Keyboard hint row in idle hero */
+.nx-kb-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 10.5px;
+  color: #484f58;
+}
+.nx-kb-row kbd {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9.5px;
+  padding: 2px 6px;
+  background: #161b22;
+  border: 1px solid #27272A;
+  border-radius: 3px;
+  color: #8b949e;
+  margin-right: 3px;
+}
+
+/* ── 4. Progressive Disclosure: collapsed inspector chains ── */
+.nx-insp-chain--sealed .nx-insp-chain-row:not(:first-child) {
+  display: none;
+}
+.nx-insp-chain--sealed:hover .nx-insp-chain-row {
+  display: block;
+}
+.nx-insp-chain--sealed::after {
+  content: attr(data-kind);
+  font-size: 8.5px;
+  color: #484f58;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  display: block;
+  padding-top: 3px;
+}
+
+/* ── 5. Scrollbar Consistency ── */
+.nx-tab-content::-webkit-scrollbar,
+.nx-insp-chain::-webkit-scrollbar,
+.nx-chunk-body::-webkit-scrollbar,
+#nxInspectorContent::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: #27272A;
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover { background: #30363d; }
+
+/* ── 6. Hover timing: consistent 120ms across all interactive elements ── */
+.nx-tab:hover,
+.nx-nav-btn:hover,
+.nx-hero-chip:hover,
+.nx-hitl-btn:hover,
+.nx-run-btn:hover,
+.nx-tiny-btn:hover,
+.nx-composer-mode:hover,
+.nx-composer-scope:hover {
+  transition: background var(--nx-t-fast), color var(--nx-t-fast), opacity var(--nx-t-fast) !important;
+}
+
+/* ── 7. Border hierarchy: 3-tier system ── */
+/* Primary surface borders */
+.nx-mission-card,
+.nx-completion-card,
+.nx-hitl-card,
+.nx-exec-chunk {
+  border-color: #1c2230;
+}
+/* Secondary element borders */
+.nx-inspector-section,
+.nx-completion-row,
+.nx-transient-group {
+  border-color: #1c2230;
+}
+/* Interactive borders */
+.nx-tab-hint,
+.nx-file-modified,
+.nx-file-unstable,
+.nx-file-validated {
+  /* defined per-class above */
+}
+
+/* ── 8. Typography consistency ── */
+.nx-inspector-section-body,
+.nx-insp-chain-row,
+.nx-completion-row > span:last-child,
+.nx-mission-strategy,
+.nx-tm-op,
+.nx-transient-file {
+  font-family: 'JetBrains Mono', 'Cascadia Code', 'Fira Code', monospace;
+}
+
+/* ── 9. Preview: persistence — preserve visible content during rebuild ── */
+.nx-preview-overlay {
+  /* Already defined — ensure no layout shift on show/hide */
+  transition: opacity var(--nx-t-fast);
+}
+#nxTab-preview {
+  overflow: hidden;
+}
+#nxTab-preview iframe {
+  /* Prevent iframe reload flash */
+  background: #0d1117;
+}
+
+/* ── 10. Execution chunk: cleaner animation ── */
+@keyframes nx-chunk-enter {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+.nx-exec-chunk {
+  animation: nx-chunk-enter 120ms var(--nx-ease-out) both;
+}
+.nx-chunk-collapsed {
+  max-height: 36px !important;
+  overflow: hidden;
+  cursor: pointer;
+  opacity: 0.55;
+}
+.nx-chunk-collapsed:hover { opacity: 0.85; }
+.nx-chunk-collapsed .nx-chunk-body { display: none !important; }
+
+/* ── 11. Panel slide animation: unified ── */
+@keyframes nx-panel-slide {
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+.nx-inspector-panel.is-open {
+  animation: nx-panel-slide 200ms var(--nx-ease-out) both;
+}
+
+/* ── 12. Mission card: smooth strategy text update ── */
+.nx-mission-strategy {
+  transition: opacity var(--nx-t-fast);
+}
+
+/* ── 13. Strip: clean dot animation only ── */
+@keyframes nx-strip-dot {
+  0%,100% { opacity: 1; }
+  50%      { opacity: 0.35; }
+}
+.nx-strip-live-dot {
+  animation: nx-strip-dot 1.6s ease infinite;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   Phase O — Beta Hardening CSS
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── Focus visibility (accessibility audit) ── */
+:focus-visible {
+  outline: 2px solid #bc8cff;
+  outline-offset: 2px;
+}
+button:focus-visible,
+[role="button"]:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid #bc8cff;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ── Motion reduction safety ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+  .nx-exec-chunk { animation: none !important; }
+  .nx-idle-hero  { transition: none !important; }
+}
+
+/* ── High contrast: ensure readable density ── */
+@media (forced-colors: active) {
+  .nx-trust-pill--ok, .nx-trust-pill--fail { border: 1px solid ButtonText; }
+  .nx-exec-chunk { border-color: ButtonText; }
+  .nx-mission-phase { color: Highlight !important; }
+}
+
+/* ── Min-width: graceful degradation for tiny viewports ── */
+@media (max-width: 799px) {
+  .nx-navrail { display: none !important; }
+  .nx-shell-root { grid-template-columns: 0 1fr !important; }
+  .nx-term-mission-header { display: none !important; }
+}
+
+/* ── Scrollbar: uniform across all panels ── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #27272A transparent;
+}
+
+/* ── Prevent layout shift from HITL card insertion ── */
+#nxInspectorContent {
+  contain: style layout;
+}
+
+/* ── Cursor: resize handles must show resize cursor ── */
+.gutter-horizontal { cursor: col-resize !important; }
+.gutter-vertical   { cursor: row-resize !important; }
+
+/* ── Overflow: prevent horizontal scroll in any panel ── */
+.nx-tab-content,
+.nx-panel-content,
+#nxInspectorContent {
+  overflow-x: hidden;
+}
+
+/* ── Safe area for persistent strip ── */
+.nx-center-body, #nxCenterBody, .p12-main {
+  padding-bottom: 28px; /* matches exec strip height */
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   nx-diagnostics — Operator Panel (hidden by default)
+   ══════════════════════════════════════════════════════════════════ */
+.nx-diag-panel {
+  display: none;
+  flex-direction: column;
+  position: fixed;
+  bottom: 32px;
+  right: 16px;
+  width: 320px;
+  max-height: 480px;
+  background: #0d1117;
+  border: 1px solid #27272A;
+  border-radius: 6px;
+  z-index: 500;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+}
+.nx-diag-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background: #161b22;
+  border-bottom: 1px solid #27272A;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #bc8cff;
+}
+.nx-diag-subtitle { color: #484f58; font-weight: 400; flex: 1; }
+.nx-diag-close {
+  background: none; border: none; color: #484f58;
+  cursor: pointer; font-size: 9px; padding: 0 2px;
+}
+.nx-diag-close:hover { color: #c9d1d9; }
+.nx-diag-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  overflow-y: auto;
+  max-height: 280px;
+  padding: 6px 0;
+}
+.nx-diag-row {
+  display: flex;
+  flex-direction: column;
+  padding: 3px 10px;
+  border-bottom: 1px solid #0d1117;
+}
+.nx-diag-key { color: #484f58; font-size: 8.5px; text-transform: uppercase; }
+.nx-diag-val { color: #c9d1d9; font-size: 10px; }
+.nx-diag-section {
+  border-top: 1px solid #27272A;
+  padding: 6px 10px;
+}
+.nx-diag-label {
+  color: #484f58; font-size: 8.5px;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  margin-bottom: 4px;
+}
+.nx-diag-history { max-height: 100px; overflow-y: auto; }
+.nx-diag-hist-row {
+  color: #6e7681;
+  font-size: 9.5px;
+  line-height: 1.5;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  gap: 6px;
+  display: flex;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   Phase Q — Operator Clarity CSS
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── First-run tip strip ── */
+.nx-onboard-tip {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  max-width: 480px;
+  width: calc(100vw - 48px);
+  z-index: 200;
+  opacity: 0;
+  transition: opacity 0.2s, transform 0.2s;
+  pointer-events: none;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+.nx-onboard-tip.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+}
+.nx-tip-icon {
+  font-size: 18px;
+  color: #bc8cff;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.nx-tip-body { flex: 1; }
+.nx-tip-title {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #c9d1d9;
+  margin-bottom: 3px;
+}
+.nx-tip-text {
+  font-size: 10.5px;
+  color: #8b949e;
+  line-height: 1.55;
+}
+.nx-tip-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  align-self: flex-end;
+}
+.nx-tip-counter { font-size: 9px; color: #484f58; }
+.nx-tip-btn {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 10px;
+  background: #bc8cff;
+  color: #0d1117;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.nx-tip-btn:hover { opacity: 0.85; }
+.nx-tip-skip {
+  font-size: 9.5px;
+  background: none;
+  border: none;
+  color: #484f58;
+  cursor: pointer;
+  padding: 2px;
+}
+.nx-tip-skip:hover { color: #8b949e; }
+
+/* ── Status banner (recovery / reconnect messaging) ── */
+.nx-status-banner {
+  position: fixed;
+  top: var(--nx-shell-topbar-height, 40px);
+  left: 50%;
+  transform: translateX(-50%) translateY(-4px);
+  background: #161b22;
+  border: 1px solid #27272A;
+  border-left: 3px solid #484f58;
+  border-radius: 0 0 6px 6px;
+  padding: 5px 16px;
+  font-size: 10.5px;
+  color: #8b949e;
+  z-index: 45;
+  opacity: 0;
+  transition: opacity 0.2s, transform 0.2s;
+  pointer-events: none;
+  max-width: 480px;
+  text-align: center;
+}
+.nx-status-banner.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ── Execution chunk kind labels ── */
+.nx-kind-label {
+  font-size: 8.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #484f58;
+  margin-right: 8px;
+}
+.nx-exec-chunk[data-kind="think"]        .nx-kind-label { color: #79c0ff; }
+.nx-exec-chunk[data-kind="action"]       .nx-kind-label { color: #f59e0b; }
+.nx-exec-chunk[data-kind="validation"]   .nx-kind-label { color: #3fb950; }
+.nx-exec-chunk[data-kind="recovery"]     .nx-kind-label { color: #f59e0b; }
+.nx-exec-chunk[data-kind="escalation"]   .nx-kind-label { color: #f85149; }
+.nx-exec-chunk[data-kind="tool_success"] .nx-kind-label { color: #3fb950; }
+.nx-exec-chunk[data-kind="result"]       .nx-kind-label { color: #bc8cff; }
+
+/* ── Performance calmness: reduce pulse animations ── */
+/* Keep only the strip live dot — remove all other ambient animations */
+.nx-mission-phase-dot,
+.nx-trust-ring,
+.nx-pulse-ring {
+  animation: none !important;
+}
+
+/* ── Prolonged session: slightly reduce brightness on idle elements ── */
+.nx-exec-chunk--sealed,
+.nx-insp-chain--sealed {
+  opacity: 0.5;
+}
+
+/* ── Analytics panel (exposed via NxDiag) ── */
+.nx-analytics-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 2px 0;
+  font-size: 9.5px;
+  color: #6e7681;
+}
+.nx-analytics-count {
+  color: #c9d1d9;
+  font-weight: 700;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   Phase R — Operator Feedback CSS
+   ══════════════════════════════════════════════════════════════════ */
+.nx-feedback-widget {
+  margin: 16px 0;
+  padding: 12px;
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  text-align: center;
+}
+.nx-fw-title {
+  font-size: 11px;
+  color: #8b949e;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+.nx-fw-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+.nx-fw-btn {
+  background: #21262d;
+  border: 1px solid #30363d;
+  color: #c9d1d9;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.nx-fw-btn:hover {
+  background: #30363d;
+  border-color: #8b949e;
+}

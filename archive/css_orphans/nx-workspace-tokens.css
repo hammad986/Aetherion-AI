@@ -1,0 +1,123 @@
+/* ═══════════════════════════════════════════════════════════════════
+   NX WORKSPACE DESIGN TOKENS — Phase 3 Shell Rebuild
+   Aligned with Replit ergonomic standards.
+   These tokens override and extend base.css values.
+═══════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Elevation System ─────────────────────────────────── */
+  --nxs-bg-root:     #0a0b0e;  /* canvas / deepest */
+  --nxs-bg-0:        #0d0f14;  /* app background */
+  --nxs-bg-1:        #111318;  /* panels, sidebars */
+  --nxs-bg-2:        #161a22;  /* hover states, secondary surfaces */
+  --nxs-bg-3:        #1d2130;  /* active/selected surfaces */
+  --nxs-bg-overlay:  rgba(10, 11, 14, 0.72); /* modal backdrops */
+
+  /* ── Foreground / Text ───────────────────────────────── */
+  --nxs-text-1:      #e8ecf4;  /* primary text */
+  --nxs-text-2:      #9ba3b5;  /* secondary / labels */
+  --nxs-text-3:      #636978;  /* muted / placeholder */
+  --nxs-text-inv:    #0a0b0e;  /* text on accent buttons */
+
+  /* ── Border System ────────────────────────────────────── */
+  --nxs-border-0:    rgba(255,255,255,0.04);  /* subtle dividers */
+  --nxs-border-1:    rgba(255,255,255,0.08);  /* standard borders */
+  --nxs-border-2:    rgba(255,255,255,0.14);  /* active / hover borders */
+  --nxs-border-3:    rgba(255,255,255,0.22);  /* focus rings */
+
+  /* ── Accent Colors ───────────────────────────────────── */
+  --nxs-accent:      #7c6af7;   /* primary action — violet */
+  --nxs-accent-dim:  rgba(124,106,247,0.12);
+  --nxs-accent-glow: rgba(124,106,247,0.25);
+  --nxs-accent-hover:#9283f9;
+
+  --nxs-green:       #3dba76;
+  --nxs-green-dim:   rgba(61,186,118,0.12);
+  --nxs-blue:        #3b9eff;
+  --nxs-blue-dim:    rgba(59,158,255,0.12);
+  --nxs-red:         #f26d6d;
+  --nxs-red-dim:     rgba(242,109,109,0.12);
+  --nxs-yellow:      #e5a84e;
+  --nxs-yellow-dim:  rgba(229,168,78,0.12);
+  --nxs-purple:      #b57dff;
+  --nxs-purple-dim:  rgba(181,125,255,0.12);
+
+  /* ── Spacing Scale (4pt grid) ───────────────────────── */
+  --nxs-sp-0: 2px;
+  --nxs-sp-1: 4px;
+  --nxs-sp-2: 8px;
+  --nxs-sp-3: 12px;
+  --nxs-sp-4: 16px;
+  --nxs-sp-5: 20px;
+  --nxs-sp-6: 24px;
+  --nxs-sp-7: 28px;
+  --nxs-sp-8: 32px;
+
+  /* ── Shell Structure Dimensions ─────────────────────── */
+  --nxs-header-h:     40px;    /* Replit standard */
+  --nxs-statusbar-h:  24px;
+  --nxs-rail-w:       48px;    /* icon nav rail width */
+  --nxs-panel-w:      280px;   /* contextual side panel */
+  --nxs-dock-h:       220px;   /* execution bottom dock */
+  --nxs-taskbar-h:    64px;    /* task input zone */
+
+  /* ── Typography ──────────────────────────────────────── */
+  --nxs-font-ui:      'Inter', system-ui, sans-serif;
+  --nxs-font-code:    'JetBrains Mono', 'Fira Code', monospace;
+  --nxs-font-size-xs: 10px;
+  --nxs-font-size-sm: 11px;
+  --nxs-font-size-md: 12px;
+  --nxs-font-size-df: 13px;
+  --nxs-font-size-lg: 14px;
+  --nxs-line-sm:      1.4;
+  --nxs-line-md:      1.5;
+  --nxs-line-lg:      1.6;
+
+  /* ── Border Radius ───────────────────────────────────── */
+  --nxs-r-1: 4px;
+  --nxs-r-2: 6px;
+  --nxs-r-3: 8px;
+  --nxs-r-4: 10px;
+  --nxs-r-5: 12px;
+  --nxs-r-6: 16px;
+
+  /* ── Motion / Easing ─────────────────────────────────── */
+  --nxs-dur-1: 80ms;
+  --nxs-dur-2: 150ms;
+  --nxs-dur-3: 240ms;
+  --nxs-ease:  cubic-bezier(0.16, 1, 0.3, 1);   /* spring-like */
+  --nxs-ease-linear: linear;
+
+  /* ── Z-Index Scale ───────────────────────────────────── */
+  --nxs-z-base:    1;
+  --nxs-z-panel:   10;
+  --nxs-z-dock:    20;
+  --nxs-z-header:  100;
+  --nxs-z-modal:   300;
+  --nxs-z-toast:   400;
+  --nxs-z-max:     9999;
+
+  /* ── Shadow System ───────────────────────────────────── */
+  --nxs-shadow-sm:  0 1px 4px rgba(0,0,0,0.3);
+  --nxs-shadow-md:  0 4px 16px rgba(0,0,0,0.4);
+  --nxs-shadow-lg:  0 8px 32px rgba(0,0,0,0.5);
+  --nxs-shadow-xl:  0 16px 56px rgba(0,0,0,0.6);
+}
+
+/* ── Light mode overrides (future-ready) ─────────────────── */
+@media (prefers-color-scheme: light) {
+  :root {
+    --nxs-bg-root:  #f3f4f7;
+    --nxs-bg-0:     #ffffff;
+    --nxs-bg-1:     #f8f9fb;
+    --nxs-bg-2:     #eef0f4;
+    --nxs-bg-3:     #e3e6ed;
+    --nxs-text-1:   #0f1117;
+    --nxs-text-2:   #4b5063;
+    --nxs-text-3:   #9199aa;
+    --nxs-border-0: rgba(0,0,0,0.05);
+    --nxs-border-1: rgba(0,0,0,0.09);
+    --nxs-border-2: rgba(0,0,0,0.15);
+    --nxs-border-3: rgba(0,0,0,0.24);
+  }
+}

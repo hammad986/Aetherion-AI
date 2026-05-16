@@ -31,6 +31,7 @@ class Tools:
             "append_file": self.append_file,
             "list_files": self.list_files, "delete_file": self.delete_file,
             "diff_edit": self.diff_edit, "search_replace": self.search_replace,
+            "ast_replace": self.ast_replace,
             "run_python": self.run_python, "run_shell": self.run_shell,
             "server_start": self.server_start, "server_stop": self.server_stop,
             "server_test": self.server_test,
@@ -71,7 +72,33 @@ class Tools:
         p.write_text(content, encoding="utf-8")
         logger.info(f"[Tools] Written: {p}")
         print(f"[FILE_WRITE] {path} ({len(content)} chars)", flush=True)
-        return self._ok(f"Written: {path} ({len(content)} chars)")
+
+        # ── Verification Engine: post-write syntax check ──────────────────
+        verify_note = ""
+        suffix = p.suffix.lower()
+        if suffix == ".py":
+            import py_compile, io
+            try:
+                py_compile.compile(str(p), doraise=True)
+                verify_note = " [syntax:OK]"
+            except py_compile.PyCompileError as e:
+                verify_note = f" [syntax:ERROR — {str(e)[:120]}]"
+                logger.warning(f"[Verify] Syntax error in {path}: {e}")
+        elif suffix == ".json":
+            import json as _json
+            try:
+                _json.loads(content)
+                verify_note = " [json:OK]"
+            except _json.JSONDecodeError as e:
+                verify_note = f" [json:ERROR — {str(e)[:80]}]"
+                logger.warning(f"[Verify] JSON error in {path}: {e}")
+
+        # Size sanity check
+        actual_size = p.stat().st_size
+        if actual_size == 0 and len(content) > 0:
+            return self._err(f"Write succeeded but file is empty on disk: {path}")
+
+        return self._ok(f"Written: {path} ({len(content)} chars){verify_note}")
 
     def append_file(self, path: str, content: str) -> dict:
         p = self._res(path)
@@ -99,6 +126,53 @@ class Tools:
         if not r["success"]: return r
         if search not in r["output"]: return self._err(f"Pattern not found in {path}")
         return self.write_file(path, r["output"].replace(search, replace, 1))
+
+    def ast_replace(self, path: str, target_name: str, new_code: str) -> dict:
+        """Replaces a top-level function or class in a Python file by name."""
+        r = self.read_file(path)
+        if not r["success"]: return r
+        content = r["output"]
+        
+        if not path.endswith(".py"):
+            return self._err("ast_replace only supports .py files.")
+            
+        import ast
+        try:
+            tree = ast.parse(content)
+        except SyntaxError as e:
+            return self._err(f"File has syntax errors, cannot parse AST: {e}")
+            
+        target_node = None
+        for node in tree.body:
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+                if node.name == target_name:
+                    target_node = node
+                    break
+                    
+        if not target_node:
+            return self._err(f"Function/Class '{target_name}' not found in {path}.")
+            
+        lines = content.splitlines(keepends=True)
+        # AST lines are 1-indexed
+        start_idx = target_node.lineno - 1
+        end_idx = target_node.end_lineno
+        
+        # Preserve decorators if any
+        if target_node.decorator_list:
+            start_idx = target_node.decorator_list[0].lineno - 1
+            
+        new_content = "".join(lines[:start_idx]) + new_code
+        if not new_code.endswith("\n"):
+            new_content += "\n"
+        new_content += "".join(lines[end_idx:])
+        
+        # Verify new code compiles
+        try:
+            ast.parse(new_content)
+        except SyntaxError as e:
+            return self._err(f"Replacement introduces syntax errors: {e}")
+            
+        return self.write_file(path, new_content)
 
     def diff_edit(self, path: str, edits: list) -> dict:
         """
@@ -172,13 +246,13 @@ class Tools:
 
     # ── Server tools ──────────────────────────────────────────────────────────
     def server_start(self, command: str, port: int, name: str = "default",
-                     wait_seconds: int = 15) -> dict:
+                     wait_seconds: int = 15, health_path: str = "/") -> dict:
         if name in self._servers:
             return self._ok(f"'{name}' already running on :{port}")
         argv = self._prepare_command(command)
         proc = subprocess.Popen(argv, cwd=str(self.workspace),
                                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        # Wait until the port is actually accepting connections (not just a fixed sleep)
+        # Step 1: TCP port binding check
         ready = self._wait_for_port(port, timeout=max(wait_seconds, 15))
         if proc.poll() is not None or not ready:
             proc.terminate()
@@ -190,7 +264,24 @@ class Tools:
             reason = "crashed" if proc.poll() is not None else f"did not bind on :{port} within {max(wait_seconds, 15)}s"
             return self._err(f"Server {reason}.\n{stderr_out}")
         self._servers[name] = {"process": proc, "port": port, "command": argv}
-        return self._ok(f"Server '{name}' running → http://localhost:{port}")
+
+        # Step 2: Verification Engine — HTTP health check (beyond TCP port)
+        health_url = f"http://127.0.0.1:{port}{health_path}"
+        health_note = ""
+        try:
+            import urllib.request as _ur
+            with _ur.urlopen(health_url, timeout=5) as resp:
+                if resp.status < 500:
+                    health_note = f" [HTTP:{resp.status} OK]"
+                else:
+                    health_note = f" [HTTP:{resp.status} — server error]"
+                    logger.warning(f"[Verify] Server health check got {resp.status} on {health_url}")
+        except Exception as he:
+            # Health check failed but TCP is open — surface as warning, not hard error
+            health_note = f" [HTTP health-check failed: {str(he)[:80]}]"
+            logger.warning(f"[Verify] Health check failed for {health_url}: {he}")
+
+        return self._ok(f"Server '{name}' running → http://localhost:{port}{health_note}")
 
     def server_stop(self, name: str = "default") -> dict:
         s = self._servers.pop(name, None)
@@ -312,6 +403,7 @@ AVAILABLE TOOLS
   delete_file(path)
   diff_edit(path, edits=[{"search":..,"replace":..}])
   search_replace(path, search, replace)
+  ast_replace(path, target_name, new_code)
 
 🐍 CODE EXECUTION
   run_python(code?, path?, timeout?)

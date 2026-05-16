@@ -1,0 +1,38 @@
+[Unit]
+Description=Nexora Autonomous Workspace
+After=network.target redis-server.service
+# Remove redis-server.service above if running SQLite single-worker mode
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/nexora
+
+# Environment configuration
+EnvironmentFile=/var/www/nexora/.env
+Environment="PATH=/var/www/nexora/venv/bin:$PATH"
+
+# Run the preflight deployment script. If it fails, the service will not start.
+ExecStartPre=/var/www/nexora/venv/bin/python nx_startup_check.py --strict
+
+# Gunicorn execution
+# For SSE streams, you MUST use gevent or eventlet worker class
+ExecStart=/var/www/nexora/venv/bin/gunicorn \
+    --workers 4 \
+    --worker-class gevent \
+    --bind 127.0.0.1:5000 \
+    --timeout 3600 \
+    --access-logfile /var/log/nexora/access.log \
+    --error-logfile /var/log/nexora/error.log \
+    web_app:app
+
+# Restart behavior
+Restart=always
+RestartSec=5
+
+# Hardening
+ProtectSystem=full
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

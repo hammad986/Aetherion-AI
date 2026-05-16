@@ -1,0 +1,699 @@
+/**
+ * nx-agi-native.css — AGI-Native Visual Differentiation Layer
+ * ════════════════════════════════════════════════════════════
+ * ALL styles here map to REAL runtime state.
+ * No fake animations. No cosmetic AI gimmicks.
+ * Load after: nds-tokens.css, layout.css
+ */
+
+/* ━━ COGNITION STREAM ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+.agi-cog-stream {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  font-size: var(--nds-type-xs);
+  font-family: var(--nds-font);
+  overflow-y: auto;
+  max-height: 100%;
+}
+
+.agi-cog-entry {
+  display: grid;
+  grid-template-columns: 14px 1fr;
+  gap: 6px;
+  align-items: baseline;
+  padding: 5px 10px;
+  border-left: 2px solid transparent;
+  transition: background var(--nds-dur-2), border-color var(--nds-dur-2);
+  line-height: 1.45;
+}
+
+.agi-cog-entry:hover {
+  background: var(--nds-surface-2);
+}
+
+/* Cognition entry types */
+.agi-cog-entry[data-type="thought"]   { border-left-color: var(--nds-accent); }
+.agi-cog-entry[data-type="decision"]  { border-left-color: var(--nds-green); }
+.agi-cog-entry[data-type="tool"]      { border-left-color: var(--nds-yellow); }
+.agi-cog-entry[data-type="error"]     { border-left-color: var(--nds-red); background: rgba(229,34,34,0.04); }
+.agi-cog-entry[data-type="verify"]    { border-left-color: var(--nds-purple); }
+.agi-cog-entry[data-type="recall"]    { border-left-color: var(--nds-blue); }
+
+.agi-cog-icon {
+  font-size: 10px;
+  opacity: 0.7;
+  padding-top: 1px;
+  user-select: none;
+}
+
+.agi-cog-text {
+  color: var(--nds-text-md);
+  word-break: break-word;
+}
+
+.agi-cog-entry[data-type="thought"] .agi-cog-text  { color: var(--nds-text-hi); }
+.agi-cog-entry[data-type="decision"] .agi-cog-text { color: var(--nds-green); }
+.agi-cog-entry[data-type="error"] .agi-cog-text    { color: var(--nds-red); }
+
+.agi-cog-time {
+  font-size: 9px;
+  color: var(--nds-text-dim);
+  white-space: nowrap;
+  margin-top: 1px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Live cursor — only present on the actively streaming entry */
+.agi-cog-entry.streaming .agi-cog-text::after {
+  content: '▍';
+  display: inline-block;
+  animation: agi-cursor-blink 0.9s step-end infinite;
+  color: var(--nds-accent);
+  margin-left: 1px;
+  font-size: 9px;
+  vertical-align: middle;
+}
+
+@keyframes agi-cursor-blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+/* Section dividers inside cognition stream */
+.agi-cog-divider {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px 4px;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--nds-text-dim);
+}
+
+.agi-cog-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--nds-surface-4);
+}
+
+/* ━━ TOOL EXECUTION TRACE ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+.agi-tool-trace {
+  background: var(--nds-surface-1);
+  border: 1px solid var(--nds-surface-4);
+  border-radius: var(--nds-r-sm);
+  margin: 4px 10px;
+  overflow: hidden;
+}
+
+.agi-tool-trace-hdr {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  background: var(--nds-surface-2);
+  cursor: pointer;
+  user-select: none;
+  font-size: var(--nds-type-xs);
+}
+
+.agi-tool-trace-hdr:hover { background: var(--nds-surface-3); }
+
+.agi-tool-name {
+  font-weight: 600;
+  color: var(--nds-text-hi);
+  font-family: var(--nds-mono);
+  font-size: 11px;
+}
+
+.agi-tool-status {
+  margin-left: auto;
+  font-size: 9px;
+  padding: 1px 6px;
+  border-radius: var(--nds-r-pill);
+  font-weight: 600;
+}
+
+.agi-tool-status.running  { background: var(--nds-blue-lo);   color: var(--nds-blue);   }
+.agi-tool-status.done     { background: var(--nds-green-lo);  color: var(--nds-green);  }
+.agi-tool-status.error    { background: var(--nds-red-lo);    color: var(--nds-red);    }
+.agi-tool-status.blocked  { background: var(--nds-yellow-lo); color: var(--nds-yellow); }
+
+.agi-tool-duration {
+  font-size: 9px;
+  color: var(--nds-text-dim);
+  font-variant-numeric: tabular-nums;
+}
+
+.agi-tool-trace-body {
+  padding: 6px 10px;
+  font-size: var(--nds-type-xs);
+  font-family: var(--nds-mono);
+  color: var(--nds-text-lo);
+  max-height: 120px;
+  overflow-y: auto;
+  display: none;
+  white-space: pre-wrap;
+  word-break: break-all;
+  line-height: 1.5;
+}
+
+.agi-tool-trace.expanded .agi-tool-trace-body { display: block; }
+
+/* ━━ TRUST & EXPLAINABILITY OVERLAYS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+.agi-trust-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background: var(--nds-surface-1);
+  border-bottom: 1px solid var(--nds-surface-4);
+  font-size: var(--nds-type-xs);
+}
+
+.agi-trust-label {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--nds-text-dim);
+  white-space: nowrap;
+}
+
+.agi-trust-track {
+  flex: 1;
+  height: 4px;
+  background: var(--nds-surface-4);
+  border-radius: var(--nds-r-pill);
+  overflow: hidden;
+}
+
+.agi-trust-fill {
+  height: 100%;
+  border-radius: var(--nds-r-pill);
+  transition: width var(--nds-dur-5) var(--nds-ease-out),
+              background var(--nds-dur-3);
+  background: var(--nds-green);
+}
+
+/* Color-shift by trust level */
+.agi-trust-fill[data-level="high"]     { background: var(--nds-green); }
+.agi-trust-fill[data-level="medium"]   { background: var(--nds-yellow); }
+.agi-trust-fill[data-level="low"]      { background: var(--nds-red); }
+.agi-trust-fill[data-level="unknown"]  { background: var(--nds-text-dim); }
+
+.agi-trust-pct {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--nds-text-hi);
+  font-variant-numeric: tabular-nums;
+  min-width: 30px;
+  text-align: right;
+}
+
+/* Semantic validation chips */
+.agi-validation-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 6px 10px;
+}
+
+.agi-val-chip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: var(--nds-r-pill);
+  border: 1px solid transparent;
+  font-weight: 500;
+}
+
+.agi-val-chip.pass    { background: var(--nds-green-lo);  color: var(--nds-green);  border-color: var(--nds-green-lo); }
+.agi-val-chip.fail    { background: var(--nds-red-lo);    color: var(--nds-red);    border-color: var(--nds-red-lo); }
+.agi-val-chip.warn    { background: var(--nds-yellow-lo); color: var(--nds-yellow); border-color: var(--nds-yellow-lo); }
+.agi-val-chip.pending { background: var(--nds-surface-3); color: var(--nds-text-lo); }
+
+/* Assumption detector */
+.agi-assumption-block {
+  margin: 4px 10px;
+  padding: 7px 10px;
+  background: rgba(150, 125, 0, 0.06);
+  border: 1px solid var(--nds-yellow-lo);
+  border-left: 3px solid var(--nds-yellow);
+  border-radius: var(--nds-r-sm);
+  font-size: var(--nds-type-xs);
+  color: var(--nds-text-md);
+}
+
+.agi-assumption-label {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--nds-yellow);
+  margin-bottom: 3px;
+}
+
+/* ━━ HITL ESCALATION OVERLAY ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+.agi-hitl-escalation {
+  position: relative;
+  margin: 8px 10px;
+  padding: 12px 12px 10px;
+  background: rgba(229, 34, 34, 0.05);
+  border: 1px solid var(--nds-red);
+  border-radius: var(--nds-r-md);
+  animation: agi-hitl-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes agi-hitl-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(229,34,34,0); }
+  50%       { box-shadow: 0 0 0 4px rgba(229,34,34,0.12); }
+}
+
+.agi-hitl-escalation.resolved {
+  animation: none;
+  border-color: var(--nds-green);
+  background: rgba(0,145,24,0.04);
+}
+
+.agi-hitl-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 7px;
+}
+
+.agi-hitl-icon {
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.agi-hitl-title {
+  font-size: var(--nds-type-sm);
+  font-weight: 700;
+  color: var(--nds-red);
+}
+
+.agi-hitl-reason {
+  font-size: var(--nds-type-xs);
+  color: var(--nds-text-md);
+  line-height: 1.45;
+  margin-bottom: 10px;
+}
+
+.agi-hitl-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.agi-hitl-btn {
+  flex: 1;
+  padding: 6px 10px;
+  border-radius: var(--nds-r-sm);
+  font-size: var(--nds-type-xs);
+  font-weight: 600;
+  font-family: var(--nds-font);
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all var(--nds-dur-2);
+}
+
+.agi-hitl-btn.approve {
+  background: var(--nds-green);
+  color: #fff;
+}
+.agi-hitl-btn.approve:hover { filter: brightness(1.1); }
+
+.agi-hitl-btn.reject {
+  background: var(--nds-surface-3);
+  color: var(--nds-red);
+  border-color: var(--nds-red);
+}
+.agi-hitl-btn.reject:hover { background: var(--nds-red-lo); }
+
+.agi-hitl-btn.retry {
+  background: var(--nds-surface-3);
+  color: var(--nds-text-md);
+  border-color: var(--nds-surface-5);
+}
+.agi-hitl-btn.retry:hover { background: var(--nds-surface-4); color: var(--nds-text-hi); }
+
+/* ━━ DAG EXECUTION NODES ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+.agi-dag-surface {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: var(--nds-type-xs);
+}
+
+.agi-dag-node {
+  display: grid;
+  grid-template-columns: 8px 1fr auto;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: var(--nds-r-sm);
+  border: 1px solid var(--nds-surface-4);
+  background: var(--nds-surface-1);
+  transition: background var(--nds-dur-2), border-color var(--nds-dur-2);
+  cursor: default;
+}
+
+.agi-dag-node:hover { background: var(--nds-surface-2); }
+
+/* State indicators */
+.agi-dag-node-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: background var(--nds-dur-3);
+}
+
+.agi-dag-node[data-state="pending"]  .agi-dag-node-dot { background: var(--nds-surface-5); }
+.agi-dag-node[data-state="running"]  .agi-dag-node-dot {
+  background: var(--nds-blue);
+  animation: agi-node-pulse 1.2s ease-in-out infinite;
+}
+.agi-dag-node[data-state="done"]     .agi-dag-node-dot { background: var(--nds-green); }
+.agi-dag-node[data-state="error"]    .agi-dag-node-dot { background: var(--nds-red); }
+.agi-dag-node[data-state="blocked"]  .agi-dag-node-dot { background: var(--nds-yellow); }
+.agi-dag-node[data-state="skipped"]  .agi-dag-node-dot { background: var(--nds-text-dim); }
+
+@keyframes agi-node-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0,121,242,0); }
+  50%       { box-shadow: 0 0 0 4px rgba(0,121,242,0.25); }
+}
+
+/* Active running node gets highlighted border */
+.agi-dag-node[data-state="running"] {
+  border-color: var(--nds-accent-border);
+  background: var(--nds-accent-subtle);
+}
+
+.agi-dag-node[data-state="error"] {
+  border-color: var(--nds-red-lo);
+  background: rgba(229,34,34,0.04);
+}
+
+.agi-dag-node-label {
+  color: var(--nds-text-hi);
+  font-size: var(--nds-type-xs);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.agi-dag-node[data-state="pending"] .agi-dag-node-label { color: var(--nds-text-lo); }
+.agi-dag-node[data-state="skipped"] .agi-dag-node-label { color: var(--nds-text-dim); text-decoration: line-through; }
+
+.agi-dag-node-dur {
+  font-size: 9px;
+  color: var(--nds-text-dim);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Dependency connector line */
+.agi-dag-edge {
+  height: 12px;
+  margin-left: 12px;
+  border-left: 1px dashed var(--nds-surface-5);
+}
+
+/* Retry badge */
+.agi-retry-badge {
+  font-size: 9px;
+  padding: 1px 5px;
+  background: var(--nds-yellow-lo);
+  color: var(--nds-yellow);
+  border-radius: var(--nds-r-pill);
+  font-weight: 700;
+}
+
+/* ━━ MEMORY / CONTEXT VISIBILITY ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+.agi-memory-section {
+  padding: 6px 10px;
+}
+
+.agi-memory-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--nds-surface-3);
+  font-size: var(--nds-type-xs);
+}
+
+.agi-memory-item:last-child { border-bottom: none; }
+
+.agi-memory-type {
+  font-size: 9px;
+  font-weight: 700;
+  min-width: 40px;
+  padding-top: 1px;
+  flex-shrink: 0;
+}
+
+.agi-memory-type.episodic  { color: var(--nds-blue); }
+.agi-memory-type.semantic  { color: var(--nds-purple); }
+.agi-memory-type.caution   { color: var(--nds-yellow); }
+.agi-memory-type.filtered  { color: var(--nds-text-dim); text-decoration: line-through; }
+
+.agi-memory-content {
+  color: var(--nds-text-md);
+  line-height: 1.4;
+  flex: 1;
+}
+
+.agi-memory-trust-tag {
+  font-size: 9px;
+  padding: 1px 5px;
+  border-radius: var(--nds-r-pill);
+  flex-shrink: 0;
+  font-weight: 600;
+}
+
+.agi-memory-trust-tag.high   { background: var(--nds-green-lo);  color: var(--nds-green); }
+.agi-memory-trust-tag.low    { background: var(--nds-red-lo);    color: var(--nds-red); }
+.agi-memory-trust-tag.medium { background: var(--nds-yellow-lo); color: var(--nds-yellow); }
+
+/* ━━ EXECUTION INTELLIGENCE — RESOURCE BUDGET BAR ━━━━━━━━━━━━━━━━━━━ */
+
+.agi-budget-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 10px;
+  font-size: var(--nds-type-xs);
+}
+
+.agi-budget-label {
+  font-size: 9px;
+  color: var(--nds-text-dim);
+  width: 52px;
+  flex-shrink: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.agi-budget-track {
+  flex: 1;
+  height: 3px;
+  background: var(--nds-surface-4);
+  border-radius: var(--nds-r-pill);
+  overflow: hidden;
+}
+
+.agi-budget-fill {
+  height: 100%;
+  border-radius: var(--nds-r-pill);
+  background: var(--nds-accent);
+  transition: width var(--nds-dur-5) var(--nds-ease-out);
+}
+
+.agi-budget-fill.warn  { background: var(--nds-yellow); }
+.agi-budget-fill.crit  { background: var(--nds-red); }
+
+.agi-budget-val {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--nds-text-hi);
+  min-width: 36px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ━━ PANEL SECTION HEADERS (shared) ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+.agi-section-hdr {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px 5px;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--nds-text-dim);
+  border-bottom: 1px solid var(--nds-surface-3);
+}
+
+.agi-section-hdr-action {
+  background: none;
+  border: none;
+  color: var(--nds-text-dim);
+  cursor: pointer;
+  font-size: 10px;
+  padding: 0 4px;
+  border-radius: var(--nds-r-xs);
+  transition: color var(--nds-dur-2);
+}
+
+.agi-section-hdr-action:hover { color: var(--nds-text-hi); }
+
+/* Live pulse dot — maps to SSE connection active */
+.agi-live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--nds-green);
+  display: inline-block;
+  margin-right: 5px;
+  flex-shrink: 0;
+}
+
+.agi-live-dot.streaming {
+  animation: agi-dot-stream 1s ease-in-out infinite;
+}
+
+.agi-live-dot.idle    { background: var(--nds-text-dim); animation: none; }
+.agi-live-dot.error   { background: var(--nds-red); animation: none; }
+.agi-live-dot.blocked { background: var(--nds-yellow); animation: none; }
+
+@keyframes agi-dot-stream {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.7); }
+}
+
+/* ━━ LEFT PANEL — COGNITION SECTION UPGRADES ━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+/* Upgrade existing nx-think-section to feel more premium */
+.nx-think-section {
+  border-top: 1px solid var(--nds-surface-3);
+  padding-top: 4px;
+  margin-top: 4px;
+}
+
+.nx-think-label {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--nds-text-dim);
+  padding: 4px 10px 2px;
+}
+
+/* ━━ ORCHESTRATION HEALTH STATUS BAR ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+#agi-orch-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  background: var(--nds-surface-1);
+  border-top: 1px solid var(--nds-surface-3);
+  font-size: var(--nds-type-xs);
+  flex-shrink: 0;
+}
+
+.agi-orch-state {
+  font-weight: 600;
+  color: var(--nds-text-hi);
+}
+
+.agi-orch-state.idle     { color: var(--nds-text-dim); }
+.agi-orch-state.running  { color: var(--nds-blue); }
+.agi-orch-state.blocked  { color: var(--nds-yellow); }
+.agi-orch-state.done     { color: var(--nds-green); }
+.agi-orch-state.error    { color: var(--nds-red); }
+
+.agi-orch-step {
+  font-size: 9px;
+  color: var(--nds-text-dim);
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ━━ RIGHT PANEL — OBSERVABILITY UPGRADES ━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+.nx-obs-feed-hdr {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 8px;
+  background: var(--nds-surface-2);
+  border-bottom: 1px solid var(--nds-surface-4);
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--nds-text-dim);
+  flex-shrink: 0;
+}
+
+.nx-obs-count-badge {
+  font-size: 9px;
+  background: var(--nds-surface-4);
+  color: var(--nds-text-lo);
+  padding: 1px 5px;
+  border-radius: var(--nds-r-pill);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ━━ PANEL TAB BAR — COGNITION/TRUST/DAG TABS ━━━━━━━━━━━━━━━━━━━━━━━ */
+
+.agi-right-tabs {
+  display: flex;
+  background: var(--nds-surface-1);
+  border-bottom: 1px solid var(--nds-surface-4);
+  flex-shrink: 0;
+}
+
+.agi-right-tab {
+  flex: 1;
+  padding: 7px 4px;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--nds-text-lo);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: color var(--nds-dur-2), border-color var(--nds-dur-2);
+  font-family: var(--nds-font);
+  white-space: nowrap;
+}
+
+.agi-right-tab:hover { color: var(--nds-text-hi); }
+
+.agi-right-tab.active {
+  color: var(--nds-text-hi);
+  border-bottom-color: var(--nds-accent);
+}
+
+.agi-right-tab-pane { display: none; height: 100%; overflow-y: auto; }
+.agi-right-tab-pane.active { display: block; }

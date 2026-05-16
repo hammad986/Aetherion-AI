@@ -16,6 +16,12 @@ Schema overview:
 """
 
 import json, sqlite3, logging, re, hashlib, math
+
+try:
+    import infra.db_helper as _db_helper
+    _db_helper.patch_sqlite_globally()
+except ImportError:
+    pass
 from datetime import datetime
 from pathlib import Path
 from config import Config
@@ -50,7 +56,15 @@ except Exception:
 
 
 class Memory:
-    def __init__(self, config: Config = None):
+    def __init__(self, config: Config = None, emit_fn=None):
+        """
+        Parameters
+        ----------
+        emit_fn : callable(event_type: str, payload: dict) | None
+            If provided, the memory system will emit agent.memory_retrieved
+            SSE events for every retrieval (explainability surface).
+            Typically wired to Agent._emit_record.
+        """
         self.config    = config or Config()
         self.json_path = Path(self.config.MEMORY_FILE)
         self.db_path   = Path(self.config.MEMORY_FILE.replace(".json", ".db"))
@@ -58,6 +72,8 @@ class Memory:
         self.vector_dir = Path(self.config.VECTOR_DB_DIR)
         self._vector_enabled = False
         self._task_collection = None
+        # Explainability hook — set by Agent after construction
+        self._emit_fn = emit_fn  # callable(event_type, payload) | None
         self._learning_collection = None
         self._init_db()
         self._init_vector_store()
@@ -131,7 +147,14 @@ class Memory:
         return [{"id":r[0],"task":r[1],"status":r[2],"api":r[3],"tokens":r[4],"time":r[5]} for r in rows]
 
     def find_similar_task(self, task: str, limit: int = 3) -> list:
-        """Semantic search over prior tasks with keyword fallback."""
+        """Semantic search over prior tasks with keyword fallback.
+
+        Emits agent.memory_retrieved for each match when _emit_fn is set,
+        supplying full explainability metadata for the frontend surface.
+        """
+        import time as _time
+        out = []
+
         if self._vector_enabled:
             try:
                 query = self._task_collection.query(
@@ -139,28 +162,87 @@ class Memory:
                     n_results=limit,
                     include=["metadatas", "documents", "distances"],
                 )
-                out = []
                 metadatas = query.get("metadatas", [[]])[0]
-                docs = query.get("documents", [[]])[0]
+                docs      = query.get("documents",  [[]])[0]
+                dists     = query.get("distances",  [[]])[0]
                 for i, meta in enumerate(metadatas):
+                    dist = dists[i] if i < len(dists) else 1.0
+                    conf = round(max(0.0, 1.0 - float(dist or 1.0)), 3)
                     out.append({
-                        "task": meta.get("task", docs[i] if i < len(docs) else ""),
+                        "task":   meta.get("task", docs[i] if i < len(docs) else ""),
                         "status": meta.get("status", "unknown"),
                         "result": meta.get("result", "")[:200],
+                        "_conf":  conf,
+                        "_source": "vector:tasks",
                     })
                 if out:
-                    return out
+                    self._emit_memory_retrieved(out, task, "semantic_vector")
+                    return [{k: v for k, v in r.items() if not k.startswith("_")} for r in out]
             except Exception as e:
                 logger.warning(f"Semantic task search failed, falling back: {e}")
 
         words = re.findall(r"[a-zA-Z0-9_]+", task.lower())[:8]
-        results = []
-        for row in self._conn().execute("SELECT task,status,result FROM tasks ORDER BY id DESC LIMIT 150"):
-            if any(w in row[0].lower() for w in words):
-                results.append({"task": row[0], "status": row[1], "result": row[2][:200]})
-            if len(results) >= limit:
+        rows_checked = 0
+        for row in self._conn().execute(
+            "SELECT id, task, status, result, created_at FROM tasks ORDER BY id DESC LIMIT 150"
+        ):
+            rows_checked += 1
+            if any(w in row[1].lower() for w in words):
+                # Estimate staleness from created_at (stored as ISO string or epoch)
+                staleness_h = 0.0
+                try:
+                    from datetime import datetime as _dt
+                    ts_str = str(row[4] or "")
+                    created = _dt.fromisoformat(ts_str.replace("Z", "+00:00"))
+                    staleness_h = round(
+                        (_time.time() - created.timestamp()) / 3600.0, 1
+                    )
+                except Exception:
+                    pass
+                # Keyword-match confidence heuristic: overlap ratio
+                task_words = set(row[1].lower().split())
+                overlap = len(set(words) & task_words) / max(len(words), 1)
+                conf = round(min(0.92, 0.5 + 0.42 * overlap), 3)
+                out.append({
+                    "task":        row[1],
+                    "status":      row[2],
+                    "result":      row[3][:200],
+                    "_conf":       conf,
+                    "_source":     f"sqlite:tasks#id={row[0]}",
+                    "_staleness_h": staleness_h,
+                })
+            if len(out) >= limit:
                 break
-        return results
+
+        self._emit_memory_retrieved(out, task, "keyword_sqlite")
+        return [{k: v for k, v in r.items() if not k.startswith("_")} for r in out]
+
+    def _emit_memory_retrieved(self, items: list, query: str, method: str) -> None:
+        """Emit agent.memory_retrieved SSE events for each retrieved item.
+        Silent no-op when _emit_fn is not set (non-realtime mode)."""
+        if not self._emit_fn or not items:
+            return
+        for item in items:
+            status   = item.get("status", "unknown")
+            conf     = item.get("_conf", 0.7)
+            stale_h  = item.get("_staleness_h", 0.0)
+            source   = item.get("_source", "memory")
+            trust    = "high" if status == "done" and conf > 0.75 else (
+                       "medium" if conf > 0.45 else "low")
+            try:
+                self._emit_fn("agent.memory_retrieved", {
+                    "type":             "episodic",
+                    "content":          (item.get("task") or "")[:200],
+                    "source":           source,
+                    "trust":            trust,
+                    "confidence":       conf,
+                    "staleness_h":      stale_h,
+                    "why":              f"Matched query via {method} (query={query[:60]})",
+                    "retrieval_reason": method,
+                    "retrieval_scope":  "tasks",
+                })
+            except Exception:
+                pass
 
     # ══════════════════════════════════════════════════
     # 3. CODE SNIPPETS
@@ -279,6 +361,9 @@ class Memory:
         return [{"category":r[0],"insight":r[1],"time":r[2]} for r in rows]
 
     def get_relevant_learnings(self, query: str, limit: int = 8) -> list:
+        """Return relevant learnings with agent.memory_retrieved emission for explainability."""
+        out = []
+
         if self._vector_enabled:
             try:
                 result = self._learning_collection.query(
@@ -286,28 +371,54 @@ class Memory:
                     n_results=limit,
                     include=["metadatas", "documents"],
                 )
-                out = []
                 metadatas = result.get("metadatas", [[]])[0]
-                docs = result.get("documents", [[]])[0]
+                docs      = result.get("documents",  [[]])[0]
                 for i, meta in enumerate(metadatas):
                     out.append({
                         "category": meta.get("category", "general"),
-                        "insight": meta.get("insight", docs[i] if i < len(docs) else ""),
-                        "time": meta.get("created_at", ""),
+                        "insight":  meta.get("insight", docs[i] if i < len(docs) else ""),
+                        "time":     meta.get("created_at", ""),
                     })
                 if out:
+                    self._emit_learnings_retrieved(out, query, "semantic_vector")
                     return out
             except Exception as e:
                 logger.warning(f"Semantic learning search failed, falling back: {e}")
 
         words = re.findall(r"[a-zA-Z0-9_]+", query.lower())[:8]
-        out = []
-        for row in self._conn().execute("SELECT category,insight,created_at FROM learnings ORDER BY id DESC LIMIT 100"):
+        for row in self._conn().execute(
+            "SELECT category, insight, created_at FROM learnings ORDER BY id DESC LIMIT 100"
+        ):
             if not words or any(w in row[1].lower() for w in words):
                 out.append({"category": row[0], "insight": row[1], "time": row[2]})
             if len(out) >= limit:
                 break
+
+        self._emit_learnings_retrieved(out, query, "keyword_sqlite")
         return out
+
+    def _emit_learnings_retrieved(self, items: list, query: str, method: str) -> None:
+        """Emit agent.memory_retrieved for learning items. Silent no-op without _emit_fn."""
+        if not self._emit_fn or not items:
+            return
+        for item in items:
+            cat = item.get("category", "general")
+            trust = "high" if cat in ("best_practice", "success_pattern") else (
+                    "medium" if cat in ("error_fix", "tool_outcome") else "low")
+            try:
+                self._emit_fn("agent.memory_retrieved", {
+                    "type":             "semantic",
+                    "content":          (item.get("insight") or "")[:200],
+                    "source":           f"sqlite:learnings[category={cat}]",
+                    "trust":            trust,
+                    "confidence":       0.78 if method == "semantic_vector" else 0.62,
+                    "staleness_h":      0.0,
+                    "why":              f"Learning [{cat}] matched via {method} (query={query[:60]})",
+                    "retrieval_reason": method,
+                    "retrieval_scope":  "learnings",
+                })
+            except Exception:
+                pass
 
     def learnings_prompt(self, query: str = "") -> str:
         learnings = self.get_relevant_learnings(query, limit=10) if query else self.get_learnings(limit=10)

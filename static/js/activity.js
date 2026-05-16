@@ -1,5 +1,6 @@
 // Phase 28: Listen for uncertainty state
       // In a real implementation this would trigger off of an SSE event or polling the MCP state endpoint
+      const nxFlag = (name) => !!(window.NX && typeof window.NX.hasDebugFlag === 'function' && window.NX.hasDebugFlag(name));
       window.addEventListener('phase28:uncertainty', function (e) {
         const query = e.detail;
         if (!query) return;
@@ -288,6 +289,7 @@
         const el = $('stStatus');
         if (!el) return;
         const mo = new MutationObserver(() => {
+          if (nxFlag('mutationobservers')) return;
           const txt = el.textContent.toLowerCase();
           const isActive = txt.includes('running') || txt.includes('queued');
           showHitlPanel(isActive);
@@ -308,181 +310,6 @@
           }
           _origQt.call(this);
         };
-      }
-
-      /* ================================================================
-         PHASE 32 — REAL PTY TERMINAL (xterm.js)
-         ================================================================ */
-      let _xterm = null;   // Terminal instance
-      let _xtermFit = null;   // FitAddon
-      let _xtermSSE = null;   // EventSource
-      let _xtermTid = null;   // terminal_id from backend
-      let _xtermBuf = '';     // input buffer for line editing
-      let _xtermInited = false;
-
-      const STEP_COLORS = {
-        plan: '#388bfd',
-        execute: '#f0883e',
-        verify: '#3fb950',
-        reflect: '#bc8cff',
-        error: '#f85149',
-      };
-
-      async function initXterm() {
-        if (_xtermInited) return;
-        if (typeof Terminal === 'undefined') {
-          setTimeout(initXterm, 400);
-          return;
-        }
-        _xtermInited = true;
-
-        _xterm = new Terminal({
-          theme: {
-            background: '#0c0c0c',
-            foreground: '#cccccc',
-            cursor: '#58a6ff',
-            cursorAccent: '#0c0c0c',
-            selection: 'rgba(88,166,255,0.2)',
-            black: '#000000', red: '#f85149', green: '#3fb950',
-            yellow: '#d29922', blue: '#58a6ff', magenta: '#bc8cff',
-            cyan: '#39c5cf', white: '#b1bac4',
-            brightBlack: '#6e7681', brightRed: '#ff7b72',
-            brightGreen: '#56d364', brightYellow: '#e3b341',
-            brightBlue: '#79c0ff', brightMagenta: '#d2a8ff',
-            brightCyan: '#56d4dd', brightWhite: '#f0f6fc',
-          },
-          fontFamily: "'Cascadia Code', 'Fira Code', 'JetBrains Mono', ui-monospace, monospace",
-          fontSize: 13,
-          lineHeight: 1.35,
-          cursorBlink: true,
-          cursorStyle: 'bar',
-          scrollback: 5000,
-          allowProposedApi: true,
-        });
-
-        _xtermFit = new FitAddon.FitAddon();
-        _xterm.loadAddon(_xtermFit);
-
-        if (typeof WebLinksAddon !== 'undefined') {
-          _xterm.loadAddon(new WebLinksAddon.WebLinksAddon());
-        }
-
-        const mount = $('xtermMount');
-        _xterm.open(mount);
-
-        // Fit + resize on container changes
-        const ro = new ResizeObserver(() => { _xtermFit.fit(); _sendResize(); });
-        ro.observe(mount);
-        _xtermFit.fit();
-
-        // Forward key input to PTY
-        _xterm.onData(data => {
-          if (!_xtermTid) return;
-          api('POST', `/api/pty/${_xtermTid}/input`, { data });
-        });
-
-        // Connect to backend PTY
-        await xtermConnect();
-      }
-
-      async function xtermConnect(sid) {
-        sid = sid || (currentSession || 'global');
-        const r = await api('POST', '/api/pty/start', { session_id: sid });
-        if (!r.ok || !r.data.ok) {
-          xtermWrite(`\r\n\x1b[31m[Terminal] PTY unavailable: ${r.data?.error || 'unknown'}\x1b[0m\r\n`);
-          $('xtermStatus').textContent = 'PTY unavailable';
-          $('xtermSkeleton').style.display = 'none';
-          return;
-        }
-        _xtermTid = r.data.terminal_id;
-        $('xtermStatus').textContent = `Connected — ${r.data.shell}`;
-        $('xtermSkeleton').style.display = 'none';
-
-        // Close any existing SSE
-        if (_xtermSSE) { _xtermSSE.close(); _xtermSSE = null; }
-
-        _xtermSSE = new EventSource(`/api/pty/${_xtermTid}/stream`);
-        _xtermSSE.onmessage = (e) => {
-          try {
-            const msg = JSON.parse(e.data);
-            if (msg.type === 'output') {
-              _xterm.write(msg.data);
-            } else if (msg.type === 'exit') {
-              xtermWrite('\r\n\x1b[33m[shell exited — click Restart to reconnect]\x1b[0m\r\n');
-              $('xtermStatus').textContent = 'Disconnected';
-              _xtermSSE.close();
-            }
-          } catch (_) { }
-        };
-        _xtermSSE.onerror = () => {
-          $('xtermStatus').textContent = 'Stream error — reconnecting…';
-          setTimeout(() => xtermConnect(sid), 3000);
-        };
-
-        // Send initial resize
-        _sendResize();
-      }
-
-      function _sendResize() {
-        if (!_xtermTid) return;
-        const cols = _xterm?.cols || 120;
-        const rows = _xterm?.rows || 30;
-        api('POST', `/api/pty/${_xtermTid}/resize`, { cols, rows });
-      }
-
-      function xtermWrite(text) {
-        if (_xterm) _xterm.write(text);
-      }
-
-      function xtermRunQuick() {
-        const input = $('xtermQuickInput');
-        const cmd = (input?.value || '').trim();
-        if (!cmd || !_xtermTid) return;
-        input.value = '';
-        api('POST', `/api/pty/${_xtermTid}/run`, { command: cmd, source: 'user' });
-        input.focus();
-      }
-
-      function xtermClear() {
-        if (_xterm) _xterm.clear();
-      }
-
-      async function xtermRestart() {
-        if (_xtermTid) {
-          await api('POST', `/api/pty/${_xtermTid}/close`);
-          _xtermTid = null;
-          _xtermInited = false;
-        }
-        if (_xtermSSE) { _xtermSSE.close(); _xtermSSE = null; }
-        if (_xterm) {
-          xtermWrite('\r\n\x1b[33m[↻ Restarting shell…]\x1b[0m\r\n');
-        }
-        $('xtermSkeleton').style.display = 'flex';
-        $('xtermStatus').textContent = 'Restarting…';
-        await initXterm();
-      }
-
-      // Auto-init when terminal tab is first opened
-      window.NX_LOAD_TASKS.push( () => {
-        const termBtn = document.querySelector('[data-tab="terminal"]');
-        if (termBtn) {
-          termBtn.addEventListener('click', () => {
-            setTimeout(initXterm, 80);
-          });
-        }
-      });
-
-      // Agent-terminal sync: called when agent executes a command
-      function xtermAgentExec(cmd) {
-        if (!_xtermTid) return;
-        api('POST', `/api/pty/${_xtermTid}/agent-exec`,
-          { command: cmd, session_id: currentSession });
-        // Badge in log area
-        const div = document.createElement('div');
-        div.className = 'agent-cmd-badge';
-        div.innerHTML = `<span class="agent-cmd-source">AGENT</span>${escapeHtml(cmd)}`;
-        const logArea = $('logArea');
-        if (logArea) logArea.appendChild(div);
       }
 
       /* ================================================================

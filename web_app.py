@@ -188,7 +188,6 @@ _BROWSER_ALLOWLIST_DEFAULT = ["localhost", "127.0.0.1"]
 _BROWSER_HOST_RE = _re_pn.compile(
     r"^(?=.{1,253}$)([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)(\.([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?))*$"
 )
-_BROWSER_LOCK = threading.Lock()
 
 
 def _browser_allowlist_normalize(host: str) -> str:
@@ -255,7 +254,6 @@ def _browser_allowlist_save(items: list) -> None:
 # is server-wide rather than per-session, which matches the user's
 # expectation of a single editor preference.
 _REVIEW_POLICY_PATH = os.path.join("data", "review_policy.json")
-_REVIEW_LOCK = threading.Lock()
 # Hard caps on the hybrid thresholds — even if the user sets the slider
 # to "999 lines", the editor should not silently auto-apply massive
 # rewrites without human review.  These numbers intentionally cap above
@@ -474,6 +472,9 @@ def _looks_text(path, sample_bytes=2048):
     text_chars = bytes(range(32, 127)) + b"\n\r\t\f\b"
     non_text = sum(1 for b in chunk if b not in text_chars)
     return (non_text / len(chunk)) < 0.30
+
+from runtime.state import *
+from runtime.state import _db_lock, _BROWSER_LOCK, _hitl_lock, _hitl_state, _P7_PIPELINES, _p7_lock, _p13_summarize_lock, _p13_in_progress, _chain_lock, _editor_llm_lock, _ROUTING_LOCK, _TERMINAL_MODE_LOCK, _terminal_lock, _STEP_STORE, _STEP_LOCK, _oauth_states
 
 app = Flask(__name__)
 
@@ -812,7 +813,6 @@ def default_managed_config():
 # Persistence (SQLite)
 # ────────────────────────────────────────────────────────────────────────────
 
-_db_lock = threading.Lock()
 
 
 def _conn():
@@ -1036,8 +1036,6 @@ def _build_chat_context(sid, n=5):
 # ── Phase 13: Context Compression & Memory Optimization ──────────────────────
 
 _P13_SUMMARIZE_THRESHOLD = 10   # messages before summarization kicks in
-_p13_summarize_lock = threading.Lock()
-_p13_in_progress: set = set()  # track sessions currently being summarized
 
 
 def _get_chat_summary(sid):
@@ -1421,10 +1419,6 @@ def update_state_from_line(sid, line):
 # Queue & runner
 # ────────────────────────────────────────────────────────────────────────────
 
-queue_lock     = threading.Lock()
-pending_queue  = deque()             # session ids waiting
-running        = {"sid": None, "proc": None, "seq": 0}
-managed_runs   = deque()             # timestamps of recent managed-mode runs
 
 
 def snapshot_workspace(ws_dir=None):
@@ -2062,31 +2056,6 @@ def docs():
 # Routes — Config (Phase 5.2 hybrid API system)
 # ────────────────────────────────────────────────────────────────────────────
 
-@app.route("/api/providers")
-def api_providers():
-    """Full Phase 5 provider catalogue with capabilities, categories, and key status."""
-    stored_cfg = get_setting("default_config", default_managed_config())
-    stored_keys = stored_cfg.get("api_keys") or {}
-    result = []
-    for p, meta in PROVIDERS.items():
-        key_env = meta.get("key_env")
-        has_platform_key = bool(os.getenv(key_env)) if key_env else False
-        has_byok_key = bool(stored_keys.get(p))
-        result.append({
-            "id":          p,
-            "label":       meta["label"],
-            "category":    meta.get("category", "core"),
-            "needs_key":   bool(key_env),
-            "speed":       meta.get("speed", "balanced"),
-            "quality":     meta.get("quality", "good"),
-            "caps":        meta.get("caps", []),
-            "models":      meta.get("models", []),
-            "plan_pref":   meta.get("plan_pref", []),
-            "has_platform_key": has_platform_key,
-            "has_byok_key":     has_byok_key,
-            "available":   (not bool(key_env)) or has_platform_key or has_byok_key,
-        })
-    return jsonify({"providers": result})
 
 
 @app.route("/api/p5/routing")
@@ -2685,7 +2654,6 @@ def api_system_metrics():
 # orch.run() (which would block the Flask thread). The actual run goes
 # through the existing subprocess worker.
 # ────────────────────────────────────────────────────────────────────
-_chain_lock   = threading.Lock()
 _chain_runner = None
 _chain_init_error = None
 # Phase 19 — Self-driven goals engine. Lazily instantiated alongside
@@ -3163,108 +3131,6 @@ def api_goals_run_now():
                     "status": eng.status()})
 
 
-@app.route("/api/queue-task", methods=["POST"])
-@idempotent(ttl_hours=1)
-def api_queue_task():
-    # Phase 19: kill switch check
-    if is_kill_switch_active():
-        return jsonify({"error": "Service temporarily suspended. Try again later."}), 503
-
-    data = request.get_json() or {}
-    raw_task = (data.get("task") or "").strip()
-    # Phase 19: sanitise and length-cap the prompt
-    task, _perr = sanitise_prompt(raw_task)
-    if _perr:
-        return jsonify({"error": _perr}), 400
-
-    model = data.get("model") or None
-    plan_mode = (data.get("plan_mode") or "elite").lower()
-    # Phase 12 — conversation context
-    continue_sid = (data.get("continue_sid") or "").strip() or None
-    if plan_mode not in PLAN_CAPABILITIES:
-        plan_mode = "elite"
-    if not task:
-        return jsonify({"error": "Task text required"}), 400
-
-    # ── Phase 8: Subscription plan gate ──────────────────────────────────────
-    try:
-        _p8_state = p8_get_state()
-        _p8_plan  = p8_effective_plan(_p8_state)
-        _p8_ok, _p8_reason = p8_check_and_increment(plan_mode, _p8_plan, _p8_state)
-        if not _p8_ok:
-            return jsonify({"error": _p8_reason, "plan_gate": True,
-                            "current_plan": _p8_plan,
-                            "upgrade_needed": True}), 403
-    except Exception:
-        pass  # Never let billing logic break task submission
-
-    # ── Daily token cap (AI cost protection) ─────────────────────────────────
-    try:
-        _uid_for_cap = str(getattr(__import__("flask").g, "user_id", "anon"))
-        _plan_for_cap = p8_effective_plan(p8_get_state())
-        _cap_ok, _cap_used, _cap_limit, _cap_rem = daily_token_check(_uid_for_cap, _plan_for_cap)
-        if not _cap_ok:
-            return jsonify({
-                "error": (f"Daily AI token limit reached ({_cap_used:,}/{_cap_limit:,} tokens). "
-                          "Resets at midnight UTC. Upgrade your plan for higher limits."),
-                "token_cap_exceeded": True,
-                "tokens_used":  _cap_used,
-                "tokens_limit": _cap_limit,
-                "plan":         _plan_for_cap,
-            }), 429
-    except Exception:
-        pass  # Never block tasks due to token cap errors
-
-    cfg = get_setting("default_config", default_managed_config())
-    ok, err, _ = validate_config(cfg)
-    if not ok:
-        return jsonify({"error": f"Stored config invalid: {err}. Open settings to fix."}), 400
-
-    # Inject plan mode into session config
-    cfg["plan_mode"] = plan_mode
-    # Pass user_id so run_session can fire completion notifications
-    try:
-        import flask as _fl
-        _req_uid = str(getattr(_fl.g, "user_id", ""))
-        if _req_uid:
-            cfg["_notify_user_id"] = _req_uid
-    except Exception:
-        pass
-
-    # Managed-mode rate limiting
-    if cfg.get("mode") == "managed":
-        if len(pending_queue) >= MANAGED_LIMITS["max_pending_in_queue"]:
-            return jsonify({"error": "Managed queue is full. Try again shortly."}), 429
-        cutoff = time.time() - MANAGED_LIMITS["rate_window_seconds"]
-        recent = sum(1 for ts in managed_runs if ts >= cutoff)
-        if recent >= MANAGED_LIMITS["max_tasks_per_window"]:
-            return jsonify({
-                "error": f"Managed-mode rate limit reached "
-                         f"({MANAGED_LIMITS['max_tasks_per_window']}/"
-                         f"{MANAGED_LIMITS['rate_window_seconds']}s). "
-                         "Switch to BYOK or wait."}), 429
-
-    # ── Phase 12: Inject conversation context ────────────────────────────────
-    task_with_ctx = task
-    if continue_sid and db_session(continue_sid):
-        ctx = _build_chat_context(continue_sid, n=8)
-        if ctx:
-            task_with_ctx = f"{ctx}\n\nCurrent request: {task}"
-
-    sid = enqueue_task(task_with_ctx, model, cfg)
-
-    # Store user message in chat history — use the new session id as anchor
-    # but link the conversation to the continue_sid chain when continuing.
-    chat_sid = continue_sid if continue_sid and db_session(continue_sid) else sid
-    db_chat_add(chat_sid, "user", task, meta={"session_id": sid, "plan_mode": plan_mode})
-    # Also add to the new session if it's different from chat_sid
-    if chat_sid != sid:
-        db_chat_add(sid, "user", task, meta={"plan_mode": plan_mode})
-
-    caps = PLAN_CAPABILITIES[plan_mode]
-    return jsonify({"ok": True, "session_id": sid, "plan_mode": plan_mode,
-                    "plan_label": caps["label"], "max_steps": caps["max_steps"],
-                    "chat_sid": chat_sid})
 
 
 @app.route("/api/plan-config")
@@ -3273,93 +3139,22 @@ def api_plan_config():
     return jsonify({"plans": PLAN_CAPABILITIES})
 
 
-@app.route("/api/queue")
-def api_queue():
-    with queue_lock:
-        return jsonify({
-            "running": running.get("sid"),
-            "pending": list(pending_queue),
-        })
 
 
-@app.route("/api/sessions")
-def api_sessions():
-    return jsonify({"sessions": db_sessions()})
 
 
-@app.route("/api/session/<sid>")
-def api_session(sid):
-    s = db_session(sid)
-    if not s: return jsonify({"error": "Not found"}), 404
-    s["files"] = json.loads(s.get("files_json") or "[]")
-    s.pop("files_json", None)
-    s["config"] = public_config(json.loads(s.get("config_json") or "{}"))
-    s.pop("config_json", None)
-    s["usage"] = json.loads(s.get("usage_json") or "{}") or None
-    s.pop("usage_json", None)
-    s["is_running"] = (running.get("sid") == sid)
-    s["is_queued"] = sid in pending_queue
-    # Phase 21.1 polish — derive a friendly project name from the task prompt
-    # so the UI header can show "Project: flask-login" instead of just the sid.
-    s["name"] = _derive_project_name(s.get("task") or "")
-    return jsonify(s)
 
 
-@app.route("/api/session/<sid>", methods=["DELETE"])
-def api_session_delete(sid):
-    if running.get("sid") == sid:
-        return jsonify({"error": "Stop the session before deleting"}), 409
-    with queue_lock:
-        if sid in pending_queue:
-            pending_queue.remove(sid)
-    db_delete_session(sid)
-    return jsonify({"ok": True})
 
 
-@app.route("/api/session/<sid>/stop", methods=["POST"])
-def api_session_stop(sid):
-    with queue_lock:
-        if sid in pending_queue:
-            pending_queue.remove(sid)
-            db_update_session(sid, status="cancelled", finished_at=time.time())
-            return jsonify({"ok": True, "message": "Removed from queue"})
-    ok, msg = stop_running_session(sid)
-    code = 200 if ok else 400
-    return jsonify({"ok": ok, "message": msg}), code
 
 
-@app.route("/api/session/<sid>/restart", methods=["POST"])
-def api_session_restart(sid):
-    s = db_session(sid)
-    if not s: return jsonify({"error": "Not found"}), 404
-    cfg = json.loads(s.get("config_json") or "{}") or get_setting(
-        "default_config", default_managed_config())
-    new_sid = enqueue_task(s["task"], s["model"], cfg)
-    return jsonify({"ok": True, "session_id": new_sid})
 
 
 # ────────────────────────────────────────────────────────────────────────────
 # Routes — Logs / Decisions / Memory
 # ────────────────────────────────────────────────────────────────────────────
 
-@app.route("/api/logs")
-def api_logs():
-    sid = request.args.get("session_id")
-    if not sid: return jsonify({"error": "session_id required"}), 400
-
-    before = request.args.get("before")
-    if before:
-        try: before = int(before)
-        except ValueError: before = 0
-        if before > 0:
-            logs = db_logs_older(sid, before, 200)
-            return jsonify({"logs": logs})
-
-    try: since = int(request.args.get("since", 0))
-    except ValueError: since = 0
-    logs = db_logs(sid, since, 200)
-    last = logs[-1]["seq"] if logs else since
-    return jsonify({"logs": logs, "last_seq": last})
 
 
 # Real terminal statuses written by run_session() — reused by both
@@ -3368,154 +3163,20 @@ def api_logs():
 TERMINAL_STATUSES = {"success", "failed", "stopped", "cancelled"}
 
 
-@app.route("/api/session/<sid>/stream")
-def api_session_stream(sid):
-    """Phase 13 — Server-Sent Events for one session.
-
-    Tails new log rows in a tight loop, yielding `data: {...}\\n\\n`
-    per event so the browser's EventSource can append in real time.
-    Sends a heartbeat comment every 15s so proxies don't drop the
-    connection. Closes when the session is in a terminal state AND no
-    new logs have arrived for ~2s. The existing /api/logs polling
-    loop remains as a fallback if SSE drops mid-stream.
-    """
-    # Reject unknown sessions up-front so a forged sid can't keep an
-    # SSE generator running indefinitely.
-    sess0 = db_session(sid)
-    if not sess0:
-        return jsonify({"error": "session not found"}), 404
-
-    try:
-        since = int(request.args.get("since", 0))
-    except ValueError:
-        since = 0
-
-    def _event_stream():
-        last_seq    = since
-        last_event  = time.time()
-        idle_after_finish = 0.0
-        # Tell the client what cursor we resumed from (lets the JS
-        # de-dup against what it has from a previous polling pass).
-        yield f"event: hello\ndata: {json.dumps({'since': since})}\n\n"
-        while True:
-            try:
-                rows = db_logs(sid, last_seq, limit=500)
-            except Exception as e:
-                yield (f"event: error\ndata: "
-                       f"{json.dumps({'error': str(e)})}\n\n")
-                return
-            if rows:
-                for row in rows:
-                    yield f"data: {json.dumps(row)}\n\n"
-                last_seq    = rows[-1]["seq"]
-                last_event  = time.time()
-                idle_after_finish = 0.0
-            else:
-                # Heartbeat every 15s to keep proxies happy. SSE
-                # comments (`: ...`) are ignored by EventSource.
-                if time.time() - last_event > 15:
-                    yield ": ping\n\n"
-                    last_event = time.time()
-
-            # Has the session finished? If yes, give it a small grace
-            # window so trailing logs flush, then close cleanly.
-            try:
-                sess = db_session(sid) or {}
-            except Exception:
-                sess = {}
-            done = sess.get("status") in TERMINAL_STATUSES
-            if done and not rows:
-                idle_after_finish += 0.25
-                if idle_after_finish >= 2.0:
-                    yield (f"event: end\ndata: "
-                           f"{json.dumps({'last_seq': last_seq, 'status': sess.get('status')})}\n\n")
-                    return
-            time.sleep(0.25)
-
-    headers = {
-        "Content-Type":      "text/event-stream",
-        "Cache-Control":     "no-cache, no-transform",
-        "X-Accel-Buffering": "no",        # nginx: don't buffer
-        "Connection":        "keep-alive",
-    }
-    return Response(stream_with_context(_event_stream()),
-                    headers=headers)
 
 
-@app.route("/api/decisions")
-def api_decisions():
-    sid = request.args.get("session_id")
-    if not sid: return jsonify({"error": "session_id required"}), 400
-    return jsonify({"decisions": db_decisions(sid)})
 
 
 # ── Phase 12: Chat / Conversation API ─────────────────────────────────────────
 
-@app.route("/api/chat/<sid>", methods=["GET"])
-def api_chat_get(sid):
-    """Return conversation history for a session."""
-    limit = int(request.args.get("limit", 30))
-    messages = db_chat_get(sid, limit=limit)
-    return jsonify({"ok": True, "messages": messages})
 
 
-@app.route("/api/chat/<sid>", methods=["POST"])
-def api_chat_add_message(sid):
-    """Manually add a message to a session's chat history (AI responses)."""
-    data = request.get_json() or {}
-    role = data.get("role", "assistant")
-    content = (data.get("content") or "").strip()
-    if not content:
-        return jsonify({"error": "content required"}), 400
-    if role not in ("user", "assistant", "system"):
-        role = "assistant"
-    db_chat_add(sid, role, content, meta=data.get("meta"))
-    return jsonify({"ok": True})
 
 
-@app.route("/api/chat/<sid>/edit/<int:msg_id>", methods=["POST"])
-def api_chat_edit_message(sid, msg_id):
-    """Delete a message and everything after it, re-queue with new prompt."""
-    data = request.get_json() or {}
-    new_prompt = (data.get("prompt") or "").strip()
-    if not new_prompt:
-        return jsonify({"error": "prompt required"}), 400
-    db_chat_delete_message(sid, msg_id)
-    # Phase 13 — invalidate summary since history changed
-    try:
-        _clear_chat_summary(sid)
-    except Exception:
-        pass
-    return jsonify({"ok": True, "deleted_from": msg_id})
 
 
-@app.route("/api/chat/<sid>", methods=["DELETE"])
-def api_chat_clear(sid):
-    """Clear all chat messages for a session."""
-    db_chat_clear(sid)
-    # Phase 13 — also clear summary when chat is cleared
-    try:
-        _clear_chat_summary(sid)
-    except Exception:
-        pass
-    return jsonify({"ok": True})
 
 
-@app.route("/api/chat/<sid>/summary", methods=["GET"])
-def api_chat_summary(sid):
-    """Phase 13 — return the current compressed context summary for a session."""
-    summary = _get_chat_summary(sid)
-    with _conn() as c:
-        count = c.execute(
-            "SELECT COUNT(*) FROM chat_messages WHERE session_id=?", (sid,)
-        ).fetchone()[0]
-    return jsonify({
-        "ok": True,
-        "has_summary": summary is not None,
-        "summary": summary,
-        "message_count": count,
-        "compressed": count > _P13_SUMMARIZE_THRESHOLD
-    })
 
 
 @app.route("/api/memory")
@@ -3654,7 +3315,6 @@ _EDITOR_MAX_AI_INPUT      = 60_000   # max chars of code/selection sent to LLM
 # that and return {ok:false, reason:"no_llm"} so the UI degrades
 # gracefully rather than 500ing.
 _editor_llm_router = None
-_editor_llm_lock   = threading.Lock()
 
 
 def _get_editor_llm():
@@ -4503,7 +4163,6 @@ from config import Config as _P22Config
 
 # ── Phase 22 — Model routing persistence ──────────────────────────────────
 _ROUTING_PATH = os.path.join("data", "model_routing.json")
-_ROUTING_LOCK = threading.Lock()
 
 def _routing_defaults() -> dict:
     return {
@@ -4616,7 +4275,6 @@ def _routing_log(event, **fields):
 # scheme allowlist + reasonable length caps, and warn the user clearly in
 # the UI before they switch.
 _TERMINAL_MODE_PATH = os.path.join(BASE_DIR, "data", "terminal_mode.json")
-_TERMINAL_MODE_LOCK = threading.Lock()
 _TERMINAL_BRIDGE_URL_RE = re.compile(
     r"^https?://[A-Za-z0-9._\-:\[\]]{1,200}(:\d{1,5})?(/[^\s]{0,200})?$"
 )
@@ -5056,7 +4714,6 @@ def api_ollama_models():
 # ── Phase 22 — Terminal sandbox ───────────────────────────────────────────
 _TERMINAL_HISTORY_MAX = 50
 _terminal_history: deque = deque(maxlen=_TERMINAL_HISTORY_MAX)
-_terminal_lock = threading.Lock()
 
 def _terminal_check_blocked(cmd: str) -> str | None:
     """Return a reason token if `cmd` contains any blocked binary, else None.
@@ -5954,8 +5611,6 @@ def api_upload():
 
 # ── Phase 31: Human-in-the-Loop (HITL) Controls ──────────────────────────────
 # Per-session pause/resume/inject state stored in memory (fast) and in MCP ctx.
-_hitl_state: dict[str, dict] = {}  # {sid: {paused, inject_queue}}
-_hitl_lock = threading.Lock()
 
 
 def _hitl_get(sid):
@@ -5963,65 +5618,12 @@ def _hitl_get(sid):
         return _hitl_state.setdefault(sid, {"paused": False, "inject_queue": []})
 
 
-@app.route("/api/session/<sid>/pause", methods=["POST"])
-def api_session_pause(sid):
-    """Pause execution of a running session (HITL)."""
-    s = db_session(sid)
-    if not s:
-        return jsonify({"ok": False, "error": "not_found"}), 404
-    state = _hitl_get(sid)
-    with _hitl_lock:
-        state["paused"] = True
-    # Signal via MCP context so orchestrator can check it
-    mcp.update("world", f"hitl_{sid}", {"paused": True})
-    db_update_session(sid, stage="paused")
-    return jsonify({"ok": True, "paused": True})
 
 
-@app.route("/api/session/<sid>/resume", methods=["POST"])
-def api_session_resume(sid):
-    """Resume a paused session."""
-    s = db_session(sid)
-    if not s:
-        return jsonify({"ok": False, "error": "not_found"}), 404
-    state = _hitl_get(sid)
-    with _hitl_lock:
-        state["paused"] = False
-    mcp.update("world", f"hitl_{sid}", {"paused": False})
-    db_update_session(sid, stage="running")
-    return jsonify({"ok": True, "paused": False})
 
 
-@app.route("/api/session/<sid>/inject", methods=["POST"])
-def api_session_inject(sid):
-    """Inject a mid-run instruction into the agent's next iteration."""
-    data = request.get_json(silent=True) or {}
-    instruction = (data.get("instruction") or "").strip()
-    if not instruction:
-        return jsonify({"ok": False, "error": "empty_instruction"}), 400
-    s = db_session(sid)
-    if not s:
-        return jsonify({"ok": False, "error": "not_found"}), 404
-    state = _hitl_get(sid)
-    with _hitl_lock:
-        state["inject_queue"].append(instruction)
-    mcp.update("world", f"inject_{sid}", {"instruction": instruction,
-                                           "ts": time.time()})
-    # Log injection as a decision for UI visibility
-    db_insert_decision(sid, time.time(), "hitl_inject", instruction[:400])
-    return jsonify({"ok": True, "queued": len(state["inject_queue"])})
 
 
-@app.route("/api/session/<sid>/hitl-state", methods=["GET"])
-def api_session_hitl_state(sid):
-    """Return current HITL pause/inject state."""
-    state = _hitl_get(sid)
-    with _hitl_lock:
-        return jsonify({
-            "ok": True,
-            "paused": state["paused"],
-            "pending_injections": len(state["inject_queue"]),
-        })
 
 
 # ── Phase 31: System Health & Observability Dashboard ────────────────────────
@@ -6356,69 +5958,10 @@ def _persist_path(tid: str) -> str:
     return os.path.join(_SESSION_PERSIST_DIR, f"{safe}.json")
 
 
-@app.route("/api/session/<sid>/save", methods=["POST"])
-def api_session_save(sid):
-    """Persist session terminal history + decisions to disk."""
-    data = request.get_json(silent=True) or {}
-    tid  = _pty_session_id(sid)
-    sess = terminal_registry.get(tid) if terminal_registry else None
-    terminal_history = sess.get_history(500) if sess else []
-
-    # Pull agent decisions from DB
-    with _conn() as c:
-        rows = c.execute(
-            "SELECT ts, kind, decision FROM decisions WHERE session_id=? ORDER BY ts",
-            (sid,)
-        ).fetchall()
-    decisions = [{"ts": r[0], "kind": r[1], "decision": r[2]} for r in rows]
-
-    payload = {
-        "sid":              sid,
-        "saved_at":         time.time(),
-        "terminal_history": terminal_history,
-        "agent_decisions":  decisions,
-        "extra":            data.get("extra") or {},
-    }
-    path = _persist_path(sid)
-    with open(path, "w", encoding="utf-8") as fh:
-        json.dump(payload, fh, indent=2, default=str)
-    return jsonify({"ok": True, "path": path, "records": len(decisions)})
 
 
-@app.route("/api/session/<sid>/restore", methods=["GET"])
-def api_session_restore(sid):
-    """Load a previously saved session snapshot."""
-    path = _persist_path(sid)
-    if not os.path.exists(path):
-        return jsonify({"ok": False, "error": "not_found"}), 404
-    try:
-        with open(path, "r", encoding="utf-8") as fh:
-            payload = json.load(fh)
-        return jsonify({"ok": True, "snapshot": payload})
-    except Exception as e:
-        return jsonify({"ok": False, "error": str(e)}), 500
 
 
-@app.route("/api/sessions/saved")
-def api_sessions_saved():
-    """List all persisted session snapshots."""
-    snapshots = []
-    for fname in os.listdir(_SESSION_PERSIST_DIR):
-        if fname.endswith(".json"):
-            try:
-                fpath = os.path.join(_SESSION_PERSIST_DIR, fname)
-                with open(fpath, "r", encoding="utf-8") as fh:
-                    meta = json.load(fh)
-                snapshots.append({
-                    "sid":        meta.get("sid"),
-                    "saved_at":   meta.get("saved_at"),
-                    "decisions":  len(meta.get("agent_decisions", [])),
-                    "commands":   len(meta.get("terminal_history", [])),
-                })
-            except Exception:
-                pass
-    snapshots.sort(key=lambda x: x.get("saved_at") or 0, reverse=True)
-    return jsonify({"ok": True, "snapshots": snapshots})
 
 
 # Also auto-save terminal history on PTY close
@@ -6426,8 +5969,6 @@ _orig_pty_close = api_pty_close  # reference to existing route fn
 
 
 # ─ Phase 32: Step-level reasoning enrichment ────────────────────────────
-_STEP_STORE = {}
-_STEP_LOCK  = threading.Lock()
 
 
 def record_step(session_id, step):
@@ -6437,20 +5978,8 @@ def record_step(session_id, step):
             _STEP_STORE[session_id] = _STEP_STORE[session_id][-200:]
 
 
-@app.route("/api/session/<sid>/steps", methods=["GET"])
-def api_session_steps_get(sid):
-    with _STEP_LOCK:
-        steps = list(_STEP_STORE.get(sid, []))
-    return jsonify({"ok": True, "steps": steps})
 
 
-@app.route("/api/session/<sid>/steps", methods=["POST"])
-def api_session_steps_post(sid):
-    data = request.get_json(silent=True) or {}
-    if not {"phase", "status"}.issubset(data.keys()):
-        return jsonify({"ok": False, "error": "missing fields"}), 400
-    record_step(sid, data)
-    return jsonify({"ok": True})
 
 
 # ─ Phase 32: Multimodal Analysis ─────────────────────────────────────
@@ -6905,71 +6434,14 @@ def api_sandbox_stats():
 
 # ── Task queue routes ─────────────────────────────────────────────────────────
 
-@app.route("/api/queue/snapshot")
-def api_queue_snapshot():
-    q = _get_task_queue()
-    if not q:
-        return jsonify({"ok": False, "error": "queue_unavailable"}), 503
-    return jsonify({"ok": True, **q.queue_snapshot()})
 
 
-@app.route("/api/queue/workers")
-def api_queue_workers():
-    q = _get_task_queue()
-    if not q:
-        return jsonify({"ok": False, "error": "queue_unavailable"}), 503
-    return jsonify({"ok": True, "workers": q.worker_status()})
 
 
-@app.route("/api/queue/submit", methods=["POST"])
-def api_queue_submit():
-    """Submit an orchestrator task to the distributed queue."""
-    data    = request.get_json(silent=True) or {}
-    task    = (data.get("task") or "").strip()
-    priority = int(data.get("priority", 2))
-    budget  = float(data.get("budget_usd", 0.0))
-    if not task:
-        return jsonify({"ok": False, "error": "missing_task"}), 400
-    q = _get_task_queue()
-    if not q:
-        return jsonify({"ok": False, "error": "queue_unavailable"}), 503
-
-    def _run_task():
-        try:
-            from orchestrator import Orchestrator
-            cfg  = get_setting("config") or default_managed_config()
-            orch = Orchestrator(config=cfg)
-            return orch.run(task)
-        except Exception as e:
-            return {"ok": False, "error": str(e)}
-
-    tid = q.submit(_run_task, name=task[:60], priority=priority,
-                   budget_usd=budget, timeout_s=300)
-    return jsonify({"ok": True, "task_id": tid})
 
 
-@app.route("/api/queue/task/<task_id>", endpoint="api_p35_queue_task")
-def api_p35_queue_task(task_id):
-    q = _get_task_queue()
-    if not q:
-        return jsonify({"ok": False, "error": "queue_unavailable"}), 503
-    info = q.get(task_id)
-    if not info:
-        return jsonify({"ok": False, "error": "not_found"}), 404
-    return jsonify({"ok": True, "task": info})
 
 
-@app.route("/api/queue/checkpoint/<task_id>", methods=["GET", "POST"])
-def api_queue_checkpoint(task_id):
-    q = _get_task_queue()
-    if not q:
-        return jsonify({"ok": False}), 503
-    if request.method == "POST":
-        state = request.get_json(silent=True) or {}
-        q.checkpoint(task_id, state)
-        return jsonify({"ok": True})
-    cp = q.restore_checkpoint(task_id)
-    return jsonify({"ok": True, "checkpoint": cp})
 
 
 # ── Resource + cost routes ────────────────────────────────────────────────────
@@ -8084,12 +7556,10 @@ from auth_system import (
 )
 from flask import g, redirect, session as flask_session
 
-workflow_queues = {}
 RATE_LIMIT_STORE = {"requests": [], "active_workflows": 0}
 CHAOS_FLAGS = {"tool_failure": False, "timeout": False, "model_failure": False}
 
 # Temporary OAuth state store (CSRF protection) — { state_token: provider }
-_oauth_states: dict = {}
 _oauth_states_lock = __import__("threading").Lock()
 
 
@@ -8921,15 +8391,6 @@ def api_readme_generate():
         return jsonify({"ok": False, "error": str(e)}), 500
 
 
-@app.route("/api/providers/status", methods=["GET"])
-def api_providers_status():
-    """Real-time status of all LLM providers."""
-    from model_router import get_router
-    router = get_router()
-    try:
-        return jsonify({"ok": True, "providers": router.provider_status()})
-    except Exception as e:
-        return jsonify({"ok": False, "error": str(e)}), 500
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -8988,8 +8449,6 @@ _P7_AGENTS = {
 }
 
 # Per-session pipeline state: { sid: { stage, agents: [{id, status, result}] } }
-_P7_PIPELINES: dict = {}
-_p7_lock = threading.Lock()
 
 _P7_SETTINGS_KEY = "p7_agent_config"
 
@@ -9744,7 +9203,6 @@ def api_plan_byok_priority():
 # ── Patch /api/queue-task to enforce plan limits ──────────────────────────────
 # We wrap the existing queue_task view with plan-gate logic by replacing it.
 
-_p8_orig_queue_task = api_queue_task  # already defined above
 
 @app.route("/api/plan/check", methods=["POST"])
 def api_plan_check():
@@ -11274,9 +10732,16 @@ def api_realtime_stream(sid):
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# --- PHASE Z3: RUNTIME ROUTE MODULARIZATION ---
+from routes.memory_routes import memory_bp
+from routes.provider_routes import provider_bp
+from routes.session_routes import session_bp
+app.register_blueprint(memory_bp)
+app.register_blueprint(provider_bp)
+app.register_blueprint(session_bp)
+
 if __name__ == "__main__":
     # Phase 19: debug mode controlled by env var — never True in production
     _debug = os.getenv("FLASK_DEBUG", "0").strip() == "1"
     _port  = int(os.getenv("PORT", "5000"))
     app.run(host="0.0.0.0", port=_port, debug=_debug, threaded=True)
-

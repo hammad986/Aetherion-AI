@@ -1,0 +1,200 @@
+MISSION:
+AETHERION AI — PHASE Z11
+AUTONOMOUS BOOTSTRAP INTELLIGENCE FOUNDATION
+
+ARCHITECTURE STATUS:
+PERMANENTLY LOCKED.
+
+STRICTLY FORBIDDEN:
+
+* no runtime implementation
+* no execution engine rewrite
+* no orchestration rewrite
+* no autonomous installer implementation
+* no dependency auto-install runtime
+* no frontend framework migration
+* no new backend services
+
+THIS PHASE IS:
+FOUNDATION + FUTURE-PROOFING ONLY.
+
+====================================================
+PRIMARY OBJECTIVE
+=================
+
+Prepare Aetherion AI for future V2/V3 evolution into a fully autonomous environment-aware execution platform.
+
+This phase MUST:
+
+* document future architecture
+* add visible engineering TODO anchors
+* add non-executing integration placeholders
+* improve operational UI discipline
+
+WITHOUT changing the live runtime.
+
+====================================================
+PHASE 1 — AUTONOMOUS BOOTSTRAP FOUNDATION
+=========================================
+
+Generate:
+docs/Z11_AUTONOMOUS_BOOTSTRAP_FOUNDATION.md
+
+Design the future architecture for:
+
+* GitHub repository ingestion
+* project structure inference
+* framework detection
+* dependency resolution
+* runtime startup inference
+* health validation
+* environment adaptation
+* VPS/Replit/Docker adaptation
+* automatic repair loops
+* screenshot validation
+* deployment diagnostics
+
+DO NOT IMPLEMENT.
+
+This is documentation + future operational blueprint only.
+
+====================================================
+PHASE 2 — MAIN WORKSPACE FUTURE MARKERS
+=======================================
+
+Add highly visible FUTURE-V2 comments inside:
+
+* index.html
+* nx-shell.css
+* execution surfaces
+* command palette region
+
+Comments must explain:
+future autonomous bootstrap integration points.
+
+Examples:
+
+<!-- FUTURE-V2: Autonomous runtime bootstrap surface -->
+
+<!-- FUTURE-V3: Visual execution canvas mount -->
+
+DO NOT EXECUTE ANYTHING.
+ONLY COMMENT MARKERS.
+
+====================================================
+PHASE 3 — VISUAL EXECUTION CANVAS FOUNDATION
+============================================
+
+Generate:
+docs/Z11_CANVAS_EXECUTION_SYSTEM.md
+
+Design future:
+
+* architecture whiteboard
+* execution graph canvas
+* visual replay map
+* dependency visualization
+* mission flow visualization
+* drag execution planning
+
+DO NOT IMPLEMENT.
+
+ONLY define:
+
+* mounting zones
+* event integration points
+* rendering constraints
+* performance limits
+* security boundaries
+
+====================================================
+PHASE 4 — COMMAND SURFACE DISCIPLINE
+====================================
+
+Fix the current topbar command surface.
+
+Current issue:
+floating disconnected “K / command palette” visual.
+
+Requirements:
+
+* integrate into topbar hierarchy
+* calm operational appearance
+* no floating gimmick styling
+* align with Cursor / VSCode density
+* preserve keyboard shortcuts
+* preserve palette runtime logic
+
+No redesign.
+Only polish and hierarchy correction.
+
+====================================================
+PHASE 5 — LEFT NAV VISUAL REPAIR
+================================
+
+Fix:
+
+* icon alignment
+* label spacing
+* fallback visual corruption
+* collapsed nav hierarchy
+
+Requirements:
+
+* strict 48px rail
+* muted operational style
+* no neon
+* no oversized labels
+* no visual overflow
+
+====================================================
+PHASE 6 — FUTURE RUNTIME COMPATIBILITY NOTES
+============================================
+
+Generate:
+docs/Z11_FUTURE_RUNTIME_COMPATIBILITY.md
+
+Document:
+
+* Replit-style autonomous adaptation
+* environment bootstrap strategy
+* dependency inference
+* deployment portability
+* runtime migration logic
+* container awareness
+* future cloud execution adaptation
+
+DO NOT IMPLEMENT.
+
+====================================================
+MANDATORY RULES
+===============
+
+NO:
+
+* package auto-installs
+* live dependency mutation
+* self-modifying runtime
+* autonomous shell execution
+* hidden subprocess execution
+* automatic deployment
+
+ONLY:
+future-proofing
+visual discipline
+architectural notes
+comment anchors
+
+====================================================
+SUCCESS STATE
+=============
+
+Aetherion AI becomes:
+
+* visually disciplined
+* future-ready
+* environment-aware by design
+* operationally calm
+* prepared for autonomous bootstrap evolution
+
+WITHOUT increasing runtime complexity.

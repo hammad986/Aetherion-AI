@@ -229,6 +229,7 @@
       style="background:none;border:none;color:#fca5a5;cursor:pointer;font-size:14px;padding:0 2px;">✕</button>
   </div>
 
+  <!-- FUTURE-V2: Autonomous runtime bootstrap surface — command palette will surface live bootstrap context, ingestion state, and health probes -->
   <!-- ── Command Palette ── -->
   <div class="nx-palette-backdrop" id="nxPalette" onclick="nxClosePalette(event)">
     <div class="nx-palette">
@@ -250,6 +251,7 @@
     <div id="nxBellWrap"><button id="nxBellBtn" onclick="nxBellToggle(event)"><span id="nxBellBadge"></span></button><div id="nxNotifPanel"><button id="nxNotifReadAll" onclick="nxNotifMarkAllRead()"></button><div id="nxNotifList"><div id="nxNotifEmpty"></div></div></div></div>
   </div>
 
+  <!-- FUTURE-V2: Topbar execution surface — runtime health indicator, bootstrap status badge, and environment selector mount in the center cluster -->
   <!-- ── New Operational Header ── -->
   <div class="nx-shell-root">
   <header class="nx-shell-topbar" style="grid-area:topbar; justify-content:space-between; padding:0 12px; font-size:12px;">
@@ -288,10 +290,10 @@
 
     <!-- RIGHT: Utility Bar -->
     <div style="display:flex;align-items:center;gap:4px;justify-content:flex-end;flex:1;">
-      <button class="nx-icon-btn" title="Command palette (Ctrl+K)" onclick="nxOpenPalette()" style="background:transparent;border:1px solid #30363d;border-radius:4px;color:#8b949e;cursor:pointer;padding:0 8px;font-size:11px;font-family:inherit;height:24px;display:flex;align-items:center;gap:6px;margin-right:8px;transition:all 0.15s;" onmouseover="this.style.border='1px solid #8b949e';this.style.color='#c9d1d9';" onmouseout="this.style.border='1px solid #30363d';this.style.color='#8b949e';">
+      <button class="nx-palette-trigger" title="Command palette (Ctrl+K)" onclick="nxOpenPalette()">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
         <span>Search</span>
-        <span style="opacity:0.5;font-size:10px;border:1px solid #30363d;border-radius:2px;padding:0 3px;">⌘K</span>
+        <kbd class="nx-kbd">⌘K</kbd>
       </button>
 
       <button class="nx-icon-btn" id="nxInspectorBtn" title="Inspector (⌘\)" onclick="nxToggleInspector()" style="background:transparent;border:none;color:#8b949e;cursor:pointer;padding:4px;border-radius:4px;display:flex;align-items:center;justify-content:center;height:24px;width:24px;transition:all 0.15s;" onmouseover="this.style.color='#c9d1d9';this.style.background='rgba(255,255,255,0.05)';" onmouseout="this.style.color='#8b949e';this.style.background='transparent';">
@@ -446,6 +448,8 @@
     </div>
   </div>
 
+  <!-- FUTURE-V2: Navigation rail — Bootstrap ingestion panel tab and Dependency graph tab mount here -->
+  <!-- FUTURE-V3: Visual execution canvas tab mounts in this rail when FEATURE_CANVAS_V3=true -->
   <!-- ── Body ── -->
   
   <nav class="nx-shell-navrail" style="grid-area:navrail;">
@@ -483,6 +487,7 @@
     </div>
   </div>
 
+  <!-- FUTURE-V3: Visual execution canvas mount — react-flow/Xyflow canvas replaces or supplements this surface when FEATURE_CANVAS_V3=true -->
   <main class="nx-shell-center" style="grid-area:center; display:flex; height:100%; width:100%; overflow:hidden;">
     <div class="nx-main" id="nxMain" style="flex:1; width:100%;">
 

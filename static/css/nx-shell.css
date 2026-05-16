@@ -77,20 +77,28 @@ html, body {
   user-select: none;
 }
 
+/* FUTURE-V2: Nav rail bootstrap integration — Bootstrap ingestion panel tab and Dependency graph tab added here in V2 */
+/* FUTURE-V3: Visual execution canvas tab mounts in this rail when FEATURE_CANVAS_V3=true */
 /* Phase C Prep: Navigation Rail */
 .nx-shell-navrail {
   grid-area: navrail;
   width: var(--nx-shell-navrail-width);
+  min-width: var(--nx-shell-navrail-width);
+  max-width: var(--nx-shell-navrail-width);
+  flex-shrink: 0;
+  overflow: hidden;
   background-color: var(--nx-color-bg-surface-elevated, #202024);
   border-right: 1px solid var(--nx-color-border, #27272A);
   display: flex;
   flex-direction: column;
   align-items: center;
   padding-top: var(--nx-space-2);
-  gap: var(--nx-space-2);
+  padding-bottom: var(--nx-space-2);
+  gap: var(--nx-space-1);
   z-index: var(--nx-z-navrail);
 }
 
+/* FUTURE-V3: Visual execution canvas mount — react-flow/Xyflow canvas replaces this surface when FEATURE_CANVAS_V3=true */
 /* Phase D Prep: Execution-First Center */
 .nx-shell-center {
   grid-area: center;
@@ -101,6 +109,7 @@ html, body {
   background-color: var(--nx-color-bg-base, #121212);
 }
 
+/* FUTURE-V3: Execution surface transitions to visual canvas tab layout in V3 */
 /* The 4-tab execution surface container */
 .nx-execution-surface {
   flex: 1;
@@ -201,21 +210,35 @@ html, body {
 
 
 /* Phase D: Contextual Slide-Over Panels */
+
+/* Phase 5 fix: strict 48px rail, muted style, no neon, no overflow, no layout shift on active */
 .nx-nav-icon {
   width: 36px;
   height: 36px;
+  min-width: 36px;
+  min-height: 36px;
   border-radius: 6px;
   background: transparent;
   border: none;
-  color: #8b949e;
+  /* Baseline inset shadow reserves the 2px active indicator slot — no layout shift */
+  box-shadow: inset 2px 0 0 transparent;
+  color: var(--nx-color-text-muted, #8b949e);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.15s ease;
+  flex-shrink: 0;
+  overflow: hidden;
+  transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
 }
-.nx-nav-icon:hover, .nx-nav-icon.active {
-  color: #E0E0E0;
+.nx-nav-icon svg {
+  max-width: 16px;
+  max-height: 16px;
+  flex-shrink: 0;
+  pointer-events: none;
+}
+.nx-nav-icon:hover {
+  color: var(--nx-color-text-primary, #E0E0E0);
   background: rgba(255, 255, 255, 0.05);
 }
 
@@ -295,10 +318,11 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
   background-color: rgba(255, 255, 255, 0.05) !important;
   color: #E0E0E0 !important;
 }
+/* Phase 5 fix: inset box-shadow for active indicator — no border, no layout shift */
 .nx-nav-icon.active {
   background-color: rgba(255, 255, 255, 0.08) !important;
   color: #E0E0E0 !important;
-  border-left: 2px solid #8b949e;
+  box-shadow: inset 2px 0 0 var(--nx-color-text-muted, #6e7681) !important;
 }
 
 /* 3. Empty States & Loading States */
@@ -473,6 +497,8 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
   background: #3fb950;
 }
 
+/* FUTURE-V2: Command palette surface — will integrate autonomous bootstrap context, live file index, and execution history search in V2 */
+
 /* Command Palette Minimal Polish */
 .nx-palette {
   background: var(--nx-color-bg-panel, #161b22) !important;
@@ -482,6 +508,48 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
 .nx-palette-input {
   background: transparent !important;
   border-bottom: 1px solid var(--nx-color-border, #30363d) !important;
+}
+
+/* Phase 4 fix: Command palette trigger — calm, topbar-integrated, no floating gimmick */
+.nx-palette-trigger {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 8px;
+  background: transparent;
+  border: 1px solid var(--nx-color-border, #30363d);
+  border-radius: 4px;
+  color: var(--nx-color-text-muted, #8b949e);
+  font-size: 11px;
+  font-family: inherit;
+  cursor: pointer;
+  margin-right: 4px;
+  transition: border-color 0.15s ease, color 0.15s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.nx-palette-trigger:hover {
+  border-color: var(--nx-color-border-hover, #484f58);
+  color: var(--nx-color-text-primary, #c9d1d9);
+}
+.nx-palette-trigger:focus-visible {
+  outline: 1px solid var(--nx-color-accent, #bc8cff);
+  outline-offset: -1px;
+}
+
+/* Phase 4 fix: keyboard hint badge — muted, no extra border box */
+.nx-kbd {
+  display: inline-flex;
+  align-items: center;
+  font-size: 10px;
+  font-family: inherit;
+  font-style: normal;
+  color: var(--nx-color-text-muted, #6e7681);
+  opacity: 0.7;
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
 }
 
 

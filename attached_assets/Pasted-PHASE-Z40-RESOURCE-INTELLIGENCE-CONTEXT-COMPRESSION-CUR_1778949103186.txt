@@ -1,0 +1,278 @@
+PHASE Z40 — RESOURCE INTELLIGENCE + CONTEXT COMPRESSION
+
+CURRENT STATUS:
+Aetherion AI now supports:
+
+* persistent runtime cognition
+* causal replay lineage
+* adaptive operational memory
+* entropy analysis
+* runtime stabilization
+* replay consistency
+* cognitive integrity validation
+* pressure propagation
+* operational self-stabilization
+
+The platform is now entering:
+long-session operational territory.
+
+The next challenge is NOT additional intelligence.
+
+The next challenge is:
+resource cognition,
+context discipline,
+and execution sustainability.
+
+STRICT RULES:
+🔒 NO NEW AI FRAMEWORKS
+🔒 NO VECTOR DATABASES
+🔒 NO NEW ORCHESTRATORS
+🔒 NO MARKETPLACE
+🔒 NO AGENT PERSONAS
+🔒 NO MULTI-USER SYSTEMS
+🔒 NO CLOUD DEPENDENCIES
+🔒 SQLITE + EXISTING EVENT SYSTEM ONLY
+🔒 RESOURCE DISCIPLINE > FEATURE EXPANSION
+🔒 LONG-SESSION STABILITY > VISUAL NOVELTY
+🔒 ALL SYSTEMS MUST REMAIN CALM, DENSE, OPERATIONAL
+
+====================================================
+PHASE Z40A — CONTEXT COMPRESSION ENGINE
+=======================================
+
+GOAL:
+Prevent long-session context overflow
+without losing operational continuity.
+
+REQUIREMENTS:
+
+1. Sliding Context Window
+   Implement:
+
+* active context
+* compressed context
+* archived context
+* replay-safe summaries
+
+2. Semantic Compression
+   Compress:
+
+* repetitive execution traces
+* repeated reasoning loops
+* stale replay segments
+* historical low-signal chunks
+
+3. Compression Integrity
+   Every compressed segment must preserve:
+
+* lineage continuity
+* replay correctness
+* forensic traceability
+
+4. Compression Confidence
+   Each compressed block receives:
+
+* fidelity score
+* reconstruction confidence
+* semantic preservation score
+
+====================================================
+PHASE Z40B — RESOURCE INTELLIGENCE ENGINE
+=========================================
+
+GOAL:
+Make runtime aware of:
+resource pressure BEFORE failure occurs.
+
+REQUIREMENTS:
+
+1. Runtime Resource Tracking
+   Track:
+
+* token usage
+* replay growth
+* memory accumulation
+* timeline density
+* DAG complexity
+* hydration cost
+
+2. Predictive Pressure Forecasting
+   Estimate:
+
+* approaching context overflow
+* replay hydration overload
+* memory fragmentation risk
+* entropy escalation risk
+
+3. Resource Severity Levels
+   Classify:
+
+* LIGHT
+* MODERATE
+* HEAVY
+* SATURATED
+* CRITICAL
+
+====================================================
+PHASE Z40C — ADAPTIVE EXECUTION BUDGETING
+=========================================
+
+GOAL:
+Prevent runaway execution cost and instability.
+
+REQUIREMENTS:
+
+1. Dynamic Token Budgets
+   Budgets adapt based on:
+
+* mission complexity
+* historical retry rate
+* entropy level
+* stabilization confidence
+
+2. Execution Budget Cooling
+   High-chaos sessions receive:
+
+* reduced retry budgets
+* reduced replay retention
+* reduced speculative execution
+
+3. Budget Breach Protection
+   If runtime exceeds safe thresholds:
+
+* force stabilization mode
+* suppress escalation storms
+* limit replay expansion
+
+====================================================
+PHASE Z40D — LONG-SESSION CONTINUITY
+====================================
+
+GOAL:
+Maintain coherent operational cognition
+during multi-hour sessions.
+
+REQUIREMENTS:
+
+1. Continuity Threads
+   Maintain:
+
+* mission continuity
+* replay continuity
+* reasoning continuity
+* dependency continuity
+
+2. Drift Prevention
+   Detect:
+
+* semantic drift
+* replay incoherence
+* context contradiction
+* stale reasoning loops
+
+3. Context Refresh Logic
+   Rebuild active context from:
+   compressed operational summaries.
+
+====================================================
+PHASE Z40E — REPLAY COMPRESSION GOVERNANCE
+==========================================
+
+GOAL:
+Prevent replay systems
+from becoming operationally heavy.
+
+REQUIREMENTS:
+
+1. Replay Tiering
+   Classify replay chains:
+
+* HOT
+* ACTIVE
+* HISTORICAL
+* ARCHIVED
+
+2. Replay Compression
+   Compress:
+   historical low-risk replay branches.
+
+3. Replay Hydration Discipline
+   Hydrate only:
+   high-priority operational replay chains.
+
+====================================================
+PHASE Z40F — COGNITIVE LOAD BALANCING
+=====================================
+
+GOAL:
+Prevent operational overload
+across runtime surfaces.
+
+REQUIREMENTS:
+
+1. Surface Pressure Distribution
+   Balance:
+
+* timeline density
+* DAG complexity
+* inspector load
+* replay hydration
+
+2. Adaptive Calmness
+   During high entropy:
+   automatically reduce:
+   visual noise,
+   timeline expansion,
+   surface pressure.
+
+3. Runtime Breathing Logic
+   Idle stable systems should:
+   gradually calm visually and operationally.
+
+====================================================
+PHASE Z40G — CERTIFICATION + FORENSIC VALIDATION
+================================================
+
+Generate:
+
+* docs/Z40_CONTEXT_COMPRESSION_AUDIT.md
+* docs/Z40_RESOURCE_INTELLIGENCE_REPORT.md
+* docs/Z40_EXECUTION_BUDGETING_ANALYSIS.md
+* docs/Z40_LONG_SESSION_CONTINUITY.md
+* docs/Z40_REPLAY_COMPRESSION_CERTIFICATION.md
+* docs/Z40_OPERATIONAL_RESOURCE_VERDICT.md
+
+Each report MUST include:
+
+1. Remaining context overflow risks
+2. Remaining replay scalability ceilings
+3. Remaining entropy amplification risks
+4. Remaining compression integrity flaws
+5. Remaining long-session coherence weaknesses
+6. Honest operational verdict
+
+====================================================
+FINAL VALIDATION
+================
+
+Before completion:
+
+* verify replay integrity preserved
+* verify compression fidelity
+* verify no lineage corruption
+* verify adaptive budgeting correctness
+* verify long-session coherence
+* verify entropy stabilization maintained
+* verify replay hydration discipline
+* verify bounded resource growth
+* verify runtime calmness preserved
+
+IMPORTANT:
+This phase is NOT:
+adding intelligence.
+
+This phase IS:
+making intelligence sustainable,
+bounded,
+resource-aware,
+and operationally scalable.

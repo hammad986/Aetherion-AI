@@ -318,7 +318,7 @@
      ══════════════════════════════════════════════════════════════════ */
   function _enhancePalette() {
     // Register mission-aware palette commands on NxBus PALETTE_OPEN
-    if (!window.NxBus) { setTimeout(_enhancePalette, 200); return; }
+    if (!window.NxBus || !NxBus.EVENTS) { setTimeout(_enhancePalette, 200); return; }
 
     NxBus.on(NxBus.EVENTS.PALETTE_OPEN, () => {
       // Inject mission-context items into palette if it supports it

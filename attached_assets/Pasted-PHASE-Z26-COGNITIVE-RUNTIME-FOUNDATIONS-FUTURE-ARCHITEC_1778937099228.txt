@@ -1,0 +1,209 @@
+PHASE Z26 — COGNITIVE RUNTIME FOUNDATIONS + FUTURE ARCHITECTURE DISCIPLINE
+
+SYSTEM STATUS:
+The platform has completed:
+
+* runtime modularization
+* event bus stabilization
+* accessibility hardening
+* frontend decomposition
+* operational UX stabilization
+* stress validation
+
+The next phase is NOT feature explosion.
+
+This phase establishes the FIRST REAL cognitive-runtime foundations required for a serious autonomous execution platform.
+
+STRICT RULES:
+🔒 NO AGI HYPE
+🔒 NO LARGE REWRITES
+🔒 NO FRAMEWORK MIGRATION
+🔒 NO REACTIVE REDESIGNS
+🔒 NO UNCONTROLLED FEATURE EXPANSION
+🔒 STABILITY FIRST
+
+Implement a SAFE beta-grade context compression pipeline.
+
+GOAL:
+Prevent long-session context degradation and token explosion.
+
+REQUIREMENTS:
+
+* active execution window
+* compressed episodic summaries
+* retained critical mission notes
+* rolling context pruning
+* replay-safe compression metadata
+* token budget awareness
+* compression audit logging
+
+IMPORTANT:
+DO NOT create fake AGI memory.
+
+This is:
+runtime context management
+ONLY.
+
+Generate:
+
+* runtime/context_compression.py
+* docs/Z26_CONTEXT_COMPRESSION_ARCHITECTURE.md
+* docs/Z26_CONTEXT_RETENTION_POLICY.md
+
+Add:
+
+* compression telemetry
+* replay compatibility verification
+* summary provenance tracking
+
+Implement a lightweight uncertainty estimation system.
+
+GOAL:
+The system should recognize:
+
+* low confidence
+* contradictory outputs
+* unstable tool execution
+* repeated retries
+* insufficient evidence
+
+REQUIREMENTS:
+
+* confidence scoring (0–1)
+* HITL escalation thresholds
+* retry instability penalties
+* hallucination suspicion markers
+* low-confidence operator alerts
+* uncertainty telemetry
+
+IMPORTANT:
+DO NOT expose chain-of-thought.
+
+Expose ONLY:
+decision confidence summaries.
+
+Generate:
+
+* runtime/confidence_engine.py
+* docs/Z26_CONFIDENCE_ENGINE.md
+* docs/Z26_HITL_ESCALATION_MATRIX.md
+
+Implement a lightweight explainability system.
+
+GOAL:
+Operators should understand:
+WHY the system made major execution decisions.
+
+REQUIREMENTS:
+
+* model selection reasons
+* retry reasons
+* escalation reasons
+* replanning reasons
+* execution pause reasons
+* tool rejection reasons
+
+IMPORTANT:
+DO NOT expose hidden reasoning or chain-of-thought.
+
+ONLY expose:
+high-level operational explanations.
+
+Generate:
+
+* runtime/explainability.py
+* docs/Z26_EXPLAINABILITY_REPORT.md
+* docs/Z26_OPERATOR_REASONING_VISIBILITY.md
+
+Implement LIMITED scheduling support.
+
+REQUIREMENTS:
+
+* delayed execution
+* timeout alerts
+* recurring mission support
+* execution deadline tracking
+* mission expiration support
+
+DO NOT:
+implement a giant orchestration scheduler.
+
+SAFE BETA-GRADE ONLY.
+
+Generate:
+
+* runtime/scheduler.py
+* docs/Z26_TEMPORAL_RUNTIME.md
+
+IMPORTANT:
+Add structured FUTURE_* architectural comments ONLY.
+
+DO NOT IMPLEMENT:
+
+* vector semantic memory
+* self-improving agents
+* plugin marketplace
+* multi-user collaboration
+* long-horizon cognition
+* local-only privacy runtime
+* adaptive persona system
+* negotiation agents
+
+Instead:
+insert disciplined FUTURE_RUNTIME_* markers
+in appropriate locations.
+
+The comments must:
+
+* explain future integration boundaries
+* warn against tight coupling
+* preserve future migration paths
+* define intended ownership boundaries
+
+Generate:
+docs/Z26_FUTURE_RUNTIME_EXPANSION_MAP.md
+
+Implement ONLY:
+
+* image ingestion foundation
+* PDF ingestion foundation
+
+DO NOT implement:
+
+* audio
+* video
+* full multimodal orchestration
+
+REQUIREMENTS:
+
+* upload routing
+* MIME validation
+* ingestion metadata
+* provider capability detection
+* future extensibility hooks
+
+Generate:
+docs/Z26_MULTIMODAL_FOUNDATION.md
+
+Generate:
+
+* docs/Z26_RUNTIME_FOUNDATION_CERTIFICATION.md
+* docs/Z26_BETA_READINESS_MATRIX.md
+* docs/Z26_OPERATIONAL_RISK_REPORT.md
+
+Final report MUST include:
+
+1. Honest beta readiness verdict
+2. Remaining architectural weaknesses
+3. Remaining execution isolation risks
+4. Remaining frontend instability risks
+5. What is still NOT production-ready
+6. What should be deferred to v2
+7. What absolutely must be stabilized before public beta
+
+STRICTLY MAINTAIN:
+🔒 Operational clarity > AI hype
+🔒 Runtime discipline > feature count
+🔒 Stability > autonomy claims
+🔒 Explainability > fake intelligence
+🔒 Real execution safety > marketing

@@ -554,6 +554,23 @@
       window.nxCloseTab    = id => NxWorkspace.closeTab(id);
       window.nxOpenTab     = id => NxWorkspace.openTab(id);
       window.nxResetLayout = () => NxWorkspace.resetLayout();
+
+      // Nav-rail slide panel toggle
+      window.nxTogglePanel = function(name) {
+        const panel = document.getElementById('nxPanel-' + name);
+        if (!panel) return;
+        const isOpen = panel.style.display === 'flex';
+        // Close all slide panels first
+        document.querySelectorAll('.nx-slide-panel').forEach(p => { p.style.display = 'none'; });
+        // Toggle the target
+        if (!isOpen) panel.style.display = 'flex';
+        // Update nav icon active state
+        document.querySelectorAll('.nx-nav-icon').forEach(btn => btn.classList.remove('active'));
+        if (!isOpen) {
+          const btn = document.querySelector('.nx-nav-icon[onclick*="' + name + '"]');
+          if (btn) btn.classList.add('active');
+        }
+      };
     });
   }
 

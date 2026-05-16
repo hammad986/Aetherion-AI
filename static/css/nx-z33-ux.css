@@ -1,0 +1,622 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   PHASE Z33 — Operational Workspace Completion + Runtime UX Stabilization
+   ═══════════════════════════════════════════════════════════════════════
+
+   Design system tokens — single source of truth for spacing, type, color.
+   All Z33 components consume these; no local overrides allowed.
+
+   Baseline grid: 4px unit (--sp-1 = 4px)
+   Type scale: 3 weights, 4 sizes
+   Color: semantic-only, low saturation during idle, never compete with data
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── Design tokens ─────────────────────────────────────────────────── */
+:root {
+  /* Spacing (4px baseline) */
+  --sp-1:   4px;
+  --sp-2:   8px;
+  --sp-3:  12px;
+  --sp-4:  16px;
+  --sp-5:  20px;
+  --sp-6:  24px;
+
+  /* Typography */
+  --font-ui:   -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
+
+  --text-title:    0.78rem;   /* panel headers, section labels */
+  --text-body:     0.74rem;   /* body content, descriptions */
+  --text-label:    0.68rem;   /* metadata, secondary labels */
+  --text-telemetry: 0.62rem;  /* raw telemetry, counters, timestamps */
+
+  --fw-title:   600;
+  --fw-body:    400;
+  --fw-label:   500;
+
+  --ls-title:   0.06em;
+  --ls-label:   0.04em;
+  --ls-telem:   0.02em;
+
+  /* Semantic color palette — calm, operational */
+  --clr-ok:      #22c55e;
+  --clr-warn:    #f59e0b;
+  --clr-error:   #ef4444;
+  --clr-info:    #38bdf8;
+  --clr-muted:   var(--muted, #6e7681);
+  --clr-surface: var(--surface, #0d1117);
+  --clr-border:  var(--border, #21262d);
+  --clr-text:    var(--text, #e6edf3);
+
+  /* Overlay z-index governance */
+  --z-timeline:   15;
+  --z-palette:    50;
+  --z-panel:      20;
+  --z-overlay:    10;
+  --z-badge:       5;
+}
+
+/* ── Typography normalization ──────────────────────────────────────── */
+.z33-title {
+  font-family: var(--font-ui);
+  font-size:   var(--text-title);
+  font-weight: var(--fw-title);
+  letter-spacing: var(--ls-title);
+  text-transform: uppercase;
+  color: var(--clr-muted);
+  line-height: 1.3;
+}
+
+.z33-label {
+  font-family: var(--font-ui);
+  font-size:   var(--text-label);
+  font-weight: var(--fw-label);
+  letter-spacing: var(--ls-label);
+  color: var(--clr-muted);
+  line-height: 1.4;
+}
+
+.z33-telemetry {
+  font-family: var(--font-mono);
+  font-size:   var(--text-telemetry);
+  font-weight: 400;
+  letter-spacing: var(--ls-telem);
+  color: var(--clr-muted);
+  line-height: 1.5;
+}
+
+.z33-value {
+  font-family: var(--font-mono);
+  font-size:   var(--text-label);
+  font-weight: var(--fw-label);
+  color: var(--clr-text);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Z33A — Execution Identity + Idle State
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Runtime pulse indicator in topbar */
+.z33-runtime-pulse {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 2px var(--sp-2);
+  border-radius: 4px;
+  font-size: var(--text-telemetry);
+  color: var(--clr-muted);
+  transition: color 0.4s;
+  cursor: default;
+  flex-shrink: 0;
+}
+
+.z33-pulse-dot {
+  width:  6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--clr-muted);
+  transition: background 0.4s;
+  flex-shrink: 0;
+}
+
+.z33-runtime-pulse.active .z33-pulse-dot {
+  background: var(--clr-ok);
+  animation: z33-pulse-beat 2.4s ease-in-out infinite;
+}
+
+.z33-runtime-pulse.degraded .z33-pulse-dot { background: var(--clr-warn); }
+.z33-runtime-pulse.critical .z33-pulse-dot { background: var(--clr-error); animation: z33-pulse-beat 0.8s ease-in-out infinite; }
+
+@keyframes z33-pulse-beat {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.45; transform: scale(0.75); }
+}
+
+.z33-pulse-label {
+  font-size: var(--text-telemetry);
+  letter-spacing: 0.04em;
+  font-family: var(--font-mono);
+}
+
+/* Enhanced idle hero — forensic alerts + Z32 signal injection */
+.z33-idle-signals {
+  display: flex;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+  margin-top: var(--sp-2);
+}
+
+.z33-idle-signal {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  padding: 2px var(--sp-2);
+  border-radius: 3px;
+  font-size: var(--text-telemetry);
+  border: 1px solid var(--clr-border);
+  color: var(--clr-muted);
+  background: var(--clr-surface);
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.z33-idle-signal:hover { border-color: rgba(56,189,248,0.3); color: var(--clr-info); }
+.z33-idle-signal.warn  { border-color: rgba(245,158,11,0.3); color: var(--clr-warn); }
+.z33-idle-signal.ok    { border-color: rgba(34,197,94,0.25); color: var(--clr-ok); }
+.z33-idle-signal.error { border-color: rgba(239,68,68,0.3);  color: var(--clr-error); }
+
+/* Replay resume card */
+.z33-replay-resume {
+  display: none;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-2) var(--sp-3);
+  margin-top: var(--sp-2);
+  background: rgba(56,189,248,0.04);
+  border: 1px solid rgba(56,189,248,0.15);
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.z33-replay-resume.visible { display: flex; }
+.z33-replay-resume:hover   { background: rgba(56,189,248,0.07); }
+
+.z33-replay-resume-icon { font-size: 13px; flex-shrink: 0; color: var(--clr-info); }
+
+.z33-replay-resume-info { flex: 1; }
+.z33-replay-resume-sid  { font-size: var(--text-label); font-weight: var(--fw-label); color: var(--clr-text); font-family: var(--font-mono); }
+.z33-replay-resume-meta { font-size: var(--text-telemetry); color: var(--clr-muted); margin-top: 1px; }
+
+.z33-replay-resume-btn {
+  padding: 2px var(--sp-2);
+  font-size: var(--text-telemetry);
+  background: rgba(56,189,248,0.08);
+  border: 1px solid rgba(56,189,248,0.2);
+  border-radius: 3px;
+  color: var(--clr-info);
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-weight: 500;
+  transition: background 0.15s;
+}
+
+.z33-replay-resume-btn:hover { background: rgba(56,189,248,0.14); }
+
+/* Pending approvals badge */
+.z33-approvals-row {
+  display: none;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-1) var(--sp-3);
+  margin-top: var(--sp-1);
+  background: rgba(245,158,11,0.04);
+  border-left: 2px solid var(--clr-warn);
+  font-size: var(--text-label);
+  color: var(--clr-warn);
+}
+
+.z33-approvals-row.visible { display: flex; }
+
+/* ═══════════════════════════════════════════════════════════════════
+   Z33B — Execution Timeline Dock
+   ═══════════════════════════════════════════════════════════════════ */
+
+.z33-timeline-dock {
+  position: relative;
+  flex-shrink: 0;
+  background: var(--clr-surface);
+  border-top: 1px solid var(--clr-border);
+  z-index: var(--z-timeline);
+  transition: height 0.2s ease;
+  overflow: hidden;
+  height: 28px;
+}
+
+.z33-timeline-dock.expanded { height: 140px; }
+
+/* Timeline header / toggle strip */
+.z33-tl-header {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 0 var(--sp-3);
+  height: 28px;
+  cursor: pointer;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.z33-tl-header:hover { background: rgba(255,255,255,0.02); }
+
+.z33-tl-label {
+  font-size: var(--text-telemetry);
+  font-weight: var(--fw-label);
+  letter-spacing: var(--ls-title);
+  text-transform: uppercase;
+  color: var(--clr-muted);
+}
+
+.z33-tl-count {
+  font-size: var(--text-telemetry);
+  font-family: var(--font-mono);
+  color: var(--clr-muted);
+  background: rgba(255,255,255,0.05);
+  padding: 0 5px;
+  border-radius: 3px;
+}
+
+.z33-tl-badges { display: flex; gap: 4px; align-items: center; }
+
+.z33-tl-badge {
+  font-size: var(--text-telemetry);
+  padding: 0 5px;
+  border-radius: 2px;
+  font-family: var(--font-mono);
+}
+
+.z33-tl-badge.retry    { background: rgba(249,115,22,0.1); color: #f97316; }
+.z33-tl-badge.replan   { background: rgba(139,92,246,0.1); color: #a78bfa; }
+.z33-tl-badge.hitl     { background: rgba(245,158,11,0.1); color: #f59e0b; }
+.z33-tl-badge.conf     { background: rgba(34,197,94,0.1);  color: #22c55e; }
+
+.z33-tl-toggle {
+  margin-left: auto;
+  font-size: 9px;
+  color: var(--clr-muted);
+  transition: transform 0.2s;
+}
+
+.z33-timeline-dock.expanded .z33-tl-toggle { transform: rotate(180deg); }
+
+/* Timeline scroll area */
+.z33-tl-body {
+  height: 112px;
+  overflow-y: auto;
+  padding: 0 var(--sp-3) var(--sp-2);
+  scrollbar-width: thin;
+  scrollbar-color: var(--clr-border) transparent;
+}
+
+.z33-tl-body::-webkit-scrollbar       { width: 4px; }
+.z33-tl-body::-webkit-scrollbar-thumb { background: var(--clr-border); border-radius: 2px; }
+
+/* Timeline event rows */
+.z33-tl-event {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-2);
+  padding: 2px 0;
+  border-bottom: 1px solid transparent;
+  transition: background 0.1s;
+}
+
+.z33-tl-event:hover { background: rgba(255,255,255,0.02); }
+
+.z33-tl-ts {
+  font-family: var(--font-mono);
+  font-size: var(--text-telemetry);
+  color: var(--clr-muted);
+  flex-shrink: 0;
+  width: 48px;
+  text-align: right;
+}
+
+.z33-tl-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.z33-tl-dot.node-done    { background: var(--clr-ok); }
+.z33-tl-dot.node-error   { background: var(--clr-error); }
+.z33-tl-dot.retry        { background: #f97316; }
+.z33-tl-dot.replan       { background: #a78bfa; }
+.z33-tl-dot.hitl         { background: var(--clr-warn); }
+.z33-tl-dot.conf-drop    { background: var(--clr-info); }
+.z33-tl-dot.recovery     { background: #34d399; }
+.z33-tl-dot.compress     { background: #a78bfa; opacity: 0.6; }
+
+.z33-tl-text {
+  font-size: var(--text-telemetry);
+  color: var(--clr-text);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.z33-tl-text.muted { color: var(--clr-muted); }
+
+/* Grouped / collapsed events */
+.z33-tl-group {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 1px 0;
+  cursor: pointer;
+}
+
+.z33-tl-group-count {
+  font-family: var(--font-mono);
+  font-size: var(--text-telemetry);
+  background: rgba(255,255,255,0.06);
+  padding: 0 5px;
+  border-radius: 2px;
+  color: var(--clr-muted);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Z33C — Operational Sidebar Refinement
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Workspace memory surface in sidebar */
+.z33-sidebar-memory {
+  border-top: 1px solid var(--clr-border);
+  padding: var(--sp-2) 0;
+}
+
+.z33-sm-header {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 0 var(--sp-3);
+  height: 26px;
+}
+
+.z33-sm-title {
+  font-size: var(--text-telemetry);
+  font-weight: var(--fw-label);
+  letter-spacing: var(--ls-title);
+  text-transform: uppercase;
+  color: var(--clr-muted);
+  flex: 1;
+}
+
+.z33-sm-list { padding: 0 var(--sp-2); }
+
+.z33-sm-item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-1) var(--sp-2);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.z33-sm-item:hover { background: rgba(255,255,255,0.04); }
+
+.z33-sm-item-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.z33-sm-item-dot.skill    { background: var(--clr-ok); }
+.z33-sm-item-dot.unstable { background: var(--clr-warn); }
+.z33-sm-item-dot.failed   { background: var(--clr-error); }
+.z33-sm-item-dot.bookmark { background: var(--clr-info); }
+
+.z33-sm-item-label {
+  font-size: var(--text-telemetry);
+  color: var(--clr-text);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.z33-sm-item-meta {
+  font-size: var(--text-telemetry);
+  color: var(--clr-muted);
+  font-family: var(--font-mono);
+  flex-shrink: 0;
+}
+
+/* Sidebar collapse indicator (auto-collapse during execution pressure) */
+.z33-sidebar-collapsed-hint {
+  display: none;
+  padding: var(--sp-1) var(--sp-2);
+  font-size: var(--text-telemetry);
+  color: var(--clr-muted);
+  text-align: center;
+}
+
+.z33-sidebar-collapsed .z33-sidebar-collapsed-hint { display: block; }
+
+/* ═══════════════════════════════════════════════════════════════════
+   Z33D — Command Palette Runtime Extensions
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Palette section dividers */
+.nx-palette-section {
+  padding: 4px var(--sp-3) 2px;
+  font-size: var(--text-telemetry);
+  font-weight: var(--fw-label);
+  letter-spacing: var(--ls-title);
+  text-transform: uppercase;
+  color: var(--clr-muted);
+  pointer-events: none;
+}
+
+/* Palette runtime state banner */
+.nx-palette-state-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-1) var(--sp-3);
+  background: rgba(56,189,248,0.04);
+  border-bottom: 1px solid rgba(56,189,248,0.12);
+  font-size: var(--text-telemetry);
+  color: var(--clr-info);
+}
+
+.nx-palette-state-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--clr-info);
+  animation: z33-pulse-beat 2s ease-in-out infinite;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Z33E — Overlay Governance
+   Prevents confidence overlays, pressure gauges, timeline alerts
+   and forensic warnings from competing visually
+   ═══════════════════════════════════════════════════════════════════ */
+
+/*
+  Z-index hierarchy (highest wins, everything else defers):
+  50  — command palette (user intent, always on top)
+  20  — slide-in panels (z31 forensic panel, z32 skills)
+  15  — timeline dock
+  10  — dag overlays (confidence badge, snapshot watermark)
+   5  — health bar badges, pressure gauges
+   4  — node intelligence panels
+   2  — execution banners (instability, drift, prediction)
+   1  — status bar, replay bar
+*/
+
+/* Enforce palette always wins */
+#nxPalette { z-index: var(--z-palette) !important; }
+
+/* Panel slides */
+.z31-forensic-panel,
+.z32-skills-panel { z-index: var(--z-panel); }
+
+/* DAG overlays */
+.z32-confidence-overlay,
+.z31-snapshot-watermark { z-index: var(--z-overlay); }
+
+/* Banners compete only within their row — never overlap cross-context */
+.z30-instability-alert,
+.z31-drift-banner,
+.z32-prediction-banner { z-index: 2; position: relative; }
+
+/* Color discipline: runtime color never exceeds 30% opacity fill on backgrounds */
+.z33-no-compete {
+  background: transparent !important;
+  border-color: rgba(255,255,255,0.06) !important;
+}
+
+/* Spacing normalization for all Live tab bars */
+.z30-health-bar,
+.z32-pressure-bar,
+.z30-replay-bar {
+  padding-left:  var(--sp-3);
+  padding-right: var(--sp-3);
+}
+
+/* Consistent section gaps in the Live tab column */
+.z33-live-section-gap { height: 1px; background: var(--clr-border); flex-shrink: 0; }
+
+/* ═══════════════════════════════════════════════════════════════════
+   Z33E — Visual System Unification
+   Reduces density variation across panels
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Panel title normalization */
+.z30-dag-label,
+.z31-forensic-title,
+.z32-skills-title {
+  font-size:      var(--text-label) !important;
+  font-weight:    var(--fw-label) !important;
+  letter-spacing: var(--ls-label) !important;
+  text-transform: uppercase !important;
+  color:          var(--clr-muted) !important;
+}
+
+/* Filter chip normalization */
+.z31-filter-chip {
+  font-size:   var(--text-telemetry) !important;
+  padding:     2px var(--sp-2) !important;
+  line-height: 1.5 !important;
+}
+
+/* Badge size normalization */
+.z30-sev-badge,
+.z32-pressure-badge,
+.z32-conf-badge {
+  font-size:   var(--text-telemetry) !important;
+  line-height: 1.5 !important;
+}
+
+/* Health bar item spacing */
+.z30-health-item,
+.z32-pressure-item {
+  font-size: var(--text-telemetry) !important;
+}
+
+/* Toolbar button height normalization */
+.z30-replay-btn,
+.z31-forensic-toggle,
+.z31-forensic-close,
+.z32-skills-title + button {
+  height: 18px !important;
+  line-height: 18px !important;
+}
+
+/* Prevent font size drift in nested panel headers */
+.z30-dag-panel-hdr,
+.z30-intel-hdr,
+.z31-forensic-hdr,
+.z32-skills-hdr {
+  font-size: var(--text-label);
+  gap:       var(--sp-2);
+  padding:   0 var(--sp-2);
+}
+
+/* Remove visual noise: excessive rounded corners on small elements */
+.z30-sev-badge  { border-radius: 3px !important; }
+.z32-conf-badge { border-radius: 8px !important; }
+
+/* ── Execution shimmer (idle → active transition, non-flashy) ─────── */
+@keyframes z33-shimmer-once {
+  0%   { opacity: 0; }
+  15%  { opacity: 1; }
+  85%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.z33-shimmer {
+  animation: z33-shimmer-once 0.8s ease forwards;
+}
+
+/* ── Replay heartbeat progress line ──────────────────────────────── */
+.z33-replay-heartbeat {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(56,189,248,0.4), transparent);
+  background-size: 200% 100%;
+  animation: z33-hb-sweep 3s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes z33-hb-sweep {
+  0%   { background-position: -100% 0; opacity: 0; }
+  20%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { background-position: 300% 0; opacity: 0; }
+}

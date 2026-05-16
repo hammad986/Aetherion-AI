@@ -1,0 +1,309 @@
+PHASE Z33 — OPERATIONAL WORKSPACE COMPLETION + RUNTIME UX STABILIZATION
+
+CURRENT SYSTEM STATUS:
+The backend runtime now supports:
+
+* DAG orchestration
+* replay persistence
+* forensic memory
+* semantic confidence
+* adaptive replanning
+* procedural skill memory
+* predictive failure intelligence
+* runtime pressure tracking
+
+The backend maturity has now surpassed the frontend operational experience.
+
+The next phase is NOT:
+adding more intelligence systems.
+
+The next phase IS:
+making the workspace feel:
+stable,
+alive,
+operational,
+coherent,
+and production-grade.
+
+STRICT RULES:
+🔒 NO BACKEND ARCHITECTURE REWRITES
+🔒 NO NEW AI SUBSYSTEMS
+🔒 NO FRAMEWORK REPLACEMENTS
+🔒 NO VISUAL NOISE
+🔒 NO MARKETING UI
+🔒 NO “AGI” EFFECTS
+🔒 CALM EXECUTION ENVIRONMENT ONLY
+🔒 OPERATIONAL CLARITY > FEATURE DENSITY
+🔒 UX STABILITY > NEW CAPABILITIES
+
+====================================================
+PHASE Z33A — EXECUTION IDENTITY + IDLE STATE
+============================================
+
+PROBLEM:
+The workspace still feels:
+empty,
+silent,
+and unfinished
+when idle.
+
+GOAL:
+Transform the workspace into a:
+living operational environment.
+
+REQUIREMENTS:
+
+1. Intelligent Idle State
+   Replace the blank center void with:
+
+* operational hints
+* recent missions
+* replay resume entry
+* last runtime state
+* pending approvals
+* recent forensic alerts
+
+2. Adaptive Workspace Presence
+   Workspace must subtly communicate:
+
+* runtime health
+* active memory pressure
+* semantic confidence
+* recovery status
+
+WITHOUT:
+
+* flashy animations
+* neon effects
+* noisy telemetry spam
+
+3. Runtime Pulse
+   Implement:
+   minimal operational pulse indicators:
+
+* subtle activity shimmer
+* live replay heartbeat
+* runtime synchronization indicator
+
+All effects MUST remain:
+calm,
+slow,
+minimal,
+and operational.
+
+====================================================
+PHASE Z33B — LIVE EXECUTION EXPERIENCE
+======================================
+
+PROBLEM:
+Execution visibility still lacks:
+flow clarity
+and operational readability.
+
+GOAL:
+Improve execution comprehension.
+
+REQUIREMENTS:
+
+1. Execution Timeline Dock
+   Build:
+   expandable bottom timeline.
+
+Must display:
+
+* node execution order
+* retries
+* replanning events
+* confidence drops
+* HITL interruptions
+* recovery transitions
+
+2. Semantic Event Grouping
+   Collapse repetitive events:
+   instead of spamming logs.
+
+3. DAG Readability Improvements
+   Improve:
+
+* edge spacing
+* node grouping
+* pressure overlays
+* confidence overlays
+* recovery branch visualization
+
+4. Replay Scrubbing
+   Allow:
+   historical replay scrubbing:
+   timeline slider → DAG state sync.
+
+====================================================
+PHASE Z33C — OPERATIONAL SIDEBAR REFINEMENT
+===========================================
+
+PROBLEM:
+Sidebar still feels:
+structurally incomplete.
+
+GOAL:
+Make sidebar adaptive and operational.
+
+REQUIREMENTS:
+
+1. Contextual Sidebar States
+   Sidebar adapts based on:
+
+* idle mode
+* active execution
+* replay inspection
+* HITL escalation
+* forensic inspection
+
+2. Smart Collapse Logic
+   Auto-collapse:
+   low-priority panels during execution pressure.
+
+3. Workspace Memory Surface
+   Sidebar should expose:
+
+* recent skills
+* replay bookmarks
+* unstable sessions
+* failed recovery chains
+
+====================================================
+PHASE Z33D — COMMAND PALETTE + OPERATOR FLOW
+============================================
+
+PROBLEM:
+Command palette still feels:
+UI-attached,
+not runtime-native.
+
+GOAL:
+Make operator interaction:
+fluid and operational.
+
+REQUIREMENTS:
+
+1. Runtime-Aware Command Palette
+   Palette suggestions must adapt to:
+
+* active session state
+* replay mode
+* instability conditions
+* low-confidence scenarios
+
+2. Operator Shortcuts
+   Support:
+
+* replay jump
+* recovery resume
+* forensic export
+* compression inspect
+* skill recall
+
+3. Semantic Search
+   Palette should search:
+
+* sessions
+* DAG nodes
+* failures
+* skills
+* replay exports
+
+====================================================
+PHASE Z33E — VISUAL SYSTEM UNIFICATION
+======================================
+
+PROBLEM:
+UI still contains:
+mixed spacing,
+mixed visual density,
+and inconsistent hierarchy.
+
+GOAL:
+Create a fully unified operational design language.
+
+REQUIREMENTS:
+
+1. Typography System
+   Standardize:
+
+* headers
+* labels
+* telemetry text
+* node captions
+* panel titles
+
+2. Spacing Discipline
+   Enforce:
+   consistent:
+   padding,
+   dock spacing,
+   sidebar rhythm,
+   timeline margins,
+   panel separation.
+
+3. Color Discipline
+   Reduce:
+   visual intensity.
+
+Use:
+subtle semantic color language only.
+
+4. Overlay Governance
+   Ensure:
+   confidence overlays,
+   pressure gauges,
+   timeline alerts,
+   and forensic warnings
+   never visually compete.
+
+====================================================
+PHASE Z33F — OPERATIONAL CERTIFICATION
+======================================
+
+Generate:
+
+* docs/Z33_RUNTIME_UX_AUDIT.md
+* docs/Z33_EXECUTION_VISIBILITY_REPORT.md
+* docs/Z33_SIDEBAR_DISCIPLINE.md
+* docs/Z33_COMMAND_PALETTE_ANALYSIS.md
+* docs/Z33_VISUAL_SYSTEM_CERTIFICATION.md
+* docs/Z33_OPERATOR_EXPERIENCE_VERDICT.md
+
+All reports MUST include:
+
+1. Remaining UX instability zones
+2. Remaining visual clutter risks
+3. Remaining operator confusion points
+4. Remaining replay readability weaknesses
+5. Remaining runtime overload risks
+6. Honest production UX verdict
+
+====================================================
+FINAL VALIDATION
+================
+
+Before completion:
+
+* verify runtime readability during long sessions
+* verify replay clarity
+* verify timeline stability
+* verify sidebar adaptation
+* verify command palette responsiveness
+* verify no visual telemetry overload
+* verify calm operational feel
+* verify no FPS degradation
+* verify no memory leaks
+
+IMPORTANT:
+This phase is NOT:
+adding features for hype.
+
+This phase IS:
+making Aetherion AI feel:
+stable,
+trustworthy,
+operational,
+and production-grade.

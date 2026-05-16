@@ -1,0 +1,303 @@
+/* ═══════════════════════════════════════════════════════════════════
+   PHASE Z37 — Causal Runtime Intelligence + Dependency Cognition
+   Risk indicator · Forecast bar · Dependency trace · Replay depth
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── Tokens ─────────────────────────────────────────────────────── */
+:root {
+  --z37-low:      #6e7681;
+  --z37-elevated: #e3b341;
+  --z37-high:     #f0883e;
+  --z37-critical: #f87171;
+  --z37-main:     #58a6ff;
+  --z37-retry:    #e3b341;
+  --z37-recovery: #3fb950;
+  --z37-escalation: #f87171;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Z37C — Risk Indicator (in mission bar)
+   ═══════════════════════════════════════════════════════════════════ */
+.z37-risk-indicator {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  border: 1px solid transparent;
+  transition: border-color 200ms ease, color 200ms ease;
+  cursor: default;
+}
+
+.z37-risk-label {
+  font-size: 8.5px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-dim, #6e7681);
+}
+
+.z37-risk-level {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  transition: color 200ms ease;
+}
+
+.z37-risk-LOW      .z37-risk-level { color: var(--z37-low); }
+.z37-risk-ELEVATED .z37-risk-level { color: var(--z37-elevated); }
+.z37-risk-HIGH     .z37-risk-level { color: var(--z37-high); }
+.z37-risk-CRITICAL .z37-risk-level {
+  color: var(--z37-critical);
+  animation: z37-critical-pulse 2.5s ease-in-out infinite;
+}
+
+@keyframes z37-critical-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
+}
+
+.z37-risk-ELEVATED { border-color: rgba(227,179,65,0.2); }
+.z37-risk-HIGH     { border-color: rgba(240,136,62,0.2); }
+.z37-risk-CRITICAL { border-color: rgba(248,113,113,0.25); }
+
+/* ═══════════════════════════════════════════════════════════════════
+   Z37C — Forecast Bar
+   ═══════════════════════════════════════════════════════════════════ */
+.z37-forecast-bar {
+  display: none;
+  align-items: center;
+  padding: 3px 12px;
+  background: var(--surface, #0d1117);
+  border-bottom: 1px solid var(--border, #21262d);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.z37-forecast-bar.z37-fc-bar-visible {
+  display: flex;
+}
+
+.z37-fc-bar-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.z37-fc-bar-label {
+  font-size: 8.5px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-dim, #6e7681);
+  flex-shrink: 0;
+}
+
+.z37-fc-bar-text {
+  font-size: 9.5px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.z37-risk-text-LOW      { color: var(--z37-low); }
+.z37-risk-text-ELEVATED { color: var(--z37-elevated); }
+.z37-risk-text-HIGH     { color: var(--z37-high); }
+.z37-risk-text-CRITICAL { color: var(--z37-critical); }
+
+.z37-fc-next {
+  font-size: 9px;
+  color: var(--text-dim, #6e7681);
+  font-style: italic;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.z37-cascade-badges {
+  display: flex;
+  gap: 4px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.z37-cascade-badge {
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: rgba(248,113,113,0.1);
+  border: 1px solid rgba(248,113,113,0.25);
+  color: var(--z37-critical);
+  cursor: default;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Z37A — Causal Inspector Section
+   ═══════════════════════════════════════════════════════════════════ */
+.z37-causal-section {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border, #21262d);
+}
+
+.z37-causal-block {
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border, #21262d);
+}
+
+.z37-causal-block:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.z37-causal-title {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim, #6e7681);
+  margin-bottom: 5px;
+}
+
+/* Dependency chain */
+.z37-dep-chain {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+
+.z37-dep-step {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.z37-dep-node {
+  font-size: 8.5px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: var(--surface-overlay, #161b22);
+  border: 1px solid var(--border, #21262d);
+  color: var(--text-dim, #6e7681);
+  transition: border-color 120ms ease;
+}
+
+.z37-dep-node.z37-dep-active {
+  border-color: rgba(88,166,255,0.4);
+  color: var(--z37-main);
+  background: rgba(88,166,255,0.07);
+}
+
+.z37-dep-node.z37-branch-retry     { border-color: rgba(227,179,65,0.3);   color: var(--z37-retry); }
+.z37-dep-node.z37-branch-recovery  { border-color: rgba(63,185,80,0.3);    color: var(--z37-recovery); }
+.z37-dep-node.z37-branch-escalation{ border-color: rgba(248,113,113,0.3);  color: var(--z37-escalation); }
+.z37-dep-node.z37-branch-main      { border-color: rgba(88,166,255,0.2);   color: var(--z37-main); }
+
+.z37-dep-arrow {
+  font-size: 8px;
+  color: var(--text-dim, #6e7681);
+  opacity: 0.35;
+}
+
+/* Insight text */
+.z37-insight-text {
+  font-size: 9px;
+  color: var(--text-dim, #6e7681);
+  font-style: italic;
+  line-height: 1.5;
+  border-left: 2px solid rgba(88,166,255,0.2);
+  padding-left: 6px;
+}
+
+/* Node forecast grid */
+.z37-forecast-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.z37-fc-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 9px;
+}
+
+.z37-fc-label { color: var(--text-dim, #6e7681); }
+.z37-fc-val   { color: var(--text, #e6edf3); }
+
+.z37-risk-val-critical { color: var(--z37-critical); }
+.z37-risk-val-elevated { color: var(--z37-elevated); }
+.z37-good  { color: var(--z37-recovery); }
+.z37-warn  { color: var(--z37-elevated); }
+.z37-bad   { color: var(--z37-critical); }
+
+.z37-retry-severe   { color: var(--z37-critical); }
+.z37-retry-elevated { color: var(--z37-elevated); }
+.z37-retry-low      { color: var(--z37-low); }
+.z37-retry-none     { color: var(--z37-recovery); }
+
+/* ═══════════════════════════════════════════════════════════════════
+   Z37E — Causal Replay Depth
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Nodes before the cursor — de-emphasised */
+[data-node-id][data-z37-replay="before"] {
+  opacity: 0.45;
+  transition: opacity 200ms ease;
+}
+
+/* Node at cursor — highlighted */
+[data-node-id][data-z37-replay="active"] {
+  opacity: 1;
+  outline: 1px solid rgba(88,166,255,0.55);
+  outline-offset: 2px;
+  transition: opacity 200ms ease, outline 200ms ease;
+}
+
+/* Nodes after cursor — dimmed but visible */
+[data-node-id][data-z37-replay="after"] {
+  opacity: 0.3;
+  transition: opacity 200ms ease;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Z37F — Operational Visual Maturity
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Critical surfaces gain subtle depth on HIGH/CRITICAL risk */
+.z30-dag-panel.z37-prominent {
+  border-color: rgba(248,113,113,0.12);
+  transition: border-color 300ms ease;
+}
+
+#z35MissionBar.z37-prominent {
+  background: color-mix(in srgb, var(--surface, #0d1117) 97%, #f87171 3%);
+  transition: background 300ms ease;
+}
+
+/* Risk-driven document-level cues */
+[data-z37-risk="HIGH"] #z30DagSurface {
+  border-left: 2px solid rgba(240,136,62,0.15);
+}
+
+[data-z37-risk="CRITICAL"] #z30DagSurface {
+  border-left: 2px solid rgba(248,113,113,0.2);
+}
+
+/* Forecast bar entrance animation */
+.z37-forecast-bar.z37-fc-bar-visible {
+  animation: z37-bar-enter 200ms ease-out forwards;
+}
+
+@keyframes z37-bar-enter {
+  from { opacity: 0; transform: translateY(-3px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

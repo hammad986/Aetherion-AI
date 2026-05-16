@@ -1,0 +1,285 @@
+PHASE Z37 — CAUSAL RUNTIME INTELLIGENCE + DEPENDENCY COGNITION
+
+CURRENT STATUS:
+Aetherion AI now supports:
+
+* unified node identity
+* cross-surface synchronization
+* execution replay fusion
+* forensic reasoning
+* execution pressure tracking
+* mission continuity
+* density governance
+* runtime drift awareness
+* adaptive operational surfaces
+
+However:
+execution intelligence is still:
+mostly observational.
+
+The runtime must now evolve into:
+a causally-aware operational system.
+
+STRICT RULES:
+🔒 NO NEW AGENTS
+🔒 NO NEW FRAMEWORKS
+🔒 NO NEW BACKEND ORCHESTRATION
+🔒 NO AI HYPE FEATURES
+🔒 NO CHATBOT ELEMENTS
+🔒 NO VISUAL GAMIFICATION
+🔒 NO SAAS DASHBOARD BEHAVIOR
+🔒 EXECUTION INTELLIGENCE > VISUAL NOVELTY
+🔒 CAUSAL CLARITY > FEATURE COUNT
+🔒 ALL NEW LOGIC MUST BE OPERATIONAL
+
+====================================================
+PHASE Z37A — TRUE DEPENDENCY LINEAGE ENGINE
+===========================================
+
+GOAL:
+Transform execution graph from:
+connected nodes
+into:
+causal execution intelligence.
+
+REQUIREMENTS:
+
+1. Parent-Child Lineage Emission
+   Every DAG execution node MUST emit:
+
+* parentId
+* ancestor chain
+* dependency chain
+* execution branch id
+* retry ancestry
+* recovery ancestry
+
+2. Causal Runtime Graph
+   NodeRegistry MUST build:
+   true execution dependency trees.
+
+3. Dependency Trace Reconstruction
+   Selecting a node MUST reconstruct:
+
+* why node executed
+* which dependency triggered it
+* what prior failure influenced it
+* what recovery altered it
+
+4. Branch Divergence Tracking
+   Replay system MUST identify:
+
+* original execution branch
+* recovery divergence branch
+* retry branch
+* escalation branch
+
+====================================================
+PHASE Z37B — DEPENDENCY PRESSURE PROPAGATION
+============================================
+
+GOAL:
+Execution instability must spread realistically
+through dependency chains.
+
+REQUIREMENTS:
+
+1. Pressure Inheritance
+   Child nodes inherit:
+   partial pressure from unstable parents.
+
+2. Cascade Detection
+   Detect:
+
+* retry storms
+* bottleneck chains
+* cascading failures
+* unstable dependency regions
+
+3. Runtime Bottleneck Intelligence
+   Highlight:
+
+* highest retry concentration
+* slowest dependency chains
+* escalation-heavy branches
+* unstable recovery loops
+
+4. Pressure Cooling
+   Recovered branches slowly reduce:
+   visual and operational pressure.
+
+====================================================
+PHASE Z37C — PREDICTIVE FAILURE + RECOVERY MODELING
+===================================================
+
+GOAL:
+Move runtime from:
+reactive
+to:
+predictive.
+
+REQUIREMENTS:
+
+1. Failure Prediction
+   Estimate:
+
+* likely next unstable node
+* escalation probability
+* recovery failure risk
+* replay instability likelihood
+
+2. Recovery Path Intelligence
+   Display:
+
+* historically successful recovery types
+* predicted stabilization chance
+* likely retry amplification
+* recovery branch confidence
+
+3. Runtime Risk Forecasting
+   Surface:
+   LOW / ELEVATED / HIGH / CRITICAL
+   runtime stability levels.
+
+====================================================
+PHASE Z37D — EXECUTION MEMORY GRAPH
+===================================
+
+GOAL:
+Runtime should remember:
+how execution evolved over time.
+
+REQUIREMENTS:
+
+1. Execution Memory Threads
+   Persist:
+
+* recovery chains
+* repeated bottlenecks
+* escalation ancestry
+* retry-heavy regions
+
+2. Historical Dependency Learning
+   Track:
+
+* frequently unstable nodes
+* historically expensive branches
+* repeated recovery paths
+
+3. Semantic Runtime History
+   Inspector MUST show:
+   “this node historically causes instability”
+   style operational insights.
+
+====================================================
+PHASE Z37E — CAUSAL REPLAY IMMERSION
+====================================
+
+GOAL:
+Replay should feel:
+alive,
+causal,
+reconstructive.
+
+REQUIREMENTS:
+
+1. Replay Reconstruction
+   Replay MUST reconstruct:
+
+* dependency states
+* runtime pressure
+* escalation context
+* recovery lineage
+* execution confidence
+
+2. Replay Time Drift
+   Operators can visually sense:
+
+* stabilization
+* collapse
+* retry amplification
+* pressure accumulation
+
+3. Causal Replay Focus
+   Replay navigation auto-focuses:
+   most critical execution moments.
+
+====================================================
+PHASE Z37F — OPERATIONAL VISUAL MATURITY
+========================================
+
+GOAL:
+Remove remaining “empty UI” feeling.
+
+REQUIREMENTS:
+
+1. Runtime Density Refinement
+   Workspace should feel:
+   alive,
+   dense,
+   operational,
+   without clutter.
+
+2. Contextual Surface Weight
+   Critical runtime surfaces subtly gain:
+
+* depth
+* opacity
+* prominence
+  during execution.
+
+3. Operational Calmness
+   Maintain:
+   minimalism,
+   clarity,
+   and low-noise execution discipline.
+
+====================================================
+PHASE Z37G — CERTIFICATION + FORENSIC VALIDATION
+================================================
+
+Generate:
+
+* docs/Z37_CAUSAL_RUNTIME_AUDIT.md
+* docs/Z37_DEPENDENCY_PROPAGATION_REPORT.md
+* docs/Z37_RUNTIME_FORECASTING.md
+* docs/Z37_EXECUTION_MEMORY_GRAPH.md
+* docs/Z37_CAUSAL_REPLAY_CERTIFICATION.md
+* docs/Z37_OPERATIONAL_MATURITY_VERDICT.md
+
+Each report MUST include:
+
+1. Remaining dependency weaknesses
+2. Remaining replay blind spots
+3. Remaining predictive limitations
+4. Remaining runtime cognition gaps
+5. Remaining execution density weaknesses
+6. Honest operational maturity verdict
+
+====================================================
+FINAL VALIDATION
+================
+
+Before completion:
+
+* verify lineage integrity
+* verify parent-child graph correctness
+* verify replay causality
+* verify no graph memory leaks
+* verify no replay desync
+* verify pressure propagation stability
+* verify recovery cooling correctness
+* verify long-session drift stability
+* verify runtime forecasting behavior
+* verify operational calmness maintained
+
+IMPORTANT:
+This phase is NOT:
+adding artificial intelligence hype.
+
+This phase IS:
+making execution intelligence:
+causal,
+predictive,
+persistent,
+and operationally mature.

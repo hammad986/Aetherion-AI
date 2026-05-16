@@ -2025,7 +2025,7 @@ def _p19_cors(response):
     response.headers.setdefault(
         "Permissions-Policy",
         "camera=(), microphone=(), geolocation=(), "
-        "payment=(self https://checkout.razorpay.com), "
+        "payment=(self \"https://checkout.razorpay.com\"), "
         "usb=(), fullscreen=(self), display-capture=(), "
         "clipboard-read=(), clipboard-write=(self)",
     )

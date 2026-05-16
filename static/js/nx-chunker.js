@@ -222,7 +222,7 @@
 
   /* ── Wire NxBus ──────────────────────────────────────────────────── */
   function _wire() {
-    if (_initialized || !window.NxBus) return;
+    if (_initialized || !window.NxBus || !NxBus.EVENTS) { if (!_initialized && window.NxBus && !NxBus.EVENTS) setTimeout(_wire, 200); return; }
     _initialized = true;
 
     const E = NxBus.EVENTS;

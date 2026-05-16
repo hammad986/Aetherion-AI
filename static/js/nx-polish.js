@@ -221,7 +221,7 @@
      5. SESSION CONTINUITY — smooth reconnect experience
      ══════════════════════════════════════════════════════════════════ */
   function _initSessionContinuity() {
-    if (!window.NxBus) { setTimeout(_initSessionContinuity, 200); return; }
+    if (!window.NxBus || !NxBus.EVENTS) { setTimeout(_initSessionContinuity, 200); return; }
     const E = NxBus.EVENTS;
 
     NxBus.on(E.SESSION_RESTORED, (d) => {

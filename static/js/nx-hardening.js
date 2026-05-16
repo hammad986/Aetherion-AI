@@ -241,7 +241,7 @@
        mission can remain. Clean on SESSION_CLEARED.
      ══════════════════════════════════════════════════════════════════ */
   function _initStaleCleanup() {
-    if (!window.NxBus) return;
+    if (!window.NxBus || !NxBus.EVENTS) { setTimeout(_initStaleCleanup, 200); return; }
     NxBus.on(NxBus.EVENTS.SESSION_CLEARED, () => {
       // Clear inspector
       const insp = $('nxInspectorContent');

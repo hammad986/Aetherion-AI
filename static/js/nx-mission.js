@@ -289,7 +289,7 @@
 
   function _wire() {
     if (_initialized) return;
-    if (!window.NxBus) { setTimeout(_wire, 200); return; }
+    if (!window.NxBus || !NxBus.EVENTS) { setTimeout(_wire, 200); return; }
     _initialized = true;
     const E = NxBus.EVENTS;
 

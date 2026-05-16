@@ -4045,3 +4045,236 @@
       cursor: pointer;
       white-space: nowrap;
     }
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z16 / Z17 / Z18 — Visual Stabilization + Execution UX + Operational Polish
+   2026-05-16
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── Z16 Phase A: Tab Bar — override inline style defeat ─────────────
+   The HTML carries style="gap:24px;padding:0 16px;background:#18181B;"
+   which beats any CSS class. Use !important to restore token control.     */
+#nxTabBar {
+  gap: 0 !important;
+  padding: 0 8px !important;
+  background: var(--panel) !important;
+  border-bottom: 1px solid var(--panel-border) !important;
+}
+
+/* Unify tab density: match existing 13px inline size, add token color.
+   The inline style on individual buttons defeats these without !important. */
+.nx-tab {
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  padding: 0 14px !important;
+  color: var(--text-dim) !important;
+  border-bottom: 2px solid transparent !important;
+}
+
+.nx-tab.active {
+  color: var(--text) !important;
+  border-bottom-color: var(--accent) !important;
+  background: transparent !important;
+}
+
+.nx-tab:hover:not(.active) {
+  color: var(--text-muted) !important;
+  background: var(--panel2, rgba(255,255,255,0.03)) !important;
+}
+
+/* ── Z16 Phase B: Composer — CSS class definition ─────────────────────
+   .nx-composer has ZERO definition in any previously-loaded CSS file.
+   Background: use bg base token, not surface (composer is below topbar).  */
+.nx-composer {
+  padding: 12px 16px 10px;
+  border-bottom: 1px solid var(--panel-border);
+  background: var(--bg);
+  flex-shrink: 0;
+}
+
+/* Composer textarea focus ring — previously had no :focus rule */
+#taskInput:focus {
+  border-color: var(--accent) !important;
+  outline: none;
+  box-shadow: 0 0 0 1px var(--accent-dim, rgba(188,140,255,0.2));
+}
+
+/* Exec toolbar — demote dashed border to solid muted border */
+.nx-exec-toolbar {
+  border-top: 1px solid var(--panel-border) !important;
+  margin-top: 8px !important;
+  padding-top: 8px !important;
+  gap: 8px !important;
+}
+
+/* ── Z16 Phase C: Idle Hero — override inline color defeat ────────────
+   Inline style="color:#8b949e" prevents token-based color system.          */
+.nx-idle-hero {
+  color: var(--text-muted) !important;
+  height: 100% !important;
+  user-select: none !important;
+}
+
+/* ── Z16 Phase D: Exec Strip — CSS class definition ──────────────────
+   .nx-exec-strip has no definition in previously-loaded CSS.
+   Z-index: 90 — above navrail (z:40), below inspector (z:45) correction:
+   strip is a fixed bottom bar, not in shell grid; set z:90 to sit above panels */
+.nx-exec-strip {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 24px;
+  background: var(--panel);
+  border-top: 1px solid var(--panel-border);
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  z-index: 90;
+  font-size: 10px;
+  font-family: var(--font, 'Inter', sans-serif);
+  gap: 0;
+  pointer-events: none;
+}
+
+.nx-exec-strip-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 10px;
+  color: var(--text-dim);
+  font-size: 10px;
+}
+
+.nx-exec-strip-item span:first-child {
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+  opacity: 0.6;
+}
+
+.nx-exec-strip-item span:last-child {
+  color: var(--text-muted);
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+}
+
+.nx-exec-strip-divider {
+  width: 1px;
+  height: 12px;
+  background: var(--panel-border);
+  flex-shrink: 0;
+}
+
+/* When agent is running, running state value gets accent color */
+#nxExecStripState[data-running="true"] {
+  color: var(--green, #3fb950) !important;
+}
+
+/* ── Z17 Phase A: Activity Bar — CSS transition ───────────────────────
+   #nxActivityBar uses display:none toggle; add fade via visibility trick  */
+#nxActivityBar {
+  transition: opacity 0.15s ease;
+}
+
+/* ── Z17 Phase B: HITL strip operator sizing ──────────────────────────
+   Ensure HITL control buttons have sufficient tap target                    */
+.nx-hitl-strip {
+  padding: 10px 10px 8px;
+}
+
+.nx-hitl-row .nx-tiny-btn {
+  min-height: 28px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+/* ── Z18 Phase A: Z-Index Registry ───────────────────────────────────
+   Canonical stacking hierarchy:
+   Shell base:   1–50
+   Exec strip:   90
+   Failsafe:     999
+   Command pal:  1000
+   SSE badge:    9000      ← moved below modals
+   Modals:       10000–10099
+   Toasts:       999998
+   Loading bar:  999999                                                     */
+#nxInspectorPanel {
+  z-index: 10050 !important;
+}
+
+#nx-sse-status {
+  z-index: 9000 !important;
+  bottom: 28px !important;
+}
+
+/* ── Z18 Phase B: Reduced-Motion — hardcoded animation overrides ──────
+   Several animations use hardcoded durations that bypass the token-based
+   @media block in nds-tokens.css. Override them explicitly here.           */
+@media (prefers-reduced-motion: reduce) {
+  .nx-hero-logo {
+    animation: none !important;
+  }
+
+  #nxRunDot {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+
+  .nx-live-dot {
+    animation: none !important;
+    opacity: 0.8 !important;
+  }
+
+  #nx-loading-bar.active {
+    animation: none !important;
+  }
+
+  .nx-sse-dot {
+    animation: none !important;
+    background: var(--text-dim) !important;
+  }
+
+  .nx-slide-panel {
+    animation: none !important;
+  }
+
+  .nx-idle-hero {
+    animation: none !important;
+  }
+
+  .nx-exec-stage {
+    transition: none !important;
+  }
+
+  #nxActivityBar {
+    transition: none !important;
+  }
+}
+
+/* ── Z18 Phase C: Focus visibility on shell chrome buttons ────────────
+   Transparent-background buttons need explicit focus ring override         */
+.nx-nav-icon:focus-visible,
+.nx-icon-btn:focus-visible,
+#runBtn:focus-visible,
+#settingsBtn:focus-visible,
+.nx-palette-trigger:focus-visible,
+.nx-tab:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ── Z18 Phase D: Content containment for scroll areas ───────────────
+   Limits layout recalculation scope during high-frequency SSE appends     */
+#nxTab-logs,
+#nxLiveCodeArea,
+#nxLiveTermArea {
+  contain: content;
+}
+
+/* ── Z18 Phase E: Exec strip color contrast fix ──────────────────────
+   The inline colors #484f58 and #6e7681 fail WCAG AA at small sizes.
+   The CSS class above uses var(--text-dim) which is #6e7681 — borderline.
+   Override inline-styled spans via attribute selector cannot target inline.
+   Handled by the .nx-exec-strip-item cascade above.                       */

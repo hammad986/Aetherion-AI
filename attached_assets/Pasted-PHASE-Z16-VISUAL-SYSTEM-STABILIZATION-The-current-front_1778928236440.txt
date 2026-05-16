@@ -1,0 +1,222 @@
+PHASE Z16 — VISUAL SYSTEM STABILIZATION
+
+The current frontend architecture is now technically stabilized after Z15.
+
+However:
+the workspace still suffers from significant visual instability, spacing imbalance, execution hierarchy weakness, and operational UX fragmentation.
+
+This phase is NOT a redesign.
+
+This is a:
+forensic visual stabilization phase.
+
+====================================================
+PRIMARY OBJECTIVE
+=================
+
+Transform Aetherion AI into a:
+calm
+balanced
+operational
+production-grade execution environment.
+
+WITHOUT:
+
+* architectural rewrites
+* runtime changes
+* DOM restructuring
+* framework migrations
+
+====================================================
+MANDATORY FIRST STEP
+====================
+
+Before implementation:
+
+perform a COMPLETE visual forensic audit.
+
+Audit:
+
+* nav rail
+* topbar
+* split balance
+* panel proportions
+* execution hierarchy
+* typography rhythm
+* spacing consistency
+* alignment integrity
+* empty-state proportions
+* command density
+* visual anchors
+* border hierarchy
+* resize behavior
+* panel overflow
+* clipping
+* responsive breakpoints
+* icon alignment
+* command palette behavior
+* toolbar grouping
+
+Generate:
+
+docs/Z16_VISUAL_FORENSIC_REPORT.md
+
+Include:
+
+* screenshots
+* exact selector findings
+* spacing inconsistencies
+* broken hierarchy zones
+* clipping artifacts
+* alignment issues
+* execution flow weaknesses
+* visual noise sources
+
+====================================================
+IMPLEMENTATION RULES
+====================
+
+1. NO BACKEND MODIFICATIONS
+
+2. NO JS RUNTIME REWRITES
+
+3. NO MONACO MODIFICATIONS
+
+4. NO SSE MODIFICATIONS
+
+5. NO SPLIT.JS LOGIC CHANGES
+
+6. NO NEW DESIGN SYSTEM
+
+Only:
+visual stabilization.
+
+====================================================
+IMPLEMENTATION TARGETS
+======================
+
+PHASE A — NAV RAIL DISCIPLINE
+
+Current issues:
+
+* labels unstable
+* icons visually clipped
+* hover rhythm inconsistent
+* spacing collapsed
+
+Fix:
+
+* exact vertical rhythm
+* icon optical alignment
+* consistent hover surfaces
+* remove visual jitter
+* proper inactive contrast
+* operational minimalism
+
+====================================================
+PHASE B — TOPBAR EXECUTION HIERARCHY
+
+Current issues:
+
+* detached controls
+* weak grouping
+* spacing imbalance
+* model selector floating
+* command surface weak
+
+Fix:
+
+* execution-first hierarchy
+* grouped operational controls
+* density consistency
+* visual anchors
+* proper spacing rhythm
+
+====================================================
+PHASE C — EXECUTION SURFACE BALANCE
+
+Current issues:
+
+* empty dead zones
+* weak execution focus
+* split imbalance
+* no visual hierarchy
+
+Fix:
+
+* center-stage execution emphasis
+* balanced panel proportions
+* operational framing
+* calm separators
+* visual weight correction
+
+====================================================
+PHASE D — PANEL DISCIPLINE
+
+Fix:
+
+* overflow clipping
+* border collisions
+* resize seams
+* inconsistent shadows
+* detached surfaces
+
+====================================================
+PHASE E — TYPOGRAPHY SYSTEM
+
+Unify:
+
+* weights
+* spacing
+* optical alignment
+* line-heights
+* monospace hierarchy
+
+====================================================
+PHASE F — RESPONSIVE STABILITY
+
+Audit:
+
+* Replit viewport
+* 1366x768
+* 1920x1080
+* zoom scaling
+* split resize behavior
+
+====================================================
+CERTIFICATION
+=============
+
+Generate:
+
+1. docs/Z16_IMPLEMENTATION_REPORT.md
+2. docs/Z16_VISUAL_CERTIFICATION.md
+
+Include:
+
+* before/after screenshots
+* remaining instability zones
+* unresolved technical debt
+* viewport validation
+* UX improvement summary
+
+====================================================
+SUCCESS STATE
+=============
+
+Aetherion AI should feel:
+
+* disciplined
+* calm
+* execution-first
+* balanced
+* premium
+* operational
+
+NOT:
+
+* experimental
+* fragmented
+* floating
+* visually noisy
+* prototype-like

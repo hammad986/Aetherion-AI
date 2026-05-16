@@ -60,6 +60,8 @@
   <link rel="stylesheet" href="/static/css/nx-observability.css">
   <!-- AGI-Native Visual Differentiation Layer -->
   <link rel="stylesheet" href="/static/css/nx-agi-native.css">
+  <!-- Z16: Shell chrome CSS — navrail, topbar, inspector, dock, composer grid -->
+  <link rel="stylesheet" href="/static/css/nx-shell.css">
 </head>
 
 <body>
@@ -274,15 +276,15 @@
     <!-- CENTER: Execution & Model (Execution First) -->
     <div style="display:flex;align-items:center;gap:8px;justify-content:center;flex:1;">
       <div style="display:flex;align-items:center;background:rgba(255,255,255,0.03);border:1px solid #30363d;border-radius:4px;overflow:hidden;height:26px;">
-        <button id="runBtn" onclick="nxRunOrStop()" style="background:transparent;border:none;color:#E0E0E0;padding:0 12px;font-size:12px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:6px;height:100%;transition:background 0.1s;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='transparent'" title="Execute task">
+        <button id="runBtn" onclick="nxRunOrStop()" style="background:transparent;border:none;color:#E0E0E0;padding:0 12px;font-size:12px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:6px;height:100%;transition:background 0.1s;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='transparent'" title="Execute task" aria-label="Execute task">
           <span class="nx-live-dot" id="nxRunDot" style="display:none;width:6px;height:6px;border-radius:50%;background:#3fb950;"></span>
           <span id="runBtnLabel" style="display:flex;align-items:center;gap:4px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Run</span>
         </button>
         <div style="width:1px;background:#30363d;height:100%;"></div>
-        <button onclick="stopSession()" style="background:transparent;border:none;color:#f85149;padding:0 12px;font-size:12px;font-weight:500;cursor:pointer;height:100%;transition:background 0.1s;" onmouseover="this.style.background='rgba(248,81,73,0.1)'" onmouseout="this.style.background='transparent'" title="Stop execution">■ Stop</button>
+        <button onclick="stopSession()" style="background:transparent;border:none;color:#f85149;padding:0 12px;font-size:12px;font-weight:500;cursor:pointer;height:100%;transition:background 0.1s;" onmouseover="this.style.background='rgba(248,81,73,0.1)'" onmouseout="this.style.background='transparent'" title="Stop execution" aria-label="Stop execution">■ Stop</button>
       </div>
 
-      <button class="nx-model-btn" id="nxModelBtn" onclick="nxOpenPanel('settings')" title="Model & API config" style="background:transparent;border:1px solid transparent;color:#8b949e;padding:0 8px;border-radius:4px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:4px;height:26px;transition:all 0.15s;" onmouseover="this.style.background='rgba(255,255,255,0.05)';this.style.color='#c9d1d9';" onmouseout="this.style.background='transparent';this.style.color='#8b949e';">
+      <button class="nx-model-btn" id="nxModelBtn" onclick="nxOpenPanel('settings')" title="Model & API config" aria-label="Model and API configuration" style="background:transparent;border:1px solid transparent;color:#8b949e;padding:0 8px;border-radius:4px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:4px;height:26px;transition:all 0.15s;" onmouseover="this.style.background='rgba(255,255,255,0.05)';this.style.color='#c9d1d9';" onmouseout="this.style.background='transparent';this.style.color='#8b949e';">
         <span id="nxModelName">Loading…</span>
         <span style="opacity:0.7;font-size:10px;">▾</span>
       </button>
@@ -290,17 +292,17 @@
 
     <!-- RIGHT: Utility Bar -->
     <div style="display:flex;align-items:center;gap:4px;justify-content:flex-end;flex:1;">
-      <button class="nx-palette-trigger" title="Command palette (Ctrl+K)" onclick="nxOpenPalette()">
+      <button class="nx-palette-trigger" title="Command palette (Ctrl+K)" aria-label="Open command palette (Ctrl+K)" onclick="nxOpenPalette()">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
         <span>Search</span>
         <kbd class="nx-kbd">⌘K</kbd>
       </button>
 
-      <button class="nx-icon-btn" id="nxInspectorBtn" title="Inspector (⌘\)" onclick="nxToggleInspector()" style="background:transparent;border:none;color:#8b949e;cursor:pointer;padding:4px;border-radius:4px;display:flex;align-items:center;justify-content:center;height:24px;width:24px;transition:all 0.15s;" onmouseover="this.style.color='#c9d1d9';this.style.background='rgba(255,255,255,0.05)';" onmouseout="this.style.color='#8b949e';this.style.background='transparent';">
+      <button class="nx-icon-btn" id="nxInspectorBtn" title="Inspector (⌘\)" aria-label="Toggle inspector panel" onclick="nxToggleInspector()" style="background:transparent;border:none;color:#8b949e;cursor:pointer;padding:4px;border-radius:4px;display:flex;align-items:center;justify-content:center;height:24px;width:24px;transition:all 0.15s;" onmouseover="this.style.color='#c9d1d9';this.style.background='rgba(255,255,255,0.05)';" onmouseout="this.style.color='#8b949e';this.style.background='transparent';">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="15" y1="3" x2="15" y2="21"></line></svg>
       </button>
 
-      <button id="settingsBtn" class="nx-icon-btn" title="Settings" onclick="openSettings()" style="background:transparent;border:none;color:#8b949e;cursor:pointer;padding:4px;border-radius:4px;display:flex;align-items:center;justify-content:center;height:24px;width:24px;transition:all 0.15s;" onmouseover="this.style.color='#c9d1d9';this.style.background='rgba(255,255,255,0.05)';" onmouseout="this.style.color='#8b949e';this.style.background='transparent';">
+      <button id="settingsBtn" class="nx-icon-btn" title="Settings" aria-label="Open settings" onclick="openSettings()" style="background:transparent;border:none;color:#8b949e;cursor:pointer;padding:4px;border-radius:4px;display:flex;align-items:center;justify-content:center;height:24px;width:24px;transition:all 0.15s;" onmouseover="this.style.color='#c9d1d9';this.style.background='rgba(255,255,255,0.05)';" onmouseout="this.style.color='#8b949e';this.style.background='transparent';">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       </button>
     </div>
@@ -453,17 +455,17 @@
   <!-- ── Body ── -->
   
   <nav class="nx-shell-navrail" style="grid-area:navrail;">
-    <button class="nx-nav-icon" onclick="nxTogglePanel('files')" title="Files">
+    <button class="nx-nav-icon" onclick="nxTogglePanel('files')" title="Files" aria-label="Files panel">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
     </button>
-    <button class="nx-nav-icon" onclick="nxTogglePanel('chat')" title="Chat">
+    <button class="nx-nav-icon" onclick="nxTogglePanel('chat')" title="Chat" aria-label="Chat panel">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
     </button>
-    <button class="nx-nav-icon" onclick="nxTogglePanel('history')" title="History">
+    <button class="nx-nav-icon" onclick="nxTogglePanel('history')" title="History" aria-label="Session history">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
     </button>
-    <div style="flex:1"></div>
-    <button class="nx-nav-icon" onclick="nxTogglePanel('settings')" title="Settings">
+    <div style="flex:1" aria-hidden="true"></div>
+    <button class="nx-nav-icon" onclick="nxTogglePanel('settings')" title="Settings" aria-label="Settings panel">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
     </button>
   </nav>
@@ -651,22 +653,22 @@
             <button class="nx-cmd-attach" title="Voice input" id="nxVoiceBtn" onclick="toggleVoice()" style="width:36px;height:36px;border-radius:6px;border:1px solid #27272A;background:#202024;color:#E0E0E0;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;">🎤</button>
           </div>
         </div>
-        <div class="nx-tab-bar" id="nxTabBar" style="display:flex; gap:24px; border-bottom:1px solid #27272A; padding:0 16px; background:#18181B;">
+        <div class="nx-tab-bar" id="nxTabBar" role="tablist" aria-label="Workspace panels">
           <!-- 4-Tab System -->
-          <button class="nx-tab active" data-nxtab="logs" onclick="nxSetTab('logs')" style="background:transparent;border:none;border-bottom:2px solid #bc8cff;color:#E0E0E0;padding:12px 0;font-size:13px;font-weight:600;cursor:pointer;position:relative;">
+          <button class="nx-tab active" role="tab" aria-selected="true" aria-controls="nxTab-logs" data-nxtab="logs" onclick="nxSetTab('logs')">
             <span class="nx-pulse" id="nxLogPulse" style="display:none"></span>
             Output
             <span class="nx-tab-dot"></span>
           </button>
-          <button class="nx-tab" data-nxtab="code" onclick="nxSetTab('code')" style="background:transparent;border:none;border-bottom:2px solid transparent;color:#8b949e;padding:12px 0;font-size:13px;font-weight:600;cursor:pointer;">
+          <button class="nx-tab" role="tab" aria-selected="false" aria-controls="nxTab-code" data-nxtab="code" onclick="nxSetTab('code')">
             Code
             <span class="nx-tab-dot"></span>
           </button>
-          <button class="nx-tab" data-nxtab="terminal" onclick="nxSetTab('terminal')" style="background:transparent;border:none;border-bottom:2px solid transparent;color:#8b949e;padding:12px 0;font-size:13px;font-weight:600;cursor:pointer;">
+          <button class="nx-tab" role="tab" aria-selected="false" aria-controls="nxTab-terminal" data-nxtab="terminal" onclick="nxSetTab('terminal')">
             Terminal
             <span class="nx-tab-dot"></span>
           </button>
-          <button class="nx-tab" data-nxtab="preview" onclick="nxSetTab('preview')" style="background:transparent;border:none;border-bottom:2px solid transparent;color:#8b949e;padding:12px 0;font-size:13px;font-weight:600;cursor:pointer;">
+          <button class="nx-tab" role="tab" aria-selected="false" aria-controls="nxTab-preview" data-nxtab="preview" onclick="nxSetTab('preview')">
             Preview
             <span class="nx-tab-dot"></span>
           </button>
@@ -692,7 +694,7 @@
         </div>
 
         <!-- IMMERSIVE EXECUTION SYSTEM — AI Activity Bar -->
-        <div id="nxActivityBar" style="display:none">
+        <div id="nxActivityBar" style="display:none" role="status" aria-live="polite" aria-label="Agent activity status">
           <span class="nx-ab-dot" id="nxAbDot"></span>
           <span id="nxAbText" style="color:var(--text-muted);font-size:11px">AI is working...</span>
           <span id="nxAbFile" class="nx-ab-file" style="display:none"></span>
@@ -726,7 +728,7 @@
         </div>
 
         <!-- Logs tab (position:relative for overlay banners) -->
-        <div class="nx-tab-content" id="nxTab-logs"
+        <div class="nx-tab-content" id="nxTab-logs" role="log" aria-live="polite" aria-label="Execution output"
           style="position:relative;display:flex;flex-direction:column;overflow:hidden">
           <!-- Phase 33 compact pipeline bar (shown during execution) -->
           <div class="nx-exec-pipeline" id="nxLogsPipeline" style="display:none">
@@ -3517,8 +3519,8 @@
     <div class="toast" id="toast"></div>
 
     <!-- Phase 28: Human-in-the-Loop Uncertainty Resolution Modal -->
-    <div id="uncertaintyModal"
-      style="display:none; position:fixed; bottom:20px; right:20px; width:350px; background:var(--panel2); border:1px solid var(--accent); border-radius:8px; padding:16px; box-shadow:0 10px 20px rgba(0,0,0,0.5); z-index:9999;">
+    <div id="uncertaintyModal" role="dialog" aria-modal="true" aria-labelledby="uncertaintyQuestion"
+      style="display:none; position:fixed; bottom:20px; right:20px; width:350px; background:var(--panel2); border:1px solid var(--accent); border-radius:8px; padding:16px; box-shadow:0 10px 20px rgba(0,0,0,0.5); z-index:10100;">
       <h3 style="color:var(--accent); margin-bottom:10px; font-size:1.1rem;" id="uncertaintyQuestion">System Uncertainty
       </h3>
       <div id="uncertaintyOptions" style="display:flex; flex-direction:column; gap:8px; margin-bottom:12px;"></div>

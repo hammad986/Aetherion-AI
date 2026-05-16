@@ -1,0 +1,698 @@
+/**
+ * nx-z45.css — Phase Z45: Causal Execution Synchronization + Runtime Consolidation
+ * ═══════════════════════════════════════════════════════════════════════════════════
+ * Sub-phases:
+ *   A — DAG ↔ Timeline visual focus system (polish Z36's existing sync)
+ *   B — Causal execution flow visualization
+ *   C — Replay immersion CSS
+ *   D — Runtime pressure intelligence
+ *   E — Telemetry consolidation (suppress duplicates)
+ *   F — Execution continuity maturity
+ *   G — CSS governance corrections
+ *
+ * Key principle: Z36 already has the sync logic. Z45 provides visual polish
+ * for its existing CSS classes: .z36-focus-ring, .z36-timeline-focus,
+ * .z36-chain-step, .z36-forensic-block, etc.
+ *
+ * Strict rules: no new animations beyond opacity+transform, no glow spam.
+ * ═══════════════════════════════════════════════════════════════════════════════════
+ */
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z45 TOKENS
+   ══════════════════════════════════════════════════════════════════════ */
+:root {
+  /* Pressure tiers */
+  --z45-pressure-critical: #C0392B;
+  --z45-pressure-high:     #D97706;
+  --z45-pressure-medium:   #C28A00;
+  --z45-pressure-low:      #525566;
+
+  /* Causal chain arrow */
+  --z45-causal-arrow:      rgba(255, 255, 255, 0.15);
+
+  /* Sync focus */
+  --z45-focus-ring:        rgba(0, 121, 242, 0.35);
+  --z45-focus-bg:          rgba(0, 121, 242, 0.06);
+  --z45-soft-focus-ring:   rgba(0, 121, 242, 0.15);
+  --z45-soft-focus-bg:     rgba(0, 121, 242, 0.03);
+
+  /* Replay accent */
+  --z45-replay-color:      #0891B2;
+  --z45-replay-tint:       rgba(8, 145, 178, 0.08);
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z45A — DAG ↔ TIMELINE VISUAL FOCUS SYSTEM
+   Polish Z36's existing .z36-focus-ring and .z36-timeline-focus classes.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── DAG node focus ring (was: Z36 applied .z36-focus-ring) ────────── */
+.z36-focus-ring,
+[data-node-id].z36-focus-ring {
+  outline: 1px solid var(--z45-focus-ring) !important;
+  outline-offset: 2px !important;
+  background: var(--z45-focus-bg) !important;
+  transition: outline 0.12s, background 0.12s !important;
+}
+
+/* ── Timeline event focus (was: Z36 applied .z36-timeline-focus) ──── */
+.z36-timeline-focus,
+.z33-tl-event.z36-timeline-focus {
+  background: var(--z45-focus-bg) !important;
+  border-left: 2px solid var(--z45-focus-ring) !important;
+  margin-left: -2px !important;
+  transition: background 0.1s, border-color 0.1s !important;
+}
+
+.z36-timeline-focus .z33-tl-text,
+.z33-tl-event.z36-timeline-focus .z33-tl-text {
+  color: var(--nds-text-md) !important;
+}
+
+/* ── Z45A soft-focus: label-match fallback (no data-z36-node-id) ──── */
+.z45-soft-focus {
+  background: var(--z45-soft-focus-bg) !important;
+  border-left: 1px solid var(--z45-soft-focus-ring) !important;
+}
+
+.z45-soft-focus .z33-tl-text {
+  color: var(--nds-text-lo) !important;
+}
+
+/* ── Cross-surface hover — shared "live" pulse on DAG node ─────────── */
+.z36-exec-pulse-active {
+  outline: 1px solid rgba(0, 121, 242, 0.25) !important;
+  outline-offset: 1px !important;
+}
+
+/* ── State ring colors for DAG node states ────────────────────────── */
+[data-node-id][data-state="error"].z36-focus-ring,
+[data-node-id][data-state="failed"].z36-focus-ring {
+  outline-color: rgba(192, 57, 43, 0.50) !important;
+  background: rgba(192, 57, 43, 0.05) !important;
+}
+
+[data-node-id][data-state="retry"].z36-focus-ring {
+  outline-color: rgba(194, 138, 0, 0.50) !important;
+  background: rgba(194, 138, 0, 0.05) !important;
+}
+
+[data-node-id][data-state="done"].z36-focus-ring {
+  outline-color: rgba(22, 163, 74, 0.40) !important;
+  background: rgba(22, 163, 74, 0.04) !important;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z45B — CAUSAL EXECUTION FLOW VISUALIZATION
+   Decision chain arrows, parent→child flow, retry branches.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── Decision chain (Z36 forensic section) ────────────────────────── */
+.z36-forensic-section {
+  border-top: 1px solid var(--z42-border-subtle) !important;
+  padding: 8px 10px !important;
+  background: var(--z42-workspace) !important;
+}
+
+.z36-forensic-title {
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  color: var(--nds-text-dim) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+  margin-bottom: 6px !important;
+}
+
+.z36-forensic-block {
+  margin-bottom: 8px !important;
+  background: var(--z42-panel-active) !important;
+  border: 1px solid var(--z42-border-subtle) !important;
+  border-radius: 4px !important;
+  padding: 6px 7px !important;
+}
+
+.z36-forensic-block:last-child { margin-bottom: 0 !important; }
+
+/* ── Decision chain steps — causal arrow ─────────────────────────── */
+.z36-chain {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 3px !important;
+}
+
+.z36-chain-step {
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  font-size: 10px !important;
+  font-family: var(--nds-mono) !important;
+  padding: 2px 0 !important;
+}
+
+.z36-chain-from {
+  color: var(--nds-text-dim) !important;
+  flex-shrink: 0 !important;
+}
+
+.z36-chain-arrow {
+  color: var(--z45-causal-arrow) !important;
+  flex-shrink: 0 !important;
+  font-size: 9px !important;
+}
+
+.z36-chain-to {
+  color: var(--nds-text-lo) !important;
+  font-weight: 500 !important;
+  flex-shrink: 0 !important;
+}
+
+.z36-chain-ts {
+  font-size: 9px !important;
+  color: var(--nds-text-dim) !important;
+  margin-left: auto !important;
+  flex-shrink: 0 !important;
+}
+
+/* State-specific chain label colors */
+.z36-state-error  { color: #E55A4E !important; }
+.z36-state-retry  { color: #D4AC45 !important; }
+.z36-state-done   { color: #4ADE80 !important; }
+.z36-state-running{ color: #57ABFF !important; }
+
+/* ── Failure pressure block ───────────────────────────────────────── */
+.z36-failure-pressure {
+  margin-top: 4px !important;
+}
+
+.z36-failure-item {
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  font-size: 10px !important;
+  font-family: var(--nds-mono) !important;
+  padding: 2px 0 !important;
+  color: var(--nds-text-lo) !important;
+}
+
+.z36-failure-dot {
+  width: 5px !important;
+  height: 5px !important;
+  border-radius: 50% !important;
+  flex-shrink: 0 !important;
+}
+
+/* ── Timeline event type visual differentiation ──────────────────── */
+.z33-tl-event[data-event-type="retry"] {
+  border-left: 2px solid rgba(194,138,0,0.30) !important;
+}
+
+.z33-tl-event[data-event-type="recovery"] {
+  border-left: 2px solid rgba(22,163,74,0.25) !important;
+}
+
+.z33-tl-event[data-event-type="replan"] {
+  border-left: 2px solid rgba(8,145,178,0.25) !important;
+}
+
+.z33-tl-event[data-event-type="node-done"] {
+  border-left: 2px solid rgba(22,163,74,0.20) !important;
+}
+
+.z33-tl-event[data-event-type="general"] {
+  border-left: 2px solid transparent !important;
+}
+
+/* ── Timeline event dots — state-coded ───────────────────────────── */
+.z33-tl-dot.retry     { background: var(--z44-paused) !important; }
+.z33-tl-dot.replan    { background: var(--z44-replay) !important; }
+.z33-tl-dot.hitl      { background: var(--z44-hitl) !important; }
+.z33-tl-dot.conf      { background: var(--z44-failed) !important; }
+.z33-tl-dot.running   { background: var(--z44-running) !important; }
+.z33-tl-dot.done      { background: var(--z44-stabilizing) !important; }
+.z33-tl-dot.error     { background: var(--z44-failed) !important; }
+
+/* ── Timeline badges — operational style ─────────────────────────── */
+.z33-tl-badge {
+  font-size: 9px !important;
+  font-family: var(--nds-mono) !important;
+  padding: 1px 4px !important;
+  border-radius: 2px !important;
+  border: 1px solid transparent !important;
+  margin-left: 3px !important;
+}
+
+.z33-tl-badge.retry  { color: #D4AC45 !important; border-color: rgba(194,138,0,0.25) !important; background: rgba(194,138,0,0.07) !important; }
+.z33-tl-badge.replan { color: #22D3EE !important; border-color: rgba(8,145,178,0.25) !important; background: rgba(8,145,178,0.07) !important; }
+.z33-tl-badge.hitl   { color: #A58BD4 !important; border-color: rgba(124,93,183,0.25) !important; background: rgba(124,93,183,0.07) !important; }
+.z33-tl-badge.conf   { color: #E55A4E !important; border-color: rgba(192,57,43,0.25) !important; background: rgba(192,57,43,0.07) !important; }
+
+/* ── Severity badges in forensic section ─────────────────────────── */
+.z30-sev-badge {
+  font-size: 9px !important;
+  font-weight: 600 !important;
+  font-family: var(--nds-mono) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  padding: 1px 4px !important;
+  border-radius: 2px !important;
+}
+
+.z30-sev-LOW    { color: var(--nds-text-dim); }
+.z30-sev-MEDIUM { color: #D4AC45; background: rgba(194,138,0,0.08); }
+.z30-sev-HIGH   { color: #E55A4E; background: rgba(192,57,43,0.08); }
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z45C — REPLAY IMMERSION CSS
+   Forensic, precise, operational. Not decorative.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── Replay mode workspace tint ─────────────────────────────────── */
+body[data-nx-state="replay"] .z33-timeline-dock {
+  outline: 1px solid rgba(8,145,178,0.15) !important;
+  outline-offset: -1px !important;
+}
+
+body[data-nx-state="replay"] .z33-tl-header {
+  color: #22D3EE !important;
+}
+
+/* ── Replay progression marker on timeline items ─────────────────── */
+.z33-tl-event.z45-replay-current {
+  background: rgba(8,145,178,0.08) !important;
+  border-left: 2px solid rgba(8,145,178,0.60) !important;
+  margin-left: -2px !important;
+}
+
+.z33-tl-event.z45-replay-past {
+  opacity: 0.55 !important;
+}
+
+.z33-tl-event.z45-replay-future {
+  opacity: 0.30 !important;
+}
+
+/* ── Replay available indicator ──────────────────────────────────── */
+html[data-z45-replay-available] .z33-tl-header::after {
+  content: 'REPLAY';
+  font-size: 9px;
+  font-family: var(--nds-mono);
+  font-weight: 600;
+  color: var(--z45-replay-color);
+  opacity: 0.7;
+  margin-left: 6px;
+  letter-spacing: 0.06em;
+}
+
+/* ── Z35 phase — replay state ─────────────────────────────────────── */
+.z35-phase-replay {
+  color: #22D3EE !important;
+}
+
+/* ── Replay cursor: Z33 already provides a replay cursor element ──── */
+.z33-replay-cursor {
+  background: rgba(8,145,178,0.70) !important;
+  box-shadow: none !important;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z45D — RUNTIME PRESSURE INTELLIGENCE
+   Hotspot tiers stamped by JS via data-pressure-tier.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── Pressure tier coloring on DAG nodes ─────────────────────────── */
+[data-pressure-tier="critical"] {
+  --z45-pressure-color: var(--z45-pressure-critical);
+}
+
+[data-pressure-tier="high"] {
+  --z45-pressure-color: var(--z45-pressure-high);
+}
+
+[data-pressure-tier="medium"] {
+  --z45-pressure-color: var(--z45-pressure-medium);
+}
+
+/* DAG node pressure indicator — right-edge stripe */
+[data-node-id][data-pressure-tier="critical"],
+[data-node-id][data-pressure-tier="high"],
+[data-node-id][data-pressure-tier="medium"] {
+  border-right: 2px solid var(--z45-pressure-color) !important;
+}
+
+/* Timeline event pressure indicator — subtle left border intensification */
+.z33-tl-event[data-pressure-tier="critical"] {
+  border-left: 2px solid var(--z45-pressure-critical) !important;
+}
+
+.z33-tl-event[data-pressure-tier="high"] {
+  border-left: 2px solid var(--z45-pressure-high) !important;
+}
+
+.z33-tl-event[data-pressure-tier="medium"] {
+  border-left: 2px solid var(--z45-pressure-medium) !important;
+}
+
+/* ── Z45 pressure hint in inspector ─────────────────────────────── */
+.z45-pressure-hint {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 4px 0 !important;
+  font-size: 10px !important;
+  font-family: var(--nds-mono) !important;
+  border-top: 1px solid var(--z42-border-subtle) !important;
+  margin-top: 6px !important;
+}
+
+.z45-pressure-label {
+  color: var(--nds-text-dim) !important;
+  text-transform: uppercase !important;
+  font-size: 9px !important;
+  letter-spacing: 0.05em !important;
+  font-weight: 600 !important;
+}
+
+.z45-pressure-val {
+  font-weight: 600 !important;
+  font-size: 10px !important;
+}
+
+.z45-pressure-critical { color: var(--z45-pressure-critical) !important; }
+.z45-pressure-high     { color: var(--z45-pressure-high) !important; }
+.z45-pressure-medium   { color: var(--z45-pressure-medium) !important; }
+
+/* ── Z35 pressure micro bar — state-aware color ──────────────────── */
+.z35-pressure-fill {
+  background: var(--z44-state-color, var(--z42-exec-active)) !important;
+  height: 100% !important;
+  border-radius: 2px !important;
+  transition: width 0.4s ease, background 0.3s !important;
+}
+
+body[data-nx-state="failed"] .z35-pressure-fill    { background: var(--z44-failed) !important; }
+body[data-nx-state="recovery"] .z35-pressure-fill  { background: var(--z44-recovery) !important; }
+body[data-nx-state="hitl"] .z35-pressure-fill      { background: var(--z44-hitl) !important; }
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z45E — TELEMETRY CONSOLIDATION
+   Suppress known duplicates. Clean up redundant surfaces.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── Z44 mission strip suppressed when Z35 bar is primary ─────────── */
+#nx-mission-strip[data-z45-consolidated="true"] {
+  display: none !important;
+}
+
+/* ── Z35 mission bar — operational polish to match Z44 token system ── */
+.z35-mission-bar {
+  background: var(--z42-workspace) !important;
+  border-bottom: 1px solid var(--z42-border-subtle) !important;
+  padding: 0 12px !important;
+  height: 26px !important;
+  min-height: 26px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0 !important;
+  flex-shrink: 0 !important;
+  overflow: hidden !important;
+  transition: border-color 0.25s !important;
+}
+
+body[data-nx-state="running"] .z35-mission-bar   { border-bottom-color: rgba(0,121,242,0.20) !important; }
+body[data-nx-state="failed"] .z35-mission-bar    { border-bottom-color: rgba(192,57,43,0.20) !important; }
+body[data-nx-state="hitl"] .z35-mission-bar      { border-bottom-color: rgba(124,93,183,0.20) !important; }
+body[data-nx-state="paused"] .z35-mission-bar    { border-bottom-color: rgba(194,138,0,0.20) !important; }
+
+.z35-mission-objective {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  min-width: 0 !important;
+  flex: 1 !important;
+  overflow: hidden !important;
+}
+
+.z35-mission-label {
+  font-size: 9px !important;
+  font-weight: 600 !important;
+  color: var(--nds-text-dim) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.07em !important;
+  font-family: var(--nds-mono) !important;
+  flex-shrink: 0 !important;
+}
+
+.z35-mission-text {
+  font-size: 10px !important;
+  font-family: var(--nds-mono) !important;
+  color: var(--nds-text-lo) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  transition: color 0.2s !important;
+}
+
+body[data-nx-state="failed"] .z35-mission-text   { color: #E55A4E !important; }
+body[data-nx-state="hitl"] .z35-mission-text     { color: #A58BD4 !important; }
+body[data-nx-state="paused"] .z35-mission-text   { color: #D4AC45 !important; }
+
+.z35-mission-indicators {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0 !important;
+  flex-shrink: 0 !important;
+}
+
+.z35-mission-ind {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  padding: 0 8px !important;
+  height: 100% !important;
+  border-left: 1px solid var(--z42-border-subtle) !important;
+}
+
+.z35-mission-val {
+  font-size: 10px !important;
+  font-family: var(--nds-mono) !important;
+  font-weight: 500 !important;
+  color: var(--nds-text-lo) !important;
+}
+
+/* Phase-specific val colors */
+.z35-phase-idle     { color: var(--nds-text-dim) !important; }
+.z35-phase-running  { color: #57ABFF !important; }
+.z35-phase-planning { color: #57ABFF !important; }
+.z35-phase-coding   { color: #4ADE80 !important; }
+.z35-phase-debug    { color: #D4AC45 !important; }
+.z35-phase-recovery { color: #D4A030 !important; }
+.z35-phase-hitl     { color: #A58BD4 !important; }
+.z35-phase-error    { color: #E55A4E !important; }
+.z35-phase-done     { color: #4ADE80 !important; }
+.z35-phase-replay   { color: #22D3EE !important; }
+
+/* Conf val colors */
+.z35-conf-high   { color: #4ADE80 !important; }
+.z35-conf-med    { color: #D4AC45 !important; }
+.z35-conf-low    { color: #E55A4E !important; }
+
+/* Pressure micro-bar container */
+.z35-pressure-micro {
+  background: var(--z42-border-subtle) !important;
+  border-radius: 2px !important;
+  height: 3px !important;
+  width: 36px !important;
+  overflow: hidden !important;
+}
+
+/* ── Suppress redundant elements marked by Z45G audit ─────────────── */
+[data-z45-suppressed="true"] { display: none !important; }
+
+/* ── Z36 intel state dot in decision chains ──────────────────────── */
+.z30-intel-state-dot {
+  width: 5px !important;
+  height: 5px !important;
+  border-radius: 50% !important;
+  display: inline-block !important;
+  margin-right: 3px !important;
+  flex-shrink: 0 !important;
+  vertical-align: middle !important;
+}
+
+.z30-intel-state-dot.running     { background: var(--z44-running); }
+.z30-intel-state-dot.done,
+.z30-intel-state-dot.success     { background: var(--z44-stabilizing); }
+.z30-intel-state-dot.error,
+.z30-intel-state-dot.failed      { background: var(--z44-failed); }
+.z30-intel-state-dot.retry       { background: var(--z44-recovery); }
+.z30-intel-state-dot.idle        { background: var(--z44-idle); }
+
+/* ── Normalize Z36 forensic section typography ────────────────────── */
+.z36-forensic-text {
+  font-size: 10px !important;
+  font-family: var(--nds-mono) !important;
+  color: var(--nds-text-lo) !important;
+  line-height: 1.4 !important;
+}
+
+.z36-forensic-label {
+  font-size: 9px !important;
+  font-weight: 600 !important;
+  color: var(--nds-text-dim) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  margin-right: 5px !important;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z45F — EXECUTION CONTINUITY MATURITY
+   Long-session persistent surface polish.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── Session age — refined visual tiers ─────────────────────────── */
+#nxSessionCard[data-session-age="fresh"] .nx-session-label::before {
+  content: '●  ';
+  color: var(--z44-stabilizing);
+  font-size: 6px;
+  vertical-align: middle;
+}
+
+#nxSessionCard[data-session-age="long"] .nx-session-label::before {
+  content: '●  ';
+  color: var(--z44-paused);
+  font-size: 6px;
+  vertical-align: middle;
+}
+
+/* ── Z35 mission bar — state-coherent throughout long sessions ──── */
+body[data-nx-state="stabilizing"] .z35-mission-bar {
+  border-bottom-color: rgba(22,163,74,0.15) !important;
+}
+
+/* ── Timeline dock — long-session continuity visual ─────────────── */
+.z33-timeline-dock {
+  transition: background 0.3s, border-color 0.3s !important;
+}
+
+/* When idle after long session — dock shows historical continuity */
+body[data-nx-state="idle"] .z33-timeline-dock {
+  background: var(--z42-panel-active) !important;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z45G — CSS GOVERNANCE CORRECTIONS
+   Fix remaining cross-phase specificity issues.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* Fix: Z36 sidebar memory — token-governed ─────────────────────── */
+.z33-sidebar-memory {
+  background: var(--z42-workspace) !important;
+  border-top: 1px solid var(--z42-border-frame) !important;
+}
+
+.z33-sm-item {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 5px !important;
+  padding: 4px 0 !important;
+  border-bottom: 1px solid var(--z42-border-subtle) !important;
+  font-size: 10px !important;
+  color: var(--nds-text-dim) !important;
+  font-family: var(--nds-mono) !important;
+  line-height: 1.4 !important;
+}
+
+.z33-sm-item:last-child { border-bottom: none !important; }
+
+.z33-sm-item-label {
+  color: var(--nds-text-lo) !important;
+  flex: 1 !important;
+}
+
+/* Fix: Z34 replay entry consolidation ─────────────────────────── */
+.z34-replay-entry {
+  border-bottom: 1px solid var(--z42-border-subtle) !important;
+  padding: 4px 8px !important;
+  font-size: 10px !important;
+  font-family: var(--nds-mono) !important;
+  color: var(--nds-text-lo) !important;
+  cursor: pointer !important;
+  transition: background 0.1s !important;
+}
+
+.z34-replay-entry:hover {
+  background: var(--z42-border-subtle) !important;
+  color: var(--nds-text-md) !important;
+}
+
+.z34-replay-entry.current {
+  background: rgba(8,145,178,0.08) !important;
+  border-left: 2px solid var(--z45-replay-color) !important;
+  color: #22D3EE !important;
+}
+
+/* Fix: Z38 pattern entry — operational density ─────────────────── */
+.z38-pattern-entry {
+  font-size: 10px !important;
+  font-family: var(--nds-mono) !important;
+  color: var(--nds-text-lo) !important;
+  padding: 3px 0 !important;
+  border-bottom: 1px solid var(--z42-border-subtle) !important;
+}
+
+.z38-pattern-entry:last-child { border-bottom: none !important; }
+
+/* Fix: Z37 causal block — Z44-aware border ─────────────────────── */
+.z37-causal-block {
+  border-left-color: var(--z44-state-color, var(--z42-border-active)) !important;
+  transition: border-color 0.25s !important;
+}
+
+/* Fix: Remove any box-shadow leaking from older phases ─────────── */
+.nx-panel-hdr,
+.z33-tl-header,
+.z36-forensic-section,
+.z37-causal-section {
+  box-shadow: none !important;
+}
+
+/* Fix: Z36 instability alert — token-governed ──────────────────── */
+.z36-instability-alert {
+  background: rgba(192,57,43,0.07) !important;
+  border: 1px solid rgba(192,57,43,0.20) !important;
+  border-radius: 4px !important;
+  padding: 5px 8px !important;
+  font-size: 10px !important;
+  color: #E55A4E !important;
+  font-family: var(--nds-mono) !important;
+  margin: 6px !important;
+}
+
+/* Fix: Z36 node focus ring with state-derived colors via CSS var ── */
+body[data-nx-state="failed"] .z36-focus-ring {
+  outline-color: rgba(192,57,43,0.40) !important;
+  background: rgba(192,57,43,0.04) !important;
+}
+
+body[data-nx-state="hitl"] .z36-focus-ring {
+  outline-color: rgba(124,93,183,0.40) !important;
+  background: rgba(124,93,183,0.04) !important;
+}
+
+/* Fix: Z33 timeline dock expand/collapse — smooth ─────────────── */
+.z33-timeline-dock.expanded {
+  border-top-color: var(--z42-border-frame) !important;
+}
+
+/* Fix: ensure Z45 consolidated mission bar state is inherited ───── */
+html[data-z45-mission-consolidated="true"] #nx-mission-strip {
+  display: none !important;
+}

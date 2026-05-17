@@ -29,7 +29,8 @@
   <script src="/static/js/nx-agi-surface.js"></script>
   <script src="/static/js/nx-hitl-bridge.js"></script>
   <script src="/static/js/nx-session-cleanup.js"></script>
-  <script src="https://checkout.razorpay.com/v1/checkout.js" async></script>
+  <!-- Razorpay script suppressed in beta (Z51A billing lockdown) -->
+  <!-- FUTURE: restore when billing is activated: <script src="https://checkout.razorpay.com/v1/checkout.js" async></script> -->
   <link rel="stylesheet" href="/static/css/nds-tokens.css">
   <link rel="stylesheet" href="/static/css/base.css">
   <link rel="stylesheet" href="/static/css/nx-z19z20z21.css">
@@ -68,6 +69,8 @@
   <link rel="stylesheet" href="/static/css/nx-shell.css">
   <!-- Z50: Operational Interaction Realism — dead controls, live presence, execution feedback -->
   <link rel="stylesheet" href="/static/css/nx-z50.css">
+  <!-- Z51: Beta Operational Lockdown + Product Cohesion -->
+  <link rel="stylesheet" href="/static/css/nx-z51.css">
 </head>
 
 <body>
@@ -4077,5 +4080,7 @@
   </script>
   <!-- Z50: Operational Interaction Realism -->
   <script src="/static/js/nx-z50.js" defer></script>
+  <!-- Z51: Beta Operational Lockdown + Product Cohesion -->
+  <script src="/static/js/nx-z51.js" defer></script>
 </body>
 </html>

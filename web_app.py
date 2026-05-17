@@ -11529,6 +11529,52 @@ def api_write_doc():
 # Requires AETHERION_REALTIME_V1=true (same flag as SSE streaming).
 # ─────────────────────────────────────────────────────────────────────────────
 
+@app.route("/api/hitl/pending", methods=["GET"])
+def api_hitl_pending():
+    """
+    Return all currently pending HITL approval requests.
+    Checks both the global HITLEventTracker and the session-scoped state.
+    Query params:
+        sid  (str, optional) — filter by session ID
+    """
+    sid = request.args.get("sid", "").strip()
+    pending = []
+    try:
+        from execution.hitl import global_hitl_tracker
+        # global_hitl_tracker stores pending events keyed by execution_id
+        raw = getattr(global_hitl_tracker, "_pending", {}) or {}
+        for eid, evt in raw.items():
+            if sid and evt.get("session_id") and evt.get("session_id") != sid:
+                continue
+            pending.append({
+                "event_id":   eid,
+                "session_id": evt.get("session_id", ""),
+                "reason":     evt.get("reason", evt.get("payload", {}).get("reason", "Approval required")),
+                "timeout_at": evt.get("timeout_at"),
+                "created_at": evt.get("created_at"),
+            })
+    except Exception:
+        pass
+    # Also try session-scoped hitl state (Redis-backed via _hitl_get)
+    if sid:
+        try:
+            state = _hitl_get(sid)
+            if state and state.get("paused"):
+                # If session is paused and not already in pending list, add it
+                already = any(p["session_id"] == sid for p in pending)
+                if not already:
+                    pending.append({
+                        "event_id":   f"session-{sid}",
+                        "session_id": sid,
+                        "reason":     state.get("reason", "Agent paused — awaiting operator approval"),
+                        "timeout_at": None,
+                        "created_at": None,
+                    })
+        except Exception:
+            pass
+    return jsonify({"ok": True, "pending": pending, "count": len(pending)})
+
+
 @app.route("/api/hitl/approve", methods=["POST"])
 def api_hitl_approve():
     """

@@ -1,0 +1,203 @@
+PHASE Z63 — CORE WORKFLOW COMPLETION + REAL EXECUTION EXPERIENCE
+
+IMPORTANT:
+This phase is about completing the REAL product workflow.
+
+DO NOT add:
+
+* more intelligence systems
+* more runtime cognition
+* more forensic abstractions
+* more enterprise terminology
+* more operational theater
+
+The goal:
+make Aetherion AI feel like
+a genuinely usable autonomous AI workspace.
+
+====================================================
+Z63A — REAL TASK COMPOSER
+=========================
+
+Current issue:
+workspace lacks a strong central execution entry point.
+
+Build:
+
+1. proper task composer
+2. multiline prompt input
+3. task presets
+4. execution mode selector
+5. provider selector
+6. model selector
+7. quick actions
+8. drag/drop files
+9. active session awareness
+
+Composer must feel:
+alive,
+focused,
+responsive,
+premium.
+
+====================================================
+Z63B — EXECUTION FLOW COMPLETION
+================================
+
+User workflow must become:
+
+create task
+→ execution starts
+→ progress visible
+→ logs visible
+→ artifacts visible
+→ completion visible
+→ replay accessible
+
+Requirements:
+
+1. visible execution phases
+2. progress states
+3. live log updates
+4. task cancellation
+5. recovery visibility
+6. execution completion summary
+7. session continuation
+
+NO fake execution surfaces.
+
+====================================================
+Z63C — ARTIFACT EXPERIENCE
+==========================
+
+Current artifact experience weak/incomplete.
+
+Requirements:
+
+1. inline preview
+2. markdown rendering
+3. code rendering
+4. JSON formatting
+5. download support
+6. artifact grouping
+7. execution-linked artifacts
+8. replay-linked artifacts
+
+====================================================
+Z63D — WORKSPACE CENTER REALIZATION
+===================================
+
+The center workspace must stop feeling empty.
+
+Requirements:
+
+1. current active task card
+2. recent sessions surface
+3. execution timeline
+4. queue visibility
+5. runtime status
+6. recent artifacts
+7. contextual guidance
+8. meaningful idle state
+
+The workspace should feel:
+productive,
+alive,
+calm,
+intentional.
+
+====================================================
+Z63E — INTERACTION RELIABILITY PASS
+===================================
+
+Audit ALL visible interactions.
+
+Fix:
+
+* dead buttons
+* fake toggles
+* broken hover states
+* hidden click blockers
+* stale listeners
+* duplicate handlers
+* inconsistent focus states
+
+Validate:
+every visible control actually works.
+
+====================================================
+Z63F — EXECUTION TRUST PASS
+===========================
+
+Remove fake operational messaging.
+
+Replace with:
+
+* honest execution states
+* practical guidance
+* real status reporting
+* useful feedback
+
+No fake:
+“cognitive runtime orchestration”
+style wording.
+
+====================================================
+Z63G — BETA USABILITY LOCK
+==========================
+
+Platform must now feel:
+
+* usable
+* interactive
+* stable
+* productive
+* trustworthy
+* execution-focused
+
+NOT:
+like a futuristic shell demo.
+
+====================================================
+REQUIRED REPORTS
+================
+
+Generate:
+
+* docs/Z63_TASK_COMPOSER_REALIZATION.md
+* docs/Z63_EXECUTION_FLOW_AUDIT.md
+* docs/Z63_ARTIFACT_EXPERIENCE.md
+* docs/Z63_WORKSPACE_CENTER_REALIZATION.md
+* docs/Z63_INTERACTION_RELIABILITY.md
+* docs/Z63_FINAL_WORKFLOW_VERDICT.md
+
+Each report must include:
+
+1. remaining workflow weaknesses
+2. fake UX surfaces removed
+3. execution gaps fixed
+4. remaining beta limitations
+5. interaction failures discovered
+6. trust issues fixed
+7. honest readiness score
+
+====================================================
+MANDATORY VALIDATION
+====================
+
+Before completion verify:
+
+* task creation works
+* execution flow visible
+* artifacts usable
+* workspace center alive
+* no dead controls remain
+* no fake notifications remain
+* all visible buttons functional
+* execution UX understandable for new users
+
+MOST IMPORTANT:
+After Z63,
+Aetherion AI should finally feel like:
+a REAL usable AI workspace,
+not just an advanced architecture showcase.

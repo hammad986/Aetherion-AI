@@ -788,8 +788,30 @@
   }
 
   function _openArtifact(id) {
-    // Open artifact panel or navigate to it
-    window.nxSetTab?.('code');
+    if (!id) { window.nxSetTab?.('code'); return; }
+    // Fetch artifact files and open the primary file in preview
+    fetch(`/api/artifacts/${encodeURIComponent(id)}/files`)
+      .then(r => r.ok ? r.json() : null)
+      .then(data => {
+        const files = (data && (data.files || data)) || [];
+        // Find the most meaningful file to preview
+        const primaryExts = ['md','html','py','js','ts','txt','json'];
+        let primary = null;
+        for (const ext of primaryExts) {
+          primary = files.find(f => (f.path || f.name || '').endsWith('.' + ext));
+          if (primary) break;
+        }
+        if (!primary && files.length) primary = files[0];
+        if (primary) {
+          const path = primary.path || primary.name || primary;
+          const sid = primary.session_id || _activeSid();
+          _openFilePreview(path, sid);
+        } else {
+          // No files — just switch to code tab
+          window.nxSetTab?.('code');
+        }
+      })
+      .catch(() => window.nxSetTab?.('code'));
   }
 
   /* ══════════════════════════════════════════════════════════════════

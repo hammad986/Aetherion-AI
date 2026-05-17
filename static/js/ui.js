@@ -1100,6 +1100,31 @@
     window.nxToast = nxToast;
     window.nxSetTask = nxSetTask;
 
+    // ── Auto-grow textarea ────────────────────────────────────────────
+    window.nxAutoGrowTextarea = function(el) {
+      el.style.height = 'auto';
+      el.style.height = Math.min(el.scrollHeight, 200) + 'px';
+    };
+
+    // ── Composer model badge sync ─────────────────────────────────────
+    // Keeps #nxComposerModelName and dot in sync with the active provider dot
+    function _syncComposerBadge() {
+      const dot = document.getElementById('nxModelDot');
+      const badge = document.getElementById('nxComposerModelBadge');
+      const badgeDot = document.getElementById('nxComposerModelDot');
+      const badgeName = document.getElementById('nxComposerModelName');
+      if (!badge || !badgeDot || !badgeName) return;
+      const green = dot?.style?.background?.includes('green');
+      badgeDot.style.background = green ? '#3fb950' : '#555';
+      const modelEl = document.getElementById('nxIdleModel');
+      const name = modelEl?.textContent?.trim();
+      badgeName.textContent = (name && name !== '—') ? name : (green ? 'Provider active' : 'No provider — click to configure');
+      badgeName.style.color = green ? '#8b949e' : '#e05252';
+    }
+    // Sync on load and after metrics update
+    setTimeout(_syncComposerBadge, 2000);
+    setInterval(_syncComposerBadge, 10000);
+
     window.p57SetView = p57SetView;
     window.p57UpdateLayout = p57UpdateLayout;
     window.p55OpenPanel = p55OpenPanel;

@@ -656,8 +656,19 @@
 
       <!-- ── CENTER: Tabbed Workspace ── -->
       <div class="nx-panel nx-center" id="nxCenter">
-        <!-- Execution Composer (Moved from Header) -->
-        <div class="nx-composer" style="padding:16px;border-bottom:1px solid #27272A;background:#121212;flex-shrink:0;">
+        <!-- Execution Composer -->
+        <div class="nx-composer" style="padding:12px 16px 10px;border-bottom:1px solid #27272A;background:#121212;flex-shrink:0;">
+          <!-- Preset task chips (collapsible) -->
+          <div id="nxPresetRow" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;align-items:center;">
+            <span style="font-size:10px;color:#555;font-weight:600;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;margin-right:2px;">Quick:</span>
+            <button onclick="nxSetTask('Fix the bug causing the current error')" style="padding:3px 10px;font-size:11px;border:1px solid #2d2d35;background:#1a1a22;color:#a0a0b0;border-radius:20px;cursor:pointer;white-space:nowrap;" onmouseover="this.style.borderColor='#58a6ff';this.style.color='#e0e0e0'" onmouseout="this.style.borderColor='#2d2d35';this.style.color='#a0a0b0'">🐛 Fix Bug</button>
+            <button onclick="nxSetTask('Write comprehensive tests for the current code')" style="padding:3px 10px;font-size:11px;border:1px solid #2d2d35;background:#1a1a22;color:#a0a0b0;border-radius:20px;cursor:pointer;white-space:nowrap;" onmouseover="this.style.borderColor='#58a6ff';this.style.color='#e0e0e0'" onmouseout="this.style.borderColor='#2d2d35';this.style.color='#a0a0b0'">✅ Write Tests</button>
+            <button onclick="nxSetTask('Review the codebase for security vulnerabilities and bugs')" style="padding:3px 10px;font-size:11px;border:1px solid #2d2d35;background:#1a1a22;color:#a0a0b0;border-radius:20px;cursor:pointer;white-space:nowrap;" onmouseover="this.style.borderColor='#58a6ff';this.style.color='#e0e0e0'" onmouseout="this.style.borderColor='#2d2d35';this.style.color='#a0a0b0'">🔍 Code Review</button>
+            <button onclick="nxSetTask('Refactor this code to improve readability and performance')" style="padding:3px 10px;font-size:11px;border:1px solid #2d2d35;background:#1a1a22;color:#a0a0b0;border-radius:20px;cursor:pointer;white-space:nowrap;" onmouseover="this.style.borderColor='#58a6ff';this.style.color='#e0e0e0'" onmouseout="this.style.borderColor='#2d2d35';this.style.color='#a0a0b0'">🔧 Refactor</button>
+            <button onclick="nxSetTask('Explain how this code works in plain language')" style="padding:3px 10px;font-size:11px;border:1px solid #2d2d35;background:#1a1a22;color:#a0a0b0;border-radius:20px;cursor:pointer;white-space:nowrap;" onmouseover="this.style.borderColor='#58a6ff';this.style.color='#e0e0e0'" onmouseout="this.style.borderColor='#2d2d35';this.style.color='#a0a0b0'">💡 Explain</button>
+            <button onclick="nxSetTask('Generate project documentation for this codebase')" style="padding:3px 10px;font-size:11px;border:1px solid #2d2d35;background:#1a1a22;color:#a0a0b0;border-radius:20px;cursor:pointer;white-space:nowrap;" onmouseover="this.style.borderColor='#58a6ff';this.style.color='#e0e0e0'" onmouseout="this.style.borderColor='#2d2d35';this.style.color='#a0a0b0'">📝 Gen Docs</button>
+          </div>
+
           <div style="display:flex;gap:8px;align-items:flex-start;">
             <div style="position:relative">
               <button class="nx-plus-btn" id="nxPlusBtn" onclick="nxTogglePlusMenu()" title="Attach file, image, or import repo" style="width:36px;height:36px;border-radius:6px;border:1px solid #27272A;background:#202024;color:#E0E0E0;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;">+</button>
@@ -674,27 +685,26 @@
             <input type="file" id="nxFolderInput" style="display:none" webkitdirectory multiple onchange="nxHandleFolderUpload(this)">
 
             <div class="p4-suggest-wrap" style="flex:1;position:relative;">
-              <textarea id="taskInput" placeholder="Execute task or define requirements... (⌘+Enter)" autocomplete="off" spellcheck="false" oninput="p4OnTaskInput(this.value);p6OnTaskType(this.value)" onfocus="p4OnTaskInput(this.value)" onblur="setTimeout(()=>p4CloseSuggest(),200)" style="width:100%;min-height:56px;background:#202024;border:1px solid #27272A;border-radius:6px;padding:12px;color:#E0E0E0;font-family:inherit;font-size:14px;resize:none;box-sizing:border-box;"></textarea>
+              <textarea id="taskInput" placeholder="Describe what you want the AI to do... (⌘+Enter to run)" autocomplete="off" spellcheck="false" oninput="p4OnTaskInput(this.value);p6OnTaskType(this.value);nxAutoGrowTextarea(this)" onfocus="p4OnTaskInput(this.value)" onblur="setTimeout(()=>p4CloseSuggest(),200)" style="width:100%;min-height:60px;max-height:200px;background:#202024;border:1px solid #27272A;border-radius:6px;padding:12px;color:#E0E0E0;font-family:inherit;font-size:14px;resize:none;box-sizing:border-box;line-height:1.5;overflow-y:auto;"></textarea>
               <div class="p4-suggest-box" id="p4SuggestBox"></div>
 
-              <div class="nx-exec-toolbar" style="display:flex;gap:12px;margin-top:12px;padding-top:10px;border-top:1px dashed #27272A;width:100%;">
-                <div style="display:flex;gap:8px;align-items:center;flex:1;">
-                  <select id="nxExecModeSelect" title="Execution mode" style="background:#202024;border:1px solid #27272A;color:#8b949e;border-radius:4px;padding:2px 6px;font-size:11px;outline:none;cursor:pointer;">
-                    <option value="autonomous">Mode: Autonomous</option>
-                    <option value="architect">Mode: Architect</option>
-                    <option value="debug">Mode: Debug</option>
-                  </select>
-                  <select id="nxExecScopeSelect" title="Execution scope" style="background:#202024;border:1px solid #27272A;color:#8b949e;border-radius:4px;padding:2px 6px;font-size:11px;outline:none;cursor:pointer;">
-                    <option value="workspace">Scope: Workspace</option>
-                    <option value="active_file">Scope: Active File</option>
-                  </select>
-                  <div style="color:#8b949e;font-size:11px;display:flex;align-items:center;gap:6px;margin-left:8px;">
-                    <span style="width:6px;height:6px;border-radius:50%;background:#3fb950;display:inline-block;box-shadow:0 0 4px #3fb950;"></span>
-                    Target: Local Shell
-                  </div>
+              <div class="nx-exec-toolbar" style="display:flex;gap:8px;margin-top:8px;align-items:center;width:100%;">
+                <select id="nxExecModeSelect" title="Execution mode" style="background:#202024;border:1px solid #27272A;color:#8b949e;border-radius:4px;padding:2px 6px;font-size:11px;outline:none;cursor:pointer;">
+                  <option value="autonomous">Autonomous</option>
+                  <option value="architect">Architect</option>
+                  <option value="debug">Debug</option>
+                </select>
+                <select id="nxExecScopeSelect" title="Execution scope" style="background:#202024;border:1px solid #27272A;color:#8b949e;border-radius:4px;padding:2px 6px;font-size:11px;outline:none;cursor:pointer;">
+                  <option value="workspace">Whole workspace</option>
+                  <option value="active_file">Active file only</option>
+                </select>
+                <div style="flex:1"></div>
+                <!-- Live model indicator in composer -->
+                <div id="nxComposerModelBadge" style="display:flex;align-items:center;gap:5px;font-size:11px;color:#555;cursor:pointer;" onclick="openSettings?.('api')" title="Configure AI provider">
+                  <span id="nxComposerModelDot" style="width:5px;height:5px;border-radius:50%;background:#555;flex-shrink:0;"></span>
+                  <span id="nxComposerModelName" style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">No provider</span>
                 </div>
               </div>
-
             </div>
             <button class="nx-cmd-attach" title="Voice input" id="nxVoiceBtn" onclick="toggleVoice()" style="width:36px;height:36px;border-radius:6px;border:1px solid #27272A;background:#202024;color:#E0E0E0;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;">🎤</button>
           </div>
@@ -780,46 +790,48 @@
           <!-- Header row -->
           <div class="nx-iw-header">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.4;flex-shrink:0"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-            <span class="nx-iw-title">Workspace ready</span>
-            <span class="nx-iw-hint"><kbd>⌘K</kbd> Commands &nbsp;·&nbsp; <kbd>⌘↵</kbd> Execute</span>
+            <span class="nx-iw-title">Ready — type a task above and press <kbd style="font-size:10px;padding:1px 5px;border:1px solid #333;border-radius:3px;background:#1a1a1a">⌘↵</kbd></span>
+            <span class="nx-iw-hint"><kbd>⌘K</kbd> Commands</span>
           </div>
 
           <!-- Runtime status strip -->
           <div class="nx-iw-status-strip" id="nxIdleStatusStrip">
-            <div class="nx-iw-stat" title="Active model / provider">
-              <span class="nx-iw-stat-label">Model</span>
+            <div class="nx-iw-stat" title="Active AI provider">
+              <span class="nx-iw-stat-label">Provider</span>
               <span class="nx-iw-stat-val" id="nxIdleModel">—</span>
             </div>
             <div class="nx-iw-stat-sep"></div>
-            <div class="nx-iw-stat" title="Model confidence">
-              <span class="nx-iw-stat-label">Confidence</span>
+            <div class="nx-iw-stat" title="Sessions run">
+              <span class="nx-iw-stat-label">Sessions</span>
               <span class="nx-iw-stat-val" id="nxIdleConf">—</span>
             </div>
             <div class="nx-iw-stat-sep"></div>
-            <div class="nx-iw-stat" title="Context token pressure">
+            <div class="nx-iw-stat" title="Context window usage">
               <span class="nx-iw-stat-label">Context</span>
               <span class="nx-iw-stat-val" id="nxIdleCtx">—</span>
             </div>
             <div class="nx-iw-stat-sep"></div>
-            <div class="nx-iw-stat" title="Queued tasks">
-              <span class="nx-iw-stat-label">Queued</span>
+            <div class="nx-iw-stat" title="Scheduled tasks">
+              <span class="nx-iw-stat-label">Scheduled</span>
               <span class="nx-iw-stat-val" id="nxIdleSched">—</span>
             </div>
           </div>
 
           <!-- Quick actions -->
           <div class="nx-iw-actions">
-            <button class="nx-hero-chip" onclick="nxSetTask('Run full test suite')">Run Tests</button>
-            <button class="nx-hero-chip" onclick="nxSetTask('Audit workspace for errors')">Audit Workspace</button>
-            <button class="nx-hero-chip" onclick="nxSetTask('Generate project documentation')">Generate Docs</button>
-            <button class="nx-hero-chip" onclick="nxSetTask('Review code for bugs and security issues')">Security Review</button>
+            <button class="nx-hero-chip" onclick="nxSetTask('Run the full test suite and fix any failures')">🧪 Run Tests</button>
+            <button class="nx-hero-chip" onclick="nxSetTask('Review the codebase for bugs and security issues')">🔍 Code Review</button>
+            <button class="nx-hero-chip" onclick="nxSetTask('Generate comprehensive project documentation')">📝 Docs</button>
+            <button class="nx-hero-chip" onclick="nxSetTask('Fix the most recent error or bug in the code')">🐛 Fix Bug</button>
+            <button class="nx-hero-chip" onclick="nxSetTask('Refactor the code for better readability and performance')">🔧 Refactor</button>
+            <button class="nx-hero-chip" onclick="nxSetTask('Add error handling and input validation throughout the codebase')">🛡 Harden</button>
           </div>
 
           <!-- Recent executions -->
           <div class="nx-iw-section">
-            <div class="nx-iw-section-label">Recent runs</div>
+            <div class="nx-iw-section-label">Recent sessions</div>
             <div id="nxIdleRecent" class="nx-iw-recent-list">
-              <div class="nx-iw-recent-empty">No recent runs</div>
+              <div class="nx-iw-recent-empty">No sessions yet — run your first task above</div>
             </div>
           </div>
 

@@ -481,19 +481,19 @@
 
   <div id="nx-slide-panels" style="grid-area:center; position:relative; z-index:100;">
     <div class="nx-slide-panel" id="nxPanel-files">
-       <div class="nx-panel-header">Files <button class="nx-close-btn" onclick="nxClosePanels()">✕</button></div>
+       <div class="nx-panel-header">Files <button class="nx-close-btn" onclick="window.nxClosePanels?.()">✕</button></div>
        <div class="nx-panel-content" id="nxPanelContent-files"></div>
     </div>
     <div class="nx-slide-panel" id="nxPanel-chat">
-       <div class="nx-panel-header">Chat <button class="nx-close-btn" onclick="nxClosePanels()">✕</button></div>
+       <div class="nx-panel-header">Chat <button class="nx-close-btn" onclick="window.nxClosePanels?.()">✕</button></div>
        <div class="nx-panel-content" id="nxPanelContent-chat"></div>
     </div>
     <div class="nx-slide-panel" id="nxPanel-history">
-       <div class="nx-panel-header">History <button class="nx-close-btn" onclick="nxClosePanels()">✕</button></div>
+       <div class="nx-panel-header">History <button class="nx-close-btn" onclick="window.nxClosePanels?.()">✕</button></div>
        <div class="nx-panel-content" id="nxPanelContent-history"></div>
     </div>
     <div class="nx-slide-panel" id="nxPanel-settings">
-       <div class="nx-panel-header">Settings <button class="nx-close-btn" onclick="nxClosePanels()">✕</button></div>
+       <div class="nx-panel-header">Settings <button class="nx-close-btn" onclick="window.nxClosePanels?.()">✕</button></div>
        <div class="nx-panel-content" id="nxPanelContent-settings"></div>
     </div>
   </div>
@@ -713,6 +713,7 @@
 
           <!-- Hidden legacy tabs to preserve JS bindings -->
           <div id="nx-legacy-tabs" style="display:none;">
+            <button class="nx-tab" data-nxtab="diff" onclick="nxSetTab('diff')"></button>
             <button class="nx-tab" data-nxtab="chat" onclick="nxSetTab('chat');p12LoadChat(currentSession)"></button>
             <button class="nx-tab" data-nxtab="live" onclick="nxSetTab('live')" id="nxLiveTabBtn"><span id="nxLiveDot"></span></button>
             <button class="nx-more-btn" id="nxMoreBtn" onclick="nxToggleMore(event)"></button>
@@ -746,6 +747,9 @@
           <button id="nxAbStopBtn" class="nx-ab-btn nx-ab-stop" onclick="stopSession()" style="display:none">■
             Stop</button>
         </div>
+
+        <!-- Z48D: Workspace intelligence suggestion bar (mounted by nx-z48.js) -->
+        <!-- placeholder: nx-z48.js injects #z48SuggestBar into #nxIdleHero -->
 
         <!-- Idle workspace — shown when no task is running -->
         <div class="nx-idle-hero" id="nxIdleHero">
@@ -865,6 +869,34 @@
         <!-- Z29: Governance + Operator Control tab -->
         <div class="nx-tab-content" id="nxTab-govern" style="padding:0;overflow:hidden;display:flex;flex-direction:column;position:relative;"></div>
 
+        <!-- Z48A: Side-by-side diff viewer tab -->
+        <div class="nx-tab-content" id="nxTab-diff" style="padding:0;overflow:hidden;display:flex;flex-direction:column;">
+          <div class="z48-diff-shell">
+            <div class="z48-diff-header">
+              <span class="z48-diff-title">Compare Files</span>
+              <span class="z48-diff-stats" style="color:#6B7280">Use the command palette or file preview to open a comparison</span>
+              <button class="z48-diff-close" onclick="nxSetTab('logs')">✕</button>
+            </div>
+            <div style="padding:20px;">
+              <div class="z48-diff-picker">
+                <div>
+                  <div class="z48-diff-picker-label">File A (original)</div>
+                  <input class="z48-diff-picker-input" id="z48DiffInputA" placeholder="e.g. src/main.py">
+                </div>
+                <div class="z48-diff-picker-row">
+                  <span style="font-size:10px;color:#6B7280;">vs</span>
+                  <button class="z48-diff-picker-swap" onclick="window._z48?.swapDiffPaths()" title="Swap A and B">⇅</button>
+                </div>
+                <div>
+                  <div class="z48-diff-picker-label">File B (revised)</div>
+                  <input class="z48-diff-picker-input" id="z48DiffInputB" placeholder="e.g. src/main_v2.py">
+                </div>
+                <button class="z48-diff-btn" onclick="window._z48?.commitDiff()">Compare →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Phase Z30 — Live Execution Graph + Visualization tab -->
         <div class="nx-tab-content" id="nxTab-live" style="flex-direction:column;overflow:hidden">
 
@@ -936,6 +968,9 @@
           </div>
 
           <!-- Z30C: Replay controls bar -->
+          <!-- Z48C: Replay minimap — inserted by nx-z48.js; placeholder here for DOM ordering -->
+          <div id="z48ReplayMinimapAnchor"></div>
+
           <div class="z30-replay-bar" id="z30ReplayBar" role="toolbar" aria-label="Replay controls">
             <span class="z30-replay-label" id="z30ReplayMode">REPLAY</span>
             <button class="z30-replay-btn" id="z30ReplayStart" onclick="_z30.replayStart()" title="Start replay from beginning">⏮</button>
@@ -3954,6 +3989,9 @@
   <!-- Phase Z47 — Operational File Workspace + Command Flow Realization -->
   <link rel="stylesheet" href="/static/css/nx-z47.css">
   <script src="/static/js/nx-z47.js" defer></script>
+  <!-- Phase Z48 — Workspace Composition + Diff Intelligence -->
+  <link rel="stylesheet" href="/static/css/nx-z48.css">
+  <script src="/static/js/nx-z48.js" defer></script>
   <script defer>
     // Z28: Initialize intel tab when first activated, sync session on future activations
     (function() {

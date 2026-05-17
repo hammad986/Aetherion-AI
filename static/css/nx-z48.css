@@ -1,0 +1,661 @@
+/**
+ * nx-z48.css — Phase Z48: Workspace Composition + Diff Intelligence
+ * ══════════════════════════════════════════════════════════════════
+ * Z48A — Side-by-side diff viewer
+ * Z48B — Split workspace mode
+ * Z48C — Replay minimap + bookmarks
+ * Z48D — Workspace intelligence suggestions
+ * Z48E — Artifact relationship display
+ * Z48F — Workspace flow polish
+ */
+
+/* ═══════════════════════════════════════════════════════════════════
+   Z48A — DIFF VIEWER
+   ═══════════════════════════════════════════════════════════════════ */
+
+.z48-diff-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  font-family: inherit;
+}
+
+/* Diff header bar */
+.z48-diff-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--nx-color-border, #2A2A2E);
+  flex-shrink: 0;
+  background: var(--nx-color-bg-surface, #18181B);
+}
+.z48-diff-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: #C0C0C0;
+}
+.z48-diff-stats {
+  font-size: 10px;
+  color: #6B7280;
+}
+.z48-diff-stat-add  { color: #4CAF50; }
+.z48-diff-stat-del  { color: #F87171; }
+.z48-diff-stat-chg  { color: #F59E0B; }
+.z48-diff-close {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: #6B7280;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  transition: background 0.1s, color 0.1s;
+}
+.z48-diff-close:hover { background: rgba(255,255,255,0.07); color: #C0C0C0; }
+
+/* File labels row */
+.z48-diff-labels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-bottom: 1px solid var(--nx-color-border, #2A2A2E);
+  flex-shrink: 0;
+}
+.z48-diff-label {
+  padding: 5px 10px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #8B949E;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.z48-diff-label-a {
+  border-right: 1px solid var(--nx-color-border, #2A2A2E);
+  background: rgba(248,113,113,0.04);
+}
+.z48-diff-label-b {
+  background: rgba(76,175,80,0.04);
+}
+.z48-diff-label-badge {
+  font-size: 9px;
+  padding: 1px 5px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.06);
+  color: #6B7280;
+}
+
+/* Diff scroll container */
+.z48-diff-body {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.1) transparent;
+}
+
+/* Side-by-side diff grid */
+.z48-diff-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-width: 0;
+}
+
+/* Individual diff line */
+.z48-diff-row {
+  display: contents;
+}
+
+.z48-diff-cell {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 11px;
+  line-height: 1.6;
+  min-height: 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.02);
+}
+.z48-diff-cell-a {
+  border-right: 1px solid var(--nx-color-border, #2A2A2E);
+}
+.z48-diff-linenum {
+  width: 2.8em;
+  text-align: right;
+  padding: 1px 6px 1px 4px;
+  color: #374151;
+  user-select: none;
+  flex-shrink: 0;
+  border-right: 1px solid rgba(255,255,255,0.04);
+}
+.z48-diff-sigil {
+  width: 1.2em;
+  text-align: center;
+  padding: 1px 2px;
+  flex-shrink: 0;
+  font-weight: 700;
+  font-size: 10px;
+}
+.z48-diff-text {
+  flex: 1;
+  padding: 1px 6px;
+  white-space: pre;
+  overflow: hidden;
+  color: #C0C0C0;
+}
+
+/* Row types */
+.z48-diff-equal   .z48-diff-cell { background: transparent; }
+.z48-diff-equal   .z48-diff-sigil { color: transparent; }
+
+.z48-diff-delete  .z48-diff-cell-a { background: rgba(248,113,113,0.08); }
+.z48-diff-delete  .z48-diff-cell-a .z48-diff-sigil { color: #F87171; }
+.z48-diff-delete  .z48-diff-cell-a .z48-diff-text  { color: #FCA5A5; }
+.z48-diff-delete  .z48-diff-cell-b { background: rgba(255,255,255,0.01); }
+.z48-diff-delete  .z48-diff-cell-b .z48-diff-text  { color: transparent; }
+
+.z48-diff-insert  .z48-diff-cell-b { background: rgba(76,175,80,0.08); }
+.z48-diff-insert  .z48-diff-cell-b .z48-diff-sigil { color: #4CAF50; }
+.z48-diff-insert  .z48-diff-cell-b .z48-diff-text  { color: #86EFAC; }
+.z48-diff-insert  .z48-diff-cell-a { background: rgba(255,255,255,0.01); }
+.z48-diff-insert  .z48-diff-cell-a .z48-diff-text  { color: transparent; }
+
+.z48-diff-replace .z48-diff-cell-a { background: rgba(245,158,11,0.07); }
+.z48-diff-replace .z48-diff-cell-a .z48-diff-sigil { color: #F59E0B; }
+.z48-diff-replace .z48-diff-cell-a .z48-diff-text  { color: #FDE68A; }
+.z48-diff-replace .z48-diff-cell-b { background: rgba(76,175,80,0.07); }
+.z48-diff-replace .z48-diff-cell-b .z48-diff-sigil { color: #4CAF50; }
+.z48-diff-replace .z48-diff-cell-b .z48-diff-text  { color: #86EFAC; }
+
+/* Diff empty / error / loading */
+.z48-diff-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 32px;
+  text-align: center;
+  color: #6B7280;
+  grid-column: 1 / -1;
+}
+.z48-diff-empty-icon { font-size: 28px; opacity: 0.35; }
+.z48-diff-empty-title { font-size: 13px; font-weight: 600; color: #8B949E; }
+
+/* File picker for diff */
+.z48-diff-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  max-width: 480px;
+  margin: 0 auto;
+}
+.z48-diff-picker-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #8B949E;
+  margin-bottom: 4px;
+}
+.z48-diff-picker-input {
+  width: 100%;
+  padding: 7px 10px;
+  background: rgba(0,0,0,0.2);
+  border: 1px solid var(--nx-color-border, #2A2A2E);
+  border-radius: 5px;
+  color: #C0C0C0;
+  font-size: 12px;
+  font-family: monospace;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.15s;
+}
+.z48-diff-picker-input:focus {
+  border-color: rgba(0,121,242,0.4);
+}
+.z48-diff-picker-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.z48-diff-picker-swap {
+  background: none;
+  border: none;
+  color: #6B7280;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px;
+  border-radius: 3px;
+}
+.z48-diff-picker-swap:hover { color: #C0C0C0; }
+.z48-diff-btn {
+  padding: 7px 16px;
+  background: rgba(0,121,242,0.12);
+  border: 1px solid rgba(0,121,242,0.25);
+  border-radius: 5px;
+  color: #60A5FA;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.12s;
+  align-self: flex-end;
+}
+.z48-diff-btn:hover { background: rgba(0,121,242,0.2); }
+.z48-diff-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* Truncation banner */
+.z48-diff-truncated {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: rgba(217,119,6,0.07);
+  border: 1px solid rgba(217,119,6,0.2);
+  border-radius: 4px;
+  font-size: 11px;
+  color: #F59E0B;
+  margin: 8px;
+  flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Z48B — SPLIT WORKSPACE MODE
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Split toggle button in tab bar */
+.z48-split-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 7px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  font-size: 10px;
+  color: #6B7280;
+  background: none;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.z48-split-btn:hover {
+  background: rgba(255,255,255,0.05);
+  color: #C0C0C0;
+  border-color: rgba(255,255,255,0.08);
+}
+.z48-split-btn.active {
+  background: rgba(0,121,242,0.1);
+  border-color: rgba(0,121,242,0.25);
+  color: #60A5FA;
+}
+
+/* Split pane wrapper */
+.z48-split-pane {
+  display: none;
+  flex-direction: column;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: var(--nx-color-bg-surface, #18181B);
+}
+
+/* Horizontal split: stack vertically */
+body.z48-split-h #nxCenter {
+  display: flex;
+  flex-direction: column;
+}
+body.z48-split-h .nx-tab-content.active {
+  flex: 1 1 50%;
+  max-height: 50%;
+  overflow: hidden;
+}
+body.z48-split-h .z48-split-pane {
+  display: flex;
+  flex: 1 1 50%;
+  border-top: 2px solid var(--nx-color-border, #2A2A2E);
+}
+
+/* Vertical split: side by side */
+body.z48-split-v #nxCenter {
+  flex-direction: row;
+}
+body.z48-split-v .nx-tab-content.active {
+  flex: 1 1 50%;
+  overflow: hidden;
+}
+body.z48-split-v .z48-split-pane {
+  display: flex;
+  flex: 1 1 50%;
+  border-left: 2px solid var(--nx-color-border, #2A2A2E);
+}
+
+/* Split drag handle */
+.z48-split-resizer {
+  background: var(--nx-color-border, #2A2A2E);
+  cursor: row-resize;
+  height: 4px;
+  flex-shrink: 0;
+  transition: background 0.15s;
+  position: relative;
+  z-index: 10;
+}
+body.z48-split-v .z48-split-resizer {
+  width: 4px;
+  height: auto;
+  cursor: col-resize;
+}
+.z48-split-resizer:hover,
+.z48-split-resizer.dragging {
+  background: rgba(0,121,242,0.4);
+}
+
+/* Split pane mini tab bar */
+.z48-split-tabbar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--nx-color-border, #2A2A2E);
+  background: var(--nx-color-bg-base, #0D0D0F);
+  flex-shrink: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.z48-split-tabbar::-webkit-scrollbar { display: none; }
+.z48-split-tab {
+  padding: 2px 8px;
+  font-size: 10px;
+  border-radius: 3px;
+  border: 1px solid transparent;
+  color: #8B949E;
+  cursor: pointer;
+  white-space: nowrap;
+  background: none;
+  transition: background 0.1s, color 0.1s;
+}
+.z48-split-tab:hover { background: rgba(255,255,255,0.05); color: #C0C0C0; }
+.z48-split-tab.active {
+  background: rgba(0,121,242,0.1);
+  border-color: rgba(0,121,242,0.2);
+  color: #60A5FA;
+}
+
+/* Split pane content area */
+.z48-split-content {
+  flex: 1;
+  overflow: auto;
+  position: relative;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Z48C — REPLAY MINIMAP + BOOKMARKS
+   ═══════════════════════════════════════════════════════════════════ */
+
+.z48-replay-minimap {
+  display: none;
+  flex-shrink: 0;
+  height: 28px;
+  background: rgba(0,0,0,0.2);
+  border-bottom: 1px solid var(--nx-color-border, #2A2A2E);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+.z48-replay-minimap.visible { display: block; }
+
+/* Minimap track */
+.z48-mm-track {
+  position: absolute;
+  inset: 4px 8px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 2px;
+}
+
+/* Minimap cursor (current position) */
+.z48-mm-cursor {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  width: 2px;
+  background: #60A5FA;
+  border-radius: 1px;
+  transition: left 0.15s;
+  pointer-events: none;
+}
+
+/* Minimap markers */
+.z48-mm-marker {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  width: 3px;
+  border-radius: 1px;
+  transition: opacity 0.2s;
+}
+.z48-mm-marker:hover { opacity: 1 !important; }
+.z48-mm-marker[data-type="failure"]  { background: #F87171; }
+.z48-mm-marker[data-type="hitl"]     { background: #A78BFA; }
+.z48-mm-marker[data-type="recovery"] { background: #F59E0B; }
+.z48-mm-marker[data-type="write"]    { background: #4CAF50; }
+.z48-mm-marker[data-type="success"]  { background: #60A5FA; }
+.z48-mm-marker[data-type="bookmark"] { background: #FDE68A; width: 4px; }
+
+/* Minimap bookmark button */
+.z48-mm-bookmark-btn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 10px;
+  background: none;
+  border: none;
+  color: #6B7280;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 2px;
+  z-index: 10;
+}
+.z48-mm-bookmark-btn:hover { color: #FDE68A; }
+
+/* Replay summary banner (shown at start/end of replay) */
+.z48-replay-summary {
+  display: none;
+  padding: 8px 12px;
+  background: rgba(0,0,0,0.3);
+  border-bottom: 1px solid var(--nx-color-border, #2A2A2E);
+  font-size: 11px;
+  color: #8B949E;
+  flex-shrink: 0;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.z48-replay-summary.visible { display: flex; align-items: center; }
+.z48-rs-item { display: flex; align-items: center; gap: 4px; }
+.z48-rs-label { color: #6B7280; font-size: 10px; }
+.z48-rs-val   { color: #C0C0C0; font-weight: 600; }
+.z48-rs-sep   { color: #374151; }
+
+/* Replay quick jump buttons */
+.z48-replay-jumps {
+  display: none;
+  gap: 4px;
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--nx-color-border, #2A2A2E);
+  flex-shrink: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.z48-replay-jumps.visible { display: flex; }
+.z48-jump-btn {
+  font-size: 9px;
+  padding: 2px 7px;
+  border-radius: 3px;
+  border: 1px solid var(--nx-color-border, #2A2A2E);
+  background: rgba(255,255,255,0.03);
+  color: #6B7280;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.1s, color 0.1s;
+  flex-shrink: 0;
+}
+.z48-jump-btn:hover { background: rgba(255,255,255,0.07); color: #C0C0C0; }
+.z48-jump-btn.fail   { color: #F87171; border-color: rgba(248,113,113,0.2); }
+.z48-jump-btn.hitl   { color: #A78BFA; border-color: rgba(167,139,250,0.2); }
+.z48-jump-btn.recov  { color: #F59E0B; border-color: rgba(245,158,11,0.2); }
+
+/* ═══════════════════════════════════════════════════════════════════
+   Z48D — WORKSPACE INTELLIGENCE SUGGESTIONS
+   Quiet, non-intrusive nudge bar
+   ═══════════════════════════════════════════════════════════════════ */
+
+.z48-suggest-bar {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: rgba(0,121,242,0.04);
+  border: 1px solid rgba(0,121,242,0.12);
+  border-radius: 6px;
+  margin: 8px 0;
+  font-size: 11px;
+  animation: z48-suggest-in 0.3s ease;
+}
+.z48-suggest-bar.visible { display: flex; }
+@keyframes z48-suggest-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.z48-suggest-icon { font-size: 13px; flex-shrink: 0; opacity: 0.7; }
+.z48-suggest-text { flex: 1; color: #8B949E; }
+.z48-suggest-action {
+  padding: 3px 9px;
+  background: rgba(0,121,242,0.1);
+  border: 1px solid rgba(0,121,242,0.2);
+  border-radius: 4px;
+  color: #60A5FA;
+  font-size: 10px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background 0.1s;
+}
+.z48-suggest-action:hover { background: rgba(0,121,242,0.18); }
+.z48-suggest-dismiss {
+  background: none;
+  border: none;
+  color: #4B5563;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 2px 4px;
+  flex-shrink: 0;
+}
+.z48-suggest-dismiss:hover { color: #8B949E; }
+
+/* ═══════════════════════════════════════════════════════════════════
+   Z48E — ARTIFACT RELATIONSHIP DISPLAY
+   ═══════════════════════════════════════════════════════════════════ */
+
+.z48-art-rel {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 6px;
+  background: rgba(255,255,255,0.02);
+  border-radius: 3px;
+  font-size: 10px;
+  color: #6B7280;
+  border: 1px solid rgba(255,255,255,0.05);
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s;
+}
+.z48-art-rel:hover { background: rgba(255,255,255,0.05); color: #8B949E; }
+.z48-art-rel-type { opacity: 0.7; }
+.z48-art-rel-name { color: #8B949E; font-weight: 500; }
+
+/* Related artifacts row */
+.z48-related-row {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Z48F — WORKSPACE FLOW POLISH
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Smooth panel transitions */
+.nx-slide-panel {
+  transition: transform 0.22s cubic-bezier(0.25, 0.1, 0.25, 1),
+              opacity 0.18s ease;
+}
+
+/* Better focus outlines (keyboard nav) */
+:focus-visible {
+  outline: 2px solid rgba(0,121,242,0.5) !important;
+  outline-offset: 2px;
+}
+.nx-tab:focus-visible {
+  box-shadow: 0 0 0 2px rgba(0,121,242,0.3) inset;
+}
+
+/* Reduced visual dead zones: give all empty tab contents a minimum height */
+.nx-tab-content:empty::after {
+  content: '';
+  display: block;
+  min-height: 120px;
+}
+
+/* Better loading state for tab content */
+.z48-tab-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 32px;
+  color: #6B7280;
+  font-size: 12px;
+}
+.z48-tab-loading::before {
+  content: '';
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.1);
+  border-top-color: #60A5FA;
+  animation: z48-spin 0.7s linear infinite;
+}
+@keyframes z48-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Z48 diff tab button (in hidden legacy tabs area, needs to be visible) */
+#nxTab-diff {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Diff "compare with" button in Z47A preview breadcrumb (injected by Z48) */
+.z48-compare-btn {
+  flex-shrink: 0;
+  font-size: 11px;
+  padding: 2px 7px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--nx-color-border, #2A2A2E);
+  border-radius: 3px;
+  color: #8B949E;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+.z48-compare-btn:hover { background: rgba(255,255,255,0.08); color: #C0C0C0; }
+
+/* Smooth tab content transitions */
+.nx-tab-content {
+  transition: opacity 0.15s ease;
+}
+.nx-tab-content:not(.active) {
+  pointer-events: none;
+}

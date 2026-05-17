@@ -1,0 +1,243 @@
+PHASE Z48 — WORKSPACE COMPOSITION + DIFF INTELLIGENCE
+
+CURRENT STATUS:
+Aetherion AI now supports:
+
+* operational workspace panels
+* execution replay systems
+* artifact preview systems
+* command palette workflows
+* execution dock awareness
+* workspace continuity
+* mission lifecycle visibility
+* causal runtime intelligence
+
+The platform is now transitioning from:
+"operational runtime"
+toward:
+"professional AI workbench."
+
+This phase is NOT about:
+new AGI cognition.
+
+This phase IS about:
+workspace composition,
+artifact relationships,
+operator ergonomics,
+and execution usability.
+
+STRICT RULES:
+🔒 NO NEW AGI SYSTEMS
+🔒 NO NEW EXECUTION INTELLIGENCE ENGINES
+🔒 NO CYBERPUNK VISUALS
+🔒 NO VISUAL OVERLOAD
+🔒 NO FAKE WORKSPACE FEATURES
+🔒 NO PERFORMANCE REGRESSIONS
+🔒 WORKFLOW CLARITY FIRST
+🔒 OPERATOR USABILITY > TECHNICAL SHOWCASE
+
+====================================================
+Z48A — SIDE-BY-SIDE DIFF WORKSPACE
+==================================
+
+GOAL:
+Operators must compare:
+generated artifacts,
+revisions,
+recoveries,
+and replay outputs
+inside the workspace.
+
+IMPLEMENT:
+
+1. /api/file/<sid>/diff endpoint
+2. Side-by-side diff viewer
+3. Inline line highlights
+4. Added/removed/changed indicators
+5. Sticky headers
+6. Scroll synchronization
+7. Safe large-file truncation
+8. Markdown-aware comparison
+9. JSON-aware formatting
+10. Replay-linked comparisons
+
+IMPORTANT:
+Diff viewer must feel:
+lightweight,
+fast,
+and operational.
+
+NOT:
+GitHub clone theater.
+
+====================================================
+Z48B — SPLIT WORKSPACE MODE
+===========================
+
+GOAL:
+Operators should inspect:
+multiple operational surfaces simultaneously.
+
+IMPLEMENT:
+
+1. Split horizontal mode
+2. Split vertical mode
+3. Preview + replay side-by-side
+4. Diff + execution side-by-side
+5. Chat + timeline side-by-side
+6. Resizable panes
+7. Persistent split layouts
+8. Keyboard shortcuts
+9. Focus management
+
+====================================================
+Z48C — OPERATIONAL REPLAY USABILITY
+===================================
+
+CURRENT PROBLEM:
+Replay system likely still:
+too forensic-oriented.
+
+GOAL:
+Replay should feel:
+navigable,
+understandable,
+operational.
+
+IMPLEMENT:
+
+1. Replay minimap
+2. Replay bookmarks
+3. Important moment markers
+4. Failure jump points
+5. Recovery jump points
+6. Replay summaries
+7. Replay annotations
+8. Mission outcome summaries
+9. Quick replay filters
+
+====================================================
+Z48D — WORKSPACE INTELLIGENCE LAYER
+===================================
+
+NOT AGI.
+
+GOAL:
+Workspace should help operators:
+without overwhelming them.
+
+IMPLEMENT:
+
+1. Resume last mission suggestions
+2. Suggested artifact reopen
+3. Recent failure reminders
+4. Replay continuation suggestions
+5. Session continuity prompts
+6. Recent command recommendations
+7. Mission recovery suggestions
+8. Frequently accessed artifacts
+
+IMPORTANT:
+Quiet assistance only.
+No assistant spam.
+
+====================================================
+Z48E — ARTIFACT RELATIONSHIP GRAPH
+==================================
+
+GOAL:
+Artifacts should feel:
+connected to executions.
+
+IMPLEMENT:
+
+1. Artifact lineage
+2. Source execution linkage
+3. Replay linkage
+4. Failure linkage
+5. Recovery linkage
+6. Dependency relationships
+7. Related artifact suggestions
+8. Version relationships
+
+====================================================
+Z48F — WORKSPACE FLOW POLISH
+============================
+
+GOAL:
+Reduce remaining:
+workflow friction.
+
+IMPLEMENT:
+
+1. Smooth transitions
+2. Better focus states
+3. Better panel ergonomics
+4. Better spacing rhythm
+5. Reduced visual dead zones
+6. Better loading states
+7. Better empty-state transitions
+8. Better keyboard navigation
+
+====================================================
+Z48G — PRODUCT REALISM AUDIT
+============================
+
+Perform deep audit for:
+
+* remaining fake workspace behaviors
+* workflow confusion
+* replay friction
+* shallow diff experiences
+* weak navigation
+* fragmented operator flow
+* missing continuity
+* visual dead zones
+* operational inconsistencies
+* split-view instability
+
+====================================================
+REQUIRED REPORTS
+================
+
+Generate:
+
+* docs/Z48_DIFF_WORKSPACE_REPORT.md
+* docs/Z48_SPLIT_WORKSPACE_REPORT.md
+* docs/Z48_REPLAY_USABILITY_AUDIT.md
+* docs/Z48_WORKSPACE_INTELLIGENCE_REPORT.md
+* docs/Z48_ARTIFACT_RELATIONSHIP_REPORT.md
+* docs/Z48_OPERATIONAL_WORKBENCH_VERDICT.md
+
+Each report MUST include:
+
+1. Remaining workspace weaknesses
+2. Remaining workflow friction
+3. Remaining operational gaps
+4. Remaining usability inconsistencies
+5. Remaining replay weaknesses
+6. Remaining artifact relationship gaps
+7. Honest workbench maturity score
+
+====================================================
+FINAL VALIDATION
+================
+
+Before completion:
+
+* verify diff viewer stable
+* verify split mode works
+* verify replay navigation usable
+* verify workspace continuity preserved
+* verify artifact relationships meaningful
+* verify no UI freezes
+* verify no visual overload
+* verify no fake-feeling interactions
+* verify performance remains stable
+* verify no architectural regressions
+
+IMPORTANT:
+This phase is about:
+transforming Aetherion AI
+from an operational runtime
+into a true professional AI workbench.

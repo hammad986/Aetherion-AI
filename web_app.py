@@ -3374,6 +3374,113 @@ def api_file(sid):
 
 
 # ─────────────────────────────────────────────────────────────────────
+# Phase Z48A — Side-by-side file diff endpoint
+# GET /api/file/<sid>/diff?a=path1&b=path2[&sid_b=other_sid]
+# Returns structured diff using Python difflib.SequenceMatcher.
+# ─────────────────────────────────────────────────────────────────────
+@app.route("/api/file/<sid>/diff")
+def api_file_diff(sid):
+    import difflib as _dl
+
+    if not db_session(sid):
+        return jsonify({"ok": False, "error": "session_not_found"}), 404
+
+    path_a = (request.args.get("a") or "").strip().lstrip("/")
+    path_b = (request.args.get("b") or "").strip().lstrip("/")
+    sid_b  = (request.args.get("sid_b") or sid).strip()
+
+    if not path_a or not path_b:
+        return jsonify({"ok": False, "error": "Both 'a' and 'b' path params are required"}), 400
+
+    MAX_LINES = 2000
+
+    def _read(s, p):
+        target = _safe_session_path(s, p)
+        if not os.path.isfile(target):
+            return None, "file_not_found"
+        if os.path.getsize(target) > 300_000:
+            return None, "file_too_large"
+        ext = os.path.splitext(target)[1].lower()
+        if ext not in _TEXT_EXTS and not _looks_text(target):
+            return None, "binary_file"
+        try:
+            with open(target, "r", encoding="utf-8", errors="replace") as fh:
+                return fh.readlines(), None
+        except OSError as exc:
+            return None, str(exc)
+
+    lines_a, err_a = _read(sid, path_a)
+    if err_a:
+        return jsonify({"ok": False, "error": f"file_a: {err_a}"}), 400
+
+    lines_b, err_b = _read(sid_b, path_b)
+    if err_b:
+        return jsonify({"ok": False, "error": f"file_b: {err_b}"}), 400
+
+    truncated = False
+    if len(lines_a) > MAX_LINES:
+        lines_a = lines_a[:MAX_LINES]
+        truncated = True
+    if len(lines_b) > MAX_LINES:
+        lines_b = lines_b[:MAX_LINES]
+        truncated = True
+
+    matcher = _dl.SequenceMatcher(None, lines_a, lines_b, autojunk=False)
+    result  = []
+
+    for tag, i1, i2, j1, j2 in matcher.get_opcodes():
+        if tag == "equal":
+            for k in range(i2 - i1):
+                result.append({
+                    "type": "equal",
+                    "num_a": i1 + k + 1,
+                    "num_b": j1 + k + 1,
+                    "text": lines_a[i1 + k].rstrip("\n"),
+                })
+        elif tag == "replace":
+            ra = lines_a[i1:i2]
+            rb = lines_b[j1:j2]
+            for k in range(max(len(ra), len(rb))):
+                result.append({
+                    "type": "replace",
+                    "num_a": (i1 + k + 1) if k < len(ra) else None,
+                    "num_b": (j1 + k + 1) if k < len(rb) else None,
+                    "text_a": ra[k].rstrip("\n") if k < len(ra) else None,
+                    "text_b": rb[k].rstrip("\n") if k < len(rb) else None,
+                })
+        elif tag == "delete":
+            for k in range(i2 - i1):
+                result.append({
+                    "type": "delete",
+                    "num_a": i1 + k + 1,
+                    "num_b": None,
+                    "text": lines_a[i1 + k].rstrip("\n"),
+                })
+        elif tag == "insert":
+            for k in range(j2 - j1):
+                result.append({
+                    "type": "insert",
+                    "num_a": None,
+                    "num_b": j1 + k + 1,
+                    "text": lines_b[j1 + k].rstrip("\n"),
+                })
+
+    changes = sum(1 for r in result if r["type"] != "equal")
+    return jsonify({
+        "ok":       True,
+        "path_a":   path_a,
+        "path_b":   path_b,
+        "sid_a":    sid,
+        "sid_b":    sid_b,
+        "lines_a":  len(lines_a),
+        "lines_b":  len(lines_b),
+        "changes":  changes,
+        "truncated": truncated,
+        "diff":     result,
+    })
+
+
+# ─────────────────────────────────────────────────────────────────────
 # Phase 20.6 — Integrated Code Editor + AI interaction layer.
 #
 # Four additive endpoints that power the Monaco-based editor in the

@@ -28,3 +28,15 @@ psutil>=5.9.0
 
 # Distributed infrastructure (optional, falls back gracefully)
 redis>=5.0.0
+bcrypt
+docx
+flask
+gunicorn
+psutil
+PyJWT
+python-docx
+python-dotenv
+razorpay
+redis
+requests
+tiktoken

@@ -295,12 +295,33 @@
     // ── Auth gate UI ───────────────────────────────────────────────────
     function nxShowAuthGate() {
       const gate = document.getElementById('nx-auth-gate');
-      if (gate) gate.classList.remove('nx-auth-hidden');
+      if (!gate) return;
+      gate.classList.remove('nx-auth-hidden', 'nx-auth-exiting');
+      // Reset card loading state on show
+      nxAuthCardLoading(false);
     }
 
     function nxHideAuthGate() {
       const gate = document.getElementById('nx-auth-gate');
-      if (gate) gate.classList.add('nx-auth-hidden');
+      if (!gate) return;
+      gate.classList.add('nx-auth-exiting');
+      setTimeout(() => {
+        gate.classList.add('nx-auth-hidden');
+        gate.classList.remove('nx-auth-exiting');
+        nxAuthCardLoading(false);
+      }, 340);
+    }
+
+    function nxAuthCardLoading(on) {
+      const card = document.getElementById('nx-auth-card');
+      if (!card) return;
+      if (on) {
+        card.setAttribute('data-loading', 'true');
+        card.querySelectorAll('input, button').forEach(el => { el.disabled = true; });
+      } else {
+        card.removeAttribute('data-loading');
+        card.querySelectorAll('input, button').forEach(el => { el.disabled = false; });
+      }
     }
 
     function nxAuthErr(msg) {
@@ -308,14 +329,16 @@
       if (!el) return;
       el.textContent = msg;
       el.classList.add('show');
-      setTimeout(() => el.classList.remove('show'), 5000);
+      setTimeout(() => el.classList.remove('show'), 6000);
     }
 
     window.nxAuthTab = function (tab) {
       document.getElementById('nx-form-login').classList.toggle('nx-hidden', tab !== 'login');
       document.getElementById('nx-form-signup').classList.toggle('nx-hidden', tab !== 'signup');
-      document.getElementById('nx-tab-login').classList.toggle('active', tab === 'login');
-      document.getElementById('nx-tab-signup').classList.toggle('active', tab === 'signup');
+      const loginTab = document.getElementById('nx-tab-login');
+      const signupTab = document.getElementById('nx-tab-signup');
+      if (loginTab) { loginTab.classList.toggle('active', tab === 'login'); loginTab.setAttribute('aria-selected', tab === 'login'); }
+      if (signupTab) { signupTab.classList.toggle('active', tab === 'signup'); signupTab.setAttribute('aria-selected', tab === 'signup'); }
       document.getElementById('nx-auth-err').classList.remove('show');
     };
 
@@ -327,7 +350,8 @@
 
       if (!identifier || !password) { nxAuthErr('Please fill in all fields'); return; }
 
-      if (btn) { btn.disabled = true; btn.textContent = 'Signing in…'; }
+      nxAuthCardLoading(true);
+      if (btn) btn.textContent = 'Signing in…';
       try {
         const r = await _origFetch('/api/auth/login', {
           method: 'POST',
@@ -341,15 +365,16 @@
           nxScheduleRefresh(d.expires_in || 900);
           nxHideAuthGate();
           nxRenderUserBadge();
-          console.log('[Auth] Signed in successfully');
           setTimeout(nxCheckVerification, 2000);
         } else {
-          nxAuthErr(d.error || 'Login failed');
+          nxAuthCardLoading(false);
+          if (btn) btn.textContent = 'Sign In';
+          nxAuthErr(d.error || 'Sign in failed. Check your details and try again.');
         }
       } catch (e) {
-        nxAuthErr('Network error. Please try again.');
-      } finally {
-        if (btn) { btn.disabled = false; btn.textContent = 'Sign In'; }
+        nxAuthCardLoading(false);
+        if (btn) btn.textContent = 'Sign In';
+        nxAuthErr('Network error. Please check your connection and try again.');
       }
     };
 
@@ -368,7 +393,8 @@
         return;
       }
 
-      if (btn) { btn.disabled = true; btn.textContent = 'Creating account…'; }
+      nxAuthCardLoading(true);
+      if (btn) btn.textContent = 'Creating account…';
       try {
         const r = await _origFetch('/api/auth/signup', {
           method: 'POST',
@@ -382,15 +408,16 @@
           nxScheduleRefresh(d.expires_in || 900);
           nxHideAuthGate();
           nxRenderUserBadge();
-          console.log('[Auth] Account created and signed in');
           setTimeout(nxCheckVerification, 2000);
         } else {
-          nxAuthErr(d.error || 'Signup failed');
+          nxAuthCardLoading(false);
+          if (btn) btn.textContent = 'Create Account';
+          nxAuthErr(d.error || 'Account creation failed. Please try again.');
         }
       } catch (e) {
-        nxAuthErr('Network error. Please try again.');
-      } finally {
-        if (btn) { btn.disabled = false; btn.textContent = 'Create Account'; }
+        nxAuthCardLoading(false);
+        if (btn) btn.textContent = 'Create Account';
+        nxAuthErr('Network error. Please check your connection and try again.');
       }
     };
 

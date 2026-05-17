@@ -79,6 +79,8 @@
   <link rel="stylesheet" href="/static/css/nx-z55.css">
   <!-- Z57: Operational Workspace Completion + Product Realism -->
   <link rel="stylesheet" href="/static/css/nx-z57.css">
+  <!-- Z59: Operational Flow Cohesion + First-Use Trust -->
+  <link rel="stylesheet" href="/static/css/nx-z59.css">
 </head>
 
 <body>
@@ -89,82 +91,90 @@
 
   <!-- ── Enterprise Auth Gate ─────────────────────────────────────────────── -->
   <div id="nx-auth-gate" class="nx-auth-hidden">
-    <div class="nx-auth-card">
-      <div class="nx-auth-logo">
-        <div class="nx-auth-logo-icon">
-          <svg width="22" height="22" viewBox="0 0 32 32" fill="none">
-            <polygon points="16,3 20.5,11.5 30,13 23,20 24.7,29.5 16,25 7.3,29.5 9,20 2,13 11.5,11.5" fill="#bc8cff"
-              stroke="#6b3fa0" stroke-width="0.5" />
-          </svg>
+    <div class="nx-auth-card" id="nx-auth-card">
+      <!-- Loading spinner overlay -->
+      <div class="nx-auth-loading-spinner" aria-hidden="true"></div>
+
+      <div class="nx-auth-header-wrap" style="display:flex;flex-direction:column;align-items:center;gap:4px;margin-bottom:22px;text-align:center;">
+        <div class="nx-auth-logo">
+          <div class="nx-auth-logo-icon">
+            <svg width="22" height="22" viewBox="0 0 32 32" fill="none">
+              <polygon points="16,3 20.5,11.5 30,13 23,20 24.7,29.5 16,25 7.3,29.5 9,20 2,13 11.5,11.5" fill="#bc8cff"
+                stroke="#6b3fa0" stroke-width="0.5" />
+            </svg>
+          </div>
+          <div class="nx-auth-logo-text">Aetherion <span>AI</span></div>
         </div>
-        <div class="nx-auth-logo-text">Aetherion <span>AI</span></div>
+        <div class="nx-auth-subtitle">Autonomous AI development workspace</div>
       </div>
 
-      <div id="nx-auth-err" class="nx-auth-err"></div>
+      <div id="nx-auth-err" class="nx-auth-err" role="alert"></div>
 
       <!-- Tabs -->
-      <div class="nx-auth-tabs">
-        <button class="nx-auth-tab active" id="nx-tab-login" onclick="nxAuthTab('login')">Sign In</button>
-        <button class="nx-auth-tab" id="nx-tab-signup" onclick="nxAuthTab('signup')">Create Account</button>
+      <div class="nx-auth-tabs" role="tablist">
+        <button class="nx-auth-tab active" id="nx-tab-login" role="tab" aria-selected="true" onclick="nxAuthTab('login')">Sign In</button>
+        <button class="nx-auth-tab" id="nx-tab-signup" role="tab" aria-selected="false" onclick="nxAuthTab('signup')">Create Account</button>
       </div>
 
-      <!-- Login form -->
-      <div id="nx-form-login">
+      <!-- Login form — proper <form> for autofill + password managers -->
+      <form id="nx-form-login" onsubmit="event.preventDefault(); nxDoLogin(); return false;" autocomplete="on" novalidate>
         <div class="nx-auth-field">
-          <label>Email or Username</label>
-          <input type="text" id="nx-login-id" placeholder="you@example.com" autocomplete="username">
+          <label for="nx-login-id">Email or Username</label>
+          <input type="text" id="nx-login-id" name="username" placeholder="you@example.com"
+            autocomplete="username" autocapitalize="none" spellcheck="false" required>
         </div>
         <div class="nx-auth-field">
-          <label>Password</label>
-          <input type="password" id="nx-login-pw" placeholder="••••••••" autocomplete="current-password"
-            onkeydown="if(event.key==='Enter') nxDoLogin()">
+          <label for="nx-login-pw">Password</label>
+          <input type="password" id="nx-login-pw" name="password" placeholder="••••••••"
+            autocomplete="current-password" required>
         </div>
-        <button class="nx-auth-btn-primary" id="nx-btn-login" onclick="nxDoLogin()">Sign In</button>
-        <button class="nx-auth-forgot-link" onclick="nxShowForgotPw()">Forgot Password?</button>
-      </div>
+        <button type="submit" class="nx-auth-btn-primary" id="nx-btn-login">Sign In</button>
+        <button type="button" class="nx-auth-forgot-link" onclick="nxShowForgotPw()">Forgot Password?</button>
+      </form>
 
       <!-- Forgot Password form -->
-      <div id="nx-form-forgot" class="nx-hidden">
-        <div id="nx-auth-ok" class="nx-auth-ok"></div>
+      <form id="nx-form-forgot" class="nx-hidden" onsubmit="event.preventDefault(); nxDoForgotPw(); return false;" autocomplete="on" novalidate>
+        <div id="nx-auth-ok" class="nx-auth-ok" role="status"></div>
         <div class="nx-auth-field">
-          <label>Email Address</label>
-          <input type="email" id="nx-forgot-email" placeholder="you@example.com" autocomplete="email"
-            onkeydown="if(event.key==='Enter') nxDoForgotPw()">
+          <label for="nx-forgot-email">Email Address</label>
+          <input type="email" id="nx-forgot-email" name="email" placeholder="you@example.com"
+            autocomplete="email" autocapitalize="none" required>
         </div>
-        <button class="nx-auth-btn-primary" id="nx-btn-forgot" onclick="nxDoForgotPw()">Send Reset Link</button>
-        <button class="nx-auth-back-link" onclick="nxShowForgotPw(false)">← Back to Sign In</button>
-      </div>
+        <button type="submit" class="nx-auth-btn-primary" id="nx-btn-forgot">Send Reset Link</button>
+        <button type="button" class="nx-auth-back-link" onclick="nxShowForgotPw(false)">← Back to Sign In</button>
+      </form>
 
       <!-- Signup form -->
-      <div id="nx-form-signup" class="nx-hidden">
+      <form id="nx-form-signup" class="nx-hidden" onsubmit="event.preventDefault(); nxDoSignup(); return false;" autocomplete="on" novalidate>
         <div class="nx-auth-field">
-          <label>Full Name</label>
-          <input type="text" id="nx-signup-name" placeholder="Your Name" autocomplete="name">
+          <label for="nx-signup-name">Full Name</label>
+          <input type="text" id="nx-signup-name" name="name" placeholder="Your Name"
+            autocomplete="name">
         </div>
         <div class="nx-auth-field">
-          <label>Email</label>
-          <input type="email" id="nx-signup-email" placeholder="you@example.com" autocomplete="email">
+          <label for="nx-signup-email">Email</label>
+          <input type="email" id="nx-signup-email" name="email" placeholder="you@example.com"
+            autocomplete="email" autocapitalize="none" required>
         </div>
         <div class="nx-auth-field">
-          <label>Password <span class="nx-auth-label-hint">(min 8 chars)</span></label>
-          <input type="password" id="nx-signup-pw" placeholder="••••••••" autocomplete="new-password"
-            onkeydown="if(event.key==='Enter') nxDoSignup()">
+          <label for="nx-signup-pw">Password <span class="nx-auth-label-hint">(min 8 chars)</span></label>
+          <input type="password" id="nx-signup-pw" name="new-password" placeholder="••••••••"
+            autocomplete="new-password" required>
         </div>
         <label class="nx-auth-agree-label">
-          <input type="checkbox" id="nx-signup-agree">
+          <input type="checkbox" id="nx-signup-agree" name="agree">
           <span>I agree to the <a href="/terms-of-service" target="_blank">Terms of
               Service</a> and <a href="/privacy-policy" target="_blank">Privacy
               Policy</a></span>
         </label>
-        <button class="nx-auth-btn-primary nx-auth-btn-signup" id="nx-btn-signup" onclick="nxDoSignup()">Create
-          Account</button>
-      </div>
+        <button type="submit" class="nx-auth-btn-primary nx-auth-btn-signup" id="nx-btn-signup">Create Account</button>
+      </form>
 
       <!-- OAuth -->
-      <div class="nx-auth-divider">or continue with</div>
+      <div class="nx-auth-divider" aria-hidden="true">or continue with</div>
       <div class="nx-auth-oauth">
         <a href="/api/auth/google" class="nx-auth-oauth-btn" id="nx-btn-google">
-          <svg width="16" height="16" viewBox="0 0 24 24">
+          <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
             <path fill="#4285F4"
               d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
             <path fill="#34A853"
@@ -177,7 +187,7 @@
           Google
         </a>
         <a href="/api/auth/github" class="nx-auth-oauth-btn" id="nx-btn-github">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <path
               d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
           </svg>

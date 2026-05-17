@@ -11730,6 +11730,14 @@ try:
 except Exception as _z41_err:
     print(f"⚠ cognition_z41_bp skipped: {_z41_err}")
 
+# --- PHASE Z49: PERSISTENT OPERATIONAL GRAPH + EXECUTION MEMORY ---
+try:
+    from routes.graph_z49 import graph_z49_bp
+    app.register_blueprint(graph_z49_bp)
+    print("✅ graph_z49_bp registered (/api/graph/*)")
+except Exception as _z49_err:
+    print(f"⚠ graph_z49_bp skipped: {_z49_err}")
+
 # --- PHASE Z6: TELEMETRY BLUEPRINT ---
 # telemetry_routes.py has no conflicting URLs and is safe to register.
 # All routes are behind lazy imports so missing infra sub-packages never

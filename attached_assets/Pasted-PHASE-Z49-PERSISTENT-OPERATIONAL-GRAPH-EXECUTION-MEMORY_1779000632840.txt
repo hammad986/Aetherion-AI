@@ -1,0 +1,230 @@
+PHASE Z49 — PERSISTENT OPERATIONAL GRAPH + EXECUTION MEMORY
+
+CURRENT STATUS:
+Aetherion AI now includes:
+
+* operational runtime systems
+* replay systems
+* artifact preview
+* diff workspaces
+* split workspace modes
+* command palette workflows
+* execution dock
+* artifact relationship surfaces
+* workspace continuity
+* replay usability systems
+
+The platform now behaves like:
+a real operational AI workbench.
+
+The next evolution is:
+persistent operational memory and relationship intelligence.
+
+STRICT RULES:
+🔒 NO AGI FEATURES
+🔒 NO META-LEARNING
+🔒 NO SELF-EVOLUTION
+🔒 NO WORLD MODELS
+🔒 NO AUTONOMOUS PERSONALITIES
+🔒 NO OVERENGINEERED KNOWLEDGE GRAPH
+🔒 BUILD OPERATIONAL MEMORY ONLY
+🔒 RELIABILITY > INTELLIGENCE
+🔒 PERSISTENCE > VISUALS
+
+====================================================
+Z49A — PERSISTENT ARTIFACT GRAPH
+================================
+
+GOAL:
+Artifacts must become:
+persistent operational entities.
+
+IMPLEMENT:
+
+1. artifact_relationships SQLite table
+2. parent-child artifact lineage
+3. version linkage
+4. replay linkage
+5. recovery linkage
+6. failure linkage
+7. session linkage
+8. execution linkage
+9. dependency linkage
+10. artifact metadata indexing
+
+REQUIREMENTS:
+
+* no fake lineage
+* all relationships traceable
+* append-safe writes
+* recovery-safe persistence
+
+====================================================
+Z49B — EXECUTION MEMORY PERSISTENCE
+===================================
+
+GOAL:
+Execution intelligence must survive:
+reloads,
+restarts,
+and future sessions.
+
+IMPLEMENT:
+
+1. persistent execution memory tables
+2. retry history persistence
+3. recovery success tracking
+4. escalation history
+5. pressure trend persistence
+6. replay outcome persistence
+7. execution summaries
+8. operator annotations
+9. replay bookmarks persistence
+
+IMPORTANT:
+Persistence must be:
+stable,
+lightweight,
+queryable.
+
+====================================================
+Z49C — OPERATIONAL GRAPH API
+============================
+
+IMPLEMENT:
+
+1. /api/graph/artifacts
+2. /api/graph/session
+3. /api/graph/replay
+4. /api/graph/recovery
+5. /api/graph/search
+6. /api/graph/node/<id>
+
+Provide:
+
+* lineage
+* dependencies
+* linked sessions
+* replay relationships
+* recovery relationships
+* execution ancestry
+
+====================================================
+Z49D — EXECUTION SUMMARY ENGINE
+===============================
+
+GOAL:
+Operators must understand:
+what happened,
+without replaying entire missions.
+
+IMPLEMENT:
+
+1. execution summaries
+2. failure summaries
+3. recovery summaries
+4. replay summaries
+5. generated artifact summaries
+6. mission outcome summaries
+7. timeline condensation
+8. key-moment extraction
+
+IMPORTANT:
+NO hallucinated summaries.
+Only event-derived summaries.
+
+====================================================
+Z49E — RELATIONSHIP-AWARE SEARCH
+================================
+
+GOAL:
+Search should understand:
+workspace relationships.
+
+IMPLEMENT:
+
+1. artifact-aware search
+2. replay-aware search
+3. session-aware search
+4. recovery-aware search
+5. dependency-aware filtering
+6. recent-history ranking
+7. lineage-aware suggestions
+
+====================================================
+Z49F — OPERATIONAL STABILITY PASS
+=================================
+
+Perform deep audit for:
+
+* persistence inconsistencies
+* stale localStorage states
+* replay desynchronization
+* broken lineage
+* graph corruption risks
+* duplicate relationships
+* invalid replay references
+* orphaned artifacts
+* fragmented workspace continuity
+* backend/frontend divergence
+
+====================================================
+Z49G — PERFORMANCE GOVERNANCE
+=============================
+
+IMPLEMENT:
+
+1. graph query budgets
+2. pagination
+3. lazy loading
+4. replay cache limits
+5. artifact indexing limits
+6. memory pressure guards
+7. stale relationship cleanup
+8. SQLite WAL safety validation
+
+====================================================
+REQUIRED REPORTS
+================
+
+Generate:
+
+* docs/Z49_OPERATIONAL_GRAPH_REPORT.md
+* docs/Z49_EXECUTION_MEMORY_REPORT.md
+* docs/Z49_SUMMARY_ENGINE_AUDIT.md
+* docs/Z49_RELATIONSHIP_SEARCH_REPORT.md
+* docs/Z49_STABILITY_GOVERNANCE_REPORT.md
+* docs/Z49_OPERATIONAL_MEMORY_VERDICT.md
+
+Each report MUST include:
+
+1. Remaining persistence weaknesses
+2. Remaining graph weaknesses
+3. Remaining replay inconsistencies
+4. Remaining operational fragmentation
+5. Remaining relationship gaps
+6. Remaining stability risks
+7. Honest operational maturity score
+
+====================================================
+FINAL VALIDATION
+================
+
+Before completion:
+
+* verify graph persistence survives reload
+* verify replay references valid
+* verify lineage relationships stable
+* verify no orphan artifacts
+* verify summaries accurate
+* verify search relationships meaningful
+* verify SQLite stability
+* verify no graph corruption
+* verify no performance regressions
+* verify operational continuity preserved
+
+IMPORTANT:
+This phase is about:
+transforming Aetherion AI
+from a powerful workspace
+into a persistent operational intelligence platform.

@@ -338,27 +338,47 @@
 
   function _renderSettingsPanel() {
     const el = $('nxPanelContent-settings');
-    if (!el || el.dataset.z46Init) return;
-    el.dataset.z46Init = '1';
+    if (!el) return;
+    // Always re-render so live data (plan mode, model, theme) is current
     _paintSettingsPanel(el);
   }
 
   function _paintSettingsPanel(el) {
-    const planMode  = $('nxActivePlanMode')?.textContent?.replace(/[⚡🔵🟣]/g, '').trim() || '—';
+    const planMode  = $('nxActivePlanMode')?.textContent?.replace(/[⚡🔵🟣]/g, '').trim() || 'Lite';
     const theme     = document.documentElement.getAttribute('data-theme') || document.body.dataset.theme || 'dark';
     const modelEl   = $('nxIdleModel') || $('stModel');
-    const modelName = modelEl?.textContent || '—';
+    const modelName = modelEl?.textContent?.trim() || '—';
+    const headerMode = $('headerMode');
+    const apiMode   = headerMode?.textContent?.trim() || 'Managed';
+    const provDot   = $('nxModelDot');
+    const provOk    = provDot?.style?.background?.includes('green');
+    const provStatus = provOk ? '● Connected' : '○ No provider';
 
     el.innerHTML = `
       <div class="z46-section">
-        <div class="z46-section-label">Runtime</div>
+        <div class="z46-section-label">Provider</div>
         <div class="z46-setting-row">
-          <span class="z46-setting-label">Plan mode</span>
-          <span class="z46-setting-val">${esc(planMode)}</span>
+          <span class="z46-setting-label">Mode</span>
+          <span class="z46-setting-val">${esc(apiMode)}</span>
         </div>
         <div class="z46-setting-row">
-          <span class="z46-setting-label">Active model</span>
+          <span class="z46-setting-label">Status</span>
+          <span class="z46-setting-val" style="color:${provOk ? 'var(--green)' : 'var(--yellow)'}">${esc(provStatus)}</span>
+        </div>
+        <div class="z46-setting-row">
+          <span class="z46-setting-label">Model</span>
           <span class="z46-setting-val">${esc(modelName)}</span>
+        </div>
+        <div class="z46-setting-row" style="margin-top:6px">
+          <button class="z46-setting-btn" style="width:100%" onclick="nxClosePanels();openSettings?.('api')">Configure providers →</button>
+        </div>
+      </div>
+
+      <div class="z46-section">
+        <div class="z46-section-label">Appearance</div>
+        <div class="z46-setting-row">
+          <span class="z46-setting-label">Plan</span>
+          <span class="z46-setting-val">${esc(planMode)}</span>
         </div>
         <div class="z46-setting-row">
           <span class="z46-setting-label">Theme</span>
@@ -368,23 +388,38 @@
 
       <div class="z46-section">
         <div class="z46-section-label">Keyboard Shortcuts</div>
+        <div class="z46-shortcut-row"><span>Run task</span><kbd>⌘↵</kbd></div>
         <div class="z46-shortcut-row"><span>Command palette</span><kbd>⌘K</kbd></div>
-        <div class="z46-shortcut-row"><span>Execute task</span><kbd>⌘↵</kbd></div>
-        <div class="z46-shortcut-row"><span>Toggle inspector</span><kbd>⌘\\</kbd></div>
-        <div class="z46-shortcut-row"><span>Pause / Resume</span><kbd>⌘P</kbd></div>
-        <div class="z46-shortcut-row"><span>Files panel</span><kbd>⌘1</kbd></div>
-        <div class="z46-shortcut-row"><span>History panel</span><kbd>⌘3</kbd></div>
+        <div class="z46-shortcut-row"><span>Stop execution</span><kbd>⌘P</kbd></div>
+        <div class="z46-shortcut-row"><span>Inspector panel</span><kbd>⌘\\</kbd></div>
+        <div class="z46-shortcut-row"><span>Settings</span><kbd>⌘,</kbd></div>
+        <div class="z46-shortcut-row"><span>New session</span><kbd>⌘⇧N</kbd></div>
+        <div class="z46-shortcut-row"><span>Files tab</span><kbd>⌘1</kbd></div>
+        <div class="z46-shortcut-row"><span>Terminal tab</span><kbd>⌘2</kbd></div>
+        <div class="z46-shortcut-row"><span>History tab</span><kbd>⌘3</kbd></div>
       </div>
 
       <div class="z46-section">
-        <div class="z46-section-label">Account</div>
+        <div class="z46-section-label">Account & Admin</div>
         <div class="z46-setting-row">
-          <span class="z46-setting-label">Profile</span>
-          <button class="z46-setting-btn" onclick="nxClosePanels(); document.getElementById('nxAccountBtn')?.click()">Open settings →</button>
+          <button class="z46-setting-btn" onclick="nxClosePanels();openSettings?.('security')">Account &amp; Security →</button>
         </div>
         <div class="z46-setting-row">
-          <span class="z46-setting-label">Admin panel</span>
-          <button class="z46-setting-btn" onclick="window.open('/admin', '_blank')">Open →</button>
+          <button class="z46-setting-btn" onclick="nxClosePanels();openSettings?.('sessions')">Session history →</button>
+        </div>
+        <div class="z46-setting-row">
+          <button class="z46-setting-btn" onclick="window.open('/admin','_blank')">Admin panel →</button>
+        </div>
+      </div>
+
+      <div class="z46-section">
+        <div class="z46-section-label">Beta Status</div>
+        <div style="font-size:11px;color:var(--text-muted,#8b949e);line-height:1.55;padding:6px 0">
+          Aetherion AI is in beta. Some features may be limited or unavailable depending on your API key configuration.
+        </div>
+        <div class="z46-setting-row">
+          <span class="z46-setting-label">Version</span>
+          <span class="z46-setting-val" style="opacity:.6">Z62 Beta</span>
         </div>
       </div>
     `;

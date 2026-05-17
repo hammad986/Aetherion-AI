@@ -385,12 +385,21 @@
     const hero = $('nxIdleHero');
     if (!hero || hero.classList.contains('hidden')) return;
     try {
-      const [mr, sr] = await Promise.all([
-        fetch('/api/system/metrics'),
-        fetch('/api/scheduler/stats').catch(() => null),
-      ]);
-      if (mr.ok) {
-        const md = await mr.json();
+      // Use cached metrics from ui.js (NX.lastMetrics) to avoid duplicate /api/system/metrics fetch.
+      // Only fall back to direct fetch if the cache is stale (>15s) or absent.
+      const cached = window.NX?.lastMetrics;
+      const cacheAge = cached?._ts ? Date.now() - cached._ts : Infinity;
+      let md = null;
+      if (cached && cacheAge < 15000) {
+        md = cached;
+      } else {
+        const mr = await fetch('/api/system/metrics').catch(() => null);
+        if (mr && mr.ok) {
+          md = await mr.json();
+          if (window.NX) { md._ts = Date.now(); window.NX.lastMetrics = md; }
+        }
+      }
+      if (md) {
         const providers = md.providers || [];
         const avail = providers.find(p => p.available) || providers[0];
         if (avail) z50StatUpdate('nxIdleModel', avail.model || avail.provider || '—');
@@ -399,6 +408,8 @@
         const ctx = md.metrics?.context_pressure;
         z50StatUpdate('nxIdleCtx', ctx ? (ctx * 100).toFixed(0) + '%' : 'Low');
       }
+      // Scheduler stats: lightweight, not duplicated elsewhere
+      const sr = await fetch('/api/scheduler/stats').catch(() => null);
       if (sr && sr.ok) {
         const sd = await sr.json();
         const sched = sd.total_enabled || sd.total || 0;

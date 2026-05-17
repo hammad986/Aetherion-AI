@@ -1979,7 +1979,7 @@ async function loadEvolutionDashboard() {
     /* ── Start polling ──────────────────────────────────────────────── */
     function p7StartPolling(sid) {
       if (p7PollTimer) clearInterval(p7PollTimer);
-      p7PollTimer = setInterval(() => p7PollStatus(sid), 800);
+      p7PollTimer = setInterval(() => p7PollStatus(sid), 3000);
       // First poll immediately
       p7PollStatus(sid);
     }

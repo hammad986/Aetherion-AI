@@ -9,6 +9,7 @@
     let _loadingBar = null;
     let _loadingDoneTimer = null;
     let _nx429Debounce = false;
+    const _nxToastSeen = new Map(); // message deduplication: msg → expiry ms
 
     function _initLoadingBar() {
       if ($id('nx-loading-bar')) return;
@@ -41,6 +42,16 @@
     const TOAST_TITLES = { success: 'Success', error: 'Error', warning: 'Warning', info: 'Info' };
 
     function nxToast(type, message, title, duration) {
+      // Message-level deduplication: same type+message within 6s → silent drop
+      const dedupKey = type + '|' + message;
+      const now = Date.now();
+      if (_nxToastSeen.has(dedupKey) && _nxToastSeen.get(dedupKey) > now) return;
+      _nxToastSeen.set(dedupKey, now + 6000);
+      // Prune old entries to prevent memory leak
+      if (_nxToastSeen.size > 40) {
+        for (const [k, exp] of _nxToastSeen) { if (exp < now) _nxToastSeen.delete(k); }
+      }
+
       let container = $id('nx-toasts');
       if (!container) {
         container = document.createElement('div');

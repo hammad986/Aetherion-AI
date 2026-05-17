@@ -409,6 +409,9 @@
 
         if (mr.ok) {
           const md = await mr.json();
+          // Cache metrics globally so other modules (e.g. nx-z50) don't fetch again
+          md._ts = Date.now();
+          if (window.NX) window.NX.lastMetrics = md;
           const m = md.metrics || {};
           const calls = m.total_calls || 0;
           const fallbacks = m.fallbacks || 0;

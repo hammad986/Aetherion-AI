@@ -1,0 +1,255 @@
+PHASE Z62 — REAL PRODUCT COMPLETION + UI FUNCTIONALITY STABILIZATION
+
+IMPORTANT:
+This phase is NOT about adding new systems.
+
+This phase exists to:
+finish the actual product usability layer.
+
+Current platform problem:
+the shell looks advanced,
+but multiple surfaces are still hollow, unstable, or partially broken.
+
+The goal of Z62:
+make Aetherion AI feel genuinely usable.
+
+STRICT RULES:
+❌ NO NEW INTELLIGENCE SYSTEMS
+❌ NO NEW FORENSIC LAYERS
+❌ NO ADMIN DASHBOARD
+❌ NO ENTERPRISE FEATURES
+❌ NO ANALYTICS EXPANSION
+❌ NO NEW “AI RUNTIME” TERMINOLOGY
+❌ NO NEW ARCHITECTURAL COMPLEXITY
+
+ONLY:
+
+* usability
+* stability
+* functional UI
+* workflow completion
+* operational realism
+
+====================================================
+Z62A — SETTINGS PANEL REALIZATION
+=================================
+
+Current issue:
+settings panel opens but is visually empty.
+
+This is unacceptable for beta usability.
+
+Audit:
+
+* settings render pipeline
+* async settings fetch
+* selector mismatches
+* panel injection
+* hidden CSS states
+* failed template rendering
+* broken API payloads
+
+Requirements:
+
+1. settings panel must fully render
+2. provider settings visible
+3. theme settings visible
+4. session/account settings visible
+5. keyboard shortcuts visible
+6. polling/debug preferences visible
+7. beta status visible
+8. all controls functional
+
+NO placeholder content.
+
+====================================================
+Z62B — POLLING + RATE LIMIT ROOT CAUSE ELIMINATION
+==================================================
+
+Current issue:
+RateLimited toast still appears.
+
+This means:
+duplicate polling or hidden retry loops still exist.
+
+Perform a deep polling audit.
+
+Find:
+
+* duplicate intervals
+* stacked listeners
+* repeated restore attempts
+* runaway fetch loops
+* hidden background retries
+* overlapping startup fetches
+
+Requirements:
+
+1. central polling registry
+2. deduplicated polling
+3. startup request orchestration
+4. background polling suppression
+5. single restore coordinator
+6. max one active polling loop per subsystem
+7. no startup self-rate-limit behavior
+
+VALIDATION:
+Platform must idle quietly.
+
+====================================================
+Z62C — REAL WORKSPACE CENTER
+============================
+
+Current workspace still feels:
+empty,
+cold,
+unfinished.
+
+Requirements:
+
+1. visible task composer
+2. meaningful central focus
+3. current task visibility
+4. recent runs visibility
+5. active session continuity
+6. real quick actions
+7. execution feedback area
+8. meaningful empty state
+
+The workspace should feel:
+alive but calm.
+
+NOT:
+empty black void.
+
+====================================================
+Z62D — TOAST + NOTIFICATION SANITY
+==================================
+
+Current issue:
+toast system still noisy/inconsistent.
+
+Requirements:
+
+1. no stacked toasts
+2. deduplicated notifications
+3. silent background failures
+4. visible user-triggered failures only
+5. max 1 warning toast at a time
+6. no fake operational notifications
+7. no fake restore messages
+
+====================================================
+Z62E — INTERACTION COMPLETION
+=============================
+
+Audit ALL buttons and interactions.
+
+Verify:
+
+* clickable
+* keyboard accessible
+* functional
+* visually responsive
+* no dead clicks
+* no empty handlers
+* no fake buttons
+
+Especially:
+
+* settings
+* sidebar controls
+* run task
+* stop task
+* panel actions
+* composer actions
+* close buttons
+* restore actions
+
+If any button is non-functional:
+FIX IT.
+
+====================================================
+Z62F — BETA REALISM PASS
+========================
+
+Remove:
+
+* fake confidence
+* fake enterprise tone
+* fake runtime intelligence wording
+* fake operational theater
+
+Replace with:
+
+* honest beta messaging
+* real product guidance
+* practical UX
+
+Platform should feel:
+focused,
+trustworthy,
+minimal,
+usable.
+
+====================================================
+Z62G — FINAL USABILITY LOCK
+===========================
+
+The platform should now feel:
+
+* operational
+* responsive
+* stable
+* realistic
+* interactive
+* trustworthy
+* complete enough for beta users
+
+NOT:
+like a prototype shell.
+
+====================================================
+REQUIRED REPORTS
+================
+
+Generate:
+
+* docs/Z62_SETTINGS_REALIZATION.md
+* docs/Z62_POLLING_ROOT_CAUSE_AUDIT.md
+* docs/Z62_WORKSPACE_REALISM.md
+* docs/Z62_TOAST_SYSTEM_AUDIT.md
+* docs/Z62_INTERACTION_COMPLETION.md
+* docs/Z62_FINAL_BETA_USABILITY_VERDICT.md
+
+Each report must include:
+
+1. real remaining problems
+2. real UX weaknesses
+3. real instability sources
+4. fake surfaces found
+5. dead interactions fixed
+6. remaining beta risks
+7. honest usability score
+
+====================================================
+MANDATORY FINAL VALIDATION
+==========================
+
+Before completion verify:
+
+* settings panel fully populated
+* no empty surfaces remain
+* no RateLimited toast on idle startup
+* no duplicate polling loops exist
+* workspace center feels usable
+* all visible buttons functional
+* no fake notifications remain
+* no dead interactions remain
+* platform usable without developer knowledge
+
+MOST IMPORTANT:
+After Z62,
+Aetherion AI should finally feel like:
+a real usable beta product,
+not an architectural demo shell.

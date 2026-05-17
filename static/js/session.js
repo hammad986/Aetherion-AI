@@ -522,17 +522,8 @@
     };
 
     // ── Cookie Consent ─────────────────────────────────────────────────
-    window.nxAcceptCookies = function () {
-      localStorage.setItem('nx_cookie_ok', '1');
-      const b = document.getElementById('nx-cookie-banner');
-      if (b) b.style.display = 'none';
-    };
-    (function nxInitCookieBanner() {
-      if (!localStorage.getItem('nx_cookie_ok')) {
-        const b = document.getElementById('nx-cookie-banner');
-        if (b) { b.style.display = 'flex'; b.style.alignItems = 'center'; }
-      }
-    })();
+    // Z56: nxAcceptCookies is now owned by nx-z50.js (z50DismissCookieBanner).
+    // Banner init is also handled there. Removed duplicate definition here.
 
     // ── Data Request / Account Deletion ────────────────────────────────
     window.nxRequestData = function () {

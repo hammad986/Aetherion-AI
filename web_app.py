@@ -7718,6 +7718,25 @@ def api_scheduler_status():
         return jsonify({"ok": False, "error": str(e)}), 500
 
 
+@app.route("/api/scheduler/stats", methods=["GET"])
+def api_scheduler_stats():
+    """Lightweight stats summary used by the idle dashboard widget (Z50).
+    Returns total enabled task count and running flag so the frontend can
+    display 'N active' or '—' without hitting the heavier /status endpoint."""
+    try:
+        st = _scheduler.status()
+        tasks = _scheduler.list_tasks() if hasattr(_scheduler, "list_tasks") else []
+        enabled = sum(1 for t in tasks if t.get("enabled", False))
+        return jsonify({
+            "ok": True,
+            "total_enabled": enabled,
+            "total": len(tasks),
+            "running": st.get("running", False),
+        })
+    except Exception as e:
+        return jsonify({"ok": True, "total_enabled": 0, "total": 0, "running": False})
+
+
 @app.route("/api/scheduler/history", methods=["GET"])
 def api_scheduler_history():
     """Get recent run history across all tasks."""

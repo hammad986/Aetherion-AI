@@ -186,25 +186,21 @@
   }
 
   /* ── Observers ─────────────────────────────────────────────────────── */
+  /* Z56: Consolidated — one shared MutationObserver for all state-bearing
+     elements instead of four separate instances. Reduces active observer
+     count by 3 (was watchRunBtn + watchStatusPill + watchHitlStrip +
+     watchErrorCard = 4; now 1). Each element keeps its own observe() call
+     with the exact same options as before.                                */
 
-  function watchRunBtn(btn) {
-    const mo = new MutationObserver(() => applyState(classifyState()));
-    mo.observe(btn, { attributes: true, attributeFilter: ['class'] });
-  }
+  let _stateObserver = null;
 
-  function watchStatusPill(el) {
-    const mo = new MutationObserver(() => applyState(classifyState()));
-    mo.observe(el, { childList: true, characterData: true, subtree: true });
-  }
-
-  function watchHitlStrip(el) {
-    const mo = new MutationObserver(() => applyState(classifyState()));
-    mo.observe(el, { attributes: true, attributeFilter: ['style'] });
-  }
-
-  function watchErrorCard(el) {
-    const mo = new MutationObserver(() => applyState(classifyState()));
-    mo.observe(el, { attributes: true, attributeFilter: ['style'] });
+  function watchStateElements(runBtn, statusPill, hitlStrip, errorCard) {
+    if (_stateObserver) _stateObserver.disconnect();
+    _stateObserver = new MutationObserver(() => applyState(classifyState()));
+    if (runBtn)     _stateObserver.observe(runBtn,     { attributes: true, attributeFilter: ['class'] });
+    if (statusPill) _stateObserver.observe(statusPill, { childList: true, characterData: true, subtree: true });
+    if (hitlStrip)  _stateObserver.observe(hitlStrip,  { attributes: true, attributeFilter: ['style'] });
+    if (errorCard)  _stateObserver.observe(errorCard,  { attributes: true, attributeFilter: ['style'] });
   }
 
   function watchLogArea(el) {
@@ -398,10 +394,7 @@
     const errorCard = $id('nxErrorCard');
     const logArea   = $id('logArea');
 
-    if (runBtn) watchRunBtn(runBtn);
-    if (stStatus) watchStatusPill(stStatus);
-    if (hitlStrip) watchHitlStrip(hitlStrip);
-    if (errorCard) watchErrorCard(errorCard);
+    watchStateElements(runBtn, stStatus, hitlStrip, errorCard);
     if (logArea) watchLogArea(logArea);
 
     // Initial state sync

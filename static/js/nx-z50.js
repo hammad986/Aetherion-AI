@@ -18,24 +18,28 @@
   function z50InitCookieBanner() {
     const banner = $('nx-cookie-banner');
     if (!banner) return;
-    if (localStorage.getItem('nx_cookie_accepted')) {
+    // Z56: check both keys — nx_cookie_accepted (z50+) and nx_cookie_ok (legacy session.js)
+    if (localStorage.getItem('nx_cookie_accepted') || localStorage.getItem('nx_cookie_ok')) {
       banner.style.display = 'none';
       return;
     }
     banner.style.display = 'flex';
-    // Ensure the dismiss button actually hides + stores
     const dismissBtn = banner.querySelector('.nx-cookie-dismiss');
     if (dismissBtn) {
       dismissBtn.onclick = () => z50DismissCookieBanner(false);
     }
   }
 
+  // Z56: Canonical definition — session.js legacy override removed (see session.js fix)
   window.nxAcceptCookies = function () {
     z50DismissCookieBanner(true);
   };
 
   function z50DismissCookieBanner(accept) {
-    if (accept) localStorage.setItem('nx_cookie_accepted', '1');
+    if (accept) {
+      localStorage.setItem('nx_cookie_accepted', '1');
+      localStorage.setItem('nx_cookie_ok', '1'); // Z56: keep legacy key in sync
+    }
     const banner = $('nx-cookie-banner');
     if (!banner) return;
     banner.classList.add('z50-hiding');

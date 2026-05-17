@@ -667,14 +667,14 @@
 
               <div class="nx-exec-toolbar" style="display:flex;gap:12px;margin-top:12px;padding-top:10px;border-top:1px dashed #27272A;width:100%;">
                 <div style="display:flex;gap:8px;align-items:center;flex:1;">
-                  <select style="background:#202024;border:1px solid #27272A;color:#8b949e;border-radius:4px;padding:2px 6px;font-size:11px;outline:none;cursor:pointer;">
-                    <option>Mode: Autonomous</option>
-                    <option>Mode: Architect</option>
-                    <option>Mode: Debug</option>
+                  <select id="nxExecModeSelect" title="Execution mode" style="background:#202024;border:1px solid #27272A;color:#8b949e;border-radius:4px;padding:2px 6px;font-size:11px;outline:none;cursor:pointer;">
+                    <option value="autonomous">Mode: Autonomous</option>
+                    <option value="architect">Mode: Architect</option>
+                    <option value="debug">Mode: Debug</option>
                   </select>
-                  <select style="background:#202024;border:1px solid #27272A;color:#8b949e;border-radius:4px;padding:2px 6px;font-size:11px;outline:none;cursor:pointer;">
-                    <option>Scope: Workspace</option>
-                    <option>Scope: Active File</option>
+                  <select id="nxExecScopeSelect" title="Execution scope" style="background:#202024;border:1px solid #27272A;color:#8b949e;border-radius:4px;padding:2px 6px;font-size:11px;outline:none;cursor:pointer;">
+                    <option value="workspace">Scope: Workspace</option>
+                    <option value="active_file">Scope: Active File</option>
                   </select>
                   <div style="color:#8b949e;font-size:11px;display:flex;align-items:center;gap:6px;margin-left:8px;">
                     <span style="width:6px;height:6px;border-radius:50%;background:#3fb950;display:inline-block;box-shadow:0 0 4px #3fb950;"></span>

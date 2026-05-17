@@ -222,6 +222,18 @@
     <button onclick="document.getElementById('p57-error-banner').classList.add('nx-hidden')" class="nx-error-banner-close" aria-label="Dismiss error">✕</button>
   </div>
 
+  <!-- Z47: Early stubs for onclick handlers — prevents "not defined" on fast click before deferred scripts load -->
+  <script>
+    window.nxClosePanels = window.nxClosePanels || function() {
+      document.querySelectorAll('.nx-slide-panel').forEach(function(p){ p.style.display='none'; });
+    };
+    window.nxClosePalette = window.nxClosePalette || function(e) {
+      if (!e || e.target === document.getElementById('nxPalette')) {
+        var el = document.getElementById('nxPalette');
+        if (el) { el.classList.remove('open'); el.setAttribute('aria-hidden','true'); }
+      }
+    };
+  </script>
   <!-- FUTURE-V2: Autonomous runtime bootstrap surface — command palette will surface live bootstrap context, ingestion state, and health probes -->
   <!-- ── Command Palette ── -->
   <div class="nx-palette-backdrop" id="nxPalette" onclick="nxClosePalette(event)">
@@ -3939,6 +3951,9 @@
   <!-- Phase Z46 — Operational Workspace Realization + Interaction Validation -->
   <link rel="stylesheet" href="/static/css/nx-z46.css">
   <script src="/static/js/nx-z46.js" defer></script>
+  <!-- Phase Z47 — Operational File Workspace + Command Flow Realization -->
+  <link rel="stylesheet" href="/static/css/nx-z47.css">
+  <script src="/static/js/nx-z47.js" defer></script>
   <script defer>
     // Z28: Initialize intel tab when first activated, sync session on future activations
     (function() {

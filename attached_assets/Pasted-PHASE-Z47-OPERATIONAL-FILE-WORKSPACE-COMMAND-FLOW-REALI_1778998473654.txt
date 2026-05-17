@@ -1,0 +1,257 @@
+PHASE Z47 — OPERATIONAL FILE WORKSPACE + COMMAND FLOW REALIZATION
+
+CURRENT STATUS:
+Aetherion AI now has:
+
+* stabilized runtime cognition
+* operational workspace panels
+* mission lifecycle visibility
+* execution replay systems
+* causal execution tracking
+* synchronized execution surfaces
+* functional interaction foundations
+
+However:
+
+The workspace still lacks:
+true operational gravity,
+deep workflow continuity,
+and professional execution ergonomics.
+
+This phase is NOT about:
+adding new AGI systems.
+
+This phase IS about:
+transforming the workspace into a true operational execution environment.
+
+STRICT RULES:
+🔒 NO NEW AGENTIC COGNITION SYSTEMS
+🔒 NO NEW FORENSIC OVERLAYS
+🔒 NO FAKE IDE THEATER
+🔒 NO CYBERPUNK UI
+🔒 NO VISUAL NOISE
+🔒 OPERATIONAL CLARITY FIRST
+🔒 WORKFLOW DEPTH > VISUAL HYPE
+🔒 PERFORMANCE MUST REMAIN STABLE
+
+====================================================
+Z47A — FILE PREVIEW + ARTIFACT WORKSPACE
+========================================
+
+CURRENT PROBLEM:
+Files panel still behaves too much like:
+download storage.
+
+GOAL:
+Create a true operational artifact workspace.
+
+IMPLEMENT:
+
+1. /api/files/{sid}/preview endpoint
+2. Inline preview drawer/panel
+3. Preview support:
+
+   * txt
+   * md
+   * json
+   * py
+   * js
+   * html
+   * css
+   * logs
+4. Syntax-safe rendering
+5. Markdown rendering
+6. JSON formatting
+7. Scroll virtualization for large files
+8. Safe truncation for huge artifacts
+9. Preview loading states
+10. Preview failure handling
+
+IMPORTANT:
+NO browser freezing.
+NO unsafe rendering.
+
+====================================================
+Z47B — WORKSPACE TAB SYSTEM
+===========================
+
+GOAL:
+Workspace should feel:
+persistent and operational.
+
+IMPLEMENT:
+
+1. Open file tabs
+2. Active tab state
+3. Tab switching
+4. Close tab handling
+5. Re-open last preview
+6. Multi-preview continuity
+7. Replay-linked artifact tabs
+8. Session persistence
+
+Tabs should:
+feel calm and lightweight.
+
+====================================================
+Z47C — COMMAND PALETTE REALIZATION
+==================================
+
+CURRENT PROBLEM:
+Command flow likely still shallow.
+
+GOAL:
+Command palette becomes:
+real operational control center.
+
+IMPLEMENT:
+
+COMMANDS:
+
+* open sessions
+* replay last mission
+* open artifacts
+* inspect failures
+* start mission
+* pause mission
+* export replay
+* clear workspace
+* focus timeline
+* toggle replay
+* jump to HITL
+* open settings
+* recover mission
+* search logs
+* open latest artifact
+
+ADD:
+
+1. Keyboard-first flow
+2. Search ranking
+3. Recent commands
+4. Execution-aware commands
+5. Context-sensitive commands
+6. Smooth open/close behavior
+
+====================================================
+Z47D — EXECUTION DOCK + ACTIVE TASK SURFACE
+===========================================
+
+GOAL:
+Operator must always know:
+what is actively executing.
+
+IMPLEMENT:
+
+1. Active execution dock
+2. Current task
+3. Runtime duration
+4. Queue depth
+5. Retry state
+6. HITL wait state
+7. Recovery state
+8. Completion summaries
+9. Quick replay shortcut
+10. Failure quick-inspect
+
+====================================================
+Z47E — ARTIFACT INTELLIGENCE
+============================
+
+GOAL:
+Artifacts should feel:
+meaningful,
+connected,
+and operational.
+
+IMPLEMENT:
+
+1. Artifact metadata
+2. Creation source
+3. Execution linkage
+4. Replay linkage
+5. Failure linkage
+6. Mission lineage
+7. Preview relationships
+8. Last accessed tracking
+
+====================================================
+Z47F — WORKSPACE CONTINUITY
+===========================
+
+GOAL:
+Workspace should survive:
+long sessions naturally.
+
+IMPLEMENT:
+
+1. Restore open tabs
+2. Restore preview state
+3. Restore replay position
+4. Restore panel states
+5. Restore mission focus
+6. Restore command history
+7. Restore operator context
+
+====================================================
+Z47G — UX + PRODUCT REALISM AUDIT
+=================================
+
+Perform deep audit for:
+
+* remaining fake interactions
+* shallow workflows
+* broken continuity
+* dead command flows
+* confusing execution states
+* weak operational grounding
+* missing usability expectations
+* interaction latency
+* empty previews
+* weak artifact navigation
+
+====================================================
+REQUIRED REPORTS
+================
+
+Generate:
+
+* docs/Z47_FILE_WORKSPACE_AUDIT.md
+* docs/Z47_COMMAND_FLOW_REPORT.md
+* docs/Z47_EXECUTION_DOCK_REPORT.md
+* docs/Z47_ARTIFACT_INTELLIGENCE_REPORT.md
+* docs/Z47_WORKSPACE_CONTINUITY_REPORT.md
+* docs/Z47_OPERATIONAL_REALISM_VERDICT.md
+
+Each report MUST include:
+
+1. Remaining workflow weaknesses
+2. Remaining shallow interactions
+3. Remaining realism gaps
+4. Remaining UX inconsistencies
+5. Remaining operational confusion
+6. Remaining artifact limitations
+7. Honest product maturity score
+
+====================================================
+FINAL VALIDATION
+================
+
+Before completion:
+
+* verify previews work
+* verify tabs persist
+* verify command palette useful
+* verify active task visible
+* verify artifacts navigable
+* verify continuity restoration works
+* verify no UI freezes
+* verify no dummy-feeling workflows
+* verify no architectural regressions
+* verify performance remains stable
+
+IMPORTANT:
+This phase is about:
+making Aetherion AI feel like
+a REAL operational workspace,
+not just a sophisticated runtime engine.

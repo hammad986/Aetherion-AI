@@ -1,0 +1,591 @@
+/**
+ * nx-z47.css — Phase Z47: Operational File Workspace + Command Flow Realization
+ * ═══════════════════════════════════════════════════════════════════════════════
+ * Z47A — File preview panel
+ * Z47B — File tab system
+ * Z47C — Command palette enhancements
+ * Z47D — Execution dock
+ * Z47E — Artifact intelligence metadata
+ * Z47F — Workspace continuity indicators
+ */
+
+/* ═══════════════════════════════════════════════════════════════════
+   Z47A — FILE PREVIEW PANEL
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Preview breadcrumb row */
+.z47-preview-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 0 10px;
+  font-size: 11px;
+  color: var(--nx-color-text-muted, #8B949E);
+  border-bottom: 1px solid var(--nx-color-border, #2A2A2E);
+  margin-bottom: 10px;
+  flex-shrink: 0;
+}
+.z47-preview-back {
+  background: none;
+  border: none;
+  color: #60A5FA;
+  cursor: pointer;
+  font-size: 11px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.z47-preview-back:hover { text-decoration: underline; }
+.z47-preview-filename {
+  font-weight: 600;
+  color: #C0C0C0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+.z47-preview-size {
+  flex-shrink: 0;
+  color: var(--nx-color-text-muted, #8B949E);
+}
+.z47-preview-download {
+  flex-shrink: 0;
+  font-size: 11px;
+  padding: 2px 7px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--nx-color-border, #2A2A2E);
+  border-radius: 3px;
+  color: #8B949E;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.12s;
+}
+.z47-preview-download:hover {
+  background: rgba(255,255,255,0.08);
+  color: #E0E0E0;
+}
+
+/* Preview container */
+.z47-preview-wrap {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+.z47-preview-content {
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.1) transparent;
+}
+
+/* Truncation banner */
+.z47-preview-truncated {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: rgba(217,119,6,0.07);
+  border: 1px solid rgba(217,119,6,0.2);
+  border-radius: 4px;
+  font-size: 11px;
+  color: #F59E0B;
+  margin-bottom: 10px;
+  flex-shrink: 0;
+}
+
+/* Code preview */
+.z47-code-block {
+  background: rgba(0,0,0,0.2);
+  border: 1px solid var(--nx-color-border, #2A2A2E);
+  border-radius: 5px;
+  padding: 12px;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+  font-size: 11.5px;
+  line-height: 1.65;
+  color: #C0C0C0;
+  overflow-x: auto;
+  white-space: pre;
+  tab-size: 2;
+}
+.z47-code-block .z47-ln {
+  display: inline-block;
+  width: 2.5em;
+  text-align: right;
+  color: #4B5563;
+  margin-right: 1em;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+/* JSON preview */
+.z47-json-wrap {
+  background: rgba(0,0,0,0.2);
+  border: 1px solid var(--nx-color-border, #2A2A2E);
+  border-radius: 5px;
+  padding: 12px;
+  font-family: monospace;
+  font-size: 11.5px;
+  line-height: 1.6;
+  overflow-x: auto;
+  white-space: pre;
+}
+.z47-json-key    { color: #60A5FA; }
+.z47-json-str    { color: #86EFAC; }
+.z47-json-num    { color: #FCA5A5; }
+.z47-json-bool   { color: #FDBA74; }
+.z47-json-null   { color: #9CA3AF; }
+.z47-json-punct  { color: #6B7280; }
+
+/* Markdown preview */
+.z47-md-wrap {
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: #C0C0C0;
+}
+.z47-md-wrap h1 {
+  font-size: 18px; font-weight: 700; color: #E0E0E0;
+  border-bottom: 1px solid var(--nx-color-border, #2A2A2E);
+  padding-bottom: 6px; margin: 12px 0 8px;
+}
+.z47-md-wrap h2 {
+  font-size: 15px; font-weight: 600; color: #E0E0E0;
+  margin: 12px 0 6px;
+}
+.z47-md-wrap h3 {
+  font-size: 13px; font-weight: 600; color: #C0C0C0;
+  margin: 10px 0 5px;
+}
+.z47-md-wrap p { margin: 0 0 8px; }
+.z47-md-wrap code {
+  font-family: monospace; font-size: 11px;
+  background: rgba(255,255,255,0.07);
+  padding: 1px 4px; border-radius: 3px;
+  color: #86EFAC;
+}
+.z47-md-wrap pre {
+  background: rgba(0,0,0,0.25);
+  border: 1px solid var(--nx-color-border, #2A2A2E);
+  border-radius: 4px;
+  padding: 10px 12px;
+  overflow-x: auto;
+  margin: 8px 0;
+}
+.z47-md-wrap pre code {
+  background: none; padding: 0; color: #C0C0C0;
+}
+.z47-md-wrap ul, .z47-md-wrap ol {
+  padding-left: 18px; margin: 0 0 8px;
+}
+.z47-md-wrap li { margin: 2px 0; }
+.z47-md-wrap strong { font-weight: 700; color: #E0E0E0; }
+.z47-md-wrap em { font-style: italic; color: #D0D0D0; }
+.z47-md-wrap hr {
+  border: none;
+  border-top: 1px solid var(--nx-color-border, #2A2A2E);
+  margin: 12px 0;
+}
+.z47-md-wrap a { color: #60A5FA; }
+.z47-md-wrap blockquote {
+  border-left: 3px solid #3B4252;
+  margin: 6px 0; padding-left: 10px;
+  color: #8B949E;
+}
+.z47-md-wrap table {
+  border-collapse: collapse; width: 100%; font-size: 11px;
+}
+.z47-md-wrap th, .z47-md-wrap td {
+  border: 1px solid var(--nx-color-border, #2A2A2E);
+  padding: 4px 8px;
+}
+.z47-md-wrap th { color: #E0E0E0; font-weight: 600; background: rgba(255,255,255,0.03); }
+
+/* Plain text / log preview */
+.z47-text-wrap {
+  font-family: monospace;
+  font-size: 11.5px;
+  line-height: 1.55;
+  color: #C0C0C0;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* Preview error */
+.z47-preview-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 24px;
+  text-align: center;
+}
+.z47-preview-error-icon { font-size: 24px; opacity: 0.4; }
+.z47-preview-error-title { font-size: 13px; font-weight: 600; color: #F87171; }
+.z47-preview-error-body  { font-size: 11px; color: #8B949E; }
+
+/* ═══════════════════════════════════════════════════════════════════
+   Z47B — FILE TAB SYSTEM
+   File tabs in #nxTabActions (right side of the tab bar)
+   ═══════════════════════════════════════════════════════════════════ */
+
+.z47-file-tabs {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  overflow-x: auto;
+  max-width: 360px;
+  scrollbar-width: none;
+}
+.z47-file-tabs::-webkit-scrollbar { display: none; }
+
+.z47-file-tab {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px 3px 10px;
+  font-size: 11px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: #8B949E;
+  cursor: pointer;
+  white-space: nowrap;
+  background: rgba(255,255,255,0.03);
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+  max-width: 130px;
+}
+.z47-file-tab:hover {
+  background: rgba(255,255,255,0.07);
+  color: #C0C0C0;
+}
+.z47-file-tab.active {
+  background: rgba(0,121,242,0.1);
+  border-color: rgba(0,121,242,0.25);
+  color: #60A5FA;
+}
+.z47-file-tab-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+.z47-file-tab-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+  font-size: 11px;
+  color: #6B7280;
+  flex-shrink: 0;
+  transition: background 0.1s, color 0.1s;
+}
+.z47-file-tab-close:hover {
+  background: rgba(255,255,255,0.1);
+  color: #E0E0E0;
+}
+
+/* File tabs separator */
+.z47-tab-divider {
+  width: 1px;
+  height: 16px;
+  background: var(--nx-color-border, #2A2A2E);
+  margin: 0 4px;
+  flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Z47C — COMMAND PALETTE ENHANCEMENTS
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Recent commands section header */
+.nx-palette-section {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #4B5563;
+  padding: 8px 12px 4px;
+  margin-top: 2px;
+}
+
+/* Context-aware item badge */
+.z47-palette-ctx-badge {
+  font-size: 9px;
+  padding: 1px 5px;
+  border-radius: 8px;
+  background: rgba(0,121,242,0.12);
+  border: 1px solid rgba(0,121,242,0.2);
+  color: #60A5FA;
+  margin-left: auto;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* Recent commands chip */
+.nx-palette-recent {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+.nx-palette-recent:hover { background: rgba(255,255,255,0.05); }
+.nx-palette-recent-icon { font-size: 11px; opacity: 0.6; width: 18px; flex-shrink: 0; }
+.nx-palette-recent-label { font-size: 12px; color: #8B949E; flex: 1; }
+.nx-palette-recent-ago { font-size: 10px; color: #4B5563; flex-shrink: 0; }
+
+/* Search result rank enhancement */
+.nx-palette-item .z47-match {
+  background: rgba(0,121,242,0.2);
+  border-radius: 2px;
+  padding: 0 1px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Z47D — EXECUTION DOCK
+   Always-visible bottom status / active task surface
+   ═══════════════════════════════════════════════════════════════════ */
+
+#nxDock {
+  min-height: 36px;
+  padding: 0 16px !important;
+  display: flex !important;
+  align-items: center;
+  gap: 12px;
+  overflow: hidden;
+}
+
+/* State-aware dock slot */
+.z47-dock-slot {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  flex-shrink: 1;
+}
+
+/* Active task chip */
+.z47-dock-task {
+  font-size: 11px;
+  color: #C0C0C0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 260px;
+  flex-shrink: 1;
+}
+
+/* Runtime timer */
+.z47-dock-timer {
+  font-size: 11px;
+  font-family: monospace;
+  color: #8B949E;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+body[data-nx-exec="running"] .z47-dock-timer { color: #C0C0C0; }
+
+/* Dock state dot */
+.z47-dock-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #4B5563;
+  flex-shrink: 0;
+  transition: background 0.3s;
+}
+body[data-nx-exec="running"]  .z47-dock-dot { background: #60A5FA; animation: z47-dock-pulse 1.8s ease-in-out infinite; }
+body[data-nx-state="hitl"]    .z47-dock-dot { background: #A78BFA; animation: z47-dock-pulse 1.2s ease-in-out infinite; }
+body[data-nx-state="recovery"].z47-dock-dot { background: #F59E0B; }
+body[data-nx-state="complete"] .z47-dock-dot { background: #4CAF50; }
+body[data-nx-state="failed"]  .z47-dock-dot { background: #F87171; }
+
+@keyframes z47-dock-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+/* Dock action button */
+.z47-dock-btn {
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 3px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #8B949E;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background 0.12s, color 0.12s;
+}
+.z47-dock-btn:hover {
+  background: rgba(255,255,255,0.09);
+  color: #E0E0E0;
+}
+.z47-dock-btn-danger:hover { background: rgba(192,57,43,0.15); color: #F87171; border-color: rgba(192,57,43,0.3); }
+.z47-dock-btn-primary:hover { background: rgba(0,121,242,0.15); color: #60A5FA; border-color: rgba(0,121,242,0.3); }
+.z47-dock-btn-green:hover { background: rgba(22,163,74,0.15); color: #4CAF50; border-color: rgba(22,163,74,0.3); }
+
+/* Dock separator */
+.z47-dock-sep {
+  width: 1px;
+  height: 18px;
+  background: rgba(255,255,255,0.08);
+  flex-shrink: 0;
+}
+
+/* Dock expand (flex spacer) */
+.z47-dock-spacer { flex: 1; min-width: 0; }
+
+/* Dock meta chips (queue, retry) */
+.z47-dock-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.z47-dock-chip {
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: #6B7280;
+  white-space: nowrap;
+}
+.z47-dock-chip.warn   { color: #F59E0B; border-color: rgba(217,119,6,0.25); background: rgba(217,119,6,0.06); }
+.z47-dock-chip.active { color: #60A5FA; border-color: rgba(0,121,242,0.25); background: rgba(0,121,242,0.06); }
+
+/* Session replay quick-chip in dock */
+.z47-dock-replay {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  color: #8B949E;
+  cursor: pointer;
+  padding: 2px 7px;
+  border-radius: 3px;
+  border: 1px solid transparent;
+  transition: border-color 0.12s, background 0.12s, color 0.12s;
+}
+.z47-dock-replay:hover {
+  border-color: rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.05);
+  color: #C0C0C0;
+}
+
+/* Dock HITL state */
+.z47-dock-hitl {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #A78BFA;
+}
+body[data-nx-state="hitl"] .z47-dock-hitl { display: flex; }
+body[data-nx-state="hitl"] .z47-dock-running { display: none; }
+
+/* Dock completion state */
+.z47-dock-done {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #4CAF50;
+}
+body[data-nx-state="complete"] .z47-dock-done { display: flex; }
+body[data-nx-state="complete"] .z47-dock-idle { display: none; }
+
+/* Dock failure state */
+.z47-dock-failed {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #F87171;
+}
+body[data-nx-state="failed"] .z47-dock-failed { display: flex; }
+body[data-nx-state="failed"] .z47-dock-idle { display: none; }
+
+/* ═══════════════════════════════════════════════════════════════════
+   Z47E — ARTIFACT INTELLIGENCE METADATA
+   ═══════════════════════════════════════════════════════════════════ */
+
+.z47-artifact-row {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 7px 8px;
+  border-radius: 5px;
+  border: 1px solid transparent;
+  margin-bottom: 3px;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s;
+}
+.z47-artifact-row:hover {
+  background: rgba(255,255,255,0.04);
+  border-color: var(--nx-color-border, #2A2A2E);
+}
+.z47-artifact-header {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.z47-artifact-name {
+  font-size: 12px;
+  color: #C0C0C0;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+.z47-artifact-type-badge {
+  font-size: 9px;
+  padding: 1px 5px;
+  border-radius: 8px;
+  border: 1px solid var(--nx-color-border, #2A2A2E);
+  color: #8B949E;
+  flex-shrink: 0;
+}
+.z47-artifact-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  color: #6B7280;
+}
+.z47-artifact-linkage {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  color: #60A5FA;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Z47F — WORKSPACE CONTINUITY INDICATORS
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Restored session indicator (brief flash on load if state restored) */
+.z47-restore-toast {
+  position: fixed;
+  bottom: 48px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 14px;
+  background: rgba(0,121,242,0.12);
+  border: 1px solid rgba(0,121,242,0.25);
+  border-radius: 6px;
+  font-size: 11px;
+  color: #60A5FA;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.z47-restore-toast.visible { opacity: 1; }

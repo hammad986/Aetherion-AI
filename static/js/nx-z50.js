@@ -173,22 +173,33 @@
     const contentEl = $('nxPanelContent-' + panelId);
     if (!contentEl) return;
 
+    // Always build fresh — z54 builders fetch live data on every open.
+    // z54 builders are exported to window at module load, always available.
     switch (panelId) {
       case 'files':
-        if (!contentEl.dataset.z50loaded) { z50BuildFilesPanel(contentEl); contentEl.dataset.z50loaded = '1'; }
-        else z50RefreshFileTree(); // re-open: refresh live data only
+        if (typeof window.z54BuildFilesPanel === 'function')
+          window.z54BuildFilesPanel(contentEl);
+        else { z50BuildFilesPanel(contentEl); z50RefreshFileTree(); }
         break;
       case 'history':
-        z50BuildHistoryPanel(contentEl); // always rebuild so sessions are fresh
+        if (typeof window.z54BuildHistoryPanel === 'function')
+          window.z54BuildHistoryPanel(contentEl);
+        else z50BuildHistoryPanel(contentEl);
         break;
       case 'settings':
-        if (!contentEl.dataset.z50loaded) { z50BuildSettingsPanel(contentEl); contentEl.dataset.z50loaded = '1'; }
-        else z50LoadSettingsStatus(); // re-open: refresh status only
+        if (typeof window.z54BuildSettingsPanel === 'function')
+          window.z54BuildSettingsPanel(contentEl);
+        else { z50BuildSettingsPanel(contentEl); z50LoadSettingsStatus(); }
         break;
       case 'chat':
-        if (!contentEl.dataset.z50loaded) { z50BuildChatPanel(contentEl); contentEl.dataset.z50loaded = '1'; }
+        if (typeof window.z54BuildChatPanel === 'function')
+          window.z54BuildChatPanel(contentEl);
+        else z50BuildChatPanel(contentEl);
         break;
     }
+
+    // Upgrade panel headers with SVG icons after content renders
+    requestAnimationFrame(() => window._z57?.upgradeHeaders());
   }
 
   /* ── Files panel ────────────────────────────────────────────────── */

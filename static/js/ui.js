@@ -1100,6 +1100,23 @@
     window.nxToast = nxToast;
     window.nxSetTask = nxSetTask;
 
+    window.nxToggleInspector = function () {
+      const panel = document.getElementById('nxInspectorPanel');
+      const btn   = document.getElementById('nxInspectorBtn');
+      if (!panel) return;
+      const isOpen = panel.classList.toggle('is-open');
+      if (btn) btn.classList.toggle('active', isOpen);
+      // Move inspector content from right-panel slot if empty
+      const content = document.getElementById('nxInspectorContent');
+      const rightContent = document.getElementById('nxRight');
+      if (isOpen && content && rightContent && !content.children.length) {
+        // Clone visible inspector sections from right panel
+        Array.from(rightContent.querySelectorAll('.nx-inspector-section')).forEach(sec => {
+          content.appendChild(sec.cloneNode(true));
+        });
+      }
+    };
+
     // ── Auto-grow textarea ────────────────────────────────────────────
     window.nxAutoGrowTextarea = function(el) {
       el.style.height = 'auto';

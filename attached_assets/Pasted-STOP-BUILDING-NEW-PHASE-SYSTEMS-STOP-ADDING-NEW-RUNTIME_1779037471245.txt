@@ -1,0 +1,206 @@
+STOP BUILDING NEW PHASE SYSTEMS.
+
+STOP ADDING NEW RUNTIME LAYERS.
+
+The product is now overengineered and fragmented.
+
+Current problem:
+multiple phase systems (z46/z50/z54/z57/z58 etc.) are fighting each other and creating unstable UI behavior.
+
+This is now a PRODUCT RESCUE + SIMPLIFICATION PASS.
+
+====================================================
+CRITICAL RULES
+==============
+
+1. DO NOT create new Z-phases.
+2. DO NOT create new runtime intelligence systems.
+3. DO NOT add overlays, trust engines, replay systems, or enterprise UX.
+4. DO NOT prioritize reports.
+5. PRIORITIZE:
+
+   * simplicity
+   * stability
+   * usability
+   * real interaction
+
+====================================================
+PRIMARY OBJECTIVE
+=================
+
+Reduce the UI architecture complexity.
+
+The workspace currently feels:
+
+* fragmented
+* overlayered
+* fake
+* hollow
+* blackbox-like
+
+The goal now is:
+make it feel like a REAL usable product.
+
+====================================================
+TASK 1 — REMOVE OVERENGINEERING
+===============================
+
+Audit all overlapping UI systems:
+
+* z46
+* z50
+* z54
+* z57
+* z58
+* duplicate wrappers
+* duplicate panel builders
+* duplicate toggles
+* duplicate notification systems
+
+Simplify aggressively.
+
+ONE panel system.
+ONE toast system.
+ONE settings renderer.
+ONE sidebar controller.
+
+Remove unnecessary override chains.
+
+====================================================
+TASK 2 — BUILD A REAL WORKSPACE
+===============================
+
+The center workspace is still mostly an empty black void.
+
+Replace it with a REAL usable layout:
+
+LEFT:
+
+* sessions/history
+* task queue
+
+CENTER:
+
+* real task composer
+* multiline input
+* model/provider selector
+* execution output
+* logs
+* progress
+* artifacts
+
+RIGHT:
+
+* inspector/details
+* settings shortcut
+* session metadata
+
+NO empty giant black surfaces.
+
+====================================================
+TASK 3 — REAL TASK EXECUTION FLOW
+=================================
+
+When user presses Run Task:
+
+* task visibly enters queue
+* execution visibly starts
+* logs visibly stream
+* progress visibly updates
+* files/artifacts visibly appear
+* completion visibly appears
+* session saves
+
+If execution is fake or simulated:
+state it honestly.
+
+DO NOT fake operational behavior.
+
+====================================================
+TASK 4 — REMOVE FAKE UX
+=======================
+
+Remove:
+
+* trust engine overlays
+* fake restore spam
+* fake operational messages
+* fake enterprise notifications
+* fake “all systems operational”
+* fake runtime language
+
+Replace with:
+simple practical UX.
+
+====================================================
+TASK 5 — SETTINGS PANEL
+=======================
+
+Completely rebuild the settings panel cleanly.
+
+Requirements:
+
+* provider/API key section
+* model selection
+* theme selection
+* keyboard shortcuts
+* account section
+* beta mode status
+
+Must render reliably every open.
+
+====================================================
+TASK 6 — BUTTON AUDIT
+=====================
+
+Audit EVERY visible button.
+
+If button does nothing:
+either implement it properly
+OR remove it.
+
+NO dead controls allowed.
+
+====================================================
+TASK 7 — FINAL CLEANUP
+======================
+
+Reduce:
+
+* notification spam
+* overlays
+* floating systems
+* visual noise
+* duplicated systems
+
+The app should feel:
+focused,
+calm,
+usable.
+
+====================================================
+IMPORTANT
+=========
+
+This is NOT a new architecture phase.
+
+This is:
+SIMPLIFICATION
+STABILIZATION
+PRODUCT RESCUE
+
+====================================================
+FINAL OUTPUT
+============
+
+At the end report ONLY:
+
+1. which systems were removed
+2. which systems were consolidated
+3. which buttons now truly work
+4. what is still broken
+5. what still feels fake
+6. real remaining blockers
+
+DO NOT exaggerate completion.
+DO NOT say “fully operational” unless verified manually.

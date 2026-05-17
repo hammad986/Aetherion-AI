@@ -805,34 +805,9 @@
     btn.textContent = isLight ? '🌙 Switch to Dark Mode' : '☀️ Switch to Light Mode';
   };
 
-  /* ═══════════════════════════════════════════════════════════════════
-     Z54F — OPERATIONAL FEEDBACK
-     Toast deduplication. Suppress noise. Real execution events.
-     ═══════════════════════════════════════════════════════════════════ */
-
-  const _z54ToastTrack = new Map();
-
-  function z54HookToastDedup() {
-    const origToast = window.toast;
-    if (typeof origToast !== 'function') {
-      setTimeout(z54HookToastDedup, 400);
-      return;
-    }
-    if (window._z54ToastHooked) return;
-    window._z54ToastHooked = true;
-    window.toast = function (msg, type, dur) {
-      const key = (type || 'ok') + ':' + String(msg || '').slice(0, 80);
-      const last = _z54ToastTrack.get(key) || 0;
-      if (Date.now() - last < 2500) return; // suppress within 2.5s
-      _z54ToastTrack.set(key, Date.now());
-      // Prune old entries
-      if (_z54ToastTrack.size > 40) {
-        const cutoff = Date.now() - 15000;
-        _z54ToastTrack.forEach((t, k) => { if (t < cutoff) _z54ToastTrack.delete(k); });
-      }
-      return origToast.call(this, msg, type, dur);
-    };
-  }
+  /* Z54F — Toast deduplication removed.
+     z58 (180ms) already provides a 5s dedup wrapper.
+     Keeping a second dedup layer here caused 2.5s + 5s conflicts. */
 
   /* ═══════════════════════════════════════════════════════════════════
      Z54G — TRUST PASS
@@ -882,48 +857,8 @@
     };
   }
 
-  /* ═══════════════════════════════════════════════════════════════════
-     PANEL BUILDER OVERRIDE
-     Override nx-z50 panel builders to use Z54 real versions.
-     ═══════════════════════════════════════════════════════════════════ */
-
-  function z54OverridePanels() {
-    const orig = window.nxTogglePanel;
-    if (typeof orig !== 'function') {
-      setTimeout(z54OverridePanels, 250);
-      return;
-    }
-    if (window._z54PanelsHooked) return;
-    window._z54PanelsHooked = true;
-
-    window.nxTogglePanel = function (panelId) {
-      // Clear both z50 and z54 load flags so z54 always renders its richer
-      // content on every open. Without this, z50 rebuilds its simpler DOM on
-      // re-open (because z50loaded was cleared) and z54 then tries to refresh
-      // elements that no longer exist (because z54built was still set).
-      const contentEl = $('nxPanelContent-' + panelId);
-      if (contentEl) {
-        delete contentEl.dataset.z50loaded;
-        delete contentEl.dataset.z54built;
-      }
-
-      orig.call(this, panelId);
-
-      // After z50 toggles the panel (display:flex), populate with z54 content
-      const panel = $('nxPanel-' + panelId);
-      const isOpen = panel && panel.style.display !== 'none' && panel.style.display !== '';
-      if (!isOpen || !contentEl) return;
-
-      // Always build fresh — each builder fetches live data via its own refresh call
-      contentEl.dataset.z54built = '1';
-      switch (panelId) {
-        case 'chat':     z54BuildChatPanel(contentEl);     break;
-        case 'files':    z54BuildFilesPanel(contentEl);    break;
-        case 'history':  z54BuildHistoryPanel(contentEl);  break;
-        case 'settings': z54BuildSettingsPanel(contentEl); break;
-      }
-    };
-  }
+  /* Panel override removed — z50PopulatePanel now calls z54 builders directly
+     via the window.z54Build* exports above. No nxTogglePanel wrapper needed. */
 
   /* ═══════════════════════════════════════════════════════════════════
      UTILITIES
@@ -954,14 +889,19 @@
      BOOT
      ═══════════════════════════════════════════════════════════════════ */
 
+  // Export panel builders so z50PopulatePanel can call them directly
+  // (eliminates the need for a nxTogglePanel wrapper override)
+  window.z54BuildFilesPanel    = z54BuildFilesPanel;
+  window.z54BuildChatPanel     = z54BuildChatPanel;
+  window.z54BuildHistoryPanel  = z54BuildHistoryPanel;
+  window.z54BuildSettingsPanel = z54BuildSettingsPanel;
+
   function z54Boot() {
     z54AuditDeadControls();
     z54TrustPass();
-    z54HookToastDedup();
     z54InterceptFetch();
-    z54OverridePanels();
     z54RefreshIdleRecent();
-    console.debug('[Phase Z54] Real Operationalization + Interaction Completion active.');
+    console.debug('[Phase Z54] active.');
   }
 
   if (document.readyState === 'loading') {

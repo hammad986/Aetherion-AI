@@ -248,17 +248,11 @@
     z57ProductRealism();
     z57InteractionPass();
 
-    // Re-run header upgrades after panels are first opened (panels start hidden)
-    const _origToggle = window.nxTogglePanel;
-    if (typeof _origToggle === 'function') {
-      window.nxTogglePanel = function (panelId) {
-        _origToggle(panelId);
-        // Give z50 a tick to render the panel, then upgrade the header
-        requestAnimationFrame(() => z57UpgradePanelHeaders());
-      };
-    }
+    // Panel header upgrades run once on boot and after each panel open via
+    // z50PopulatePanel (which now calls z57UpgradePanelHeaders directly).
+    // The nxTogglePanel wrapper is removed — it was layer 5 of a 6-layer chain.
 
-    console.debug('[Phase Z57] Workspace Completion + Product Realism active.');
+    console.debug('[Phase Z57] active.');
   }
 
   if (document.readyState === 'loading') {

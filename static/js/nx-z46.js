@@ -778,8 +778,8 @@
       };
     }
 
-    // B: Patch nxTogglePanel to populate content on open
-    _patchTogglePanel();
+    // B: Panel population is handled by z50PopulatePanel which calls z54 builders directly.
+    // _patchTogglePanel() removed — it was a 6th nxTogglePanel wrapper causing re-render races.
 
     // G: Run realism audit
     _runRealismAudit();

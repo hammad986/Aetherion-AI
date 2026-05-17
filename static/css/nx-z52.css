@@ -1,0 +1,705 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   nx-z52.css — Phase Z52: Operational Product Experience + UI Maturity
+   Auth redesign, visual hierarchy, workspace presence, empty states,
+   product identity, toast governance, interaction calmness.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z52A: AUTH EXPERIENCE REFINEMENT
+   Complete override of layout.css auth section.
+   Goal: Claude / Linear / OpenAI level calm professionalism.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── Backdrop ── */
+#nx-auth-gate {
+  background: #060810 !important;
+  background-image:
+    radial-gradient(ellipse 90% 55% at 50% -5%,
+      rgba(88, 130, 255, 0.06) 0%,
+      transparent 65%) !important;
+  backdrop-filter: none !important;
+}
+
+/* ── Card ── */
+.nx-auth-card {
+  background: #0c1018 !important;
+  border: 1px solid rgba(255, 255, 255, 0.07) !important;
+  border-radius: 14px !important;
+  width: 100% !important;
+  max-width: 400px !important;
+  padding: 40px 40px 30px !important;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.6),
+    0 24px 64px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
+  animation: z52-card-enter 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+@keyframes z52-card-enter {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Logo ── */
+.nx-auth-logo {
+  margin-bottom: 6px !important;
+  gap: 12px !important;
+}
+
+.nx-auth-logo-icon {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 11px !important;
+  background: rgba(188, 140, 255, 0.07) !important;
+  border: 1px solid rgba(188, 140, 255, 0.14) !important;
+}
+
+.nx-auth-logo-text {
+  font-size: 1.15rem !important;
+  font-weight: 700 !important;
+  color: #d1d9e0 !important;
+  letter-spacing: -0.3px !important;
+}
+
+.nx-auth-logo-text span {
+  color: #b18aff !important;
+  font-weight: 600 !important;
+}
+
+/* ── Tagline (injected by z52.js) ── */
+.z52-auth-tagline {
+  text-align: center;
+  font-size: 11.5px;
+  color: rgba(139, 148, 158, 0.55);
+  margin-top: 5px;
+  margin-bottom: 26px;
+  letter-spacing: 0.01em;
+  line-height: 1.5;
+}
+
+/* ── Tabs — underline style (overrides pill style) ── */
+.nx-auth-tabs {
+  background: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  margin-bottom: 24px !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07) !important;
+  display: flex !important;
+  gap: 0 !important;
+}
+
+.nx-auth-tab {
+  flex: 1 !important;
+  padding: 10px 0 !important;
+  border-radius: 0 !important;
+  font-size: 0.82rem !important;
+  font-weight: 500 !important;
+  color: rgba(139, 148, 158, 0.6) !important;
+  background: none !important;
+  border: none !important;
+  border-bottom: 2px solid transparent !important;
+  margin-bottom: -1px !important;
+  cursor: pointer !important;
+  transition: color 0.15s, border-color 0.15s !important;
+  letter-spacing: 0.01em !important;
+}
+
+.nx-auth-tab:hover {
+  color: rgba(209, 217, 224, 0.8) !important;
+}
+
+.nx-auth-tab.active {
+  color: #d1d9e0 !important;
+  background: none !important;
+  border-bottom-color: #58a6ff !important;
+  font-weight: 600 !important;
+}
+
+.nx-auth-tab:focus-visible {
+  outline: none !important;
+  box-shadow: inset 0 -2px 0 0 rgba(88, 166, 255, 0.5) !important;
+}
+
+/* ── Field labels — sentence case, lighter weight ── */
+.nx-auth-field {
+  margin-bottom: 16px !important;
+}
+
+.nx-auth-field label {
+  display: block !important;
+  font-size: 11.5px !important;
+  font-weight: 500 !important;
+  color: rgba(139, 148, 158, 0.8) !important;
+  margin-bottom: 6px !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+}
+
+.nx-auth-label-hint {
+  font-weight: 400 !important;
+  opacity: 0.65 !important;
+}
+
+/* ── Inputs — deeper, more defined ── */
+.nx-auth-field input {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  background: rgba(255, 255, 255, 0.025) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 8px !important;
+  padding: 11px 13px !important;
+  font-size: 0.88rem !important;
+  color: #d1d9e0 !important;
+  outline: none !important;
+  transition: border-color 0.15s, box-shadow 0.15s !important;
+  font-family: inherit !important;
+}
+
+.nx-auth-field input::placeholder {
+  color: rgba(139, 148, 158, 0.35) !important;
+}
+
+.nx-auth-field input:hover {
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+.nx-auth-field input:focus {
+  border-color: rgba(88, 166, 255, 0.45) !important;
+  box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.09) !important;
+}
+
+.nx-auth-field input.error {
+  border-color: rgba(248, 81, 73, 0.45) !important;
+  box-shadow: 0 0 0 3px rgba(248, 81, 73, 0.07) !important;
+}
+
+/* ── Primary button — white-on-dark, maximum clarity ── */
+.nx-auth-btn-primary {
+  width: 100% !important;
+  padding: 11px !important;
+  border-radius: 8px !important;
+  border: none !important;
+  cursor: pointer !important;
+  background: #d1d9e0 !important;
+  color: #0a0d12 !important;
+  font-size: 0.87rem !important;
+  font-weight: 600 !important;
+  margin-top: 6px !important;
+  margin-bottom: 10px !important;
+  display: block !important;
+  transition: background 0.15s !important;
+  font-family: inherit !important;
+  letter-spacing: 0.01em !important;
+}
+
+.nx-auth-btn-primary:hover:not(:disabled) {
+  background: #e6edf3 !important;
+  opacity: 1 !important;
+}
+
+.nx-auth-btn-primary:active:not(:disabled) {
+  background: #b8c3cc !important;
+  transform: scale(0.993) !important;
+}
+
+.nx-auth-btn-primary:disabled {
+  background: rgba(209, 217, 224, 0.25) !important;
+  color: rgba(10, 13, 18, 0.5) !important;
+  cursor: not-allowed !important;
+}
+
+/* ── Forgot / Back links ── */
+.nx-auth-forgot-link {
+  font-size: 0.78rem !important;
+  color: rgba(88, 166, 255, 0.7) !important;
+}
+.nx-auth-forgot-link:hover {
+  color: #58a6ff !important;
+  text-decoration: underline !important;
+}
+
+/* ── Error banner — trust-forward ── */
+#nx-auth-err {
+  background: rgba(248, 81, 73, 0.06) !important;
+  border: 1px solid rgba(248, 81, 73, 0.16) !important;
+  border-left: 3px solid #f85149 !important;
+  border-radius: 0 7px 7px 0 !important;
+  padding: 9px 12px !important;
+  font-size: 0.82rem !important;
+  color: rgba(248, 81, 73, 0.9) !important;
+  margin-bottom: 16px !important;
+  line-height: 1.45 !important;
+}
+
+/* ── Divider ── */
+.nx-auth-divider {
+  color: rgba(139, 148, 158, 0.35) !important;
+  font-size: 0.72rem !important;
+  margin: 20px 0 !important;
+  letter-spacing: 0.04em !important;
+}
+.nx-auth-divider::before,
+.nx-auth-divider::after {
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* ── OAuth buttons ── */
+.nx-auth-oauth {
+  gap: 8px !important;
+}
+
+.nx-auth-oauth-btn {
+  background: transparent !important;
+  border: 1px solid rgba(255, 255, 255, 0.07) !important;
+  color: rgba(209, 217, 224, 0.7) !important;
+  font-size: 0.82rem !important;
+  font-weight: 500 !important;
+  padding: 10px 8px !important;
+  border-radius: 8px !important;
+  transition: border-color 0.15s, background 0.15s, color 0.15s !important;
+}
+
+.nx-auth-oauth-btn:hover {
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  background: rgba(255, 255, 255, 0.03) !important;
+  color: #d1d9e0 !important;
+}
+
+/* ── Agree label ── */
+.nx-auth-agree-label {
+  font-size: 0.78rem !important;
+  color: rgba(139, 148, 158, 0.65) !important;
+  display: flex !important;
+  gap: 8px !important;
+  align-items: flex-start !important;
+  margin-bottom: 14px !important;
+  cursor: pointer !important;
+  line-height: 1.4 !important;
+}
+.nx-auth-agree-label a {
+  color: rgba(88, 166, 255, 0.7) !important;
+}
+.nx-auth-agree-label a:hover {
+  color: #58a6ff !important;
+}
+
+/* ── Auth footer ── */
+.nx-auth-footer {
+  font-size: 11px !important;
+  color: rgba(139, 148, 158, 0.35) !important;
+  text-align: center !important;
+  margin-top: 20px !important;
+}
+.nx-auth-footer a {
+  color: rgba(88, 166, 255, 0.5) !important;
+}
+.nx-auth-footer a:hover {
+  color: rgba(88, 166, 255, 0.8) !important;
+}
+
+/* ── Success banner ── */
+#nx-auth-ok {
+  background: rgba(63, 185, 80, 0.06) !important;
+  border: 1px solid rgba(63, 185, 80, 0.14) !important;
+  border-left: 3px solid #3fb950 !important;
+  border-radius: 0 8px 8px 0 !important;
+  color: rgba(63, 185, 80, 0.9) !important;
+  padding: 9px 12px !important;
+  margin-bottom: 16px !important;
+}
+
+/* ── User badge (top-right corner) ── */
+.nx-auth-user-badge {
+  background: rgba(12, 16, 24, 0.95) !important;
+  border: 1px solid rgba(255, 255, 255, 0.07) !important;
+}
+.nx-auth-user-badge:hover {
+  border-color: rgba(255, 255, 255, 0.13) !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z52B / Z52F: TOAST GOVERNANCE — rich toast stack
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* Governor container — stacked rich toasts */
+#z52ToastStack {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 99998;
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 8px;
+  pointer-events: none;
+  max-width: 340px;
+  width: calc(100vw - 40px);
+}
+
+.z52-toast {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 11px 14px;
+  border-radius: 10px;
+  background: #0f1621;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.3);
+  pointer-events: auto;
+  animation: z52-toast-in 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 200ms ease, transform 200ms ease;
+  max-width: 340px;
+  line-height: 1.4;
+}
+
+.z52-toast.z52-toast-exit {
+  opacity: 0;
+  transform: translateX(16px);
+}
+
+@keyframes z52-toast-in {
+  from { opacity: 0; transform: translateX(16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.z52-toast-icon {
+  font-size: 13px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  width: 16px;
+  text-align: center;
+}
+
+.z52-toast-body { flex: 1; }
+.z52-toast-msg {
+  font-size: 12.5px;
+  color: #d1d9e0;
+  font-weight: 500;
+}
+.z52-toast-detail {
+  font-size: 11px;
+  color: rgba(139, 148, 158, 0.7);
+  margin-top: 2px;
+}
+
+/* Kind variants */
+.z52-toast.ok   { border-left: 3px solid rgba(63, 185, 80, 0.6); }
+.z52-toast.warn { border-left: 3px solid rgba(210, 153, 34, 0.6); }
+.z52-toast.err  { border-left: 3px solid rgba(248, 81, 73, 0.6); }
+.z52-toast.info { border-left: 3px solid rgba(88, 166, 255, 0.4); }
+.z52-toast.restore { border-left: 3px solid rgba(88, 166, 255, 0.35); }
+
+.z52-toast-dismiss {
+  background: none;
+  border: none;
+  color: rgba(139, 148, 158, 0.4);
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0 2px;
+  flex-shrink: 0;
+  margin-top: 0;
+  transition: color 0.1s;
+  font-family: inherit;
+}
+.z52-toast-dismiss:hover { color: rgba(139, 148, 158, 0.8); }
+
+/* Expand restore detail */
+.z52-toast-expand {
+  background: none;
+  border: none;
+  color: rgba(88, 166, 255, 0.6);
+  cursor: pointer;
+  font-size: 10.5px;
+  padding: 0;
+  font-family: inherit;
+  margin-top: 3px;
+  display: block;
+  transition: color 0.1s;
+}
+.z52-toast-expand:hover { color: rgba(88, 166, 255, 0.9); }
+.z52-toast-detail-list {
+  display: none;
+  margin-top: 5px;
+  padding: 5px 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 5px;
+  font-size: 10.5px;
+  color: rgba(139, 148, 158, 0.65);
+  line-height: 1.6;
+}
+.z52-toast-detail-list.visible { display: block; }
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z52C / Z52E: WORKSPACE PRESENCE + EMPTY STATES
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* Operational readiness banner — shown on first load */
+.z52-workspace-ready {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  margin-bottom: 14px;
+  animation: z52-fade-in 400ms ease;
+}
+@keyframes z52-fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+.z52-ready-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #3fb950;
+  flex-shrink: 0;
+  animation: z52-ready-pulse 3s ease-in-out infinite;
+}
+@keyframes z52-ready-pulse {
+  0%, 100% { opacity: 0.6; }
+  50%       { opacity: 1; }
+}
+
+.z52-ready-msg {
+  font-size: 11.5px;
+  color: rgba(139, 148, 158, 0.7);
+  flex: 1;
+}
+
+.z52-ready-time {
+  font-size: 10.5px;
+  color: rgba(139, 148, 158, 0.4);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Enhanced empty state for first-time / no-session workspace */
+.z52-empty-state {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 4px 0 8px;
+  animation: z52-fade-in 350ms ease;
+}
+
+.z52-empty-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(72, 79, 88, 0.8);
+  margin-bottom: 2px;
+}
+
+.z52-mission-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 11px;
+  background: rgba(255, 255, 255, 0.018);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  text-align: left;
+  width: 100%;
+  font-family: inherit;
+}
+.z52-mission-card:hover {
+  background: rgba(255, 255, 255, 0.035);
+  border-color: rgba(255, 255, 255, 0.09);
+}
+.z52-mission-card:active { transform: scale(0.992); }
+
+.z52-mission-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.z52-mission-body { flex: 1; overflow: hidden; }
+.z52-mission-title {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(209, 217, 224, 0.85);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+}
+.z52-mission-sub {
+  font-size: 10.5px;
+  color: rgba(139, 148, 158, 0.55);
+  margin-top: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.z52-mission-arrow {
+  color: rgba(139, 148, 158, 0.3);
+  font-size: 14px;
+  flex-shrink: 0;
+  transition: color 0.1s, transform 0.1s;
+}
+.z52-mission-card:hover .z52-mission-arrow {
+  color: rgba(139, 148, 158, 0.6);
+  transform: translateX(2px);
+}
+
+/* Contextual hint cards */
+.z52-context-hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background: rgba(88, 166, 255, 0.04);
+  border: 1px solid rgba(88, 166, 255, 0.09);
+  border-radius: 7px;
+  font-size: 11px;
+  color: rgba(139, 148, 158, 0.75);
+  line-height: 1.4;
+}
+.z52-context-hint strong {
+  color: rgba(209, 217, 224, 0.8);
+  font-weight: 500;
+}
+
+/* Idle workspace iw improvements */
+.nx-iw-title {
+  font-size: 12.5px !important;
+  font-weight: 500 !important;
+  color: rgba(139, 148, 158, 0.75) !important;
+  letter-spacing: 0.01em !important;
+}
+
+.nx-iw-section-label {
+  font-size: 10px !important;
+  letter-spacing: 0.07em !important;
+  color: rgba(72, 79, 88, 0.8) !important;
+}
+
+.nx-iw-stat-label {
+  font-size: 9.5px !important;
+  color: rgba(72, 79, 88, 0.9) !important;
+}
+
+.nx-iw-stat-val {
+  font-size: 11px !important;
+  color: rgba(139, 148, 158, 0.85) !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z52D: VISUAL HIERARCHY REBALANCING
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* Primary action (run button) — clear elevation above all other controls */
+#runBtn, .nx-run-btn {
+  font-weight: 600 !important;
+  letter-spacing: 0.01em !important;
+}
+
+/* De-emphasize secondary inspector section labels */
+.nx-insp-section-label,
+.nx-panel-section-title {
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.08em !important;
+  color: rgba(72, 79, 88, 0.85) !important;
+}
+
+/* Elevate active model / plan display */
+#nxPlanBadge, .nx-plan-badge {
+  font-weight: 600 !important;
+  opacity: 1 !important;
+}
+
+/* Mute repeated separators */
+.nx-sep, .nx-divider-line {
+  opacity: 0.35 !important;
+}
+
+/* Reduce opacity on idle log output vs active */
+body:not(.nx-running) #logArea {
+  opacity: 0.85;
+  transition: opacity 0.3s ease;
+}
+body.nx-running #logArea {
+  opacity: 1;
+}
+
+/* Tone down "muted" text properly */
+.nx-text-muted, [class*="muted"] {
+  color: rgba(139, 148, 158, 0.65) !important;
+}
+
+/* Panel depth layering */
+.nx-left-panel {
+  background: rgba(8, 11, 16, 0.6) !important;
+}
+
+/* Topbar — slightly more defined */
+.nx-topbar {
+  border-bottom-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+/* Right inspector — subtle elevation */
+.nx-right-panel {
+  border-left-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z52G: PRODUCT IDENTITY — clean typography
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* Composer: "What should I build?" placeholder  handled by CSS */
+/* Reduce SCREAMING UPPERCASE in less important areas */
+.nx-label-secondary {
+  text-transform: none !important;
+  font-size: 11.5px !important;
+  letter-spacing: 0 !important;
+}
+
+/* Operational state indicator */
+.z52-operational-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10.5px;
+  color: rgba(139, 148, 158, 0.6);
+  font-weight: 500;
+}
+.z52-operational-status::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #3fb950;
+  display: inline-block;
+  animation: z52-ready-pulse 3s ease-in-out infinite;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z52: DARK MODE DEPTH TOKENS (supplement nds-tokens.css)
+   ══════════════════════════════════════════════════════════════════════ */
+:root {
+  --z52-surface-0: #060810;
+  --z52-surface-1: #0c1018;
+  --z52-surface-2: #111826;
+  --z52-border-subtle: rgba(255, 255, 255, 0.06);
+  --z52-border-emphasis: rgba(255, 255, 255, 0.11);
+  --z52-text-primary:   #d1d9e0;
+  --z52-text-secondary: rgba(139, 148, 158, 0.75);
+  --z52-text-tertiary:  rgba(139, 148, 158, 0.45);
+  --z52-accent-glow:    rgba(88, 166, 255, 0.10);
+  --z52-success:        #3fb950;
+  --z52-warning:        #d29922;
+  --z52-danger:         #f85149;
+}

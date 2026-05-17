@@ -3676,32 +3676,43 @@
       margin-bottom: 24px;
     }
 
+    /* Z52A: Underline-tab style — no pill background */
     .nx-auth-tabs {
       display: flex;
       gap: 0;
-      background: var(--panel2, #1c2230);
-      border-radius: 8px;
-      padding: 3px;
-      margin-bottom: 22px;
+      background: none;
+      border-radius: 0;
+      padding: 0;
+      margin-bottom: 24px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
     }
 
     .nx-auth-tab {
       flex: 1;
       text-align: center;
-      padding: 7px 0;
-      border-radius: 6px;
-      font-size: 0.83rem;
-      font-weight: 600;
+      padding: 10px 0;
+      border-radius: 0;
+      font-size: 0.82rem;
+      font-weight: 500;
       cursor: pointer;
-      color: var(--muted, #8b949e);
-      transition: all 0.15s;
+      color: rgba(139, 148, 158, 0.6);
+      transition: color 0.15s, border-color 0.15s;
       border: none;
+      border-bottom: 2px solid transparent;
       background: none;
+      margin-bottom: -1px;
+      font-family: inherit;
+    }
+
+    .nx-auth-tab:hover {
+      color: rgba(209, 217, 224, 0.8);
     }
 
     .nx-auth-tab.active {
-      background: var(--accent, #58a6ff);
-      color: #fff;
+      background: none;
+      color: #d1d9e0;
+      border-bottom-color: #58a6ff;
+      font-weight: 600;
     }
 
     .nx-auth-field {
@@ -3739,30 +3750,36 @@
       border-color: var(--red, #f85149);
     }
 
+    /* Z52A: White-on-dark primary button — confidence through contrast */
     .nx-auth-btn-primary {
       width: 100%;
       padding: 11px;
       border-radius: 8px;
       border: none;
       cursor: pointer;
-      background: var(--purple, #bc8cff);
-      color: #fff;
-      font-size: 0.9rem;
-      font-weight: 700;
-      margin-top: 4px;
+      background: #d1d9e0;
+      color: #0a0d12;
+      font-size: 0.87rem;
+      font-weight: 600;
+      margin-top: 6px;
       margin-bottom: 10px;
-      /* FIX: was 0 — clears space below button so Forgot Password link never overlaps */
       display: block;
-      /* ensure full block stacking */
-      transition: opacity 0.15s;
+      transition: background 0.15s;
+      font-family: inherit;
+      letter-spacing: 0.01em;
     }
 
-    .nx-auth-btn-primary:hover {
-      opacity: 0.88;
+    .nx-auth-btn-primary:hover:not(:disabled) {
+      background: #e6edf3;
+    }
+
+    .nx-auth-btn-primary:active:not(:disabled) {
+      background: #b8c3cc;
     }
 
     .nx-auth-btn-primary:disabled {
-      opacity: 0.5;
+      background: rgba(209, 217, 224, 0.25);
+      color: rgba(10, 13, 18, 0.5);
       cursor: not-allowed;
     }
 

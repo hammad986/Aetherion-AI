@@ -1,0 +1,282 @@
+PHASE Z52 — OPERATIONAL PRODUCT EXPERIENCE + UI MATURITY
+
+IMPORTANT:
+STOP expanding backend architecture.
+
+This phase is STRICTLY focused on:
+
+* product maturity
+* operational identity
+* onboarding refinement
+* emotional workspace continuity
+* UX realism
+* visual hierarchy
+* interaction intelligence
+
+NO NEW:
+
+* replay systems
+* graph engines
+* memory engines
+* orchestration systems
+* intelligence layers
+* persistence subsystems
+
+FOCUS:
+Make Nexora feel like:
+a premium operational AI workspace.
+
+====================================================
+Z52A — AUTH EXPERIENCE REFINEMENT
+=================================
+
+The current login/signup experience feels:
+generic,
+template-like,
+emotionally flat.
+
+Completely redesign the auth experience.
+
+REQUIREMENTS:
+
+1. Reduce dull grey layering
+2. Add stronger visual depth hierarchy
+3. Improve contrast separation
+4. Add operational identity language
+5. Remove “generic SaaS” feeling
+6. Improve spacing rhythm
+7. Improve typography hierarchy
+8. Improve focus states
+9. Add subtle operational ambient depth
+10. Signup and login should feel:
+    focused,
+    premium,
+    trustworthy,
+    calm.
+
+IMPORTANT:
+NO flashy gradients.
+NO gaming aesthetics.
+NO over-animation.
+
+Goal:
+Claude/OpenAI/Linear-level calm professionalism.
+
+====================================================
+Z52B — RESTORE NOTIFICATION CONSOLIDATION
+=========================================
+
+Current restore notifications are fragmented and spammy.
+
+BAD:
+
+* Steps restored
+* Learning restored
+* Goals restored
+* Graph restored
+* Scheduler restored
+
+all appearing separately.
+
+Replace with:
+ONE unified restoration summary.
+
+Example:
+“Operational workspace restored successfully”
+with expandable detail view.
+
+REQUIREMENTS:
+
+1. Single restoration event
+2. Deduplicate restoration toasts
+3. Queue-based toast governance
+4. Max 1 operational restore toast
+5. Collapse repeated events
+6. Add toast lifecycle manager
+7. Add notification priority system
+
+Goal:
+quiet operational trust.
+
+====================================================
+Z52C — WORKSPACE PRESENCE SYSTEM
+================================
+
+Current workspace still feels:
+empty,
+cold,
+inactive.
+
+Implement:
+context-aware operational presence.
+
+REQUIREMENTS:
+
+1. Smart empty-state guidance
+2. Workspace contextual hints
+3. Active operational readiness indicators
+4. Contextual onboarding
+5. Intelligent first-task guidance
+6. Runtime awareness surfaces
+7. Humanized operational continuity
+
+IMPORTANT:
+NOT chatbot tips.
+
+Goal:
+workspace should feel:
+ready,
+aware,
+alive.
+
+====================================================
+Z52D — VISUAL HIERARCHY REBALANCING
+===================================
+
+Current interface lacks:
+attention hierarchy.
+
+Audit and rebalance:
+
+* opacity layers
+* typography weights
+* panel depth
+* spacing rhythm
+* shadow hierarchy
+* contrast structure
+* visual density
+* focus steering
+
+Goal:
+operators instantly understand:
+what matters most.
+
+====================================================
+Z52E — OPERATIONAL EMPTY-STATE DESIGN
+=====================================
+
+The giant empty dark workspace creates:
+psychological deadness.
+
+Implement:
+structured operational empty states.
+
+Examples:
+
+* recent mission surfaces
+* workspace readiness
+* quick-start operational flows
+* contextual suggestions
+* runtime state cards
+* session continuity surfaces
+
+Goal:
+workspace should NEVER feel abandoned.
+
+====================================================
+Z52F — TOAST + FEEDBACK GOVERNANCE
+==================================
+
+Implement:
+centralized notification orchestration.
+
+Requirements:
+
+1. Deduplicated messages
+2. Priority routing
+3. Silent informational updates
+4. Critical-only escalation
+5. Toast grouping
+6. Auto-collapse repeated updates
+7. Restore-event aggregation
+
+Goal:
+calm operational communication.
+
+====================================================
+Z52G — PRODUCT IDENTITY MATURITY
+================================
+
+Perform a full audit of:
+
+* wording
+* labels
+* empty states
+* onboarding copy
+* runtime messaging
+* operational terminology
+
+Remove:
+
+* generic template language
+* random engineering labels
+* fragmented terminology
+
+Unify product voice.
+
+Nexora should feel:
+cohesive,
+intentional,
+operational,
+mature.
+
+====================================================
+PERFORMANCE RULES
+=================
+
+DO NOT:
+
+* add new polling systems
+* add more MutationObservers
+* add more replay engines
+* add more runtime overlays
+
+Instead:
+SIMPLIFY existing UX systems.
+
+====================================================
+REQUIRED REPORTS
+================
+
+Generate:
+
+* docs/Z52_AUTH_REFINEMENT_REPORT.md
+* docs/Z52_NOTIFICATION_GOVERNANCE.md
+* docs/Z52_WORKSPACE_PRESENCE_AUDIT.md
+* docs/Z52_VISUAL_HIERARCHY_REPORT.md
+* docs/Z52_EMPTY_STATE_MATURITY.md
+* docs/Z52_PRODUCT_IDENTITY_VERDICT.md
+
+Each report MUST include:
+
+1. Remaining UX weaknesses
+2. Remaining identity fragmentation
+3. Remaining visual inconsistency
+4. Remaining onboarding friction
+5. Remaining emotional dead-zones
+6. Remaining trust issues
+7. Honest product maturity score
+
+====================================================
+FINAL VALIDATION
+================
+
+Before completion verify:
+
+* login/signup no longer feels generic
+* restore notifications consolidated
+* no stacked spam toasts
+* workspace no longer feels empty
+* onboarding feels intentional
+* visual hierarchy improved
+* operational calmness preserved
+* no new performance regressions
+* no excessive animations
+* no flashy SaaS styling
+
+MOST IMPORTANT:
+
+After Z52,
+Nexora should feel like:
+a serious operational AI workspace product —
+NOT a technically impressive prototype.

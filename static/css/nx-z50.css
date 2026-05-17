@@ -1,0 +1,418 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   nx-z50.css — Phase Z50: Operational Interaction Realism
+   Workspace believability, live presence, dead control elimination.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── Z50C: Workspace idle heartbeat ──────────────────────────────────── */
+@keyframes z50-idle-breathe {
+  0%, 100% { opacity: 0.45; }
+  50%       { opacity: 0.75; }
+}
+@keyframes z50-queue-pulse {
+  0%   { transform: scale(1);   opacity: 1; }
+  50%  { transform: scale(1.35); opacity: 0.6; }
+  100% { transform: scale(1);   opacity: 1; }
+}
+@keyframes z50-run-accepted {
+  0%   { box-shadow: 0 0 0 0 rgba(99,102,241,0.55); }
+  60%  { box-shadow: 0 0 0 8px rgba(99,102,241,0); }
+  100% { box-shadow: 0 0 0 0 rgba(99,102,241,0); }
+}
+@keyframes z50-run-complete {
+  0%   { box-shadow: 0 0 0 0 rgba(34,197,94,0.55); }
+  60%  { box-shadow: 0 0 0 10px rgba(34,197,94,0); }
+  100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); }
+}
+@keyframes z50-slide-in-up {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes z50-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Z50C: Runtime warmth — idle hero pulse dot ──────────────────────── */
+.z50-heartbeat-dot {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  color: var(--text-muted);
+}
+.z50-heartbeat-dot::before {
+  content: '';
+  display: block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: z50-queue-pulse 3s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+/* ── Z50D: Run button feedback ────────────────────────────────────────── */
+.nx-topbar-run-btn.z50-accepted {
+  animation: z50-run-accepted 0.5s ease-out;
+}
+.nx-topbar-run-btn.z50-completed {
+  animation: z50-run-complete 0.6s ease-out;
+}
+.nx-topbar-run-btn {
+  position: relative;
+  transition:
+    background var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out),
+    transform  var(--dur-instant) var(--ease-out);
+}
+.nx-topbar-run-btn:active {
+  transform: scale(0.96);
+}
+
+/* ── Z50B: NavRail panel content ─────────────────────────────────────── */
+.z50-panel-body {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+.z50-panel-section {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--panel-border);
+  flex-shrink: 0;
+}
+.z50-panel-section-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+}
+.z50-panel-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 12px;
+}
+
+/* ── Z50B: NavRail active state ───────────────────────────────────────── */
+.nx-nav-icon {
+  position: relative;
+  transition:
+    background var(--dur-fast) var(--ease-out),
+    color      var(--dur-fast) var(--ease-out),
+    transform  var(--dur-fast) var(--ease-spring);
+}
+.nx-nav-icon:hover {
+  transform: scale(1.08);
+}
+.nx-nav-icon:active {
+  transform: scale(0.93);
+}
+.nx-nav-icon.z50-active {
+  background: var(--accent-dim) !important;
+  color: var(--accent) !important;
+  box-shadow: inset 2px 0 0 var(--accent);
+}
+.nx-nav-icon.z50-active::after {
+  content: '';
+  position: absolute;
+  left: 0; top: 25%; bottom: 25%;
+  width: 2px;
+  background: var(--accent);
+  border-radius: 0 2px 2px 0;
+}
+
+/* ── Z50B: Panel slide animation ─────────────────────────────────────── */
+.nx-slide-panel {
+  animation: z50-slide-in-up var(--dur-moderate) var(--ease-snap);
+}
+
+/* ── Z50E: Slide panel header refinement ─────────────────────────────── */
+.nx-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  height: 36px;
+  border-bottom: 1px solid var(--panel-border);
+  flex-shrink: 0;
+  background: var(--panel);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+.nx-close-btn {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  font-size: 13px;
+  padding: 4px;
+  border-radius: 4px;
+  line-height: 1;
+  transition: color var(--dur-fast), background var(--dur-fast);
+}
+.nx-close-btn:hover {
+  color: var(--text);
+  background: var(--panel-border);
+}
+.nx-close-btn:active { transform: scale(0.9); }
+
+/* ── Z50C: Idle status strip live values ─────────────────────────────── */
+.nx-iw-stat-val {
+  transition: color var(--dur) var(--ease-out);
+}
+.nx-iw-stat-val.z50-updated {
+  animation: z50-fade-in var(--dur-moderate) var(--ease-out);
+}
+
+/* ── Z50D: Execution state feedback bar ──────────────────────────────── */
+.z50-exec-feedback {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  font-size: 11px;
+  font-weight: 500;
+  border-bottom: 1px solid var(--panel-border);
+  background: var(--panel);
+  flex-shrink: 0;
+  animation: z50-slide-in-up var(--dur-fast) var(--ease-out);
+  transition: background var(--dur) var(--ease-out);
+}
+.z50-exec-feedback.visible { display: flex; }
+.z50-exec-feedback.accepted  { background: rgba(99,102,241,0.06); border-color: rgba(99,102,241,0.2); }
+.z50-exec-feedback.running   { background: rgba(34,197,94,0.04);  border-color: rgba(34,197,94,0.15); }
+.z50-exec-feedback.completed { background: rgba(34,197,94,0.07);  border-color: rgba(34,197,94,0.25); }
+.z50-exec-feedback.failed    { background: rgba(240,81,73,0.06);  border-color: rgba(240,81,73,0.2); }
+.z50-exec-feedback.retrying  { background: rgba(240,160,48,0.06); border-color: rgba(240,160,48,0.2); }
+
+.z50-exec-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.accepted  .z50-exec-dot { background: var(--accent); animation: z50-queue-pulse 1.2s ease-in-out infinite; }
+.running   .z50-exec-dot { background: var(--green);  animation: z50-queue-pulse 1.0s ease-in-out infinite; }
+.completed .z50-exec-dot { background: var(--green);  }
+.failed    .z50-exec-dot { background: var(--red);    }
+.retrying  .z50-exec-dot { background: var(--yellow); animation: z50-queue-pulse 0.8s ease-in-out infinite; }
+
+.z50-exec-label { flex: 1; color: var(--text-secondary); }
+.z50-exec-elapsed { color: var(--text-dim); font-size: 10px; font-variant-numeric: tabular-nums; }
+
+/* ── Z50C: Runtime pulse in topbar ───────────────────────────────────── */
+.z33-pulse-dot {
+  animation: z50-idle-breathe 4s ease-in-out infinite;
+}
+.z33-runtime-pulse[data-state="running"] .z33-pulse-dot {
+  background: var(--green) !important;
+  animation: z50-queue-pulse 1.2s ease-in-out infinite;
+}
+.z33-runtime-pulse[data-state="error"] .z33-pulse-dot {
+  background: var(--red) !important;
+  animation: none;
+}
+.z33-runtime-pulse[data-state="idle"] .z33-pulse-dot {
+  animation: z50-idle-breathe 4s ease-in-out infinite;
+}
+
+/* ── Z50F: Mode/Scope select styling ─────────────────────────────────── */
+.z50-exec-select {
+  background: var(--surface);
+  border: 1px solid var(--panel-border);
+  color: var(--text-secondary);
+  border-radius: var(--r-sm);
+  padding: 3px 8px;
+  font-size: 11px;
+  font-family: var(--font);
+  outline: none;
+  cursor: pointer;
+  transition: border-color var(--dur-fast), color var(--dur-fast);
+}
+.z50-exec-select:hover {
+  border-color: var(--panel-border-hover);
+  color: var(--text);
+}
+.z50-exec-select:focus-visible {
+  box-shadow: 0 0 0 2px var(--accent-dim), 0 0 0 1px var(--accent);
+}
+.z50-exec-select.z50-changed {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ── Z50B: History panel session items ───────────────────────────────── */
+.z50-hist-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 10px;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background var(--dur-fast), border-color var(--dur-fast);
+  margin-bottom: 4px;
+}
+.z50-hist-item:hover {
+  background: var(--accent-subtle);
+  border-color: var(--panel-border-hover);
+}
+.z50-hist-item:active { transform: scale(0.99); }
+.z50-hist-name {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.z50-hist-meta {
+  font-size: 10px;
+  color: var(--text-dim);
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.z50-hist-status {
+  display: inline-block;
+  padding: 1px 5px;
+  border-radius: 10px;
+  font-size: 9px;
+  font-weight: 700;
+}
+.z50-hist-status.ok   { background: var(--green-dim);  color: var(--green); }
+.z50-hist-status.err  { background: var(--red-dim);    color: var(--red); }
+.z50-hist-status.run  { background: var(--blue-dim);   color: var(--blue); }
+.z50-hist-status.idle { background: var(--panel-border); color: var(--text-dim); }
+
+/* ── Z50B: Files panel tree items ────────────────────────────────────── */
+.z50-file-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 8px;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  font-size: 11px;
+  color: var(--text-secondary);
+  transition: background var(--dur-fast), color var(--dur-fast);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.z50-file-item:hover { background: var(--accent-subtle); color: var(--text); }
+.z50-file-item:active { transform: scale(0.98); }
+.z50-file-item.dir { font-weight: 500; color: var(--text-muted); }
+.z50-file-item.z50-active { background: var(--accent-dim); color: var(--accent); }
+
+/* ── Z50E: Panel empty states ────────────────────────────────────────── */
+.z50-panel-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 32px 16px;
+  color: var(--text-dim);
+  font-size: 11px;
+  text-align: center;
+  height: 100%;
+}
+.z50-panel-empty-icon {
+  font-size: 24px;
+  opacity: 0.4;
+}
+.z50-panel-empty-label {
+  font-weight: 500;
+  color: var(--text-muted);
+}
+.z50-panel-empty-hint {
+  font-size: 10px;
+  color: var(--text-dim);
+  max-width: 160px;
+  line-height: 1.5;
+}
+
+/* ── Z50G: Reduced motion ────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .z50-heartbeat-dot::before,
+  .z50-exec-dot,
+  .z33-pulse-dot {
+    animation: none !important;
+  }
+  .nx-topbar-run-btn.z50-accepted,
+  .nx-topbar-run-btn.z50-completed {
+    animation: none !important;
+  }
+}
+
+/* ── Z50F: Cohesion — active navrail panel persists state ────────────── */
+.nx-slide-panel {
+  transition: none;
+}
+.nx-slide-panel[style*="display: block"] .nx-panel-content {
+  animation: z50-slide-in-up var(--dur-moderate) var(--ease-out);
+}
+
+/* ── Z50D: Error banner retry button ─────────────────────────────────── */
+.nx-error-banner-fix:hover,
+.nx-error-banner-fix:focus-visible {
+  background: var(--red) !important;
+  color: #fff !important;
+  transform: none;
+}
+.nx-error-banner-fix:active { transform: scale(0.96) !important; }
+
+/* ── Z50B: Cookie banner functional state ────────────────────────────── */
+#nx-cookie-banner {
+  transition: opacity var(--dur) var(--ease-out), transform var(--dur) var(--ease-snap);
+}
+#nx-cookie-banner.z50-hiding {
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+}
+
+/* ── Z50C: Queue count badge pulse ───────────────────────────────────── */
+#nxQueueCount.z50-active {
+  color: var(--blue);
+  animation: z50-queue-pulse 2s ease-in-out infinite;
+}
+
+/* ── Z50E: Panel resize memory — smooth open/close ───────────────────── */
+.nx-shell-navrail .nx-nav-icon:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--accent-dim), 0 0 0 1px var(--accent);
+}
+
+/* ── Z50D: Run button label transition ───────────────────────────────── */
+#runBtnLabel {
+  transition: opacity var(--dur-fast) var(--ease-out);
+}
+.nx-topbar-run-btn.running #runBtnLabel {
+  color: var(--red);
+}
+
+/* ── Z50C: Reconnect awareness banner ────────────────────────────────── */
+.z50-reconnect-bar {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 14px;
+  font-size: 11px;
+  background: rgba(240,160,48,0.08);
+  border-bottom: 1px solid rgba(240,160,48,0.25);
+  color: var(--yellow);
+  font-weight: 500;
+  animation: z50-slide-in-up var(--dur-fast) var(--ease-out);
+  flex-shrink: 0;
+}
+.z50-reconnect-bar.visible { display: flex; }
+.z50-reconnect-bar .z50-exec-dot {
+  background: var(--yellow);
+  animation: z50-queue-pulse 1s ease-in-out infinite;
+}

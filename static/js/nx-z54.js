@@ -146,6 +146,8 @@
     _z54CurrentSid = sid;
     z54SetExecState('running', sid);
     z54ConnectSSE(sid);
+    // Broadcast for downstream listeners (Z55+)
+    document.dispatchEvent(new CustomEvent('nx:exec:start', { detail: { sid } }));
     // Refresh idle recent after a delay so the new session appears
     setTimeout(z54RefreshIdleRecent, 2000);
     setTimeout(z54RefreshIdleRecent, 8000);
@@ -170,11 +172,13 @@
       });
       src.addEventListener('done', () => {
         z54SetExecState('complete', sid);
+        document.dispatchEvent(new CustomEvent('nx:exec:end', { detail: { state: 'complete', sid } }));
         if (_z54SSEConn) { try { _z54SSEConn.close(); } catch (_) {} _z54SSEConn = null; }
         z54RefreshChatIfOpen();
       });
       src.addEventListener('error_event', e => {
         z54SetExecState('failed', sid);
+        document.dispatchEvent(new CustomEvent('nx:exec:end', { detail: { state: 'failed', sid } }));
         if (_z54SSEConn) { try { _z54SSEConn.close(); } catch (_) {} _z54SSEConn = null; }
       });
       src.onerror = () => {
@@ -190,6 +194,8 @@
 
   function z54HandleSSEEvent(data) {
     if (!data) return;
+    // Broadcast for downstream listeners (Z55+)
+    document.dispatchEvent(new CustomEvent('nx:exec:sse', { detail: data }));
     const type = (data.type || '').toLowerCase();
 
     // Drive pipeline bar stages

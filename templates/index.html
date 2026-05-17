@@ -4,11 +4,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nexora — AI Development Platform</title>
+  <title>Aetherion — AI Development Platform</title>
   <meta name="description"
-    content="Nexora AI Platform — Autonomous multi-agent AI that plans, codes, debugs and ships your software.">
-  <meta name="application-name" content="Nexora">
-  <meta property="og:title" content="Nexora — AI Development Platform">
+    content="Aetherion AI Platform — Autonomous multi-agent AI that plans, codes, debugs and ships your software.">
+  <meta name="application-name" content="Aetherion">
+  <meta property="og:title" content="Aetherion — AI Development Platform">
   <meta property="og:description"
     content="Autonomous multi-agent AI that plans, codes, debugs and ships your software.">
   <link rel="icon" type="image/svg+xml"
@@ -71,6 +71,8 @@
   <link rel="stylesheet" href="/static/css/nx-z50.css">
   <!-- Z51: Beta Operational Lockdown + Product Cohesion -->
   <link rel="stylesheet" href="/static/css/nx-z51.css">
+  <!-- Z53: Product Cohesion + Operational Interaction Maturity — Aetherion AI -->
+  <link rel="stylesheet" href="/static/css/nx-z53.css">
 </head>
 
 <body>
@@ -89,7 +91,7 @@
               stroke="#6b3fa0" stroke-width="0.5" />
           </svg>
         </div>
-        <div class="nx-auth-logo-text">Nexora <span>AI</span></div>
+        <div class="nx-auth-logo-text">Aetherion <span>AI</span></div>
       </div>
 
       <div id="nx-auth-err" class="nx-auth-err"></div>
@@ -196,7 +198,7 @@
 
   <!-- ── Site Footer ── -->
   <div id="nx-site-footer" class="nx-site-footer">
-    <span>© 2026 Nexora AI</span>
+    <span>© 2026 Aetherion AI</span>
     <span class="nx-footer-sep">·</span>
     <a href="/privacy-policy" target="_blank" class="nx-footer-link">Privacy Policy</a>
     <span class="nx-footer-sep">·</span>
@@ -204,7 +206,7 @@
     <span class="nx-footer-sep">·</span>
     <a href="/refund-policy" target="_blank" class="nx-footer-link">Refund Policy</a>
     <span class="nx-footer-sep">·</span>
-    <a href="mailto:support@nexora.ai" class="nx-footer-link">support@nexora.ai</a>
+    <a href="mailto:support@aetherion.ai" class="nx-footer-link">support@aetherion.ai</a>
   </div>
 
   <!-- ── Email Verification Banner ── -->
@@ -275,7 +277,7 @@
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
         </svg>
-        <span class="nx-topbar-breadcrumb-name">Nexora</span>
+        <span class="nx-topbar-breadcrumb-name">Aetherion</span>
         <span class="nx-topbar-breadcrumb-sep">/</span>
         <span id="nxCurProjectHeader" style="font-weight:500;">Workspace</span>
       </div>
@@ -369,7 +371,7 @@
         <div class="p8-modal-title">🚀 Choose Your Plan</div>
         <button class="p8-close-btn" onclick="p8CloseUpgradeModal()">×</button>
       </div>
-      <div class="p8-modal-sub" id="p8ModalSub">Unlock the full power of Nexora AI Platform</div>
+      <div class="p8-modal-sub" id="p8ModalSub">Unlock the full power of Aetherion AI Platform</div>
 
       <!-- Phase 36: Billing cycle toggle -->
       <div class="p36-cycle-toggle" id="p36CycleToggle">
@@ -587,7 +589,7 @@
               <span onclick="p4RefreshSessionHistory()" title="Refresh">↻</span>
             </div>
             <div class="p4-sess-list" id="p4SessList">
-              <div class="p4-sess-empty">No sessions yet</div>
+              <div class="p4-sess-empty">No recent sessions</div>
             </div>
           </div>
 
@@ -762,7 +764,7 @@
           <!-- Header row -->
           <div class="nx-iw-header">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.4;flex-shrink:0"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-            <span class="nx-iw-title">Ready for execution</span>
+            <span class="nx-iw-title">Workspace ready</span>
             <span class="nx-iw-hint"><kbd>⌘K</kbd> Commands &nbsp;·&nbsp; <kbd>⌘↵</kbd> Execute</span>
           </div>
 
@@ -773,7 +775,7 @@
               <span class="nx-iw-stat-val" id="nxIdleModel">—</span>
             </div>
             <div class="nx-iw-stat-sep"></div>
-            <div class="nx-iw-stat" title="Session confidence level">
+            <div class="nx-iw-stat" title="Model confidence">
               <span class="nx-iw-stat-label">Confidence</span>
               <span class="nx-iw-stat-val" id="nxIdleConf">—</span>
             </div>
@@ -783,8 +785,8 @@
               <span class="nx-iw-stat-val" id="nxIdleCtx">—</span>
             </div>
             <div class="nx-iw-stat-sep"></div>
-            <div class="nx-iw-stat" title="Scheduled missions">
-              <span class="nx-iw-stat-label">Scheduled</span>
+            <div class="nx-iw-stat" title="Queued tasks">
+              <span class="nx-iw-stat-label">Queued</span>
               <span class="nx-iw-stat-val" id="nxIdleSched">—</span>
             </div>
           </div>
@@ -799,20 +801,20 @@
 
           <!-- Recent executions -->
           <div class="nx-iw-section">
-            <div class="nx-iw-section-label">Recent executions</div>
+            <div class="nx-iw-section-label">Recent runs</div>
             <div id="nxIdleRecent" class="nx-iw-recent-list">
-              <div class="nx-iw-recent-empty">No recent executions</div>
+              <div class="nx-iw-recent-empty">No recent runs</div>
             </div>
           </div>
 
           <!-- Z33A: Replay resume card (hidden until a forensic session is found) -->
-          <div class="z33-replay-resume" id="z33ReplayResume" title="Resume last forensic session">
+          <div class="z33-replay-resume" id="z33ReplayResume" title="Resume last session">
             <span class="z33-replay-resume-icon">⏮</span>
             <div class="z33-replay-resume-info">
               <div class="z33-replay-resume-sid">—</div>
               <div class="z33-replay-resume-meta">Loading…</div>
             </div>
-            <button class="z33-replay-resume-btn">Resume Replay</button>
+            <button class="z33-replay-resume-btn">Resume Session</button>
           </div>
 
           <!-- Z33A: Pending approvals row (hidden until HITL queue has items) -->
@@ -855,8 +857,8 @@
           <!-- Terminal content area -->
           <div style="flex:1; position:relative;">
             <div id="xtermSkeleton" style="position:absolute; inset:0; padding:12px; font-family:monospace; font-size:12px; color:var(--text-muted);">
-              Booting terminal interface...<br/>
-              Connecting to PTY...
+              Terminal initializing...<br/>
+              Connecting to shell...
             </div>
             <div id="xtermMount" style="position:absolute; inset:0; overflow:hidden;"></div>
           </div>
@@ -952,7 +954,7 @@
             <span class="z31-persist-dot" id="z31PersistDot" title="Snapshot persistence idle"></span>
             <!-- Z31C: Historical session browser toggle -->
             <button class="z31-forensic-toggle" id="z31ForensicToggle"
-              onclick="_z31forensics.togglePanel()" title="Historical session browser">
+              onclick="_z31forensics.togglePanel()" title="Session history">
               History
             </button>
           </div>
@@ -1012,7 +1014,7 @@
             </div>
 
             <!-- Z31C: Historical session browser panel (slides in from left) -->
-            <div class="z31-forensic-panel" id="z31ForensicPanel" role="complementary" aria-label="Historical sessions">
+            <div class="z31-forensic-panel" id="z31ForensicPanel" role="complementary" aria-label="Session history">
               <div class="z31-forensic-hdr">
                 <span class="z31-forensic-title">Session History</span>
                 <button class="z31-forensic-close" onclick="_z31forensics.closePanel()" title="Close">✕</button>
@@ -1857,7 +1859,7 @@
     <span class="nx-statusbar-sep"></span>
     <span class="nx-statusbar-item" id="nxSbStatus">Idle</span>
     <div class="nx-statusbar-right">
-      <span class="nx-statusbar-item" id="nxSbSess">No session</span>
+      <span class="nx-statusbar-item" id="nxSbSess">No active run</span>
       <span class="nx-statusbar-sep"></span>
       <span class="nx-statusbar-item">
         <kbd class="nx-kbd">Ctrl+Enter</kbd> Run &nbsp;
@@ -2143,7 +2145,7 @@
             <div class="preview-state" id="previewState" data-state="empty">
               <div class="preview-state-card">
                 <div class="preview-state-title" id="previewStateTitle">No preview yet</div>
-                <div class="preview-state-copy" id="previewStateCopy">Run a task or open a session with previewable files.</div>
+                <div class="preview-state-copy" id="previewStateCopy">Run a task to see a live preview here.</div>
                 <div class="preview-state-actions">
                   <button class="btn tiny" type="button" onclick="reloadPreview()">Reload</button>
                   <button class="btn tiny" type="button" onclick="setTask('Build a simple landing page with HTML and CSS')">Starter</button>
@@ -2911,7 +2913,7 @@
           <div class="pane-body">
             <div class="status-grid">
               <div class="label">Status</div>
-              <div class="value"><span class="pill idle" id="stStatus-legacy">No session</span></div>
+              <div class="value"><span class="pill idle" id="stStatus-legacy">No active run</span></div>
               <div class="label">Mode</div>
               <div class="value muted" id="stMode">—</div>
               <div class="label">Stage</div>
@@ -3605,7 +3607,7 @@
               <h3>Support &amp; Contact</h3>
               <div class="info-box" style="font-size:0.87rem">
                 For billing, privacy, or account issues, email us at<br>
-                <a href="mailto:support@nexora.ai" style="color:var(--accent);font-weight:600">support@nexora.ai</a>
+                <a href="mailto:support@aetherion.ai" style="color:var(--accent);font-weight:600">support@aetherion.ai</a>
                 <span style="color:var(--muted);font-size:0.8rem;display:block;margin-top:4px">We respond within 2
                   business days.</span>
               </div>
@@ -3851,7 +3853,7 @@
         <div id="fb-success-body" class="fb-success" style="display:none">
           <div class="fb-check">✅</div>
           <h4>Feedback received!</h4>
-          <p>Thanks for helping make Nexora better. We'll review your report shortly.</p>
+          <p>Thanks for helping make Aetherion better. We'll review your report shortly.</p>
         </div>
       </div>
     </div>

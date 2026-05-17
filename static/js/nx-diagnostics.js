@@ -1,5 +1,5 @@
 /**
- * nx-diagnostics.js — Nexora Operator Diagnostics Panel v1
+ * nx-diagnostics.js — Aetherion Operator Diagnostics Panel v1
  * ═══════════════════════════════════════════════════════════════════
  * Hidden by default. Operator-only access.
  * Toggle: Ctrl+Shift+D

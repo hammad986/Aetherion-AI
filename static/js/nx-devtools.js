@@ -1,5 +1,5 @@
 /**
- * nx-devtools.js — Nexora Internal Developer Diagnostics Panel v1
+ * nx-devtools.js — Aetherion Internal Developer Diagnostics Panel v1
  * ══════════════════════════════════════════════════════════════════════
  * Activated by: Ctrl+Shift+D or ?nx_devtools in URL
  * Renders a floating, collapsible panel showing live runtime state.

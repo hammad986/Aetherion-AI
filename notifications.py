@@ -1,7 +1,7 @@
 """
 notifications.py — Real-Time Notification & Event System
 =========================================================
-Production-grade notification engine for Nexora AI Platform.
+Production-grade notification engine for Aetherion AI Platform.
 
 Features:
 - Persistent DB storage (saas_platform.db)
@@ -35,7 +35,7 @@ logger = logging.getLogger(__name__)
 DB_PATH    = "saas_platform.db"
 EMAIL_API_KEY = os.environ.get("EMAIL_API_KEY", "")
 EMAIL_FROM    = os.environ.get("EMAIL_FROM", "noreply@nexora.ai")
-APP_NAME      = "Nexora AI Platform"
+APP_NAME      = "Aetherion AI Platform"
 
 VALID_TYPES     = {"task", "support", "billing", "system"}
 VALID_PRIORITIES = {"info", "warning", "critical"}
@@ -413,7 +413,7 @@ def _send_critical_email(to: str, name: str, title: str, message: str):
           <div style="font-weight:700;color:#e6edf3;margin-bottom:8px">{title}</div>
           <div style="color:#8b949e;font-size:13px">{message}</div>
         </div>
-        <p style="color:#8b949e;font-size:12px;margin-top:16px">Log in to Nexora to take action.</p>
+        <p style="color:#8b949e;font-size:12px;margin-top:16px">Log in to Aetherion to take action.</p>
         <p style="color:#30363d;font-size:11px;margin-top:12px">{APP_NAME} · noreply@nexora.ai</p>
       </div>
     </div>
@@ -422,7 +422,7 @@ def _send_critical_email(to: str, name: str, title: str, message: str):
         payload = json.dumps({
             "from":    EMAIL_FROM,
             "to":      [to],
-            "subject": f"[Nexora] Critical: {title}",
+            "subject": f"[Aetherion] Critical: {title}",
             "html":    html,
         }).encode()
         req = urllib.request.Request(

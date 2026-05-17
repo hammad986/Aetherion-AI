@@ -1,5 +1,5 @@
 /**
- * nx-mission.js — Nexora Strategic Execution Narrative v1
+ * nx-mission.js — Aetherion Strategic Execution Narrative v1
  * ═══════════════════════════════════════════════════════════════════
  * Mission lifecycle, operational phase transitions, reasoning
  * compression, adaptive messaging, and completion narrative.

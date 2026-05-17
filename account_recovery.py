@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 DB_PATH    = "saas_platform.db"
 EMAIL_API_KEY = os.environ.get("EMAIL_API_KEY", "")
 EMAIL_FROM    = os.environ.get("EMAIL_FROM", "noreply@nexora.ai")
-APP_NAME      = "Nexora"
+APP_NAME      = "Aetherion"
 
 RESET_TOKEN_MINUTES  = int(os.environ.get("RESET_TOKEN_MINUTES",  "30"))
 VERIFY_TOKEN_HOURS   = int(os.environ.get("VERIFY_TOKEN_HOURS",   "24"))
@@ -122,12 +122,12 @@ def _reset_email_html(name: str, reset_link: str) -> str:
   <div style="background:#0d1117;border-radius:12px;padding:32px;color:#e6edf3">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:24px">
       <svg width="22" height="22" viewBox="0 0 32 32" fill="none"><polygon points="16,3 20.5,11.5 30,13 23,20 24.7,29.5 16,25 7.3,29.5 9,20 2,13 11.5,11.5" fill="#bc8cff" stroke="#6b3fa0" stroke-width="0.5"/></svg>
-      <span style="font-size:1.1rem;font-weight:800;color:#e6edf3">Nexora <span style="color:#bc8cff">AI</span></span>
+      <span style="font-size:1.1rem;font-weight:800;color:#e6edf3">Aetherion <span style="color:#bc8cff">AI</span></span>
     </div>
     <h2 style="color:#e6edf3;margin:0 0 8px;font-size:1.3rem">Reset Your Password</h2>
     <p style="color:#8b949e;margin:0 0 24px;line-height:1.6">
       Hi {name or 'there'},<br><br>
-      We received a request to reset the password for your Nexora account.
+      We received a request to reset the password for your Aetherion account.
       Click the button below to choose a new password.
     </p>
     <a href="{reset_link}" style="display:inline-block;background:#bc8cff;color:#0d1117;font-weight:700;font-size:0.95rem;padding:12px 28px;border-radius:8px;text-decoration:none;margin-bottom:24px">
@@ -158,12 +158,12 @@ def _verify_email_html(name: str, verify_link: str) -> str:
   <div style="background:#0d1117;border-radius:12px;padding:32px;color:#e6edf3">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:24px">
       <svg width="22" height="22" viewBox="0 0 32 32" fill="none"><polygon points="16,3 20.5,11.5 30,13 23,20 24.7,29.5 16,25 7.3,29.5 9,20 2,13 11.5,11.5" fill="#bc8cff" stroke="#6b3fa0" stroke-width="0.5"/></svg>
-      <span style="font-size:1.1rem;font-weight:800;color:#e6edf3">Nexora <span style="color:#bc8cff">AI</span></span>
+      <span style="font-size:1.1rem;font-weight:800;color:#e6edf3">Aetherion <span style="color:#bc8cff">AI</span></span>
     </div>
     <h2 style="color:#e6edf3;margin:0 0 8px;font-size:1.3rem">Verify Your Email</h2>
     <p style="color:#8b949e;margin:0 0 24px;line-height:1.6">
       Hi {name or 'there'},<br><br>
-      Thanks for signing up for Nexora AI Platform! Please verify your email address
+      Thanks for signing up for Aetherion AI Platform! Please verify your email address
       to unlock all features and secure your account.
     </p>
     <a href="{verify_link}" style="display:inline-block;background:#3fb950;color:#0d1117;font-weight:700;font-size:0.95rem;padding:12px 28px;border-radius:8px;text-decoration:none;margin-bottom:24px">
@@ -177,7 +177,7 @@ def _verify_email_html(name: str, verify_link: str) -> str:
       ⏰ This link expires in <strong style="color:#d29922">{VERIFY_TOKEN_HOURS} hours</strong>.
     </p>
     <p style="color:#8b949e;font-size:13px;margin:0 0 20px">
-      If you didn't create a Nexora account, you can safely ignore this email.
+      If you didn't create a Aetherion account, you can safely ignore this email.
     </p>
     <hr style="border:none;border-top:1px solid #30363d;margin:20px 0">
     <p style="color:#30363d;font-size:11px;margin:0">

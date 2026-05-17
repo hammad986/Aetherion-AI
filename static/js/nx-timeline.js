@@ -1,5 +1,5 @@
 /**
- * nx-timeline.js — Nexora Execution Replay & Timeline Component
+ * nx-timeline.js — Aetherion Execution Replay & Timeline Component
  * ══════════════════════════════════════════════════════════════════════
  * Renders an interactive, scrubbable timeline of execution events.
  * Connects directly to the backend ExecutionReplayEngine payload.

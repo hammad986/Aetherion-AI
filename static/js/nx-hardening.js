@@ -1,5 +1,5 @@
 /**
- * nx-hardening.js — Nexora Beta Hardening Runtime v1
+ * nx-hardening.js — Aetherion Beta Hardening Runtime v1
  * ═══════════════════════════════════════════════════════════════════
  * Phase O: Real runtime fixes only.
  *

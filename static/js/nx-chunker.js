@@ -1,5 +1,5 @@
 /**
- * nx-chunker.js — Nexora Execution Chunking Engine v1
+ * nx-chunker.js — Aetherion Execution Chunking Engine v1
  * ═══════════════════════════════════════════════════════
  * Intercepts NxBus STREAM_CHUNK events and groups them into
  * structured execution blocks rendered in the Output timeline.

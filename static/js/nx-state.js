@@ -1,5 +1,5 @@
 ﻿/**
- * nx-state.js — Nexora Canonical State Governance v1
+ * nx-state.js — Aetherion Canonical State Governance v1
  * ══════════════════════════════════════════════════════════════════════
  * Three canonical state slices. Each slice owns its data exclusively.
  *

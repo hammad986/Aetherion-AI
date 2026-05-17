@@ -1,5 +1,5 @@
 /**
- * nx-orchestrator.js — Nexora Cross-Surface Orchestration Layer v1
+ * nx-orchestrator.js — Aetherion Cross-Surface Orchestration Layer v1
  * ═══════════════════════════════════════════════════════════════════
  * Single bus-to-surface bridge. All surfaces receive the same runtime truth.
  * No framework. No DOM rewrites. Surgical attribute/class mutations only.

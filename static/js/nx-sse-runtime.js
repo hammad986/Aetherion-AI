@@ -1,5 +1,5 @@
 /**
- * nx-sse-runtime.js — Nexora Resilient SSE Runtime Layer v1
+ * nx-sse-runtime.js — Aetherion Resilient SSE Runtime Layer v1
  * ══════════════════════════════════════════════════════════════════════
  * Owns the ONLY EventSource connection to the backend AGI stream.
  * All consumers receive events via NxBus — never direct DOM mutations.

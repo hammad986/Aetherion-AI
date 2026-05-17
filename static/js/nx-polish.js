@@ -1,5 +1,5 @@
 /**
- * nx-polish.js — Nexora Operator Experience & Flow Polish v1
+ * nx-polish.js — Aetherion Operator Experience & Flow Polish v1
  * ═══════════════════════════════════════════════════════════════════
  * Phase N: Interaction smoothness, keyboard ergonomics, latency
  * masking, empty-state intelligence, progressive disclosure,

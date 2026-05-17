@@ -2481,7 +2481,7 @@ async function loadEvolutionDashboard() {
         key: p36RazKey,
         amount: order.amount,
         currency: order.currency,
-        name: 'Nexora AI Platform',
+        name: 'Aetherion AI Platform',
         description: `${order.plan_name} Plan (${order.billing_cycle})`,
         order_id: order.razorpay_order_id,
         theme: { color: '#bc8cff' },

@@ -1,5 +1,5 @@
 /**
- * nx-activity.js — Nexora Activity Layer v1
+ * nx-activity.js — Aetherion Activity Layer v1
  * ═══════════════════════════════════════════════════════════════════════
  * Modules (each self-contained IIFE, no external deps beyond window.NX):
  *

@@ -196,7 +196,7 @@
     if (!_term) return;
     const sid = _sid ? _sid.slice(0, 8) + '…' : 'none';
     _term.writeln('\x1b[34m╔══════════════════════════════╗\x1b[0m');
-    _term.writeln('\x1b[34m║\x1b[0m  \x1b[1mNexora AGI Terminal\x1b[0m         \x1b[34m║\x1b[0m');
+    _term.writeln('\x1b[34m║\x1b[0m  \x1b[1mAetherion AI Terminal\x1b[0m         \x1b[34m║\x1b[0m');
     _term.writeln(`\x1b[34m║\x1b[0m  Session: \x1b[33m${sid}\x1b[0m          \x1b[34m║\x1b[0m`);
     _term.writeln('\x1b[34m╚══════════════════════════════╝\x1b[0m');
     _term.writeln('\x1b[90mCtrl+C cancel · Ctrl+L clear · ↑↓ history\x1b[0m');

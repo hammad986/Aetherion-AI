@@ -1,5 +1,5 @@
 ﻿/**
- * nx-onboard.js — Nexora Design System: Onboarding + Governance Runtime
+ * nx-onboard.js — Aetherion Design System: Onboarding + Governance Runtime
  * Modules: NdsToast (canonical) | NdsOnboard (first-run) | NdsPerf (budget)
  */
 (function(){'use strict';
@@ -48,7 +48,7 @@ function _showOnboard(){
     <div class="nds-onboard-card" role="dialog" aria-modal="true" aria-labelledby="ndsOnboardTitle">
       <div class="nds-onboard-hero">
         <div class="nds-onboard-logo">✦</div>
-        <div class="nds-onboard-title" id="ndsOnboardTitle">Welcome to Nexora AI</div>
+        <div class="nds-onboard-title" id="ndsOnboardTitle">Welcome to Aetherion</div>
         <div class="nds-onboard-sub">An intelligent workspace for building, debugging, and shipping with AI. Choose your starting layout:</div>
       </div>
       <div class="nds-onboard-body">

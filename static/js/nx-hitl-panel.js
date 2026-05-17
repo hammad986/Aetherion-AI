@@ -1,5 +1,5 @@
 /**
- * nx-hitl-panel.js — Nexora HITL Approval/Rejection Panel v1
+ * nx-hitl-panel.js — Aetherion HITL Approval/Rejection Panel v1
  * ══════════════════════════════════════════════════════════════════════
  * Handles operator approval/rejection of blocked agent threads.
  * Wired to POST /api/hitl/approve (backend added during hardening phase).

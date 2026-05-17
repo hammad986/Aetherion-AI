@@ -26,7 +26,7 @@ DB_PATH = "support.db"
 # ─── Email config ──────────────────────────────────────────────────────────────
 EMAIL_API_KEY = os.environ.get("EMAIL_API_KEY", "")
 EMAIL_FROM    = os.environ.get("EMAIL_FROM", "support@nexora.ai")
-APP_NAME      = "Nexora AI Platform"
+APP_NAME      = "Aetherion AI Platform"
 
 # ─── Rate limit: 3 tickets per user per hour ──────────────────────────────────
 _ticket_rate: dict = {}
@@ -176,7 +176,7 @@ def _email_ticket_created(ticket: dict):
     html = f"""
     <div style="font-family:Inter,sans-serif;max-width:560px;margin:0 auto;padding:24px">
       <div style="background:#0d1117;border-radius:12px;padding:24px;color:#e6edf3">
-        <h2 style="color:#bc8cff;margin:0 0 16px">Nexora Support</h2>
+        <h2 style="color:#bc8cff;margin:0 0 16px">Aetherion Support</h2>
         <p style="color:#8b949e;margin:0 0 12px">Your support ticket has been received.</p>
         <div style="background:#161b22;border-radius:8px;padding:16px;margin-bottom:16px">
           <div style="font-size:12px;color:#8b949e;margin-bottom:4px">TICKET ID</div>
@@ -189,13 +189,13 @@ def _email_ticket_created(ticket: dict):
         <p style="color:#8b949e;font-size:13px">
           We'll respond within 24 hours. You can view your ticket status in the platform under Support.
         </p>
-        <p style="color:#30363d;font-size:11px;margin-top:20px">Nexora AI Platform · support@nexora.ai</p>
+        <p style="color:#30363d;font-size:11px;margin-top:20px">Aetherion AI Platform · support@nexora.ai</p>
       </div>
     </div>
     """
     threading.Thread(
         target=_send_email,
-        args=(ticket["user_email"], f"[Nexora Support] Ticket #{ticket['id'][:8].upper()} received", html),
+        args=(ticket["user_email"], f"[Aetherion Support] Ticket #{ticket['id'][:8].upper()} received", html),
         daemon=True,
     ).start()
 
@@ -206,7 +206,7 @@ def _email_ticket_reply(ticket: dict, reply_message: str, sender: str):
     html = f"""
     <div style="font-family:Inter,sans-serif;max-width:560px;margin:0 auto;padding:24px">
       <div style="background:#0d1117;border-radius:12px;padding:24px;color:#e6edf3">
-        <h2 style="color:#bc8cff;margin:0 0 16px">Nexora Support — New Reply</h2>
+        <h2 style="color:#bc8cff;margin:0 0 16px">Aetherion Support — New Reply</h2>
         <p style="color:#8b949e;margin:0 0 12px">
           Ticket <strong style="color:#58a6ff">#{ticket['id'][:8].upper()}</strong>:
           <em>{ticket['subject']}</em>
@@ -214,14 +214,14 @@ def _email_ticket_reply(ticket: dict, reply_message: str, sender: str):
         <div style="background:#161b22;border-radius:8px;padding:16px;margin-bottom:16px;color:#e6edf3">
           {reply_message[:500]}
         </div>
-        <p style="color:#8b949e;font-size:13px">Log in to Nexora to continue the conversation.</p>
-        <p style="color:#30363d;font-size:11px;margin-top:20px">Nexora AI Platform · support@nexora.ai</p>
+        <p style="color:#8b949e;font-size:13px">Log in to Aetherion to continue the conversation.</p>
+        <p style="color:#30363d;font-size:11px;margin-top:20px">Aetherion AI Platform · support@nexora.ai</p>
       </div>
     </div>
     """
     threading.Thread(
         target=_send_email,
-        args=(ticket["user_email"], f"[Nexora Support] Reply on #{ticket['id'][:8].upper()}", html),
+        args=(ticket["user_email"], f"[Aetherion Support] Reply on #{ticket['id'][:8].upper()}", html),
         daemon=True,
     ).start()
 
@@ -239,19 +239,19 @@ def _email_status_change(ticket: dict, new_status: str):
     html = f"""
     <div style="font-family:Inter,sans-serif;max-width:560px;margin:0 auto;padding:24px">
       <div style="background:#0d1117;border-radius:12px;padding:24px;color:#e6edf3">
-        <h2 style="color:#bc8cff;margin:0 0 16px">Nexora Support — Status Update</h2>
+        <h2 style="color:#bc8cff;margin:0 0 16px">Aetherion Support — Status Update</h2>
         <p style="color:#8b949e;margin:0 0 12px">
           Ticket <strong style="color:#58a6ff">#{ticket['id'][:8].upper()}</strong> is now
           <strong style="color:#3fb950">{label}</strong>.
         </p>
-        <p style="color:#8b949e;font-size:13px">Log in to Nexora to view your ticket.</p>
-        <p style="color:#30363d;font-size:11px;margin-top:20px">Nexora AI Platform · support@nexora.ai</p>
+        <p style="color:#8b949e;font-size:13px">Log in to Aetherion to view your ticket.</p>
+        <p style="color:#30363d;font-size:11px;margin-top:20px">Aetherion AI Platform · support@nexora.ai</p>
       </div>
     </div>
     """
     threading.Thread(
         target=_send_email,
-        args=(ticket["user_email"], f"[Nexora Support] Ticket #{ticket['id'][:8].upper()} — {label}", html),
+        args=(ticket["user_email"], f"[Aetherion Support] Ticket #{ticket['id'][:8].upper()} — {label}", html),
         daemon=True,
     ).start()
 

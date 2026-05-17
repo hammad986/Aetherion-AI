@@ -1,5 +1,5 @@
 /**
- * nx-surface-fusion.js — Nexora Unified Execution Environment v1
+ * nx-surface-fusion.js — Aetherion Unified Execution Environment v1
  * ═══════════════════════════════════════════════════════════════════
  * Fuses all runtime surfaces into one mission-centered workspace.
  *

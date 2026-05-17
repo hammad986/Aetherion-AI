@@ -1,5 +1,5 @@
 /**
- * nx-clarity.js — Nexora Operator Clarity & First-Run Experience v1
+ * nx-clarity.js — Aetherion Operator Clarity & First-Run Experience v1
  * ═══════════════════════════════════════════════════════════════════
  * Phase Q: First-run onboarding, execution transparency,
  * human-readable HITL wording, recovery messaging,

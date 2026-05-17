@@ -1,5 +1,5 @@
 /**
- * nx-observability.js — Nexora AGI Observability Panel v1
+ * nx-observability.js — Aetherion AGI Observability Panel v1
  * ══════════════════════════════════════════════════════════════════════
  * Renders live agent orchestration events into the right-side panel.
  *

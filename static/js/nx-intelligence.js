@@ -1,5 +1,5 @@
 /**
- * nx-intelligence.js — Nexora Operational Intelligence v1.1
+ * nx-intelligence.js — Aetherion Operational Intelligence v1.1
  * ═══════════════════════════════════════════════════════════════════
  * Phase R: Analytics, forensics, feedback.
  * Phase S: Cross-session reliability memory, operator trust calibration,
@@ -37,7 +37,7 @@
 
     const data = {
       timestamp: new Date().toISOString(),
-      agent_version: 'Nexora v0.9-beta',
+      agent_version: 'Aetherion v1.0',
       beta_cohort: 'cohort-1-internal',
       environment: envInfo,
       execution_quality: qualityScore,

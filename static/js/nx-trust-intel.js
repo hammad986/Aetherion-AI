@@ -1,5 +1,5 @@
 /**
- * nx-trust.js — Nexora Trusted Execution Intelligence v1
+ * nx-trust.js — Aetherion Trusted Execution Intelligence v1
  * ═══════════════════════════════════════════════════════════════════
  * Confidence model, retry intelligence, validation evidence,
  * failure explanation, HITL escalation, and memory continuity.

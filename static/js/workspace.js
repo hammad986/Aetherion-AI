@@ -1,5 +1,5 @@
 /**
- * workspace.js â€” Nexora Dockable Workspace Controller  v2
+ * workspace.js â€” Aetherion Dockable Workspace Controller  v2
  * =========================================================
  * Single canonical controller for all panel/tab layout state.
  *

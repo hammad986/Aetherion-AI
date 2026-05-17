@@ -1,0 +1,814 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   nx-z53.css — Phase Z53: Product Cohesion + Operational Interaction Maturity
+   Brand: Aetherion AI
+   Goal: Cohesive operational workspace — not a collection of subsystems.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z53-A: UNIFIED MOTION TIMING SYSTEM
+   One timing vocabulary across every interactive element.
+   ══════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* Canonical timing tokens */
+  --z53-t-instant:  80ms;
+  --z53-t-fast:    140ms;
+  --z53-t-base:    200ms;
+  --z53-t-slow:    320ms;
+  --z53-t-reveal:  400ms;
+
+  /* Canonical easing tokens */
+  --z53-ease-out:   cubic-bezier(0.16, 1, 0.3, 1);
+  --z53-ease-in:    cubic-bezier(0.4, 0, 1, 1);
+  --z53-ease-micro: cubic-bezier(0.2, 0, 0, 1);
+
+  /* Canonical interaction colors */
+  --z53-hover-bg:   rgba(255,255,255,0.04);
+  --z53-active-bg:  rgba(188,140,255,0.10);
+  --z53-focus-ring: rgba(188,140,255,0.45);
+
+  /* Canonical surface depth */
+  --z53-surface-0: #0D0D0F;
+  --z53-surface-1: #111115;
+  --z53-surface-2: #17171C;
+  --z53-surface-3: #1E1E25;
+  --z53-border:    rgba(255,255,255,0.06);
+  --z53-border-hi: rgba(255,255,255,0.10);
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z53-B: SIDEBAR / NAVRAIL MATURITY
+   Active tools feel grounded. Inactive tools feel quiet.
+   ══════════════════════════════════════════════════════════════════════ */
+
+.nx-shell-navrail {
+  background: var(--z53-surface-1);
+  border-right: 1px solid var(--z53-border);
+  gap: 2px;
+  padding: 10px 0;
+}
+
+/* Navrail items: unified baseline */
+.nx-nav-icon {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,0.32);
+  background: transparent;
+  border: 1px solid transparent;
+  transition:
+    color        var(--z53-t-fast) var(--z53-ease-micro),
+    background   var(--z53-t-fast) var(--z53-ease-micro),
+    border-color var(--z53-t-fast) var(--z53-ease-micro),
+    transform    var(--z53-t-instant) var(--z53-ease-micro);
+  cursor: pointer;
+  outline: none;
+}
+
+/* Quiet hover — lifted but not loud */
+.nx-nav-icon:hover {
+  color: rgba(255,255,255,0.72);
+  background: var(--z53-hover-bg);
+  border-color: var(--z53-border);
+  transform: none;
+}
+
+/* Active state: grounded and authoritative */
+.nx-nav-icon.active,
+.nx-nav-icon[aria-selected="true"] {
+  color: #bc8cff;
+  background: rgba(188,140,255,0.12);
+  border-color: rgba(188,140,255,0.22);
+}
+
+/* Active indicator strip — left edge anchor */
+.nx-nav-icon.active::before {
+  content: '';
+  position: absolute;
+  left: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 18px;
+  border-radius: 0 2px 2px 0;
+  background: #bc8cff;
+  opacity: 0.9;
+}
+
+/* Focus ring — accessible, not flashy */
+.nx-nav-icon:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--z53-focus-ring);
+}
+
+/* SVG icons: inherit color cleanly */
+.nx-nav-icon svg {
+  transition: opacity var(--z53-t-fast) var(--z53-ease-micro);
+}
+.nx-nav-icon:not(.active) svg { opacity: 0.65; }
+.nx-nav-icon.active svg       { opacity: 1; }
+.nx-nav-icon:hover svg        { opacity: 0.9; }
+
+/* Navrail divider */
+.nx-nav-divider {
+  width: 20px;
+  height: 1px;
+  background: var(--z53-border);
+  margin: 4px auto;
+  border-radius: 1px;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z53-C: PANEL HEADER HIERARCHY + REALISM
+   Headers feel purposeful. Content feels organized.
+   ══════════════════════════════════════════════════════════════════════ */
+
+.nx-panel-hdr {
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  height: 40px;
+  min-height: 40px;
+  background: var(--z53-surface-2);
+  border-bottom: 1px solid var(--z53-border);
+  gap: 8px;
+  user-select: none;
+}
+
+.nx-panel-title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.45);
+  flex: 1;
+}
+
+/* Panel section headers — internal rhythm */
+.nx-think-label,
+.z33-sm-title,
+.p4-sess-title,
+.nx-iw-section-label,
+.z31-panel-title,
+.z32-panel-title {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.28);
+  padding: 0;
+  margin-bottom: 6px;
+}
+
+/* Panel empty states — calm, informative */
+.p4-sess-empty,
+.z33-sm-empty,
+.nx-iw-recent-empty,
+.rs-empty,
+.z31-empty {
+  font-size: 11px;
+  color: rgba(255,255,255,0.22);
+  padding: 12px 0;
+  text-align: center;
+  font-style: italic;
+  letter-spacing: 0.01em;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z53-D: IDLE WORKSPACE DENSITY + COMPOSITION
+   The workspace should feel ready and operational before execution begins.
+   ══════════════════════════════════════════════════════════════════════ */
+
+.nx-idle-hero {
+  padding: 28px 28px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 680px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Header row — authoritative but calm */
+.nx-iw-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--z53-border);
+}
+
+.nx-iw-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.82);
+  letter-spacing: -0.01em;
+  flex: 1;
+}
+
+.nx-iw-hint {
+  font-size: 11px;
+  color: rgba(255,255,255,0.22);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.nx-iw-hint kbd {
+  font-size: 10px;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--z53-surface-3);
+  border: 1px solid var(--z53-border-hi);
+  color: rgba(255,255,255,0.45);
+  font-family: var(--font-mono, monospace);
+}
+
+/* Status strip — unified data density */
+.nx-iw-status-strip {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: var(--z53-surface-2);
+  border: 1px solid var(--z53-border);
+  border-radius: 8px;
+  overflow: hidden;
+  padding: 0 12px;
+}
+
+.nx-iw-stat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 10px 12px;
+}
+
+.nx-iw-stat-label {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.25);
+}
+
+.nx-iw-stat-val {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.72);
+  font-family: var(--font-mono, monospace);
+}
+
+.nx-iw-stat-sep {
+  width: 1px;
+  height: 28px;
+  background: var(--z53-border);
+  flex-shrink: 0;
+}
+
+/* Quick action chips — operational, not decorative */
+.nx-iw-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.nx-hero-chip {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 5px 12px;
+  border-radius: 6px;
+  background: var(--z53-surface-3);
+  border: 1px solid var(--z53-border-hi);
+  color: rgba(255,255,255,0.55);
+  cursor: pointer;
+  transition:
+    background   var(--z53-t-fast) var(--z53-ease-micro),
+    border-color var(--z53-t-fast) var(--z53-ease-micro),
+    color        var(--z53-t-fast) var(--z53-ease-micro);
+  letter-spacing: 0.01em;
+}
+
+.nx-hero-chip:hover {
+  background: rgba(188,140,255,0.10);
+  border-color: rgba(188,140,255,0.25);
+  color: rgba(255,255,255,0.85);
+}
+
+.nx-hero-chip:active {
+  transform: scale(0.98);
+  transition-duration: var(--z53-t-instant);
+}
+
+/* Recent runs section */
+.nx-iw-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.nx-iw-section-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.25);
+}
+
+.nx-iw-recent-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--z53-border);
+  background: var(--z53-surface-2);
+}
+
+.nx-iw-recent-empty {
+  font-size: 11px;
+  color: rgba(255,255,255,0.20);
+  padding: 14px 14px;
+  text-align: center;
+  font-style: italic;
+}
+
+.nx-iw-recent-row {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  gap: 10px;
+  cursor: pointer;
+  transition: background var(--z53-t-instant) var(--z53-ease-micro);
+  border-bottom: 1px solid var(--z53-border);
+}
+
+.nx-iw-recent-row:last-child { border-bottom: none; }
+
+.nx-iw-recent-row:hover { background: var(--z53-hover-bg); }
+
+.nx-iw-recent-badge {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.nx-iw-recent-badge--done   { background: rgba(63,185,80,0.12); color: #3fb950; border: 1px solid rgba(63,185,80,0.2); }
+.nx-iw-recent-badge--failed { background: rgba(248,81,73,0.12);  color: #f85149; border: 1px solid rgba(248,81,73,0.2); }
+.nx-iw-recent-badge--other  { background: var(--z53-surface-3);  color: rgba(255,255,255,0.35); border: 1px solid var(--z53-border); }
+
+.nx-iw-recent-task {
+  flex: 1;
+  font-size: 12px;
+  color: rgba(255,255,255,0.65);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nx-iw-recent-time {
+  font-size: 10px;
+  color: rgba(255,255,255,0.22);
+  font-family: var(--font-mono, monospace);
+  flex-shrink: 0;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z53-E: UNIFIED BUTTON + CHIP INTERACTION SYSTEM
+   Predictable, intentional, premium.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* Micro-interaction: all clickable elements */
+button:not(:disabled),
+[role="button"]:not(:disabled) {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Unified tiny button */
+.nx-tiny-btn {
+  font-size: 10px;
+  font-weight: 500;
+  padding: 3px 9px;
+  border-radius: 5px;
+  background: var(--z53-surface-3);
+  border: 1px solid var(--z53-border-hi);
+  color: rgba(255,255,255,0.5);
+  cursor: pointer;
+  transition:
+    background   var(--z53-t-fast) var(--z53-ease-micro),
+    border-color var(--z53-t-fast) var(--z53-ease-micro),
+    color        var(--z53-t-fast) var(--z53-ease-micro);
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+}
+
+.nx-tiny-btn:hover {
+  background: var(--z53-hover-bg);
+  border-color: var(--z53-border-hi);
+  color: rgba(255,255,255,0.82);
+}
+
+.nx-tiny-btn:active {
+  transform: scale(0.97);
+  transition-duration: var(--z53-t-instant);
+}
+
+/* Topbar run button — primary action, operationally grounded */
+.nx-topbar-run-btn {
+  transition:
+    background   var(--z53-t-fast) var(--z53-ease-micro),
+    box-shadow   var(--z53-t-fast) var(--z53-ease-micro),
+    transform    var(--z53-t-instant) var(--z53-ease-micro);
+}
+
+.nx-topbar-run-btn:hover:not(:disabled) {
+  transform: none;
+  box-shadow: 0 0 0 2px rgba(188,140,255,0.25);
+}
+
+.nx-topbar-run-btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+/* Icon buttons — subtle, consistent */
+.nx-icon-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid transparent;
+  color: rgba(255,255,255,0.38);
+  cursor: pointer;
+  transition:
+    background   var(--z53-t-fast) var(--z53-ease-micro),
+    border-color var(--z53-t-fast) var(--z53-ease-micro),
+    color        var(--z53-t-fast) var(--z53-ease-micro);
+}
+
+.nx-icon-btn:hover {
+  background: var(--z53-hover-bg);
+  border-color: var(--z53-border);
+  color: rgba(255,255,255,0.72);
+}
+
+.nx-icon-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--z53-focus-ring);
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z53-F: TOPBAR POLISH
+   ══════════════════════════════════════════════════════════════════════ */
+
+.nx-shell-topbar {
+  background: var(--z53-surface-1);
+  border-bottom: 1px solid var(--z53-border);
+}
+
+.nx-topbar-breadcrumb-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.75);
+  letter-spacing: -0.01em;
+}
+
+.nx-topbar-breadcrumb-sep {
+  color: rgba(255,255,255,0.20);
+  font-size: 12px;
+  margin: 0 2px;
+}
+
+/* Model button */
+.nx-model-btn {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: var(--z53-surface-3);
+  border: 1px solid var(--z53-border-hi);
+  color: rgba(255,255,255,0.55);
+  cursor: pointer;
+  transition:
+    background   var(--z53-t-fast) var(--z53-ease-micro),
+    border-color var(--z53-t-fast) var(--z53-ease-micro),
+    color        var(--z53-t-fast) var(--z53-ease-micro);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.nx-model-btn:hover {
+  background: var(--z53-hover-bg);
+  border-color: var(--z53-border-hi);
+  color: rgba(255,255,255,0.80);
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z53-G: STATUSBAR MATURITY
+   Calm, informative, non-intrusive.
+   ══════════════════════════════════════════════════════════════════════ */
+
+.nx-statusbar {
+  background: var(--z53-surface-1);
+  border-top: 1px solid var(--z53-border);
+  font-size: 10px;
+  color: rgba(255,255,255,0.32);
+  letter-spacing: 0.01em;
+}
+
+.nx-statusbar-item {
+  color: rgba(255,255,255,0.35);
+  transition: color var(--z53-t-fast) var(--z53-ease-micro);
+}
+
+.nx-statusbar-sep {
+  color: rgba(255,255,255,0.12);
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z53-H: SESSION CARD POLISH (left panel)
+   ══════════════════════════════════════════════════════════════════════ */
+
+.nx-session-card {
+  background: var(--z53-surface-2);
+  border: 1px solid var(--z53-border);
+  border-radius: 7px;
+  padding: 10px 12px;
+  margin: 8px 0 4px;
+}
+
+.nx-session-label {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.25);
+  min-width: 52px;
+}
+
+.nx-session-val {
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.65);
+  font-family: var(--font-mono, monospace);
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z53-I: REDUCE VISUAL NOISE + COGNITIVE OVERLOAD
+   Suppress low-value telemetry surfaces in default view.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* Suppress debug performance HUD unless explicitly triggered */
+#nxPerfHUD:not(.z53-forced) {
+  display: none !important;
+}
+
+/* Collapse verbose phase labels in observability — show only on hover */
+.nx-obs-phase-label {
+  opacity: 0;
+  transition: opacity var(--z53-t-fast) var(--z53-ease-micro);
+}
+.nx-obs-phase-label:hover { opacity: 1; }
+
+/* Reduce stacked overlay noise — only one banner at a time */
+.nx-exec-pipeline + .nx-exec-pipeline {
+  display: none !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z53-J: AUTH SCREEN POLISH
+   First impression matters. Calm, professional, trustworthy.
+   ══════════════════════════════════════════════════════════════════════ */
+
+.nx-auth-card {
+  background: var(--z53-surface-2);
+  border: 1px solid var(--z53-border-hi);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.03),
+    0 24px 48px rgba(0,0,0,0.6);
+}
+
+.nx-auth-logo-text {
+  font-size: 18px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.90);
+  letter-spacing: -0.02em;
+}
+
+.nx-auth-logo-text span {
+  color: #bc8cff;
+}
+
+.nx-auth-btn-primary {
+  transition:
+    background   var(--z53-t-fast) var(--z53-ease-micro),
+    box-shadow   var(--z53-t-fast) var(--z53-ease-micro),
+    transform    var(--z53-t-instant) var(--z53-ease-micro);
+}
+
+.nx-auth-btn-primary:hover:not(:disabled) {
+  box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+}
+
+.nx-auth-btn-primary:active:not(:disabled) {
+  transform: scale(0.99);
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z53-K: FOCUS STATE UNIFICATION
+   Consistent, accessible, on-brand.
+   ══════════════════════════════════════════════════════════════════════ */
+
+*:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--z53-focus-ring) !important;
+  border-radius: 4px;
+}
+
+/* Remove browser default focus on click (keep for keyboard only) */
+*:focus:not(:focus-visible) {
+  outline: none;
+  box-shadow: none;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z53-L: EXECUTION PIPELINE POLISH
+   ══════════════════════════════════════════════════════════════════════ */
+
+.nx-exec-pipeline {
+  background: var(--z53-surface-2);
+  border-bottom: 1px solid var(--z53-border);
+  padding: 6px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+}
+
+.nx-exec-stage {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.28);
+  letter-spacing: 0.04em;
+  transition: color var(--z53-t-base) var(--z53-ease-micro);
+}
+
+.nx-exec-stage.active  { color: #bc8cff; }
+.nx-exec-stage.done    { color: rgba(63,185,80,0.8); }
+.nx-exec-stage.failed  { color: rgba(248,81,73,0.8); }
+
+.nx-stage-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
+.nx-exec-stage.active .nx-stage-dot {
+  opacity: 1;
+  animation: z53-pulse 1.4s ease infinite;
+}
+
+@keyframes z53-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z53-M: RUNTIME PULSE INDICATOR POLISH
+   ══════════════════════════════════════════════════════════════════════ */
+
+.z33-runtime-pulse {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  color: rgba(255,255,255,0.30);
+  padding: 3px 8px;
+  border-radius: 5px;
+  background: transparent;
+  border: 1px solid transparent;
+  transition:
+    color        var(--z53-t-fast) var(--z53-ease-micro),
+    background   var(--z53-t-fast) var(--z53-ease-micro),
+    border-color var(--z53-t-fast) var(--z53-ease-micro);
+  cursor: default;
+  user-select: none;
+}
+
+.z33-runtime-pulse:hover {
+  background: var(--z53-hover-bg);
+  border-color: var(--z53-border);
+  color: rgba(255,255,255,0.55);
+}
+
+.z33-pulse-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.20);
+  flex-shrink: 0;
+  transition: background var(--z53-t-base) var(--z53-ease-micro);
+}
+
+.z33-runtime-pulse.running .z33-pulse-dot {
+  background: #3fb950;
+  animation: z53-pulse 1.2s ease infinite;
+}
+
+.z33-runtime-pulse.error .z33-pulse-dot {
+  background: #f85149;
+}
+
+.z33-pulse-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z53-N: TOAST / NOTIFICATION CALMNESS
+   No flashy animations. Informative and quiet.
+   ══════════════════════════════════════════════════════════════════════ */
+
+.nx-toast,
+.nds-toast {
+  background: var(--z53-surface-3);
+  border: 1px solid var(--z53-border-hi);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  font-size: 12px;
+  color: rgba(255,255,255,0.80);
+  animation: z53-toast-in var(--z53-t-base) var(--z53-ease-out);
+}
+
+@keyframes z53-toast-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z53-O: COMMAND PALETTE POLISH
+   ══════════════════════════════════════════════════════════════════════ */
+
+.nx-palette-overlay {
+  background: rgba(0,0,0,0.65);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.nx-palette-modal {
+  background: var(--z53-surface-2);
+  border: 1px solid var(--z53-border-hi);
+  border-radius: 10px;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.04),
+    0 32px 64px rgba(0,0,0,0.7);
+  animation: z53-palette-in var(--z53-t-base) var(--z53-ease-out);
+}
+
+@keyframes z53-palette-in {
+  from { opacity: 0; transform: scale(0.97) translateY(-8px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.nx-palette-input {
+  background: transparent;
+  border: none;
+  font-size: 14px;
+  color: rgba(255,255,255,0.85);
+}
+
+.nx-palette-input:focus { outline: none; box-shadow: none !important; }
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z53-P: SCROLLBAR CONSISTENCY
+   ══════════════════════════════════════════════════════════════════════ */
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.10) transparent;
+}
+
+*::-webkit-scrollbar { width: 4px; height: 4px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.10);
+  border-radius: 2px;
+}
+*::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.18); }

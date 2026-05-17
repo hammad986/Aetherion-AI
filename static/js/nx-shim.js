@@ -1,5 +1,5 @@
 ﻿/**
- * nx-shim.js — Nexora Legacy Migration Shim v1
+ * nx-shim.js — Aetherion Legacy Migration Shim v1
  * ══════════════════════════════════════════════════════════════════════
  * PURPOSE: Intercept legacy window.* globals and route them through
  * the canonical NxBus / NxState architecture WITHOUT rewriting callers.

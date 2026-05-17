@@ -32,8 +32,8 @@ RAZORPAY_KEY_ID     = os.getenv("RAZORPAY_KEY_ID", "")
 RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET", "")
 EMAIL_API_KEY       = os.getenv("EMAIL_API_KEY", "")       # Resend API key
 EMAIL_FROM          = os.getenv("EMAIL_FROM", "billing@nexora.ai")
-APP_NAME            = "Nexora"
-APP_FULL_NAME       = "Nexora AI Platform"
+APP_NAME            = "Aetherion"
+APP_FULL_NAME       = "Aetherion AI Platform"
 
 RAZORPAY_ENABLED = bool(RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET)
 

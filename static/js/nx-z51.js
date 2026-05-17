@@ -91,7 +91,7 @@
     const betaBadge = document.createElement('span');
     betaBadge.className = 'z51-beta-badge';
     betaBadge.textContent = 'BETA';
-    betaBadge.title = 'Nexora AI — Beta v' + NX_BETA.version;
+    betaBadge.title = 'Aetherion AI — Beta v' + NX_BETA.version;
     /* Keep plan badge but add beta indicator alongside */
     planBadge.parentNode.insertBefore(betaBadge, planBadge.nextSibling);
   }

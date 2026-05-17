@@ -1,5 +1,5 @@
 /**
- * nx-bus.js — Nexora Canonical Event Bus v1
+ * nx-bus.js — Aetherion Canonical Event Bus v1
  * ══════════════════════════════════════════════════════════════════════
  * Architecture: typed pub/sub bus. Replaces direct window.* coupling.
  *

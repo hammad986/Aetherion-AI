@@ -1,7 +1,7 @@
-# Nexora AI Platform
+# Aetherion AI Platform
 
 ## Overview
-Nexora is an autonomous coding agent platform designed to streamline software development through AI-driven processes. It features a multi-LLM router with intelligent routing and auto-failover, a comprehensive web-based UI, and terminal integration. The system operates on a Plan → Execute → Observe → Fix development loop, aiming for a robust, self-improving, and highly customizable environment for AI-assisted software engineering. Its core purpose is to provide an efficient and intelligent platform for AI-powered development, with capabilities extending to complex task orchestration, self-correction, and collaborative agent systems.
+Aetherion AI is an autonomous coding agent platform designed to streamline software development through AI-driven processes. It features a multi-LLM router with intelligent routing and auto-failover, a comprehensive web-based UI, and terminal integration. The system operates on a Plan → Execute → Observe → Fix development loop, aiming for a robust, self-improving, and highly customizable environment for AI-assisted software engineering. Its core purpose is to provide an efficient and intelligent platform for AI-powered development, with capabilities extending to complex task orchestration, self-correction, and collaborative agent systems.
 
 ## User Preferences
 I prefer iterative development with clear, concise feedback. I value transparency in the AI's decision-making process and prefer to be asked before major architectural changes are implemented. I appreciate detailed explanations when new features or complex solutions are introduced.

@@ -356,7 +356,7 @@
     banner.className = 'z52-workspace-ready';
     banner.innerHTML = `
       <span class="z52-ready-dot"></span>
-      <span class="z52-ready-msg" id="z52ReadyMsg">Nexora ready · all systems operational</span>
+      <span class="z52-ready-msg" id="z52ReadyMsg">Ready · all systems operational</span>
       <span class="z52-ready-time" id="z52ReadyTime">${_fmtTime()}</span>`;
     /* Insert before the first child of hero */
     hero.insertBefore(banner, hero.firstChild);
@@ -381,8 +381,8 @@
     wrap.className = 'z52-empty-state';
     wrap.innerHTML = `
       <div class="z52-empty-label">Start a mission</div>
-      ${_missionCard('🏗', 'Build a feature', 'Describe a feature and Nexora will plan and implement it', 'Build a new feature: ')}
-      ${_missionCard('🐛', 'Fix a bug', 'Paste the error — Nexora diagnoses and patches the code', 'Debug and fix this error: ')}
+      ${_missionCard('🏗', 'Build a feature', 'Describe a feature and the agent will plan and build it', 'Build a new feature: ')}
+      ${_missionCard('🐛', 'Fix a bug', 'Paste the error and the agent will diagnose and fix it', 'Debug and fix this error: ')}
       ${_missionCard('🔍', 'Audit the codebase', 'Review files for bugs, security issues, and improvements', 'Audit workspace for errors and security issues')}
     `;
     emptyEl.appendChild(wrap);
@@ -442,8 +442,8 @@
 
   /* Map of generic strings → operational replacements */
   const IDENTITY_MAP = [
-    /* Idle hero title — "Ready for execution" → "Nexora ready" */
-    ['#nxIdleHero .nx-iw-header .nx-iw-title',       'Ready for execution',  'Nexora ready'],
+    /* Idle hero title — "Ready for execution" → "Aetherion ready" */
+    ['#nxIdleHero .nx-iw-header .nx-iw-title',       'Workspace ready',  'Aetherion ready'],
     /* "Recent executions" → "Mission history" */
     ['#nxIdleHero .nx-iw-section-label',             'Recent executions',    'Mission history'],
     /* "Agent running" in HITL status */

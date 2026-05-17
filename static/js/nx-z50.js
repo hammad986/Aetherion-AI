@@ -26,20 +26,21 @@
     banner.style.display = 'flex';
     const dismissBtn = banner.querySelector('.nx-cookie-dismiss');
     if (dismissBtn) {
-      dismissBtn.onclick = () => z50DismissCookieBanner(false);
+      dismissBtn.onclick = () => z50DismissCookieBanner(true);
     }
   }
 
-  // Z56: Canonical definition — session.js legacy override removed (see session.js fix)
+  // Z58: Canonical definition — both accept and dismiss persist consent for beta.
   window.nxAcceptCookies = function () {
     z50DismissCookieBanner(true);
   };
 
   function z50DismissCookieBanner(accept) {
-    if (accept) {
-      localStorage.setItem('nx_cookie_accepted', '1');
-      localStorage.setItem('nx_cookie_ok', '1'); // Z56: keep legacy key in sync
-    }
+    // Z58: Always persist — for beta, accept and dismiss are equivalent.
+    // Banner must never re-appear after any user interaction.
+    localStorage.setItem('nx_cookie_accepted', '1');
+    localStorage.setItem('nx_cookie_ok', '1');
+    if (accept !== false) { /* already set above */ }
     const banner = $('nx-cookie-banner');
     if (!banner) return;
     banner.classList.add('z50-hiding');

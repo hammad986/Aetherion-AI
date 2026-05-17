@@ -1,0 +1,234 @@
+PHASE Z58 — INTERACTION VALIDATION + DEAD CONTROL ELIMINATION
+
+IMPORTANT:
+Do NOT add new visual polish.
+Do NOT add new runtime intelligence.
+Do NOT add new replay, graph, memory, or orchestration systems.
+
+This phase is only about one thing:
+every visible control must be real, reliable, and trustworthy.
+
+Current problem:
+the UI looks better than before, but several controls still feel inert:
+
+* cookie accept/dismiss
+* some topbar actions
+* some sidebar/panel actions
+* startup warnings / rate-limit toasts
+* workspace buttons that appear tappable but do nothing
+* login/onboarding actions that feel shallow
+* empty states that look active but are not operational
+
+The goal of Z58 is:
+make Aetherion AI behave like a truly usable beta product.
+
+STRICT RULES:
+🔒 NO NEW AGENTS
+🔒 NO NEW REPLAY SYSTEMS
+🔒 NO NEW GRAPH ENGINES
+🔒 NO NEW TELEMETRY LAYERS
+🔒 NO NEW POLLING LOOPS
+🔒 NO NEW VISUAL EFFECTS
+🔒 NO MARKETING UI
+🔒 NO FAKE BUTTONS
+🔒 NO PLACEHOLDER INTERACTIONS
+🔒 FIX OR HIDE ONLY
+🔒 TRUST > COMPLEXITY
+🔒 FUNCTIONALITY > APPEARANCE
+
+====================================================
+Z58A — FULL INTERACTION AUDIT
+=============================
+
+Audit every visible interactive element across:
+
+* auth/login screen
+* cookie banner
+* topbar
+* nav rail
+* workspace tabs
+* files/chat/history/settings panels
+* run/stop controls
+* command palette
+* replay controls
+* preview controls
+* context chips
+* close/dismiss buttons
+* onboarding actions
+* any visible icon-button or chip
+
+For EACH control, verify:
+
+1. click handler exists
+2. hover state exists
+3. active state exists
+4. disabled state exists
+5. keyboard interaction exists
+6. focus-visible state exists
+7. loading feedback exists
+8. failure feedback exists
+9. no duplicate handlers
+10. no silent no-op behavior
+
+If any visible control cannot be made real immediately:
+hide it.
+
+====================================================
+Z58B — COOKIE BANNER REALIZATION
+================================
+
+The cookie banner must be fully functional.
+
+Requirements:
+
+1. Accept must persist consent
+2. Dismiss must persist consent
+3. Banner must not reappear after acceptance
+4. Legacy consent keys must be harmonized
+5. No duplicate consent handlers
+6. No visual overlay conflicts
+7. No broken click targets
+
+If cookie consent is not actually needed for beta:
+remove the banner entirely.
+
+====================================================
+Z58C — DEAD CONTROL ELIMINATION
+===============================
+
+Remove or disable all fake-feeling elements:
+
+* buttons with no effect
+* chips that only set text but do nothing
+* icons that are decorative only
+* controls without backend linkage
+* actions that show toasts but do not perform work
+* startup warnings that are not real
+* rate-limit errors that are emitted by bad polling or duplicated requests
+
+Every visible action must either:
+
+* perform a real operation
+  OR
+* be hidden from the UI
+
+====================================================
+Z58D — STARTUP ERROR SANITIZATION
+=================================
+
+Investigate and eliminate startup noise:
+
+* false rate-limit toasts
+* repeated reconnect messages
+* duplicate initialization banners
+* stale warnings on login
+* overlay spam
+* startup race-condition UI
+
+Requirements:
+
+* only real errors should surface
+* repeated identical messages must be deduplicated
+* startup must feel calm and deterministic
+* no warning should appear without a real cause
+
+====================================================
+Z58E — WORKSPACE FUNCTIONALITY CHECK
+====================================
+
+Verify the workspace surfaces are actually operational:
+
+* run button
+* stop button
+* sidebar actions
+* panel open/close
+* session/history actions
+* files actions
+* chat actions
+* settings actions
+
+If any surface is still shallow:
+either wire it fully or hide it.
+
+====================================================
+Z58F — HYDRATION + BINDING STABILITY
+====================================
+
+Audit interaction binding order:
+
+* DOM ready timing
+* hydration timing
+* event listener registration
+* panel render timing
+* SSE binding timing
+
+Requirements:
+
+* no clicks before hydration
+* no late-binding dead controls
+* no duplicated listeners
+* no stale initialization
+* no double-render action conflicts
+
+====================================================
+Z58G — TRUST HARDENING
+======================
+
+Make Aetherion AI feel dependable.
+
+Requirements:
+
+* reliable dismiss actions
+* reliable close buttons
+* reliable acceptance actions
+* reliable panel toggles
+* reliable startup behavior
+* reliable runtime feedback
+* reliable empty-state actions
+
+If a feature is incomplete:
+do not tease it in the UI.
+
+====================================================
+REQUIRED REPORTS
+================
+
+Generate:
+
+* docs/Z58_INTERACTION_AUDIT.md
+* docs/Z58_DEAD_CONTROL_REPORT.md
+* docs/Z58_COOKIE_REALIZATION.md
+* docs/Z58_STARTUP_SANITIZATION.md
+* docs/Z58_BINDING_STABILITY.md
+* docs/Z58_PRODUCT_TRUST_VERDICT.md
+
+Each report MUST include:
+
+1. Remaining broken interactions
+2. Remaining fake controls
+3. Remaining startup noise
+4. Remaining binding risks
+5. Remaining trust gaps
+6. Remaining dead surfaces
+7. Honest reliability score
+
+====================================================
+FINAL VALIDATION
+================
+
+Before completion verify:
+
+* every visible button works or is hidden
+* cookie banner works or is removed
+* no fake warnings remain
+* no duplicate messages remain
+* no startup spam remains
+* no dead controls remain
+* no interaction race conditions remain
+* no late-binding bugs remain
+* workspace feels responsive
+* beta trust is improved
+
+MOST IMPORTANT:
+After Z58, Aetherion AI should feel like a real usable beta product,
+not a visually improved shell with broken interactions.

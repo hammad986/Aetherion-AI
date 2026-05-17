@@ -355,8 +355,8 @@
     banner.id = 'z52ReadyBanner';
     banner.className = 'z52-workspace-ready';
     banner.innerHTML = `
-      <span class="z52-ready-dot"></span>
-      <span class="z52-ready-msg" id="z52ReadyMsg">Ready · all systems operational</span>
+      <span class="z52-ready-dot" id="z52ReadyDot"></span>
+      <span class="z52-ready-msg" id="z52ReadyMsg">Workspace ready</span>
       <span class="z52-ready-time" id="z52ReadyTime">${_fmtTime()}</span>`;
     /* Insert before the first child of hero */
     hero.insertBefore(banner, hero.firstChild);
@@ -401,9 +401,13 @@
   }
 
   function _wireIdleHeroStats() {
-    /* Poll model/confidence from existing nxIdleModel etc. — already done by Z50.
-       Z52 adds context-aware hints: show a hint if model is unset or confidence is low */
-    setInterval(() => {
+    /* Z58: Context hints now fire ONCE after 45s, only if user has not yet run
+       anything (avoids repetitive "No AI provider" nag on every 12s tick).
+       Previously this was a setInterval(12000) which emitted spam on every idle page. */
+    setTimeout(() => {
+      /* Skip if user has already run a task this session */
+      if (document.body.dataset.nxHasRun || document.body.classList.contains('nx-running')) return;
+
       const modelEl = $('nxIdleModel');
       const confEl  = $('nxIdleConf');
       if (!modelEl || !confEl) return;
@@ -411,13 +415,13 @@
       const model = (modelEl.textContent || '').trim();
       const conf  = (confEl.textContent  || '').trim();
 
-      /* Clear previous hints */
+      /* Clear any stale hints */
       qsa('.z52-context-hint', $('nxIdleHero') || document).forEach(el => el.remove());
       const hero = $('nxIdleHero');
-      if (!hero || document.body.classList.contains('nx-running')) return;
+      if (!hero) return;
 
-      /* If model is unset, suggest configuring keys */
-      if (!model || model === '—') {
+      /* If model is still unset 45s after boot, user genuinely needs to configure */
+      if (!model || model === '—' || model === 'No model') {
         const hint = document.createElement('div');
         hint.className = 'z52-context-hint';
         hint.innerHTML = `<span>⚙</span> <span>No AI provider configured — <strong>open Settings → Providers</strong> to add your API keys</span>`;
@@ -425,7 +429,7 @@
         section.appendChild(hint);
       }
 
-      /* If confidence is low, hint at context compression */
+      /* If confidence is low, hint at context compression — still one-shot */
       if (conf && parseFloat(conf) < 30 && parseFloat(conf) > 0) {
         const hint = document.createElement('div');
         hint.className = 'z52-context-hint';
@@ -433,7 +437,7 @@
         const section = qs('.nx-iw-section', hero) || hero;
         section.appendChild(hint);
       }
-    }, 12000);
+    }, 45000);
   }
 
   /* ═══════════════════════════════════════════════════════════════════

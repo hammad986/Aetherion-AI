@@ -448,15 +448,13 @@
       banner.style.display = 'none';
       return;
     }
-    /* Ensure both Accept and Dismiss write to localStorage */
+    /* Z58: Ensure ALL buttons (accept AND dismiss) write to localStorage */
     qsa('button', banner).forEach(btn => {
-      const txt = btn.textContent?.trim().toLowerCase();
-      if (txt === 'accept' || txt === 'ok' || btn.className?.includes('accept')) {
-        btn.addEventListener('click', () => {
-          localStorage.setItem('nx_cookie_accepted', '1');
-          banner.style.display = 'none';
-        }, { once: true });
-      }
+      btn.addEventListener('click', () => {
+        localStorage.setItem('nx_cookie_accepted', '1');
+        localStorage.setItem('nx_cookie_ok', '1');
+        banner.style.display = 'none';
+      }, { once: true });
     });
   }
 

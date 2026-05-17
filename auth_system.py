@@ -13,6 +13,7 @@ Features:
 import sqlite3
 import secrets
 import uuid
+import hashlib
 import jwt
 import datetime
 import bcrypt
@@ -157,6 +158,11 @@ def _make_refresh_token() -> str:
     return secrets.token_hex(64)
 
 
+def _hash_refresh_token(token: str) -> str:
+    """SHA-256 hash of refresh token — only the hash is stored in DB."""
+    return hashlib.sha256(token.encode("utf-8")).hexdigest()
+
+
 def _get_user_info(cursor, user_id: int):
     cursor.execute("SELECT id, email, name, provider, role, is_banned FROM users WHERE id = ?", (user_id,))
     return cursor.fetchone()
@@ -171,6 +177,7 @@ def create_session(user_id: int, device_info: str = "", ip_address: str = "") ->
 
     session_id = str(uuid.uuid4())
     refresh = _make_refresh_token()
+    refresh_hash = _hash_refresh_token(refresh)
     expires_at = (
         datetime.datetime.utcnow() + datetime.timedelta(days=REFRESH_TOKEN_DAYS)
     ).isoformat()
@@ -178,7 +185,7 @@ def create_session(user_id: int, device_info: str = "", ip_address: str = "") ->
     c.execute(
         "INSERT INTO auth_sessions (id, user_id, refresh_token, device_info, ip_address, expires_at) "
         "VALUES (?, ?, ?, ?, ?, ?)",
-        (session_id, user_id, refresh, device_info[:255], ip_address[:64], expires_at),
+        (session_id, user_id, refresh_hash, device_info[:255], ip_address[:64], expires_at),
     )
     conn.commit()
     conn.close()
@@ -198,9 +205,10 @@ def create_session(user_id: int, device_info: str = "", ip_address: str = "") ->
 def refresh_access_token(refresh_token: str, ip_address: str = ""):
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
+    token_hash = _hash_refresh_token(refresh_token)
     c.execute(
         "SELECT id, user_id, expires_at, device_info FROM auth_sessions WHERE refresh_token = ?",
-        (refresh_token,),
+        (token_hash,),
     )
     row = c.fetchone()
     if not row:
@@ -221,12 +229,13 @@ def refresh_access_token(refresh_token: str, ip_address: str = ""):
         return False, "Refresh token expired"
 
     new_refresh = _make_refresh_token()
+    new_refresh_hash = _hash_refresh_token(new_refresh)
     new_expires = (
         datetime.datetime.utcnow() + datetime.timedelta(days=REFRESH_TOKEN_DAYS)
     ).isoformat()
     c.execute(
         "UPDATE auth_sessions SET refresh_token = ?, expires_at = ?, ip_address = ? WHERE id = ?",
-        (new_refresh, new_expires, ip_address[:64], session_id),
+        (new_refresh_hash, new_expires, ip_address[:64], session_id),
     )
 
     user = _get_user_info(c, user_id)
@@ -247,7 +256,8 @@ def refresh_access_token(refresh_token: str, ip_address: str = ""):
 def revoke_session(refresh_token: str):
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
-    c.execute("DELETE FROM auth_sessions WHERE refresh_token = ?", (refresh_token,))
+    token_hash = _hash_refresh_token(refresh_token)
+    c.execute("DELETE FROM auth_sessions WHERE refresh_token = ?", (token_hash,))
     conn.commit()
     conn.close()
 

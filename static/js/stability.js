@@ -8,6 +8,7 @@
     let _loadingCount = 0;
     let _loadingBar = null;
     let _loadingDoneTimer = null;
+    let _nx429Debounce = false;
 
     function _initLoadingBar() {
       if ($id('nx-loading-bar')) return;
@@ -100,7 +101,13 @@
             if (resp.status >= 500) {
               nxToast('error', `Server error (${resp.status}) on ${urlStr.split('/api/')[1] || urlStr}`, 'Server Error');
             } else if (resp.status === 429) {
-              nxToast('warning', 'Too many requests — please wait a moment.', 'Rate Limited');
+              // Only show 429 toast for explicit user-triggered calls, not background polling
+              const isBgPoll = /\/(queue|health|metrics|costs|sessions|routing|patterns|evolution|skills|z31|z32|z38|z39|z40|z41|z49|p5|p6|p9)/.test(urlStr);
+              if (!isBgPoll && !_nx429Debounce) {
+                _nx429Debounce = true;
+                nxToast('warning', 'Too many requests — please wait a moment.', 'Rate Limited');
+                setTimeout(() => { _nx429Debounce = false; }, 10000);
+              }
             }
           }
           return resp;

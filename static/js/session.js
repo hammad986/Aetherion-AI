@@ -209,7 +209,8 @@
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const d = await r.json();
-        if (d.ok && !d.verified) {
+        // Only show banner if email service is configured AND user is unverified
+        if (d.ok && !d.verified && d.email_service_enabled) {
           const banner = document.getElementById('nx-verify-banner');
           if (banner) banner.classList.add('show');
         }

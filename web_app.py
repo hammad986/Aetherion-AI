@@ -9071,8 +9071,11 @@ def api_verify_email():
 @token_required
 def api_verification_status():
     from account_recovery import get_verification_status
+    email_service_enabled = bool(os.environ.get("EMAIL_API_KEY", "").strip())
+    if not email_service_enabled:
+        return jsonify({"ok": True, "verified": True, "email_service_enabled": False})
     verified = get_verification_status(g.user_id)
-    return jsonify({"ok": True, "verified": verified})
+    return jsonify({"ok": True, "verified": verified, "email_service_enabled": True})
 
 
 @app.route("/api/run_workflow", methods=["POST"])

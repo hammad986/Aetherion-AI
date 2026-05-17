@@ -1,0 +1,180 @@
+PHASE FIX-CORE-UI — STOP ADDING FEATURES. FIX THE ACTUAL PRODUCT.
+
+IMPORTANT:
+Do NOT add new systems.
+Do NOT add new runtime intelligence.
+Do NOT generate fake enterprise UX.
+Do NOT generate new architecture layers.
+Do NOT focus on reports first.
+
+The product currently LOOKS advanced,
+but most interactions still feel fake or incomplete.
+
+This phase exists ONLY to make the UI genuinely functional.
+
+====================================================
+CRITICAL RULES
+==============
+
+1. DO NOT claim something is fixed unless it is visibly working.
+2. DO NOT generate placeholder panels.
+3. DO NOT leave empty surfaces.
+4. DO NOT add cosmetic systems.
+5. DO NOT prioritize docs over implementation.
+6. EVERY visible button must be tested.
+7. EVERY panel must contain real content.
+8. If something is not working:
+   FIX IT FULLY before moving on.
+
+====================================================
+TASK 1 — SETTINGS PANEL
+=======================
+
+Current issue:
+Settings panel is still visually empty.
+
+Fix the REAL root cause.
+
+Audit:
+
+* render pipeline
+* DOM injection
+* async fetch
+* selector mismatch
+* hidden CSS
+* stale mount
+* panel hydration
+* visibility states
+
+Requirements:
+
+* settings content must visibly render
+* provider settings visible
+* model settings visible
+* theme settings visible
+* keyboard shortcuts visible
+* account section visible
+* beta mode visible
+
+NO placeholders.
+
+====================================================
+TASK 2 — BUTTON FUNCTIONALITY AUDIT
+===================================
+
+Audit EVERY visible button.
+
+Especially:
+
+* Run Task
+* Stop Task
+* Sidebar buttons
+* Settings
+* History
+* Chat
+* Files
+* Search
+* Cookie buttons
+* Dropdowns
+* Close buttons
+* Artifact buttons
+* Session actions
+
+For EACH button:
+
+1. confirm click handler exists
+2. confirm action executes
+3. confirm visual response exists
+4. confirm no dead click
+5. confirm keyboard accessibility
+
+If button is fake:
+either FIX IT or REMOVE IT.
+
+====================================================
+TASK 3 — WORKSPACE CENTER
+=========================
+
+Current workspace still feels empty and fake.
+
+Requirements:
+
+* visible task composer
+* visible current status
+* recent sessions
+* recent artifacts
+* quick actions
+* execution area
+* meaningful empty state
+
+The center should feel:
+usable,
+alive,
+practical.
+
+====================================================
+TASK 4 — EXECUTION FLOW
+=======================
+
+Requirements:
+
+* Run Task actually starts execution
+* progress visibly updates
+* logs visibly stream
+* task can stop
+* completion visibly appears
+* artifacts appear
+* session saves correctly
+
+NO fake execution states.
+
+====================================================
+TASK 5 — REMOVE FAKE UX
+=======================
+
+Remove:
+
+* fake runtime messages
+* fake enterprise language
+* fake restore spam
+* fake operational notifications
+
+Replace with:
+simple,
+honest,
+real UX.
+
+====================================================
+TASK 6 — VALIDATE EVERYTHING
+============================
+
+Before completion:
+manually test:
+
+* every sidebar button
+* every modal
+* every panel
+* run task
+* stop task
+* settings
+* artifact open
+* history
+* cookie buttons
+
+DO NOT mark complete unless these ACTUALLY work.
+
+====================================================
+FINAL OUTPUT
+============
+
+At the end:
+ONLY report:
+
+1. what was ACTUALLY fixed
+2. what is STILL broken
+3. which buttons still do not work
+4. which panels still incomplete
+5. real remaining beta blockers
+
+DO NOT exaggerate completion.
+DO NOT claim “fully operational” unless verified.

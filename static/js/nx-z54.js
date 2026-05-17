@@ -897,36 +897,30 @@
     window._z54PanelsHooked = true;
 
     window.nxTogglePanel = function (panelId) {
-      // Reset z50 load flag so z54 can render fresh
+      // Clear both z50 and z54 load flags so z54 always renders its richer
+      // content on every open. Without this, z50 rebuilds its simpler DOM on
+      // re-open (because z50loaded was cleared) and z54 then tries to refresh
+      // elements that no longer exist (because z54built was still set).
       const contentEl = $('nxPanelContent-' + panelId);
       if (contentEl) {
         delete contentEl.dataset.z50loaded;
+        delete contentEl.dataset.z54built;
       }
 
       orig.call(this, panelId);
 
-      // After z50 toggles the panel, populate with z54 content
+      // After z50 toggles the panel (display:flex), populate with z54 content
       const panel = $('nxPanel-' + panelId);
       const isOpen = panel && panel.style.display !== 'none' && panel.style.display !== '';
       if (!isOpen || !contentEl) return;
 
-      const alreadyBuilt = contentEl.dataset.z54built;
-      if (!alreadyBuilt) {
-        contentEl.dataset.z54built = '1';
-        switch (panelId) {
-          case 'chat':     z54BuildChatPanel(contentEl);    break;
-          case 'files':    z54BuildFilesPanel(contentEl);   break;
-          case 'history':  z54BuildHistoryPanel(contentEl); break;
-          case 'settings': z54BuildSettingsPanel(contentEl); break;
-        }
-      } else {
-        // Refresh live data on re-open
-        switch (panelId) {
-          case 'chat':     z54LoadChat();           break;
-          case 'files':    z54RefreshFiles();       break;
-          case 'history':  z54RefreshHistory();     break;
-          case 'settings': z54LoadSettingsPanel();  break;
-        }
+      // Always build fresh — each builder fetches live data via its own refresh call
+      contentEl.dataset.z54built = '1';
+      switch (panelId) {
+        case 'chat':     z54BuildChatPanel(contentEl);     break;
+        case 'files':    z54BuildFilesPanel(contentEl);    break;
+        case 'history':  z54BuildHistoryPanel(contentEl);  break;
+        case 'settings': z54BuildSettingsPanel(contentEl); break;
       }
     };
   }

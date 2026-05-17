@@ -671,17 +671,32 @@
     const orig = window.nxTogglePanel;
     window.nxTogglePanel = function (name) {
       if (typeof orig === 'function') orig.call(this, name);
-      // Populate panel content on open
+      // Populate panel content on open — but don't clobber richer z54/z50 content
       setTimeout(() => {
         const panel = $('nxPanel-' + name);
-        if (panel?.style.display !== 'flex') return; // was toggled closed
+        const d = panel?.style.display;
+        if (!panel || !d || d === 'none') return; // panel was toggled closed
+        const contentEl = $('nxPanelContent-' + name);
         switch (name) {
-          case 'files':    _renderFilesPanel();    break;
-          case 'chat':     _renderChatPanel();     break;
-          case 'history':  _renderHistoryPanel();  break;
-          case 'settings': _renderSettingsPanel(); break;
+          case 'files':
+            // z46 has the best files panel (downloads + artifacts + log link)
+            // Only render if z54 hasn't already built a richer version
+            if (!contentEl?.dataset.z54built) _renderFilesPanel();
+            break;
+          case 'chat':
+            // z54 has a richer chat (API history + live injection); z46 only renders as fallback
+            if (!contentEl?.dataset.z54built) _renderChatPanel();
+            break;
+          case 'history':
+            // Only render if z54 hasn't built its (richer) version
+            if (!contentEl?.dataset.z54built) _renderHistoryPanel();
+            break;
+          case 'settings':
+            // Only render if z54 hasn't built its (richer, live-data) version
+            if (!contentEl?.dataset.z54built) _renderSettingsPanel();
+            break;
         }
-      }, 50);
+      }, 80);
     };
   }
 

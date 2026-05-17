@@ -354,6 +354,7 @@
 .nx-slide-panel {
   transition: none;
 }
+.nx-slide-panel[style*="display: flex"] .nx-panel-content,
 .nx-slide-panel[style*="display: block"] .nx-panel-content {
   animation: z50-slide-in-up var(--dur-moderate) var(--ease-out);
 }

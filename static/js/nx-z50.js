@@ -155,7 +155,7 @@
       return;
     }
 
-    panel.style.display = 'block';
+    panel.style.display = 'flex';
     _z50ActivePanel = panelId;
     sessionStorage.setItem('nx_navrail_panel', panelId);
     if (btn) btn.classList.add('z50-active');
@@ -172,15 +172,23 @@
   function z50PopulatePanel(panelId) {
     const contentEl = $('nxPanelContent-' + panelId);
     if (!contentEl) return;
-    if (contentEl.dataset.z50loaded) return; // already populated, live data refreshed below
 
     switch (panelId) {
-      case 'files':    z50BuildFilesPanel(contentEl); break;
-      case 'history':  z50BuildHistoryPanel(contentEl); break;
-      case 'settings': z50BuildSettingsPanel(contentEl); break;
-      case 'chat':     z50BuildChatPanel(contentEl); break;
+      case 'files':
+        if (!contentEl.dataset.z50loaded) { z50BuildFilesPanel(contentEl); contentEl.dataset.z50loaded = '1'; }
+        else z50RefreshFileTree(); // re-open: refresh live data only
+        break;
+      case 'history':
+        z50BuildHistoryPanel(contentEl); // always rebuild so sessions are fresh
+        break;
+      case 'settings':
+        if (!contentEl.dataset.z50loaded) { z50BuildSettingsPanel(contentEl); contentEl.dataset.z50loaded = '1'; }
+        else z50LoadSettingsStatus(); // re-open: refresh status only
+        break;
+      case 'chat':
+        if (!contentEl.dataset.z50loaded) { z50BuildChatPanel(contentEl); contentEl.dataset.z50loaded = '1'; }
+        break;
     }
-    contentEl.dataset.z50loaded = '1';
   }
 
   /* ── Files panel ────────────────────────────────────────────────── */

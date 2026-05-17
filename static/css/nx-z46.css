@@ -1,0 +1,733 @@
+/**
+ * nx-z46.css — Phase Z46: Operational Workspace Realization + Interaction Validation
+ * ════════════════════════════════════════════════════════════════════════════════════
+ * Z46A — Sidebar panel content
+ * Z46B — Interaction validation polish
+ * Z46C — Operational empty states
+ * Z46D — Mission lifecycle visual states
+ * Z46E — Surface elevation + depth hierarchy
+ * Z46F — Execution feedback maturity
+ * Z46G — Product realism + trust layer
+ */
+
+/* ═══════════════════════════════════════════════════════════════════
+   Z46E — SURFACE ELEVATION HIERARCHY
+   Three-tier depth system: bg < surface < elevated
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Slide panels: elevated tier */
+.nx-slide-panel {
+  background: var(--nx-color-bg-surface-elevated, #1C1C20);
+  border-right: 1px solid var(--nx-color-border, #2A2A2E);
+}
+
+/* Center content area: base tier */
+.nx-shell-center {
+  background: var(--nx-color-bg-base, #161618);
+}
+
+/* Tab content: slightly elevated from base */
+.nx-tab-content {
+  background: var(--nx-color-bg-surface, #18181C);
+}
+
+/* Inspector: elevated surface */
+.nx-right {
+  background: var(--nx-color-bg-surface-elevated, #1C1C20);
+  border-left: 1px solid var(--nx-color-border, #2A2A2E);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Z46A — PANEL CONTENT LAYOUT PRIMITIVES
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Section header */
+.z46-section {
+  margin-bottom: 20px;
+}
+.z46-section-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--nx-color-text-muted, #8B949E);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--nx-color-border, #2A2A2E);
+}
+
+/* File row */
+.z46-file-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 5px;
+  cursor: pointer;
+  color: var(--nx-color-text-secondary, #C0C0C0);
+  font-size: 12px;
+  transition: background 0.12s;
+  text-decoration: none;
+}
+.z46-file-row:hover {
+  background: rgba(255,255,255,0.04);
+  color: #E0E0E0;
+}
+.z46-file-row.z46-dir {
+  color: var(--nx-color-text-muted, #8B949E);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: default;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding-top: 10px;
+}
+.z46-file-icon {
+  font-size: 13px;
+  flex-shrink: 0;
+  width: 16px;
+  text-align: center;
+}
+.z46-file-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.z46-file-size {
+  font-size: 10px;
+  color: var(--nx-color-text-muted, #8B949E);
+  flex-shrink: 0;
+}
+
+/* History row */
+.z46-history-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  margin-bottom: 4px;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s;
+}
+.z46-history-row:hover {
+  background: rgba(255,255,255,0.04);
+  border-color: var(--nx-color-border, #2A2A2E);
+}
+.z46-history-row-top {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.z46-history-task {
+  flex: 1;
+  font-size: 12px;
+  color: #C0C0C0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.z46-history-time {
+  font-size: 10px;
+  color: var(--nx-color-text-muted, #8B949E);
+  flex-shrink: 0;
+}
+.z46-history-row-bottom {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.z46-history-sid {
+  font-size: 10px;
+  font-family: monospace;
+  color: var(--nx-color-text-muted, #8B949E);
+}
+.z46-history-replay-btn {
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--nx-color-border, #2A2A2E);
+  color: #8B949E;
+  cursor: pointer;
+  margin-left: auto;
+}
+.z46-history-replay-btn:hover {
+  background: rgba(255,255,255,0.08);
+  color: #E0E0E0;
+}
+
+/* Status badge */
+.z46-badge {
+  font-size: 9px;
+  font-weight: 600;
+  padding: 1px 5px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
+.z46-badge-done     { background: rgba(22,163,74,0.15); color: #4CAF50; }
+.z46-badge-running  { background: rgba(0,121,242,0.15); color: #60A5FA; }
+.z46-badge-error    { background: rgba(192,57,43,0.15); color: #F87171; }
+.z46-badge-stopped  { background: rgba(139,148,158,0.15); color: #8B949E; }
+.z46-badge-recovery { background: rgba(217,119,6,0.15); color: #F59E0B; }
+
+/* Chat message */
+.z46-chat-msg {
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.z46-chat-msg:last-child { border-bottom: none; }
+.z46-chat-role {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 3px;
+}
+.z46-chat-role-agent    { color: #60A5FA; }
+.z46-chat-role-operator { color: #4CAF50; }
+.z46-chat-role-system   { color: var(--nx-color-text-muted, #8B949E); }
+.z46-chat-text {
+  font-size: 12px;
+  color: #C0C0C0;
+  line-height: 1.5;
+}
+
+/* Chat input row */
+.z46-chat-input-row {
+  display: flex;
+  gap: 6px;
+  padding: 12px 0 4px;
+  border-top: 1px solid var(--nx-color-border, #2A2A2E);
+  margin-top: 8px;
+}
+.z46-chat-input {
+  flex: 1;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--nx-color-border, #2A2A2E);
+  border-radius: 5px;
+  color: #E0E0E0;
+  font-size: 12px;
+  padding: 5px 8px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.z46-chat-input:focus {
+  border-color: #0079F2;
+}
+.z46-chat-send-btn {
+  padding: 5px 10px;
+  background: rgba(0,121,242,0.15);
+  border: 1px solid rgba(0,121,242,0.3);
+  border-radius: 5px;
+  color: #60A5FA;
+  font-size: 11px;
+  cursor: pointer;
+  transition: background 0.12s;
+  flex-shrink: 0;
+}
+.z46-chat-send-btn:hover {
+  background: rgba(0,121,242,0.25);
+}
+
+/* Settings row */
+.z46-setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.z46-setting-row:last-child { border-bottom: none; }
+.z46-setting-label {
+  font-size: 12px;
+  color: #C0C0C0;
+}
+.z46-setting-val {
+  font-size: 12px;
+  color: #8B949E;
+  font-family: monospace;
+}
+.z46-setting-btn {
+  font-size: 11px;
+  padding: 3px 8px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--nx-color-border, #2A2A2E);
+  border-radius: 4px;
+  color: #C0C0C0;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.z46-setting-btn:hover {
+  background: rgba(255,255,255,0.08);
+  color: #E0E0E0;
+}
+
+/* Shortcut row */
+.z46-shortcut-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 0;
+  font-size: 11px;
+  color: #8B949E;
+}
+.z46-shortcut-row kbd {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 3px;
+  padding: 1px 5px;
+  font-family: monospace;
+  font-size: 10px;
+  color: #C0C0C0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Z46C — OPERATIONAL EMPTY STATES
+   No black voids. Structured guidance when no data.
+   ═══════════════════════════════════════════════════════════════════ */
+
+.z46-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 28px 16px;
+  text-align: center;
+  gap: 8px;
+}
+.z46-empty-icon {
+  font-size: 24px;
+  opacity: 0.3;
+  margin-bottom: 4px;
+}
+.z46-empty-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #8B949E;
+}
+.z46-empty-body {
+  font-size: 11px;
+  color: var(--nx-color-text-muted, #6B7280);
+  line-height: 1.5;
+  max-width: 200px;
+}
+.z46-empty-action {
+  margin-top: 8px;
+  font-size: 11px;
+  padding: 4px 12px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 4px;
+  color: #8B949E;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+.z46-empty-action:hover {
+  background: rgba(255,255,255,0.1);
+  color: #E0E0E0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Z46C — IDLE WORKSPACE OPERATIONAL GUIDANCE
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Readiness indicators strip */
+.z46-readiness-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 10px 0;
+}
+.z46-readiness-chip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 12px;
+  border: 1px solid var(--nx-color-border, #2A2A2E);
+  color: #8B949E;
+  background: rgba(255,255,255,0.02);
+}
+.z46-readiness-chip.ready {
+  border-color: rgba(22,163,74,0.25);
+  color: #4CAF50;
+  background: rgba(22,163,74,0.06);
+}
+.z46-readiness-chip.warn {
+  border-color: rgba(217,119,6,0.25);
+  color: #F59E0B;
+  background: rgba(217,119,6,0.06);
+}
+.z46-readiness-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+/* Last mission summary */
+.z46-last-mission {
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--nx-color-border, #2A2A2E);
+  background: rgba(255,255,255,0.02);
+  margin: 8px 0;
+}
+.z46-last-mission-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--nx-color-text-muted, #8B949E);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-bottom: 5px;
+}
+.z46-last-mission-task {
+  font-size: 12px;
+  color: #C0C0C0;
+  margin-bottom: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.z46-last-mission-meta {
+  font-size: 10px;
+  color: var(--nx-color-text-muted, #8B949E);
+  display: flex;
+  gap: 8px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Z46D — MISSION LIFECYCLE VISUAL STATES
+   All 7 lifecycle states have distinct visual treatment.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* State: creating (brief flash on session start) */
+body[data-nx-state="creating"] .nx-shell-center::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(0,121,242,0.03);
+  pointer-events: none;
+  z-index: 0;
+  animation: z46-creating-flash 0.6s ease-out forwards;
+}
+@keyframes z46-creating-flash {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+/* State: running — activity bar shown */
+body[data-nx-exec="running"] #nxActivityBar { display: flex !important; }
+body[data-nx-exec="idle"]    #nxIdleHero    { display: flex; }
+body[data-nx-exec="running"] #nxIdleHero    { display: none; }
+
+/* State: HITL — inject strip visible */
+body[data-nx-state="hitl"] .nx-hitl-strip  { display: block !important; }
+body[data-nx-state="hitl"] #nxActivityBar  { display: flex !important; }
+
+/* State: recovery — amber accent on activity bar */
+body[data-nx-state="recovery"] #nxActivityBar {
+  border-bottom: 1px solid rgba(217,119,6,0.3);
+}
+body[data-nx-state="recovery"] .nx-ab-dot {
+  background: #F59E0B !important;
+}
+
+/* State: replay */
+body[data-nx-state="replay"] #nxActivityBar {
+  border-bottom: 1px solid rgba(100,160,250,0.25);
+}
+body[data-nx-state="replay"] #nxAbText::before {
+  content: '⏮  ';
+}
+
+/* State: complete — brief green flash */
+body[data-nx-state="complete"] .nx-ab-dot {
+  background: #4CAF50 !important;
+}
+
+/* State: failed */
+body[data-nx-state="failed"] #nxActivityBar {
+  border-bottom: 1px solid rgba(192,57,43,0.3);
+}
+body[data-nx-state="failed"] .nx-ab-dot {
+  background: #F87171 !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Z46F — EXECUTION FEEDBACK MATURITY
+   Operator always knows what's happening.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Queue position indicator */
+.z46-queue-chip {
+  display: none;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #8B949E;
+  white-space: nowrap;
+}
+body[data-z46-queue-pos] .z46-queue-chip { display: flex; }
+
+/* Active task display */
+.z46-active-task {
+  font-size: 11px;
+  color: #8B949E;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 220px;
+  flex: 1;
+}
+body[data-nx-exec="running"] .z46-active-task { color: #C0C0C0; }
+
+/* HITL wait indicator */
+.z46-hitl-wait {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: rgba(124,93,183,0.08);
+  border: 1px solid rgba(124,93,183,0.2);
+  border-radius: 5px;
+  font-size: 11px;
+  color: #A78BFA;
+  margin: 4px 0;
+}
+body[data-nx-state="hitl"] .z46-hitl-wait { display: flex; }
+.z46-hitl-wait-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #A78BFA;
+  animation: z46-hitl-pulse 1.2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+@keyframes z46-hitl-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+/* Recovery progress */
+.z46-recovery-progress {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 10px;
+  background: rgba(217,119,6,0.06);
+  border: 1px solid rgba(217,119,6,0.2);
+  border-radius: 5px;
+  font-size: 11px;
+  color: #F59E0B;
+  margin: 4px 0;
+}
+body[data-nx-state="recovery"] .z46-recovery-progress { display: flex; }
+
+/* Runtime warning banner */
+.z46-runtime-warning {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  background: rgba(192,57,43,0.07);
+  border: 1px solid rgba(192,57,43,0.2);
+  border-radius: 5px;
+  font-size: 11px;
+  color: #F87171;
+  margin: 4px 0;
+}
+html[data-z37-risk="CRITICAL"] .z46-runtime-warning,
+html[data-z37-risk="HIGH"]     .z46-runtime-warning { display: flex; }
+
+/* Mission completion summary */
+.z46-completion-summary {
+  display: none;
+  flex-direction: column;
+  padding: 10px 12px;
+  background: rgba(22,163,74,0.06);
+  border: 1px solid rgba(22,163,74,0.2);
+  border-radius: 6px;
+  gap: 4px;
+  margin: 4px 0;
+}
+body[data-nx-state="complete"] .z46-completion-summary { display: flex; }
+.z46-completion-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #4CAF50;
+}
+.z46-completion-meta {
+  font-size: 11px;
+  color: #8B949E;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Z46B — INTERACTION VALIDATION POLISH
+   Ensure all controls feel real, responsive, clickable.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Ensure nav icons have adequate click target */
+.nx-nav-icon {
+  min-width: 40px;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--nx-color-text-muted, #8B949E);
+  transition: background 0.12s, color 0.12s;
+}
+.nx-nav-icon:hover {
+  background: rgba(255,255,255,0.06);
+  color: #E0E0E0;
+}
+.nx-nav-icon.active {
+  background: rgba(0,121,242,0.12);
+  color: #60A5FA;
+}
+.nx-nav-icon:focus-visible {
+  outline: 2px solid #0079F2;
+  outline-offset: 2px;
+}
+
+/* Close button — clearly clickable */
+.nx-close-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  transition: background 0.12s, color 0.12s;
+}
+.nx-close-btn:hover {
+  background: rgba(255,255,255,0.08);
+  color: #E0E0E0;
+}
+.nx-close-btn:focus-visible {
+  outline: 2px solid #0079F2;
+  outline-offset: 2px;
+}
+
+/* Hero chips — clear affordance */
+.nx-hero-chip {
+  border: 1px solid var(--nx-color-border, #2A2A2E);
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+}
+.nx-hero-chip:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.18);
+  color: #E0E0E0;
+}
+.nx-hero-chip:focus-visible {
+  outline: 2px solid #0079F2;
+  outline-offset: 2px;
+}
+
+/* Cookie banner action buttons */
+.nx-cookie-accept, .nx-cookie-dismiss {
+  transition: background 0.12s, color 0.12s;
+  cursor: pointer;
+}
+.nx-cookie-accept:hover  { filter: brightness(1.15); }
+.nx-cookie-dismiss:hover { background: rgba(255,255,255,0.1); }
+
+/* ═══════════════════════════════════════════════════════════════════
+   Z46G — PRODUCT REALISM + TRUST LAYER
+   No fake-feeling surfaces. Suppress placeholder-only panels.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Suppress data-z46-fake="true" elements */
+[data-z46-fake="true"] { display: none !important; }
+
+/* Mark suppressed redundant elements */
+[data-z45-suppressed="true"] { display: none !important; }
+
+/* Ensure panel scroll is smooth */
+.nx-panel-content, .nx-slide-panel .nx-panel-content {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.1) transparent;
+  scroll-behavior: smooth;
+}
+
+/* Panel refresh button */
+.z46-panel-refresh {
+  background: none;
+  border: none;
+  color: var(--nx-color-text-muted, #8B949E);
+  cursor: pointer;
+  font-size: 13px;
+  padding: 2px 4px;
+  border-radius: 3px;
+  transition: color 0.12s, background 0.12s;
+}
+.z46-panel-refresh:hover {
+  color: #E0E0E0;
+  background: rgba(255,255,255,0.06);
+}
+
+/* Loading state */
+.z46-loading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  font-size: 12px;
+  color: var(--nx-color-text-muted, #8B949E);
+}
+.z46-loading::before {
+  content: '';
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(255,255,255,0.1);
+  border-top-color: #8B949E;
+  border-radius: 50%;
+  animation: z46-spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+@keyframes z46-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Z46E — CONTENT READABILITY REFINEMENT
+   Reduce visual void. Improve spatial balance.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Reduced void on empty tab contents */
+.nx-tab-content:empty {
+  background: var(--nx-color-bg-surface, #18181C);
+}
+
+/* Panel content padding consistency */
+.nx-slide-panel .nx-panel-content {
+  padding: 12px 14px;
+}
+
+/* Idle hero should never be a black void */
+.nx-idle-hero {
+  min-height: 160px;
+  background: var(--nx-color-bg-surface, #18181C);
+}
+
+/* Soft panel separator line */
+.z46-separator {
+  height: 1px;
+  background: var(--nx-color-border, #2A2A2E);
+  margin: 12px 0;
+}

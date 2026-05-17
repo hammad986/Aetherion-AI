@@ -1,0 +1,901 @@
+/* ════════════════════════════════════════════════════════════════════════
+   nx-z57.css — Phase Z57: Operational Workspace Completion + Product Realism
+   Eliminates dead zones, upgrades panel hierarchy, matures execution surfaces,
+   polishes onboarding, completes all interaction states, removes fake UI.
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* ── Z57 surface tokens ───────────────────────────────────────────────── */
+:root {
+  --z57-bg:           #0b0b0f;
+  --z57-surface-1:    #111116;
+  --z57-surface-2:    #17171d;
+  --z57-border:       rgba(255,255,255,0.055);
+  --z57-border-hi:    rgba(255,255,255,0.10);
+  --z57-text-hi:      rgba(255,255,255,0.80);
+  --z57-text-mid:     rgba(255,255,255,0.50);
+  --z57-text-lo:      rgba(255,255,255,0.26);
+  --z57-accent:       #bc8cff;
+  --z57-accent-dim:   rgba(188,140,255,0.10);
+  --z57-accent-glow:  rgba(188,140,255,0.20);
+  --z57-green:        #3fb950;
+  --z57-blue:         #388bfd;
+  --z57-red:          #f85149;
+  --z57-amber:        #d29922;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z57A — WORKSPACE COMPLETION
+   Eliminate the black void; create spatial density.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* Main shell background — softer than pure black */
+.nx-shell-root {
+  background: var(--z57-bg);
+}
+
+/* Center content: matches shell */
+.nx-shell-center,
+#nxMainContent {
+  background: var(--z57-bg);
+}
+
+/* Tab content areas — unified surface */
+.nx-tab-content {
+  background: var(--z57-bg);
+}
+
+/* Tab bar: slightly elevated surface */
+.nx-tab-bar {
+  background: var(--z57-surface-1);
+  border-bottom: 1px solid var(--z57-border);
+}
+
+/* Topbar */
+.nx-shell-topbar {
+  background: var(--z57-surface-1);
+  border-bottom: 1px solid var(--z57-border);
+}
+
+/* Navrail */
+.nx-shell-navrail {
+  background: var(--z57-surface-1);
+  border-right: 1px solid var(--z57-border);
+}
+
+/* ── Idle Hero: fully realized operational start screen ──────────────── */
+
+.nx-idle-hero {
+  max-width: 540px;
+  margin: 0 auto;
+  padding: 36px 28px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  animation: z57-hero-in 240ms ease-out;
+}
+
+@keyframes z57-hero-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Header row */
+.nx-iw-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--z57-border);
+}
+.nx-iw-header > svg {
+  color: var(--z57-accent);
+  opacity: 0.55 !important;
+  flex-shrink: 0;
+}
+.nx-iw-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--z57-text-hi);
+  letter-spacing: -0.01em;
+}
+.nx-iw-hint {
+  margin-left: auto;
+  font-size: 10px;
+  color: var(--z57-text-lo);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+.nx-iw-hint kbd {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 3px;
+  padding: 1px 4px;
+  font-size: 9px;
+  color: rgba(255,255,255,0.42);
+  font-family: inherit;
+}
+
+/* Runtime status strip */
+.nx-iw-status-strip {
+  display: flex;
+  align-items: stretch;
+  background: var(--z57-surface-1);
+  border: 1px solid var(--z57-border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.nx-iw-stat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 11px 14px;
+  transition: background 120ms;
+}
+.nx-iw-stat:hover {
+  background: rgba(255,255,255,0.02);
+}
+.nx-iw-stat-sep {
+  width: 1px;
+  background: var(--z57-border);
+  margin: 10px 0;
+  flex-shrink: 0;
+}
+.nx-iw-stat-label {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--z57-text-lo);
+}
+.nx-iw-stat-val {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--z57-text-mid);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Quick action chips */
+.nx-iw-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.nx-hero-chip {
+  background: var(--z57-surface-1);
+  border: 1px solid var(--z57-border);
+  border-radius: 7px;
+  color: var(--z57-text-mid);
+  font-size: 11px;
+  font-weight: 500;
+  padding: 10px 13px;
+  text-align: left;
+  cursor: pointer;
+  transition: background 130ms, border-color 130ms, color 130ms;
+  font-family: inherit;
+  line-height: 1.4;
+}
+.nx-hero-chip:hover {
+  background: var(--z57-accent-dim);
+  border-color: var(--z57-accent-glow);
+  color: rgba(255,255,255,0.82);
+}
+.nx-hero-chip:active {
+  transform: scale(0.99);
+  background: rgba(188,140,255,0.14);
+}
+
+/* Recent runs */
+.nx-iw-section {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.nx-iw-section-label {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--z57-text-lo);
+}
+.nx-iw-recent-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: var(--z57-surface-1);
+  border: 1px solid var(--z57-border);
+  border-radius: 7px;
+  overflow: hidden;
+  min-height: 48px;
+}
+.nx-iw-recent-empty {
+  font-size: 11px;
+  color: var(--z57-text-lo);
+  padding: 14px 16px;
+  text-align: center;
+}
+
+/* Recent run items (populated by z50PopulateIdleRecent) */
+.nx-iw-recent-list > div:not(.nx-iw-recent-empty) {
+  padding: 8px 14px !important;
+  border-bottom: 1px solid var(--z57-border) !important;
+  transition: background 100ms;
+}
+.nx-iw-recent-list > div:not(.nx-iw-recent-empty):hover {
+  background: rgba(255,255,255,0.03) !important;
+}
+.nx-iw-recent-list > div:not(.nx-iw-recent-empty):last-child {
+  border-bottom: none !important;
+}
+
+/* Replay resume card */
+.z33-replay-resume {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--z57-surface-1);
+  border: 1px solid var(--z57-border);
+  border-radius: 7px;
+  cursor: pointer;
+  transition: border-color 130ms, background 130ms;
+}
+.z33-replay-resume:hover {
+  border-color: rgba(188,140,255,0.18);
+  background: rgba(188,140,255,0.04);
+}
+.z33-replay-resume-icon {
+  font-size: 14px;
+  opacity: 0.45;
+  flex-shrink: 0;
+}
+.z33-replay-resume-info {
+  flex: 1;
+  min-width: 0;
+}
+.z33-replay-resume-sid {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--z57-text-mid);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.z33-replay-resume-meta {
+  font-size: 10px;
+  color: var(--z57-text-lo);
+  margin-top: 2px;
+}
+.z33-replay-resume-btn {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--z57-accent);
+  background: var(--z57-accent-dim);
+  border: 1px solid rgba(188,140,255,0.18);
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 120ms, border-color 120ms;
+  font-family: inherit;
+}
+.z33-replay-resume-btn:hover {
+  background: rgba(188,140,255,0.16);
+  border-color: rgba(188,140,255,0.30);
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z57B — PANEL UPGRADES
+   Production-grade panel hierarchy.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* Panel container */
+.nx-slide-panel {
+  background: var(--z57-surface-1);
+  border-right: 1px solid var(--z57-border);
+  box-shadow: 4px 0 32px rgba(0,0,0,0.40);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Panel header: authoritative */
+.nx-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 14px;
+  height: 44px;
+  min-height: 44px;
+  background: rgba(255,255,255,0.02);
+  border-bottom: 1px solid var(--z57-border);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--z57-text-lo);
+  flex-shrink: 0;
+}
+.nx-panel-header .z57-ph-icon {
+  color: var(--z57-text-lo);
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+.nx-panel-header .z57-ph-title {
+  color: rgba(255,255,255,0.45);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+.nx-panel-header .z57-ph-hint {
+  font-size: 9px;
+  color: var(--z57-text-lo);
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  margin-left: 2px;
+  opacity: 0.7;
+}
+.nx-panel-header .z57-ph-badge {
+  margin-left: auto;
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--z57-text-lo);
+  background: rgba(255,255,255,0.06);
+  border-radius: 10px;
+  padding: 1px 6px;
+}
+
+/* Close button */
+.nx-close-btn {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: var(--z57-text-lo);
+  cursor: pointer;
+  font-size: 13px;
+  padding: 4px 6px;
+  border-radius: 4px;
+  line-height: 1;
+  transition: background 100ms, color 100ms;
+  flex-shrink: 0;
+}
+.nx-close-btn:hover {
+  background: rgba(255,255,255,0.07);
+  color: var(--z57-text-mid);
+}
+
+/* Panel content area */
+.nx-panel-content {
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+}
+
+/* z50 panel internal structure */
+.z50-panel-body {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.z50-panel-section {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--z57-border);
+  flex-shrink: 0;
+}
+.z50-panel-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 6px 0;
+  min-height: 0;
+}
+
+/* File search input */
+#z50FileSearch {
+  background: var(--z57-bg) !important;
+  border: 1px solid var(--z57-border) !important;
+  border-radius: 5px !important;
+  padding: 5px 8px !important;
+  color: var(--z57-text-hi) !important;
+  font-size: 11px !important;
+  outline: none !important;
+}
+#z50FileSearch:focus {
+  border-color: var(--z57-accent-glow) !important;
+}
+
+/* File items */
+.z50-file-item {
+  display: flex;
+  align-items: center;
+  padding: 5px 14px;
+  font-size: 11px;
+  color: var(--z57-text-mid);
+  cursor: pointer;
+  transition: background 90ms, color 90ms;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: 28px;
+}
+.z50-file-item:hover {
+  background: rgba(255,255,255,0.04);
+  color: var(--z57-text-hi);
+}
+.z50-file-item.z50-active {
+  background: var(--z57-accent-dim);
+  color: var(--z57-accent);
+}
+.z50-file-item.dir {
+  color: rgba(255,255,255,0.38);
+}
+
+/* History items */
+.z50-hist-item {
+  padding: 9px 14px;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(255,255,255,0.035);
+  transition: background 90ms;
+}
+.z50-hist-item:hover {
+  background: rgba(255,255,255,0.03);
+}
+.z50-hist-item:last-child {
+  border-bottom: none;
+}
+.z50-hist-name {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--z57-text-mid);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 4px;
+}
+.z50-hist-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--z57-text-lo);
+}
+.z50-hist-status {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+.z50-hist-status.ok   { background: rgba(63,185,80,0.10);   color: var(--z57-green); }
+.z50-hist-status.err  { background: rgba(248,81,73,0.10);   color: var(--z57-red); }
+.z50-hist-status.run  { background: rgba(56,139,253,0.10);  color: var(--z57-blue); }
+.z50-hist-status.idle { background: rgba(255,255,255,0.05); color: var(--z57-text-lo); }
+
+/* Settings panel buttons */
+.z50-panel-section button.nx-tiny-btn[style*="text-align:left"],
+.z50-panel-section button.nx-tiny-btn[style*="text-align: left"] {
+  display: flex !important;
+  align-items: center !important;
+  width: 100% !important;
+  padding: 8px 10px !important;
+  font-size: 11px !important;
+  border: 1px solid var(--z57-border) !important;
+  border-radius: 6px !important;
+  color: var(--z57-text-mid) !important;
+  background: transparent !important;
+  text-align: left !important;
+  transition: background 100ms, border-color 100ms, color 100ms !important;
+}
+.z50-panel-section button.nx-tiny-btn[style*="text-align"]:hover {
+  background: rgba(255,255,255,0.04) !important;
+  border-color: var(--z57-border-hi) !important;
+  color: var(--z57-text-hi) !important;
+}
+
+/* Chat panel empty state */
+.z50-panel-body > div[style*="align-items:center"] {
+  flex: 1;
+}
+
+/* Empty states */
+.z50-panel-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px 20px;
+  gap: 7px;
+  text-align: center;
+}
+.z50-panel-empty-icon {
+  font-size: 16px;
+  opacity: 0.18;
+  margin-bottom: 4px;
+}
+.z50-panel-empty-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--z57-text-lo);
+}
+.z50-panel-empty-hint {
+  font-size: 10px;
+  color: rgba(255,255,255,0.18);
+  max-width: 200px;
+  line-height: 1.6;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z57C — EXECUTION VISUALIZATION MATURITY
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* Execution pipeline bar */
+.nx-exec-pipeline {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  background: rgba(255,255,255,0.015);
+  border-bottom: 1px solid var(--z57-border);
+  flex-shrink: 0;
+}
+.nx-exec-stage {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--z57-text-lo);
+  padding: 3px 6px;
+  border-radius: 4px;
+  transition: color 200ms, background 200ms;
+}
+.nx-exec-stage.active {
+  color: var(--z57-blue);
+  background: rgba(56,139,253,0.08);
+}
+.nx-exec-stage.done {
+  color: var(--z57-green);
+}
+.nx-exec-stage.failed {
+  color: var(--z57-red);
+}
+.nx-stage-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+  transition: background 200ms;
+}
+.nx-exec-stage.active .nx-stage-dot {
+  animation: z57-stage-pulse 1.2s ease-in-out infinite;
+}
+@keyframes z57-stage-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.35; }
+}
+
+/* Log area */
+#logArea {
+  padding: 6px 0 16px;
+  min-height: 0;
+}
+.log-line {
+  padding: 1px 14px;
+  font-size: 11px;
+  line-height: 1.75;
+  font-family: 'JetBrains Mono', 'Menlo', monospace;
+  color: rgba(255,255,255,0.62);
+  border-left: 2px solid transparent;
+}
+.log-line:hover {
+  background: rgba(255,255,255,0.02);
+}
+.log-line.error, .log-line.err {
+  color: var(--z57-red);
+  border-left-color: rgba(248,81,73,0.35);
+  background: rgba(248,81,73,0.03);
+}
+.log-line.warn {
+  color: var(--z57-amber);
+  border-left-color: rgba(210,153,34,0.3);
+}
+.log-line.success, .log-line.ok, .log-line.done {
+  color: var(--z57-green);
+}
+.log-line.info, .log-line.debug {
+  color: rgba(255,255,255,0.40);
+}
+.log-line.ai, .log-line.thought {
+  color: rgba(188,140,255,0.75);
+  font-style: italic;
+}
+
+/* Error card */
+.nx-error-card {
+  margin: 10px 14px;
+  padding: 11px 14px;
+  background: rgba(248,81,73,0.05);
+  border: 1px solid rgba(248,81,73,0.18);
+  border-radius: 7px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.72);
+  line-height: 1.55;
+}
+
+/* HITL strip */
+.nx-hitl-strip {
+  background: rgba(210,153,34,0.06);
+  border-bottom: 1px solid rgba(210,153,34,0.15);
+  padding: 10px 12px;
+}
+.nx-hitl-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+.nx-hitl-inject {
+  display: flex;
+  gap: 5px;
+  margin-top: 6px;
+}
+.nx-hitl-input {
+  flex: 1;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(210,153,34,0.2);
+  border-radius: 4px;
+  color: var(--z57-text-hi);
+  font-size: 11px;
+  padding: 4px 8px;
+  outline: none;
+  font-family: inherit;
+}
+.nx-hitl-input:focus {
+  border-color: rgba(210,153,34,0.4);
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z57D — ONBOARDING + LOGIN MATURITY
+   Premium, calm, credible.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* Auth gate backdrop */
+#nx-auth-gate {
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(20,20,35,1) 0%, var(--z57-bg) 70%) !important;
+}
+
+/* Auth card: lifted without being flashy */
+.nx-auth-card {
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.06),
+    0 24px 56px rgba(0,0,0,0.50),
+    0 4px 12px rgba(0,0,0,0.30) !important;
+  background: var(--z57-surface-1) !important;
+}
+
+/* Input focus: premium */
+.nx-auth-field input:focus {
+  border-color: rgba(188,140,255,0.30) !important;
+  box-shadow: 0 0 0 3px rgba(188,140,255,0.07) !important;
+  outline: none !important;
+}
+
+/* Primary submit button */
+button.nx-auth-submit,
+.nx-auth-card button[type="submit"],
+.nx-auth-card .nx-btn-primary {
+  background: rgba(188,140,255,0.12) !important;
+  border: 1px solid rgba(188,140,255,0.22) !important;
+  color: rgba(255,255,255,0.88) !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.01em !important;
+  transition: background 140ms, border-color 140ms, box-shadow 140ms !important;
+}
+button.nx-auth-submit:hover,
+.nx-auth-card button[type="submit"]:hover,
+.nx-auth-card .nx-btn-primary:hover {
+  background: rgba(188,140,255,0.18) !important;
+  border-color: rgba(188,140,255,0.32) !important;
+  box-shadow: 0 2px 12px rgba(188,140,255,0.12) !important;
+}
+
+/* OAuth buttons */
+.nx-auth-oauth-btn {
+  border: 1px solid var(--z57-border) !important;
+  background: rgba(255,255,255,0.025) !important;
+  color: var(--z57-text-mid) !important;
+  transition: background 120ms, border-color 120ms, color 120ms !important;
+}
+.nx-auth-oauth-btn:hover {
+  background: rgba(255,255,255,0.05) !important;
+  border-color: var(--z57-border-hi) !important;
+  color: var(--z57-text-hi) !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z57E — INTERACTION COMPLETION
+   Every button, tab, and close action has a consistent response state.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* Unified nx-tiny-btn */
+.nx-tiny-btn {
+  transition: background 110ms, border-color 110ms, color 110ms, transform 90ms !important;
+  font-family: inherit;
+}
+.nx-tiny-btn:hover {
+  background: rgba(255,255,255,0.07) !important;
+  border-color: rgba(255,255,255,0.14) !important;
+}
+.nx-tiny-btn:active {
+  transform: scale(0.97) !important;
+}
+
+/* Nav icon active (z50 class) */
+.nx-nav-icon.z50-active {
+  background: var(--z57-accent-dim) !important;
+  border-color: rgba(188,140,255,0.18) !important;
+  color: var(--z57-accent) !important;
+}
+
+/* Tab hover */
+.nx-tab:not(.active):hover {
+  background: rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.62);
+}
+.nx-tab.active {
+  color: rgba(255,255,255,0.88);
+  border-bottom-color: var(--z57-accent);
+}
+
+/* Topbar icon buttons */
+.nx-icon-btn:hover {
+  background: rgba(255,255,255,0.06);
+}
+.nx-icon-btn:active {
+  background: rgba(255,255,255,0.09);
+}
+
+/* Run button */
+.nx-topbar-run-btn {
+  transition: background 120ms, box-shadow 120ms;
+}
+.nx-topbar-run-btn:hover {
+  box-shadow: 0 0 0 3px rgba(63,185,80,0.10);
+}
+.nx-topbar-run-btn.is-running {
+  box-shadow: 0 0 0 3px rgba(63,185,80,0.15);
+}
+
+/* Model button */
+.nx-model-btn {
+  transition: background 110ms, border-color 110ms;
+}
+.nx-model-btn:hover {
+  background: rgba(255,255,255,0.06);
+  border-color: var(--z57-border-hi);
+}
+
+/* Command palette trigger */
+.nx-palette-trigger {
+  transition: background 110ms, color 110ms;
+}
+.nx-palette-trigger:hover {
+  background: rgba(255,255,255,0.05);
+  color: var(--z57-text-hi);
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z57F — PRODUCT REALISM
+   Remove fake states, show only honest operational information.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* Legacy exec strip: shows "Not connected" on load — hidden */
+.nx-exec-strip {
+  display: none !important;
+}
+
+/* Replay resume card: hidden until populated by z33 JS */
+.z33-replay-resume:not([data-sid]) {
+  display: none !important;
+}
+
+/* Approvals row: hidden when empty */
+.z33-approvals-row:empty {
+  display: none !important;
+}
+
+/* Idle signals: hidden when empty */
+.z33-idle-signals:empty {
+  display: none !important;
+}
+
+/* Z50 exec feedback bar when empty */
+.z50-exec-feedback:not(.visible) {
+  display: none !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Z57G — VISUAL CALMNESS + DEPTH
+   Contrast hierarchy, spacing rhythm, surface depth, visual focus.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* Typography: cleaner hierarchy */
+.nx-iw-title,
+.nx-panel-header .z57-ph-title {
+  font-feature-settings: 'kern' 1, 'liga' 1;
+}
+
+/* Scrollbar: unobtrusive */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.08);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.14);
+}
+
+/* Dividers: subtle */
+.nx-topbar-divider {
+  background: var(--z57-border) !important;
+}
+
+/* Toast stack: calmer positioning */
+#z52ToastStack {
+  z-index: 9000;
+}
+
+/* Error banner: visible but not alarming */
+#p57-error-banner.show,
+#p57-error-banner:not(.nx-hidden):not([style*="display:none"]) {
+  background: rgba(248,81,73,0.06);
+  border: 1px solid rgba(248,81,73,0.15);
+  backdrop-filter: blur(8px);
+}
+
+/* Verify banner: visible but calm */
+#nx-verify-banner.show {
+  background: rgba(210,153,34,0.06);
+  border: 1px solid rgba(210,153,34,0.14);
+}
+
+/* Z55 exec presence card: calmer in idle state */
+.z55-exec-card {
+  margin: 10px 14px;
+  border-radius: 8px;
+}
+
+/* Z50 idle hero stat update animation: subtle */
+.z50-updated {
+  animation: z57-stat-flash 400ms ease-out !important;
+}
+@keyframes z57-stat-flash {
+  0%   { color: var(--z57-accent); }
+  100% { color: var(--z57-text-mid); }
+}
+
+/* Focus ring: consistent */
+:focus-visible {
+  outline: 2px solid rgba(188,140,255,0.40);
+  outline-offset: 2px;
+}
+
+/* Panel content section titles (z50) */
+div[style*="font-size:10px"][style*="color:var(--text-dim)"][style*="font-weight:700"],
+div[style*="font-size:10px"][style*="font-weight:700"][style*="text-transform:uppercase"] {
+  color: var(--z57-text-lo) !important;
+  letter-spacing: 0.09em;
+}

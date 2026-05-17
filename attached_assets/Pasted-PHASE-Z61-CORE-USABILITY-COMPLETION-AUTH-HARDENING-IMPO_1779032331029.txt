@@ -1,0 +1,251 @@
+PHASE Z61 — CORE USABILITY COMPLETION + AUTH HARDENING
+
+IMPORTANT:
+This phase is NOT about adding intelligence.
+
+This phase exists to:
+complete the actual usable beta experience.
+
+The architecture is already advanced enough.
+The current weakness is:
+real-world usability and operational clarity.
+
+Current issues still visible:
+
+* workspace center still feels hollow
+* verify-email banner feels fake/incomplete
+* rate-limit messages still appear
+* polling behavior may still be aggressive
+* session continuity still feels artificial
+* core task flow is weak
+* settings surface still feels emotionally empty
+* operational shell is stronger than actual workflow usability
+
+This phase must prioritize:
+REAL USABILITY > ADVANCED FEATURES
+
+STRICT RULES:
+❌ NO NEW AI ARCHITECTURE
+❌ NO NEW MEMORY SYSTEMS
+❌ NO NEW GRAPH SYSTEMS
+❌ NO NEW FORENSIC LAYERS
+❌ NO NEW ENTERPRISE TERMINOLOGY
+❌ NO NEW DASHBOARD COMPLEXITY
+❌ NO NEW “INTELLIGENCE” FEATURES
+
+ONLY:
+
+* usability
+* trust
+* workflow clarity
+* operational stability
+* real beta completion
+
+====================================================
+Z61A — DEEP AUTH HARDENING
+==========================
+
+Perform a deeper auth audit.
+
+Verify:
+
+1. password hashing in database
+2. bcrypt salt usage
+3. refresh/session token handling
+4. token expiration behavior
+5. session invalidation
+6. password reset safety
+7. signup validation
+8. duplicate account edge cases
+9. auth API abuse risks
+10. localStorage exposure risks
+
+Search:
+
+* auth_system.py
+* auth routes
+* database writes
+* session middleware
+* frontend auth handlers
+
+If any unsafe behavior exists:
+FIX IT.
+
+DO NOT fake the audit.
+
+====================================================
+Z61B — RATE LIMIT + POLLING STABILIZATION
+=========================================
+
+The platform still shows occasional:
+
+* “Rate Limited”
+* excessive restore behavior
+* polling spam
+* duplicate startup requests
+
+Audit ALL polling systems.
+
+Requirements:
+
+1. identify duplicate polling loops
+2. identify unnecessary restore calls
+3. debounce startup requests
+4. reduce aggressive polling
+5. centralize polling intervals
+6. prevent duplicate restore attempts
+7. ensure startup never rate-limits itself
+
+The app should feel:
+stable,
+quiet,
+controlled.
+
+====================================================
+Z61C — REAL WORKSPACE CENTER
+============================
+
+The center workspace must become truly usable.
+
+Requirements:
+
+1. visible primary composer
+2. clear “start task” interaction
+3. meaningful empty state
+4. recent session continuity
+5. visible active session
+6. clear current objective
+7. real operational focus
+8. no black void feeling
+
+DO NOT:
+add fake metrics or fake dashboards.
+
+This should feel:
+focused,
+minimal,
+productive.
+
+====================================================
+Z61D — VERIFY EMAIL REALISM
+===========================
+
+Current verify-email surface feels fake/incomplete.
+
+Requirements:
+IF verification is fully functional:
+
+* keep it
+* make it trustworthy
+* show real verification state
+
+IF NOT fully functional:
+
+* hide it entirely for beta
+
+DO NOT:
+show incomplete auth trust surfaces.
+
+====================================================
+Z61E — SETTINGS PANEL MATURITY
+==============================
+
+Current settings panel still feels emotionally empty.
+
+Requirements:
+
+1. minimal but real settings
+2. provider configuration
+3. theme controls
+4. account/session controls
+5. polling/debug preferences
+6. keyboard shortcuts
+7. clear beta labeling
+
+DO NOT:
+add fake enterprise settings.
+
+====================================================
+Z61F — TASK FLOW COMPLETION
+===========================
+
+The actual workflow experience must feel complete.
+
+Requirements:
+
+1. create task
+2. run task
+3. view progress
+4. review result
+5. continue session
+
+This flow should feel:
+continuous,
+stable,
+understandable.
+
+====================================================
+Z61G — BETA USABILITY LOCK
+==========================
+
+The platform should now feel:
+
+* genuinely usable
+* stable
+* trustworthy
+* operational
+* focused
+* realistic
+
+NOT:
+
+* theatrical
+* overengineered
+* fake-enterprise
+* intelligence-overloaded
+
+====================================================
+REQUIRED REPORTS
+================
+
+Generate:
+
+* docs/Z61_AUTH_DEEP_AUDIT.md
+* docs/Z61_RATE_LIMIT_STABILITY.md
+* docs/Z61_WORKSPACE_CORE_USABILITY.md
+* docs/Z61_VERIFY_EMAIL_REALISM.md
+* docs/Z61_SETTINGS_MATURITY.md
+* docs/Z61_BETA_USABILITY_VERDICT.md
+
+Each report must include:
+
+1. real problems found
+2. remaining usability gaps
+3. remaining fake surfaces
+4. remaining trust risks
+5. remaining workflow friction
+6. remaining operational instability
+7. honest beta usability score
+
+====================================================
+FINAL VALIDATION
+================
+
+Before completion verify:
+
+* passwords are safely hashed
+* no auth leaks exist
+* startup does not rate-limit itself
+* polling is stable
+* no duplicate restore loops exist
+* workspace center feels usable
+* verify-email surface is honest
+* settings panel feels real
+* task flow feels complete
+* no fake operational theater remains
+
+MOST IMPORTANT:
+After Z61,
+Aetherion AI should feel like:
+a real usable autonomous AI beta platform,
+not just a polished architectural prototype.

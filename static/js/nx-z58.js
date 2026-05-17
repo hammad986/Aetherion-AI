@@ -345,7 +345,7 @@
     /* Readiness banner health check — slight delay so banner exists in DOM */
     setTimeout(z58HardenReadinessBanner, 1200);
 
-    console.log('[Phase Z58] Interaction Validation + Dead Control Elimination active.');
+    console.debug('[Phase Z58] Interaction Validation + Dead Control Elimination active.');
   }
 
   if (document.readyState === 'loading') {

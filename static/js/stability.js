@@ -392,7 +392,7 @@
         hideFailsafe: hideFailsafeBanner,
       };
 
-      console.log('[STABLE] FINAL STABILITY & UX HARDENING COMPLETE — SYSTEM IS BETA LAUNCH READY');
+      console.debug('[STABLE] hardening complete');
     }
 
     window.NX_BOOT_TASKS.push(bootStable);

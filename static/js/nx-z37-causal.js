@@ -894,7 +894,7 @@
       _scheduleUpdate();
     }, 1100);
 
-    console.log('[Phase Z37] Causal Runtime Intelligence + Dependency Cognition active.');
+    console.debug('[Phase Z37] Causal Runtime Intelligence + Dependency Cognition active.');
   }
 
   if (window.NX_LOAD_TASKS) {

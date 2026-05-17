@@ -604,7 +604,7 @@
     z51WorkspaceCalmness();
     z51PerformanceStabilize();
     z51TrustHardening();
-    console.log('[Phase Z51] Beta Operational Lockdown active. v' + NX_BETA.version);
+    console.debug('[Phase Z51] Beta Operational Lockdown active. v' + NX_BETA.version);
   }
 
   if (document.readyState === 'loading') {

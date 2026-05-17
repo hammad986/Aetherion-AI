@@ -543,7 +543,7 @@
     if (sid) { S.sid = sid; }
     // Load skills
     _loadSkills();
-    console.log('[Phase Z32] Semantic Execution Intelligence + Adaptive Runtime Stability active.');
+    console.debug('[Phase Z32] Semantic Execution Intelligence + Adaptive Runtime Stability active.');
   }
 
   if (window.NX_LOAD_TASKS) {

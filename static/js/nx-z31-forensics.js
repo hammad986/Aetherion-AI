@@ -588,7 +588,7 @@
     // Initial session list load
     _loadSessions();
 
-    console.log('[Phase Z31] Persistent Forensics + Execution Memory active.');
+    console.debug('[Phase Z31] Persistent Forensics + Execution Memory active.');
   }
 
   if (window.NX_LOAD_TASKS) {

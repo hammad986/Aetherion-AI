@@ -686,7 +686,7 @@
     z55HookHistoryRender();
     z55FilterToasts();
     z55RealismAudit();
-    console.log('[Phase Z55] Live Operational Workspace + Execution Immersion active.');
+    console.debug('[Phase Z55] Live Operational Workspace + Execution Immersion active.');
   }
 
   if (document.readyState === 'loading') {

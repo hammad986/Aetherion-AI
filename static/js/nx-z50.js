@@ -686,7 +686,7 @@
     z50StartLivePresence();
     z50PopulateIdleRecent();
     z50PerformancePass();
-    console.log('[Phase Z50] Operational Interaction Realism active.');
+    console.debug('[Phase Z50] Operational Interaction Realism active.');
   }
 
   if (document.readyState === 'loading') {

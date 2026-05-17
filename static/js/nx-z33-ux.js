@@ -313,7 +313,7 @@
       if (S.idleRefreshTimer) clearInterval(S.idleRefreshTimer);
     });
 
-    console.log('[Phase Z33] Operational Workspace UX Controller active.');
+    console.debug('[Phase Z33] Operational Workspace UX Controller active.');
   }
 
   window._z33ux = { refreshIdle: _refreshIdleHero, loadMemory: _loadSidebarMemory };

@@ -578,7 +578,7 @@
       // Periodic doc gen while running
       setInterval(() => { if (_execRunning && _timeline.length > 0) _generateDoc(); }, 60000);
 
-      console.log('[UX-IT] UX INTELLIGENCE LAYER ACTIVE — THINKING VISIBILITY + TIMELINE + EXECUTION FEEDBACK FULLY OPERATIONAL');
+      console.debug('[UX-IT] ready');
     }
 
     window.NX_BOOT_TASKS.push(boot);

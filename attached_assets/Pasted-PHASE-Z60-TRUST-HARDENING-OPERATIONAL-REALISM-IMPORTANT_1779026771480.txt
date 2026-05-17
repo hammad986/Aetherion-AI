@@ -1,0 +1,277 @@
+PHASE Z60 — TRUST HARDENING + OPERATIONAL REALISM
+
+IMPORTANT:
+This is NOT a feature expansion phase.
+
+This phase exists to:
+remove fake operational behavior,
+eliminate broken trust signals,
+and harden Aetherion AI into a believable real beta product.
+
+Current state:
+The platform now has strong architectural layering and improved onboarding,
+but still contains:
+
+* fake enterprise surfaces
+* synthetic operational messaging
+* broken encoding
+* empty panels
+* shallow overlays
+* weak security trust visibility
+* emotionally empty workspace behavior
+
+This phase must prioritize:
+REALISM > COMPLEXITY
+TRUST > FEATURES
+USABILITY > IMPRESSIVE LOOKING UI
+
+STRICT RULES:
+❌ NO NEW AI SYSTEMS
+❌ NO NEW AGENTS
+❌ NO NEW MEMORY LAYERS
+❌ NO NEW GRAPH FEATURES
+❌ NO NEW RUNTIME INTELLIGENCE
+❌ NO NEW ENTERPRISE TERMINOLOGY
+❌ NO NEW FAKE METRICS
+❌ NO NEW OVERLAYS
+❌ NO NEW “SMART” SURFACES
+
+ONLY:
+
+* hardening
+* cleanup
+* realism
+* trust
+* operational maturity
+
+====================================================
+Z60A — AUTH + SECURITY AUDIT
+============================
+
+Perform a REAL security audit of the authentication system.
+
+Validate:
+
+1. Password storage method
+2. Hashing implementation
+3. JWT/session handling
+4. Cookie security flags
+5. localStorage/sessionStorage exposure
+6. accidental credential logging
+7. browser console leaks
+8. exposed auth payloads
+9. unsafe debug traces
+10. duplicate auth states
+
+Search ALL:
+
+* frontend JS
+* auth routes
+* storage layers
+* logs
+* session handlers
+
+If passwords are unsafe:
+FIX IT.
+
+If tokens are exposed:
+FIX IT.
+
+If auth state leaks:
+FIX IT.
+
+DO NOT fake the audit.
+
+Output:
+actual findings only.
+
+====================================================
+Z60B — ENCODING + TEXT SANITIZATION
+===================================
+
+Fix ALL broken text rendering.
+
+Examples:
+
+* â€”
+* malformed unicode
+* broken toast text
+* corrupted restore messages
+
+Requirements:
+
+1. UTF-8 consistency
+2. sanitized toast rendering
+3. normalized runtime text
+4. no malformed symbols
+5. no corrupted interpolation strings
+
+This must be globally fixed.
+
+====================================================
+Z60C — DEAD SURFACE ELIMINATION
+===============================
+
+Audit every visible panel and control.
+
+If incomplete:
+
+* hide it
+  OR
+* simplify it
+
+DO NOT expose:
+
+* empty settings panels
+* dead tabs
+* hollow controls
+* fake enterprise widgets
+* passive surfaces
+
+Requirements:
+
+1. no empty operational panels
+2. no non-functional buttons
+3. no fake placeholders
+4. no dead metrics
+5. no fake sync messages
+
+====================================================
+Z60D — OPERATIONAL NOISE REDUCTION
+==================================
+
+Current startup flow is noisy.
+
+Reduce:
+
+* overlapping overlays
+* repetitive startup notices
+* synthetic operational messages
+* unnecessary restore spam
+* fake system confidence
+
+Requirements:
+
+1. maximum 1 startup toast
+2. maximum 1 runtime status banner
+3. no stacked overlays
+4. no passive warnings
+5. no fake “systems synced”
+6. no fake “all systems operational”
+
+Replace fake confidence with:
+quiet confidence.
+
+====================================================
+Z60E — REAL WORKSPACE CENTER
+============================
+
+The center workspace still feels emotionally empty.
+
+Build a REAL primary operational surface.
+
+Requirements:
+
+1. clear central composer
+2. visible “start task” interaction
+3. recent run continuity
+4. active session identity
+5. meaningful empty state
+6. visible operational purpose
+7. no black void feeling
+
+DO NOT:
+create fake dashboards.
+
+This should feel:
+focused,
+minimal,
+usable.
+
+====================================================
+Z60F — TRUST-FIRST PRODUCT POLISH
+=================================
+
+Audit the entire product for:
+
+* fake confidence
+* fake operational claims
+* unnecessary overlays
+* visual clutter
+* enterprise theater
+* UX overengineering
+
+The platform should now feel:
+
+* honest
+* stable
+* focused
+* believable
+* operational
+* calm
+
+====================================================
+Z60G — BETA REALISM LOCK
+========================
+
+The product should now behave like:
+a serious real beta,
+NOT:
+a visually impressive prototype.
+
+Prioritize:
+
+* reliability
+* consistency
+* trust
+* clarity
+* usability
+* operational realism
+
+====================================================
+REQUIRED REPORTS
+================
+
+Generate:
+
+* docs/Z60_SECURITY_AUDIT.md
+* docs/Z60_ENCODING_SANITIZATION.md
+* docs/Z60_DEAD_SURFACE_REPORT.md
+* docs/Z60_OPERATIONAL_NOISE_AUDIT.md
+* docs/Z60_WORKSPACE_REALISM.md
+* docs/Z60_TRUST_MATURITY_VERDICT.md
+
+Each report must include:
+
+1. actual problems found
+2. what was fake before
+3. what was removed
+4. remaining risks
+5. remaining hollow UX
+6. remaining weak trust areas
+7. honest beta readiness score
+
+====================================================
+FINAL VALIDATION
+================
+
+Before completion verify:
+
+* passwords are safely handled
+* no auth leakage exists
+* no broken encoding remains
+* no fake runtime spam remains
+* no dead panels remain
+* no fake enterprise surfaces remain
+* startup is calm
+* workspace feels usable
+* overlays are minimal
+* beta feels trustworthy
+
+MOST IMPORTANT:
+After Z60,
+Aetherion AI should feel:
+real,
+stable,
+trustworthy,
+and operationally believable.

@@ -544,7 +544,7 @@
     }, 1200);
 
     S.initialized = true;
-    console.log('[Phase Z38] Persistent Runtime Cognition + Adaptive Operational Memory active.');
+    console.debug('[Phase Z38] Persistent Runtime Cognition + Adaptive Operational Memory active.');
   }
 
   if (window.NX_LOAD_TASKS) {

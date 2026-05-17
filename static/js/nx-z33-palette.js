@@ -225,6 +225,6 @@
     _registerItems();
     _hookPalette();
     _refreshCache();
-    console.log('[Phase Z33] Runtime-aware command palette extension active.');
+    console.debug('[Phase Z33] Runtime-aware command palette extension active.');
   });
 })();

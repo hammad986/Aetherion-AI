@@ -952,7 +952,7 @@
     setTimeout(_wireTimelineRows, 1000);
 
     S.initialized = true;
-    console.log('[Phase Z34] Forensic Replay Fusion + Deep Execution Presence active.');
+    console.debug('[Phase Z34] Forensic Replay Fusion + Deep Execution Presence active.');
   }
 
   if (window.NX_LOAD_TASKS) {

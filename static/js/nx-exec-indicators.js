@@ -111,7 +111,7 @@
   function _init() {
     _patchGlobalStatus();
     setState(STATES.idle); // ensure clean initial state
-    console.log('[NxExecIndicators] Execution indicators ready');
+    console.debug('[NxExecIndicators] ready');
   }
 
   /* ── Public API ─────────────────────────────────────────────────────────── */

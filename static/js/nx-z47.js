@@ -905,7 +905,7 @@
       _dockSetIdle(`Last: ${_wsState.lastSid.slice(0,8)}…`);
     }
 
-    console.log('[Phase Z47] Operational file workspace active.');
+    console.debug('[Phase Z47] Operational file workspace active.');
   }
 
   if (document.readyState === 'loading') {

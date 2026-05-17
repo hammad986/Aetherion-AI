@@ -967,7 +967,7 @@
     z54InterceptFetch();
     z54OverridePanels();
     z54RefreshIdleRecent();
-    console.log('[Phase Z54] Real Operationalization + Interaction Completion active.');
+    console.debug('[Phase Z54] Real Operationalization + Interaction Completion active.');
   }
 
   if (document.readyState === 'loading') {

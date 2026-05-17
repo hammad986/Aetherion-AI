@@ -839,7 +839,7 @@
     }, 900);
 
     S.initialized = true;
-    console.log('[Phase Z35] Operational Mission Presence + Execution Density active.');
+    console.debug('[Phase Z35] Operational Mission Presence + Execution Density active.');
   }
 
   if (window.NX_LOAD_TASKS) {

@@ -284,7 +284,7 @@
 
     // ── Auto-load when support tab is active ─────────────────────────────────────
     window.NX_LOAD_TASKS.push( function () {
-      console.log('[Support] Customer support system active.');
+      console.debug('[Support] ready');
       // Load tickets in background for badge count
       setTimeout(nxSupportLoadTickets, 2000);
     });

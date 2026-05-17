@@ -253,7 +253,7 @@
       };
 
       _patchHitlSetPaused();
-      console.log('[Immersive AI Execution System] Activity bar + file tracking active.');
+      console.debug('[Immersive] active');
     }
 
     window.NX_LOAD_TASKS.push( _init);

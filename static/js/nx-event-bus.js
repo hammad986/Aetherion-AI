@@ -56,5 +56,5 @@
   }
 
   window.NxBus = { on, once, off, emit, clear, _debug };
-  console.log('[NxBus] Event bus ready');
+  console.debug('[NxBus] ready');
 })();

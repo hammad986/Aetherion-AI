@@ -258,7 +258,7 @@
       };
     }
 
-    console.log('[Phase Z57] Workspace Completion + Product Realism active.');
+    console.debug('[Phase Z57] Workspace Completion + Product Realism active.');
   }
 
   if (document.readyState === 'loading') {

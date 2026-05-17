@@ -748,7 +748,7 @@
     };
     waitBus();
 
-    console.log('[Phase Z46] Operational workspace realization active.');
+    console.debug('[Phase Z46] Operational workspace realization active.');
   }
 
   if (document.readyState === 'loading') {

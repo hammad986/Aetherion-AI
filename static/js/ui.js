@@ -176,12 +176,12 @@
       }
 
       nxStep('init:end');
-      console.log('[NX] Advanced UI (Critical) initialized');
+      console.debug('[NX] UI ready');
     }
 
     // Deferred non-critical tasks
     function nxInitBackgroundTasks() {
-        console.log('[NX] Initializing background tasks...');
+        console.debug('[NX] bg tasks init');
         // Start metric polling
         nxStartMetrics();
         // Load initial state
@@ -197,7 +197,7 @@
         nxWatchInspectorSlots();
         // Drag & drop on command bar
         nxInitDragDrop();
-        console.log('[NX] Background tasks initialized');
+        console.debug('[NX] bg tasks ready');
     }
 
     // ── Rotating placeholder text ──

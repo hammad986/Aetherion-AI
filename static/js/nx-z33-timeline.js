@@ -249,7 +249,7 @@
   function _init() {
     _wireNxBus();
     _renderHeader();
-    console.log('[Phase Z33] Execution timeline dock active.');
+    console.debug('[Phase Z33] Execution timeline dock active.');
   }
 
   if (window.NX_LOAD_TASKS) {

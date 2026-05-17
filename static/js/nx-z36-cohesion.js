@@ -926,7 +926,7 @@
     }, 1000);
 
     S.initialized = true;
-    console.log('[Phase Z36] Runtime Cohesion + Execution Intelligence active.');
+    console.debug('[Phase Z36] Runtime Cohesion + Execution Intelligence active.');
   }
 
   if (window.NX_LOAD_TASKS) {

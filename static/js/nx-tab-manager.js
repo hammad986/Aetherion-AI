@@ -85,7 +85,7 @@
     _patchSetTab();
     _setupTablistAria();
     _wireArrowNavigation();
-    console.log('[NxTabManager] Tab manager ready');
+    console.debug('[NxTabManager] ready');
   }
 
   if (typeof window.NX_LOAD_TASKS !== 'undefined') {

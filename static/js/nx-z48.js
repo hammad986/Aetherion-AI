@@ -969,7 +969,7 @@
       }
     }, 15000);
 
-    console.log('[Phase Z48] Workspace composition active.');
+    console.debug('[Phase Z48] Workspace composition active.');
   }
 
   if (document.readyState === 'loading') {

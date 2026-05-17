@@ -575,7 +575,7 @@
       _stampAllPressureTiers();    // Z45D
       _startSyncCycle();           // periodic maintenance
 
-      console.log('[Phase Z45] Causal synchronization + runtime consolidation active.');
+      console.debug('[Phase Z45] Causal synchronization + runtime consolidation active.');
     }, 400); // after Z35/Z36/Z44 have initialized
   }
 

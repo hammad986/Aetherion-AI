@@ -619,7 +619,7 @@
     const sid = window.currentSession || null;
     if (sid) { S.sid = sid; if (window.NxDagEngine) NxDagEngine.setSession(sid); _pollDagBackend(); }
 
-    console.log('[Phase Z30] Execution Graph + Structural Visibility active.');
+    console.debug('[Phase Z30] Execution Graph + Structural Visibility active.');
   }
 
   // Boot via NX_LOAD_TASKS if available, else DOMContentLoaded

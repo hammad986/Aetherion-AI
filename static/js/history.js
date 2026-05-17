@@ -141,7 +141,7 @@
       }
     }, 45000);
 
-    console.log('[Phase 15] Learning Dashboard active — metrics, timeline, failure analysis ready.');
+    console.debug('[Phase 15] Learning Dashboard active — metrics, timeline, failure analysis ready.');
 
 
     /* ═══════════════════════════════════════════════════════════════
@@ -370,7 +370,7 @@
       if (_p16PollTimer) { clearInterval(_p16PollTimer); _p16PollTimer = null; }
     }
 
-    console.log('[Phase 16] Autonomous Goal-Driven AI active — goal decomposition + execution ready.');
+    console.debug('[Phase 16] Autonomous Goal-Driven AI active — goal decomposition + execution ready.');
 
 
     /* ═══════════════════════════════════════════════════════════════
@@ -945,7 +945,7 @@
         }
       };
 
-      console.log('[Phase 17] Task Graph Visualization + Execution Engine active.');
+      console.debug('[Phase 17] Task Graph Visualization + Execution Engine active.');
 
     })();
 
@@ -1194,7 +1194,7 @@
         return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
       }
 
-      console.log('[Phase 18] Background Autonomous Agents + Task Scheduler active.');
+      console.debug('[Phase 18] Background Autonomous Agents + Task Scheduler active.');
 
     })();
 

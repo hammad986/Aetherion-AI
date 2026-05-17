@@ -61,7 +61,7 @@
       p13CheckSummary(sid);
     };
 
-    console.log('[Phase 13] Context Compression active — 3-tier memory enabled.');
+    console.debug('[Phase 13] Context Compression active — 3-tier memory enabled.');
 
 
     /* ═══════════════════════════════════════════════════════════════
@@ -196,6 +196,6 @@
       if (_p14InsightsOpen) p14LoadInsights();
     }, 60000);
 
-    console.log('[Phase 14] Self-Improving AI active — learning engine connected.');
+    console.debug('[Phase 14] Self-Improving AI active — learning engine connected.');
 
   })();

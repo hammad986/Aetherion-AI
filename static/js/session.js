@@ -795,5 +795,5 @@
     window.nxShowAuthGate = nxShowAuthGate;
     window.nxHideAuthGate = nxHideAuthGate;
 
-    console.log('[Auth] Enterprise authentication engine active.');
+    console.debug('[Auth] active');
   })();

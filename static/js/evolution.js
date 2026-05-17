@@ -264,7 +264,7 @@
 
     /* ── Init ──────────────────────────────────────────────────────────── */
     window.NX_LOAD_TASKS.push( function () {
-      console.log('[Phase 12] Conversational Context + Editable Prompt System active.');
+      console.debug('[Phase 12] Conversational Context + Editable Prompt System active.');
       // Keyboard shortcut: Escape closes edit modal
       document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') {

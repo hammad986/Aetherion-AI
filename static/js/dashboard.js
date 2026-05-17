@@ -1064,7 +1064,7 @@ async function loadEvolutionDashboard() {
       };
     })();
 
-    console.log('[Phase 4] Intelligence & Personalization Layer active.');
+    console.debug('[Phase 4] Intelligence & Personalization Layer active.');
   })();
 
   /* ================================================================
@@ -1413,7 +1413,7 @@ async function loadEvolutionDashboard() {
       setTimeout(p5UpdateRoutingInfo, 400);
     };
 
-    console.log('[Phase 5] BYOK Multi-Provider System active. Providers:', Object.keys({}).length || 'loading…');
+    console.debug('[Phase 5] BYOK Multi-Provider System active. Providers:', Object.keys({}).length || 'loading…');
   })();
 
   /* ================================================================
@@ -1682,7 +1682,7 @@ async function loadEvolutionDashboard() {
             const d = await r.json();
             if (d.ok && d.top && d.top.id !== 'local') {
               p5SelectProvider(d.top.id, null);
-              console.log(`[P6 AUTO] Pre-selected ${d.top.label} for task (score: ${d.top.score})`);
+              console.debug(`[P6 AUTO] Pre-selected ${d.top.label} for task (score: ${d.top.score})`);
             }
           }
         } catch (e) { }
@@ -1762,7 +1762,7 @@ async function loadEvolutionDashboard() {
       }
     };
 
-    console.log('[Phase 6] Decision Intelligence Layer active. Priority:', p6Priority);
+    console.debug('[Phase 6] Decision Intelligence Layer active. Priority:', p6Priority);
   })();
 
   /* ================================================================
@@ -2131,7 +2131,7 @@ async function loadEvolutionDashboard() {
       p7MonitorSessions();
       p7WatchPlanMode();
       p7WatchSessionSelect();
-      console.log('[Phase 7] Structured Agent System active. Agents:', p7Agents.map(a => a.id));
+      console.debug('[Phase 7] Structured Agent System active. Agents:', p7Agents.map(a => a.id));
     });
 
   })();
@@ -2731,7 +2731,7 @@ async function loadEvolutionDashboard() {
     window.NX_LOAD_TASKS.push( function () {
       p8Load();
       p8StartPoll();
-      console.log('[Phase 8] Monetization & Access Control Layer active.');
+      console.debug('[Phase 8] Monetization & Access Control Layer active.');
     });
 
   })();
@@ -2871,7 +2871,7 @@ async function loadEvolutionDashboard() {
       p9StartPoll();
       p9HookPlanSelector();
       p9HookTaskEvents();
-      console.log('[Phase 9] Model Intelligence Routing System active.');
+      console.debug('[Phase 9] Model Intelligence Routing System active.');
     });
 
   })();
@@ -2957,7 +2957,7 @@ async function loadEvolutionDashboard() {
     window.NX_LOAD_TASKS.push( function () {
       p10Refresh();
       _p10Timer = setInterval(p10Refresh, 45000);
-      console.log('[Phase 10] Agent Intelligence & Memory System active.');
+      console.debug('[Phase 10] Agent Intelligence & Memory System active.');
     });
 
     window.p10Refresh = p10Refresh;
@@ -3138,7 +3138,7 @@ async function loadEvolutionDashboard() {
 
     /* ── Init ───────────────────────────────────────────────────────── */
     window.NX_LOAD_TASKS.push( function () {
-      console.log('[Phase 11] Multi-Agent Collaboration System active.');
+      console.debug('[Phase 11] Multi-Agent Collaboration System active.');
     });
 
   })();

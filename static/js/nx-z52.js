@@ -217,8 +217,8 @@
         if (!items.length) return;
         /* Show one consolidated restore toast */
         _showRichToast(
-          'Workspace restored',
-          items.length > 1 ? items.length + ' systems synced' : null,
+          'Session resumed',
+          null,
           'restore',
           items.length > 1 ? items : null,
           4000
@@ -580,7 +580,7 @@
       }
     });
 
-    console.log('[Phase Z52] Operational Product Experience active. Identity, toast governance, workspace presence.');
+    console.debug('[Phase Z52] Operational Product Experience active. Identity, toast governance, workspace presence.');
   }
 
   /* Defer 150ms to allow Z51 and all other deferred scripts to settle */

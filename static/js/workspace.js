@@ -7,7 +7,7 @@
  *   - WS_PANELS: registry of all panels with metadata
  *   - NxWorkspace: singleton controller (window.NxWorkspace)
  *   - Persists to localStorage under key 'nx_workspace_v2'
- *   - More â–¾ menu reflects closed secondary panels
+ *   - More ▾ menu reflects closed secondary panels
  *   - Panels: resizable (drag handle), closable, restorable
  *   - Docking zones: left | center | right | bottom
  *   - Keyboard: Ctrl+Shift+E (left), Ctrl+Shift+I (right)
@@ -80,13 +80,13 @@
     _updatePanelHeaderBtns();
   }
 
-  // â”€â”€â”€ Panel header Ã— buttons â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // â”€â”€â”€ Panel header × buttons â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   function _updatePanelHeaderBtns() {
     // Left panel collapse button label
     const leftColBtn = _el('nxLeft')?.querySelector('.nx-tiny-btn[onclick*="nxToggleLeft"]');
     if (leftColBtn) leftColBtn.textContent = _state.leftOpen ? 'â—‚' : 'â–¸';
 
-    // Right panel header â€” inject Ã— button if missing
+    // Right panel header â€” inject × button if missing
     const rightHdr = _el('nxRight')?.querySelector('.nx-panel-hdr .nx-panel-actions');
     if (rightHdr && !rightHdr.querySelector('.nx-ws-close-btn')) {
       const btn = document.createElement('button');
@@ -205,7 +205,7 @@
       btn.style.display = hidden ? 'none' : '';
     });
 
-    // Add close (Ã—) buttons to closable primary tabs if not already present
+    // Add close (×) buttons to closable primary tabs if not already present
     tabBar.querySelectorAll('.nx-tab:not(.secondary)').forEach(btn => {
       const tid = btn.dataset.nxtab;
       if (!tid) return;
@@ -214,8 +214,8 @@
       if (btn.style.display === 'none') return;
       const x = document.createElement('span');
       x.className = 'nx-tab-close';
-      x.title = 'Close panel (restore from More â–¾)';
-      x.textContent = 'Ã—';
+      x.title = 'Close panel (restore from More ▾)';
+      x.textContent = '×';
       x.addEventListener('click', e => { e.stopPropagation(); NxWorkspace.closeTab(tid); });
       btn.appendChild(x);
     });
@@ -276,7 +276,7 @@
 
       mkItem('â—‚ AI Thinking panel', () => NxWorkspace.toggleLeft(),  'Ctrl+Shift+E');
       mkItem('â–¸ Inspector panel',   () => NxWorkspace.toggleRight(), 'Ctrl+Shift+I');
-      mkItem('â–² Bottom dock',        () => NxWorkspace.toggleBottom(),'');
+      mkItem('▲ Bottom dock',        () => NxWorkspace.toggleBottom(),'');
       mkItem('â†º Reset layout',       () => NxWorkspace.resetLayout(), '');
     }
   }
@@ -338,7 +338,7 @@
       _ensureBottomDock();
       _injectStyles();
 
-      console.log('[NxWorkspace v2] Initialized. State:', JSON.stringify(_state));
+      console.debug('[NxWorkspace v2] ready');
     },
 
     // â”€â”€ Panel width toggles â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -431,7 +431,7 @@
       }
       _applyTabVisibility();
       _save();
-      if (typeof nxToast === 'function') nxToast(`${panel.label} closed â€” restore from More â–¾`);
+      if (typeof nxToast === 'function') nxToast(`${panel.label} closed â€” restore from More ▾`);
     },
 
     openTab(id) {
@@ -512,7 +512,7 @@
       /* â”€â”€ Bottom dock â”€â”€ */
       #nxBottomDock { max-height: 60vh; }
 
-      /* â”€â”€ Panel header Ã— close button â”€â”€ */
+      /* â”€â”€ Panel header × close button â”€â”€ */
       .nx-ws-close-btn { margin-right: 2px; }
       .nx-ws-close-btn:hover { background: rgba(239,68,68,.18) !important; color: var(--red, #ef4444) !important; }
     `;

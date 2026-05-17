@@ -318,7 +318,7 @@
             }
             const t0 = now();
             recordStage(`${phase}:start`, { task: taskName });
-            console.log(`[BOOT:${phase}] start ${taskName}${task.__nxSourceFile ? ` @ ${task.__nxSourceFile}` : ''}`);
+            console.debug(`[BOOT:${phase}] start ${taskName}${task.__nxSourceFile ? ` @ ${task.__nxSourceFile}` : ''}`);
             try {
                 await task();
                 const dt = now() - t0;
@@ -329,7 +329,7 @@
                     durationMs: Math.round(dt),
                     source: task.__nxSourceFile || '',
                 });
-                console.log(`[BOOT:${phase}] done ${taskName} (${dt.toFixed(1)}ms)`);
+                console.debug(`[BOOT:${phase}] done ${taskName} (${dt.toFixed(1)}ms)`);
                 if (dt > 10) {
                     console.warn(`[BOOT] Slow ${phase} task: ${taskName} took ${dt.toFixed(1)}ms`);
                 }
@@ -466,7 +466,7 @@
         nx.state = 'booting';
         nx.diagnostics.bootStartedAt = now();
         recordStage('boot:init');
-        console.log('[BOOT] Starting Modular App Initialize...');
+        console.debug('[BOOT] init');
         if (
             nx.debugFlags.disable.size ||
             nx.debugFlags.disableSources.size ||
@@ -493,7 +493,7 @@
             degraded: nx.diagnostics.degradedModules.length,
         });
 
-        console.log(`[BOOT] Interactive state reached in ${(now() - startTime).toFixed(1)}ms`);
+        console.debug(`[BOOT] ready in in ${(now() - startTime).toFixed(1)}ms`);
 
         const loadTasks = window.NX_LOAD_TASKS.slice();
         loadTasks.forEach((task, i) => {

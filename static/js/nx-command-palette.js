@@ -191,7 +191,7 @@
   function _init() {
     _setupAria();
     _wireInput();
-    console.log('[NxPalette] Command palette module ready');
+    console.debug('[NxPalette] ready');
   }
 
   /* ── Public API ─────────────────────────────────────────────────────────── */

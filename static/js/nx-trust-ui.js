@@ -666,7 +666,7 @@
       });
     });
 
-    console.log('[NxTrustUI] Trust Engine UI initialized');
+    console.debug('[NxTrustUI] init');
   }
 
   /* ── Bootstrap ────────────────────────────────────────────────────── */

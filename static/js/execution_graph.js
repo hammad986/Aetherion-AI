@@ -408,7 +408,7 @@
     window.NX_LOAD_TASKS.push( () => {
       _hookIngestLogRow();
       setInterval(_pollSessionState, 600);
-      console.log('[Phase 33] Real-Time AI Execution Visualization active.');
+      console.debug('[Phase 33] Real-Time AI Execution Visualization active.');
     });
 
     // nxSetTab already handles the .active class which triggers display:flex from CSS.

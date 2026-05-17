@@ -86,7 +86,7 @@ function _showOnboard(){
       <!-- Runtime readiness -->
       <div style="display:flex;align-items:center;gap:8px;padding:8px 14px;background:rgba(63,185,80,0.06);border:1px solid rgba(63,185,80,0.18);border-radius:8px;font-size:11.5px;color:#3fb950;font-weight:500;margin-bottom:20px;">
         <div style="width:6px;height:6px;border-radius:50%;background:#3fb950;flex-shrink:0;animation:z59PulseGreen 2s ease-in-out infinite;"></div>
-        Runtime ready — all systems operational
+        Ready
       </div>
 
       <!-- Layout presets -->

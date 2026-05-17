@@ -170,7 +170,7 @@
     _auditModals();
     _patchSettings();
     _patchDrawer();
-    console.log('[NxModal] Modal system ready. Modals audited:', _stack.length);
+    console.debug('[NxModal] ready');
   }
 
   if (typeof window.NX_LOAD_TASKS !== 'undefined') {

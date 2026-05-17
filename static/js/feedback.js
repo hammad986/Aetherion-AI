@@ -77,5 +77,5 @@
           if (e.key === 'Escape') closeFeedbackModal();
         });
 
-        console.log('[Feedback] FEEDBACK SYSTEM ACTIVE — USER INPUT CAPTURED SUCCESSFULLY');
+        console.debug('[Feedback] ready');
       })();

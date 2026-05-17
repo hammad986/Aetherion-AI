@@ -144,7 +144,7 @@
 
   /* ── Module init ────────────────────────────────────────────────────────── */
   document.addEventListener('keydown', _onKeydown);
-  console.log('[NxKeyboard] Keyboard shortcut module active');
+  console.debug('[NxKeyboard] ready');
 
   window.NxKeyboard = { register, unregister, list };
 

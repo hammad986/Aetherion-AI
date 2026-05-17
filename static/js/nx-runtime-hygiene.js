@@ -383,7 +383,7 @@
     }
 
     setInterval(updateHUD, HUD_INTERVAL_MS);
-    console.log('[NX:Z21/Z24] Runtime hygiene + stress hardening active — nxPerfHUD() / _nxDiagSnapshot()');
+    console.debug('[NX:Z21/Z24] hygiene active');
   }
 
   init();

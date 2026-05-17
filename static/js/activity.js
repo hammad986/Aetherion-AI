@@ -966,7 +966,7 @@
         });
       }
 
-      console.log('[Phase 33] Cross-platform terminal intelligence active.');
+      console.debug('[Phase 33] Cross-platform terminal intelligence active.');
 
       /* ================================================================
          PHASE 34 — INTELLIGENCE DASHBOARD JS
@@ -1182,7 +1182,7 @@
         };
       })();
 
-      console.log('[Phase 34] Semi-AGI Intelligence Dashboard active.');
+      console.debug('[Phase 34] Semi-AGI Intelligence Dashboard active.');
 
       /* ================================================================
          PHASE 35 — ENTERPRISE DASHBOARD JS
@@ -1362,4 +1362,4 @@
         }
       }, 8000);
 
-      console.log('[Phase 35] Enterprise Autonomous System Dashboard active.');
+      console.debug('[Phase 35] Enterprise Autonomous System Dashboard active.');

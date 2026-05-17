@@ -1,0 +1,313 @@
+PHASE Z56 — INTERACTION STABILIZATION + TRUST RECOVERY
+
+IMPORTANT:
+
+STOP adding:
+new systems,
+new runtime layers,
+new orchestration features,
+new execution frameworks,
+new telemetry,
+new overlays,
+new visual concepts.
+
+This phase is STRICTLY about:
+stabilization,
+interaction recovery,
+trust restoration,
+and beta reliability.
+
+====================================================
+PRIMARY OBJECTIVE
+=================
+
+Aetherion AI currently feels:
+visually advanced,
+but interaction reliability is inconsistent.
+
+Core issue:
+
+many UI surfaces appear operational,
+but interactions are either:
+broken,
+conflicting,
+dead,
+delayed,
+or unstable.
+
+This phase must:
+make the platform feel
+stable,
+responsive,
+predictable,
+and trustworthy.
+
+====================================================
+Z56A — GLOBAL INTERACTION AUDIT
+===============================
+
+Audit EVERY visible interactive surface.
+
+INCLUDING:
+
+* buttons
+* chips
+* toggles
+* menus
+* dropdowns
+* tabs
+* cards
+* sidebar actions
+* panel controls
+* close buttons
+* modal actions
+* cookie actions
+* onboarding actions
+* run/stop controls
+* chat actions
+* history actions
+* settings actions
+
+For EACH control:
+
+verify:
+
+1. click works
+2. hover works
+3. active state works
+4. disabled state works
+5. focus state works
+6. event binding exists
+7. no duplicate listeners
+8. no blocked propagation
+9. no hydration race condition
+10. no silent failure
+
+If ANY interaction is broken:
+FIX IT.
+
+NOT visually.
+Actually operationally.
+
+====================================================
+Z56B — DEAD UI ERADICATION
+==========================
+
+Audit all visible UI.
+
+If ANY element:
+
+* does nothing
+* is decorative only
+* has fake behavior
+* triggers placeholder logic
+* produces fake toasts
+* opens empty states
+* has no backend connection
+
+then:
+EITHER:
+
+* operationalize it
+  OR
+* remove/hide it completely.
+
+NO prototype theater.
+
+====================================================
+Z56C — STARTUP STABILITY PASS
+=============================
+
+Current startup experience is unstable.
+
+Fix:
+
+1. false rate-limit errors
+2. duplicate startup toasts
+3. reconnect spam
+4. initialization race conditions
+5. panel hydration timing bugs
+6. delayed interaction activation
+7. stale session restore issues
+8. startup overlay conflicts
+
+Requirements:
+
+startup should feel:
+clean,
+calm,
+stable,
+intentional.
+
+NO warnings should appear
+unless REAL.
+
+====================================================
+Z56D — EVENT SYSTEM CONSOLIDATION
+=================================
+
+Audit:
+ALL event listeners,
+MutationObservers,
+timers,
+polling loops,
+SSE hooks,
+and DOM subscriptions.
+
+Requirements:
+
+1. eliminate duplicate listeners
+2. eliminate duplicate SSE reactions
+3. eliminate event propagation conflicts
+4. eliminate hydration duplication
+5. eliminate observer spam
+6. eliminate startup listener stacking
+7. centralize interaction ownership
+
+Goal:
+
+interaction system should feel:
+deterministic,
+not chaotic.
+
+====================================================
+Z56E — WORKSPACE RECOVERY
+=========================
+
+Current workspace still feels:
+empty,
+cold,
+and partially broken.
+
+Fix:
+
+1. black void composition
+2. empty operational density
+3. inactive dead zones
+4. non-functional center surfaces
+5. inactive runtime cards
+6. broken contextual surfaces
+7. layout imbalance
+
+Requirements:
+
+workspace must feel:
+alive,
+usable,
+responsive,
+and interaction-ready.
+
+====================================================
+Z56F — TRUST + BETA RELIABILITY
+===============================
+
+Perform a REAL beta trust audit.
+
+Fix:
+
+1. broken cookie actions
+2. unreliable close buttons
+3. inconsistent hover timing
+4. stuck active states
+5. delayed transitions
+6. interaction lag
+7. false runtime warnings
+8. fake loading states
+9. inconsistent panel behavior
+10. broken dismiss actions
+
+Goal:
+
+EVERY interaction should feel:
+intentional,
+stable,
+and production-minded.
+
+====================================================
+Z56G — PERFORMANCE + HYDRATION STABILITY
+========================================
+
+Audit:
+boot timing,
+hydration order,
+DOM readiness,
+panel initialization,
+runtime attachment timing.
+
+Requirements:
+
+1. no interaction before hydration ready
+2. no duplicated initialization
+3. no startup race conditions
+4. no delayed click activation
+5. no unstable DOM patching
+6. no hydration mismatch behavior
+
+====================================================
+STRICT RULES
+============
+
+DO NOT ADD:
+
+* new runtime systems
+* new replay systems
+* new memory systems
+* new telemetry systems
+* new orchestration layers
+* new visual frameworks
+* new engineering showcases
+
+FOCUS ONLY:
+stability,
+interaction recovery,
+trust,
+reliability,
+operational polish.
+
+====================================================
+REQUIRED REPORTS
+================
+
+Generate:
+
+* docs/Z56_INTERACTION_AUDIT.md
+* docs/Z56_DEAD_UI_REPORT.md
+* docs/Z56_STARTUP_STABILITY.md
+* docs/Z56_EVENT_SYSTEM_AUDIT.md
+* docs/Z56_BETA_RELIABILITY.md
+* docs/Z56_PRODUCT_TRUST_VERDICT.md
+
+Each report MUST include:
+
+1. Remaining broken interactions
+2. Remaining fake surfaces
+3. Remaining startup instability
+4. Remaining hydration risks
+5. Remaining trust gaps
+6. Remaining beta blockers
+7. Honest reliability score
+
+====================================================
+FINAL VALIDATION
+================
+
+Before completion verify:
+
+* ALL visible buttons work
+* cookie actions work
+* no false rate-limit errors
+* no startup spam
+* no duplicate listeners
+* no hydration conflicts
+* no dead controls remain
+* no fake runtime warnings remain
+* workspace feels responsive
+* panels reliably open/close
+* startup experience calm and stable
+
+MOST IMPORTANT:
+
+After Z56,
+Aetherion AI should finally feel:
+like a REAL usable beta product —
+NOT a visually advanced but unstable prototype.

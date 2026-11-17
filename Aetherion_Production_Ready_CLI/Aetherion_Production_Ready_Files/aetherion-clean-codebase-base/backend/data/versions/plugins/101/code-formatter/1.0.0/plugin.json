@@ -1,0 +1,40 @@
+{
+  "id": "code-formatter",
+  "name": "Code Formatter Tool",
+  "version": "1.0.0",
+  "description": "Formats python and javascript files cleanly.",
+  "author": "Platform Team",
+  "license": "MIT",
+  "entrypoint": "main.py:format_code",
+  "runtime": "python",
+  "repository": "",
+  "required_permissions": [
+    "FILESYSTEM_READ",
+    "FILESYSTEM_WRITE"
+  ],
+  "provided_tools": [
+    {
+      "name": "format_code",
+      "description": "Format target file in workspace",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ]
+      }
+    }
+  ],
+  "required_dependencies": [],
+  "compatible_aetherion_version": ">=2.0.0",
+  "homepage": "",
+  "documentation": "",
+  "icon": "",
+  "tags": [],
+  "configuration_schema": {},
+  "trust_level": "UNTRUSTED"
+}

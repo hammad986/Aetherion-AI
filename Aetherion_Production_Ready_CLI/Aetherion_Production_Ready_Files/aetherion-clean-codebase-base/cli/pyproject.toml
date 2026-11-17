@@ -1,0 +1,129 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "aetherion"
+version = "1.0.0"
+description = "Official CLI for the Aetherion AI Platform — build anything with AI agents"
+authors = [{ name = "Aetherion", email = "dev@aetherion.ai" }]
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.9"
+keywords = ["ai", "agents", "cli", "tui", "aetherion", "llm", "coding", "terminal"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Software Development :: Libraries :: Application Frameworks",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Utilities",
+]
+dependencies = [
+    "click>=8.1",
+    "httpx>=0.24",
+    "rich>=13.0",
+    "keyring>=24.0",
+]
+
+[project.optional-dependencies]
+tui = [
+    "textual>=0.61.0",
+]
+all = [
+    "textual>=0.61.0",
+]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov",
+    "pytest-httpx>=0.22",
+    "pytest-asyncio>=0.21",
+    "ruff>=0.4",
+    "mypy>=1.8",
+    "textual>=0.61.0",   # dev always gets TUI
+    "build",
+]
+build = [
+    "pyinstaller>=6.0",
+    "hatchling",
+]
+
+[project.urls]
+Homepage      = "https://aetherion.ai"
+Repository    = "https://github.com/aetherion/aetherion-ai"
+"Bug Tracker" = "https://github.com/aetherion/aetherion-ai/issues"
+Documentation = "https://docs.aetherion.ai/cli"
+Changelog     = "https://github.com/aetherion/aetherion-ai/blob/main/CHANGELOG.md"
+
+[project.scripts]
+aetherion = "aetherion_cli.main:main"
+
+# ---------------------------------------------------------------------------
+# Build
+# ---------------------------------------------------------------------------
+
+[tool.hatch.build]
+ignore-vcs = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["aetherion_cli"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "aetherion_cli/**",
+    "README.md",
+    "LICENSE.md",
+    "CHANGELOG.md",
+]
+
+# ---------------------------------------------------------------------------
+# Test
+# ---------------------------------------------------------------------------
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts   = "--tb=short -q"
+asyncio_mode = "auto"
+
+# ---------------------------------------------------------------------------
+# Linting (ruff)
+# ---------------------------------------------------------------------------
+
+[tool.ruff]
+line-length    = 100
+target-version = "py39"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "PLC"]
+ignore = ["E501", "UP007", "B008"]
+
+# ---------------------------------------------------------------------------
+# Type checking (mypy)
+# ---------------------------------------------------------------------------
+
+[tool.mypy]
+python_version      = "3.9"
+strict              = true
+ignore_missing_imports = true
+exclude             = ["tests/", "aetherion.spec"]
+
+# ---------------------------------------------------------------------------
+# Coverage
+# ---------------------------------------------------------------------------
+
+[tool.coverage.run]
+source  = ["aetherion_cli"]
+omit    = ["*/__pycache__/*", "*/tests/*"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = false

@@ -1,0 +1,65 @@
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.cert
+
+# Git and editor state
+.git
+.gitignore
+.vscode
+.idea
+
+# Python caches, virtualenvs, and build artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.tox/
+.venv/
+venv/
+ENV/
+build/
+dist/
+*.egg-info/
+
+# Node and frontend build artifacts
+node_modules/
+frontend-auth/node_modules/
+frontend-auth/dist/
+.vite/
+
+# Runtime databases and workspaces
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+/workspace/
+/workspaces/
+backend/workspace/
+.aetherion_worktrees/
+
+# Logs, scratch, and generated reports
+*.log
+logs/
+audit/logs/
+*.tmp
+*.bak
+scratch/
+temp_*/
+qa/manual_uat/screenshots/
+FINAL_*_REPORT.md
+FINAL_*_AUDIT.md
+FINAL_*_CERTIFICATION.md
+FINAL_*_READINESS.md
+FINAL_*_ACCEPTANCE.md
+PHASE_*_REPORT.md
+audit_results*.txt
+pytest_results.txt

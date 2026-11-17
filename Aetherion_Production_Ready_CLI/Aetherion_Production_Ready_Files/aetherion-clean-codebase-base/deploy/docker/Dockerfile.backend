@@ -1,0 +1,57 @@
+# =============================================================================
+# Stage 1: Build & Dependency Wheel Cache
+# =============================================================================
+FROM python:3.12-slim-bookworm AS builder
+
+WORKDIR /build
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libpq-dev \
+    gcc \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY backend/requirements.txt .
+RUN pip install --no-cache-dir --user -r requirements.txt
+
+# =============================================================================
+# Stage 2: Hardened Non-Root Runtime
+# =============================================================================
+FROM python:3.12-slim-bookworm AS runner
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq5 \
+    curl \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create dedicated non-root user
+RUN groupadd -g 10001 aetherion && \
+    useradd -u 10001 -g aetherion -m -s /bin/bash aetherion
+
+# Copy installed python wheels from builder
+COPY --from=builder /root/.local /home/aetherion/.local
+ENV PATH=/home/aetherion/.local/bin:$PATH
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+
+# Copy backend codebase & scripts
+COPY --chown=aetherion:aetherion backend/ /app/
+COPY --chown=aetherion:aetherion scripts/ /app/scripts/
+
+# Workspace mount point & logs directory, backend symlink
+RUN mkdir -p /app/workspace /app/logs && \
+    ln -s /app /app/backend && \
+    chown -R aetherion:aetherion /app/workspace /app/logs /app/backend
+
+USER aetherion:aetherion
+
+EXPOSE 5000
+
+HEALTHCHECK --interval=15s --timeout=5s --start-period=10s --retries=3 \
+    CMD curl -f http://localhost:5000/api/health || exit 1
+
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "4", "--threads", "2", "--timeout", "120", "app:app"]

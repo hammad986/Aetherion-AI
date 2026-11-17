@@ -1,0 +1,58 @@
+# =============================================================================
+# Aetherion Execution Fabric Worker Container
+# Stage 1: Build & Dependency Wheel Cache
+# =============================================================================
+FROM python:3.12-slim-bookworm AS builder
+
+WORKDIR /build
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libpq-dev \
+    gcc \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY backend/requirements.txt .
+RUN pip install --no-cache-dir --user -r requirements.txt \
+    && pip install --no-cache-dir --user rich httpx
+
+# =============================================================================
+# Stage 2: Hardened Non-Root Worker Runtime
+# =============================================================================
+FROM python:3.12-slim-bookworm AS runner
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq5 \
+    curl \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Dedicated non-root user (matching backend container)
+RUN groupadd -g 10001 aetherion && \
+    useradd -u 10001 -g aetherion -m -s /bin/bash aetherion
+
+# Copy installed python wheels from builder
+COPY --from=builder /root/.local /home/aetherion/.local
+ENV PATH=/home/aetherion/.local/bin:$PATH
+ENV PYTHONPATH=/app/backend:/app/cli
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+
+# Copy backend and cli codebases
+COPY --chown=aetherion:aetherion backend/ /app/backend/
+COPY --chown=aetherion:aetherion cli/ /app/cli/
+
+# Workspace mount point
+RUN mkdir -p /app/workspace && chown -R aetherion:aetherion /app/workspace
+
+USER aetherion:aetherion
+
+# Preflight validation healthcheck
+HEALTHCHECK --interval=15s --timeout=5s --start-period=10s --retries=3 \
+    CMD python -m execution.fabric.worker_entrypoint --check-only || exit 1
+
+# Production worker entrypoint running preflight contract & runtime
+CMD ["python", "-m", "execution.fabric.worker_entrypoint"]

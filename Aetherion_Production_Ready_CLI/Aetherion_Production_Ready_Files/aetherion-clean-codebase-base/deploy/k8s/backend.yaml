@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aetherion-backend
+  namespace: aetherion
+  labels:
+    app: aetherion-backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: aetherion-backend
+  template:
+    metadata:
+      labels:
+        app: aetherion-backend
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+      containers:
+        - name: backend
+          image: aetherion/backend:1.0.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5000
+              name: http
+          envFrom:
+            - configMapRef:
+                name: aetherion-config
+            - secretRef:
+                name: aetherion-secrets
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: 1000m
+              memory: 1536Mi
+          livenessProbe:
+            httpGet:
+              path: /livez
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 2
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aetherion-backend
+  namespace: aetherion
+  labels:
+    app: aetherion-backend
+spec:
+  type: ClusterIP
+  selector:
+    app: aetherion-backend
+  ports:
+    - port: 5000
+      targetPort: http
+      name: http

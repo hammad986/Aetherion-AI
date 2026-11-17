@@ -1,0 +1,174 @@
+# =============================================================================
+# AETHERION PRODUCTION DOCKER COMPOSE CONFIGURATION (Strict Production Mode)
+# =============================================================================
+# Requirements:
+# 1. Environment variables MUST be set via .env or orchestration secrets.
+# 2. Strict startup ordering: Postgres & Redis healthy -> Backend healthy -> Workers start.
+# 3. Dedicated non-root users (aetherion:aetherion 10001:10001).
+# 4. Fail-closed on missing secrets or unavailable dependencies.
+# =============================================================================
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: aetherion-postgres-prod
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-aetherion}
+      POSTGRES_USER: ${POSTGRES_USER:-aetherion_user}
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:?Error: POSTGRES_PASSWORD must be configured for production}"
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - postgres_prod_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-aetherion_user} -d ${POSTGRES_DB:-aetherion}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - aetherion_prod_net
+
+  redis:
+    image: redis:7-alpine
+    container_name: aetherion-redis-prod
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory", "512mb", "--maxmemory-policy", "volatile-lru"]
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - redis_prod_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - aetherion_prod_net
+
+  backend:
+    build:
+      context: ../..
+      dockerfile: deploy/docker/Dockerfile.backend
+    container_name: aetherion-backend-prod
+    restart: unless-stopped
+    environment:
+      ENVIRONMENT: production
+      PORT: 5000
+      SECRET_KEY: "${SECRET_KEY:?Error: SECRET_KEY must be configured for production}"
+      JWT_SECRET: "${JWT_SECRET:?Error: JWT_SECRET must be configured for production}"
+      DATABASE_URL: postgresql://${POSTGRES_USER:-aetherion_user}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-aetherion}
+      REDIS_URL: redis://redis:6379/0
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:3000}
+      RUNNER_CONTAINER: 1
+      REQUIRE_SANDBOX: ${REQUIRE_SANDBOX:-false}
+      LLM_PROVIDER: ${LLM_PROVIDER:-mock}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+    ports:
+      - "127.0.0.1:5000:5000"
+    volumes:
+      - workspace_prod_data:/app/workspace
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health/control-plane"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - aetherion_prod_net
+
+  frontend-auth:
+    build:
+      context: ../..
+      dockerfile: deploy/docker/Dockerfile.frontend-auth
+    container_name: aetherion-frontend-auth-prod
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3000:8080"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/healthz"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    networks:
+      - aetherion_prod_net
+
+  worker-a:
+    build:
+      context: ../..
+      dockerfile: deploy/docker/Dockerfile.worker
+    container_name: aetherion-worker-a-prod
+    restart: unless-stopped
+    environment:
+      ENVIRONMENT: production
+      WORKER_ID: ${WORKER_A_ID:-worker-a}
+      MAX_CONCURRENCY: ${WORKER_A_MAX_CONCURRENCY:-4}
+      CAPABILITIES: ${WORKER_A_CAPABILITIES:-DEFAULT,CPU}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-aetherion_user}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-aetherion}
+      REDIS_URL: redis://redis:6379/0
+      SECRET_KEY: "${SECRET_KEY:?Error: SECRET_KEY must be configured for production}"
+      JWT_SECRET: "${JWT_SECRET:?Error: JWT_SECRET must be configured for production}"
+      LLM_PROVIDER: ${LLM_PROVIDER:-mock}
+    volumes:
+      - workspace_prod_data:/app/workspace
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    networks:
+      - aetherion_prod_net
+
+  worker-b:
+    build:
+      context: ../..
+      dockerfile: deploy/docker/Dockerfile.worker
+    container_name: aetherion-worker-b-prod
+    restart: unless-stopped
+    environment:
+      ENVIRONMENT: production
+      WORKER_ID: ${WORKER_B_ID:-worker-b}
+      MAX_CONCURRENCY: ${WORKER_B_MAX_CONCURRENCY:-4}
+      CAPABILITIES: ${WORKER_B_CAPABILITIES:-DEFAULT,CPU}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-aetherion_user}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-aetherion}
+      REDIS_URL: redis://redis:6379/0
+      SECRET_KEY: "${SECRET_KEY:?Error: SECRET_KEY must be configured for production}"
+      JWT_SECRET: "${JWT_SECRET:?Error: JWT_SECRET must be configured for production}"
+      LLM_PROVIDER: ${LLM_PROVIDER:-mock}
+    volumes:
+      - workspace_prod_data:/app/workspace
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    networks:
+      - aetherion_prod_net
+
+volumes:
+  postgres_prod_data:
+    driver: local
+  redis_prod_data:
+    driver: local
+  workspace_prod_data:
+    driver: local
+
+networks:
+  aetherion_prod_net:
+    driver: bridge

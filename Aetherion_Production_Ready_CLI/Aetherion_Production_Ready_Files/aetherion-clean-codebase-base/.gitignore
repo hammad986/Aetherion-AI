@@ -1,0 +1,65 @@
+# Environment and Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.cert
+
+# Python cache & virtual environments
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.venv/
+venv/
+ENV/
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Node.js & Frontend build
+node_modules/
+dist/
+.vite/
+
+# Databases & runtime data
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+sessions.db
+saas_platform.db
+# Runtime workspaces (root level only)
+/workspace/
+/workspaces/
+!**/aetherion_cli/workspace/
+
+# Logs & temporary files
+*.log
+logs/
+audit/logs/
+*.tmp
+*.bak
+.DS_Store
+Thumbs.db

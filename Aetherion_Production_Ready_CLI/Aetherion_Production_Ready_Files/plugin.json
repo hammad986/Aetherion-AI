@@ -1,0 +1,153 @@
+{
+  "id": "rea-reverse-engineer",
+  "name": "REA - Reverse Engineer Anything (morluto/rea)",
+  "version": "1.0.0",
+  "description": "Reverse engineer anything with autonomous agents, from application behavior, JS/Electron runtimes, and APKs down to native binaries with deterministic Evidence IDs.",
+  "author": "Aetherion Platform Team (ref: morluto/rea)",
+  "license": "MIT",
+  "entrypoint": "main.py:execute_rea_tool",
+  "runtime": "python",
+  "repository": "https://github.com/morluto/rea",
+  "required_permissions": [
+    "FILESYSTEM_READ",
+    "FILESYSTEM_WRITE",
+    "PROCESS_EXEC",
+    "NETWORK_LOCAL"
+  ],
+  "provided_tools": [
+    {
+      "name": "rea_scope_gate",
+      "description": "Confirm target authorization and initialize a deterministic REA case file before inspecting any binary or runtime target.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "target_path": {
+            "type": "string",
+            "description": "Path or URI of the binary, package, or runtime target."
+          },
+          "authorization_note": {
+            "type": "string",
+            "description": "Explicit ownership or written authorization confirmation."
+          }
+        },
+        "required": [
+          "target_path",
+          "authorization_note"
+        ]
+      }
+    },
+    {
+      "name": "rea_inspect_binary",
+      "description": "Inspect native binaries (ELF/PE/Mach-O), Go binaries, WASM, .NET assemblies, or Android APKs for sections, symbols, strings, imports/exports, and bounded function dossiers.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "target_path": {
+            "type": "string"
+          },
+          "case_id": {
+            "type": "string"
+          },
+          "function_filter": {
+            "type": "string"
+          },
+          "max_strings": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "target_path",
+          "case_id"
+        ]
+      }
+    },
+    {
+      "name": "rea_observe_js_runtime",
+      "description": "Passive Inspector protocol observation (Runtime.enable, Debugger.enable) for Node.js and Electron targets without code injection or breakpoint mutation.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "inspector_ws_url": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "node",
+              "electron-main",
+              "electron-preload",
+              "electron-renderer"
+            ]
+          },
+          "capture_window_ms": {
+            "type": "integer"
+          },
+          "case_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "inspector_ws_url",
+          "role",
+          "case_id"
+        ]
+      }
+    },
+    {
+      "name": "rea_reconstruct_feature",
+      "description": "Synthesize a deterministic Finding Ledger with Evidence IDs and generate a clean-room implementation plan for a reverse-engineered feature.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "case_id": {
+            "type": "string"
+          },
+          "question": {
+            "type": "string"
+          },
+          "evidence_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "case_id",
+          "question"
+        ]
+      }
+    }
+  ],
+  "required_dependencies": [],
+  "compatible_aetherion_version": ">=1.0.0",
+  "homepage": "https://rea.tools/",
+  "documentation": "https://github.com/morluto/rea",
+  "icon": "binary",
+  "tags": [
+    "reverse-engineering",
+    "binary-analysis",
+    "mcp",
+    "rea",
+    "static-analysis",
+    "dynamic-observation"
+  ],
+  "configuration_schema": {
+    "type": "object",
+    "properties": {
+      "rea_binary_path": {
+        "type": "string",
+        "default": "rea"
+      },
+      "strict_scope_gate": {
+        "type": "boolean",
+        "default": true
+      },
+      "max_retained_metadata_bytes": {
+        "type": "integer",
+        "default": 1048576
+      }
+    }
+  },
+  "trust_level": "VERIFIED"
+}

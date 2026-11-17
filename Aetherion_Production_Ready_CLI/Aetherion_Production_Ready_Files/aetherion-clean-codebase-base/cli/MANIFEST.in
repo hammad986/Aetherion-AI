@@ -1,0 +1,6 @@
+include README.md
+include LICENSE.md
+include CHANGELOG.md
+recursive-include aetherion_cli *.md *.json *.yaml
+global-exclude *.pyc
+global-exclude __pycache__
